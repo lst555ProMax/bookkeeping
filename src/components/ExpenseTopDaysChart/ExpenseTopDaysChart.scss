@@ -1,0 +1,84 @@
+.expense-top-days-chart {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+
+  &__title {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  &__container {
+    width: 100%;
+    height: 300px;
+  }
+
+  &--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    text-align: center;
+  }
+
+  &__empty-message {
+    color: #666;
+    font-style: italic;
+    margin: 0;
+  }
+
+  &__tooltip {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.9rem;
+
+    .tooltip__label {
+      margin: 0 0 0.25rem 0;
+      font-weight: 600;
+    }
+
+    .tooltip__value {
+      margin: 0;
+      color: #4ECDC4;
+      font-weight: 700;
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .expense-top-days-chart {
+    padding: 1rem;
+
+    &__title {
+      font-size: 1.1rem;
+    }
+
+    &__container {
+      height: 250px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .expense-top-days-chart {
+    padding: 0.8rem;
+
+    &__title {
+      font-size: 1rem;
+    }
+
+    &__container {
+      height: 200px;
+    }
+  }
+}

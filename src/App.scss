@@ -1,0 +1,9 @@
+// App.scss - 全局应用样式
+// 当前主要样式在各个组件和页面中管理
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,79 @@
+.expense-form {
+  background: transparent; /* 移除背景，由父容器提供 */
+  padding: 2rem;
+  border-radius: 0; /* 移除圆角，由父容器提供 */
+  box-shadow: none; /* 移除阴影，由父容器提供 */
+  margin-bottom: 0; /* 移除外边距 */
+  max-width: none; /* 移除最大宽度限制 */
+
+  &__title {
+    margin: 0 0 2rem 0;
+    color: #333;
+    font-size: 1.6rem;
+    text-align: center;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__group {
+    margin-bottom: 1.5rem;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: 0.6rem;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  &__input,
+  &__select {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background: #fafafa;
+
+    &:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+
+  &__submit {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.1rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}

@@ -1,0 +1,30 @@
+.month-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+  }
+
+  &__select {
+    padding: 0.75rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+
+    &:hover {
+      border-color: #c5c9d0;
+    }
+  }
+}
