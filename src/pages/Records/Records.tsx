@@ -12,9 +12,13 @@ const Records: React.FC = () => {
   });
 
   // 加载存储的支出记录
-  useEffect(() => {
+  const loadData = () => {
     const savedExpenses = loadExpenses();
     setExpenses(savedExpenses);
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
   // 根据选中月份过滤支出记录
