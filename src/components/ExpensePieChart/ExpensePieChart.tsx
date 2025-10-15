@@ -28,7 +28,7 @@ const generateColor = (index: number): string => {
 };
 
 // 获取分类颜色
-const getCategoryColor = (category: string, index: number): string => {
+const getCategoryColor = (index: number): string => {
   return generateColor(index);
 };
 
