@@ -44,7 +44,7 @@ const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ expenses, title = "�
     return {
       name: category,
       value: total,
-      color: getCategoryColor(category, index)
+      color: getCategoryColor(index)
     };
   }).filter(item => item.value > 0); // 只显示有支出的分类
 
