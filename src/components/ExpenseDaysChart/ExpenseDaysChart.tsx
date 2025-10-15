@@ -2,12 +2,14 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ExpenseRecord } from '@/types';
 import { formatCurrency } from '@/utils';
-import './ExpenseBottomDaysChart.scss';
+import './ExpenseDaysChart.scss';
 
-interface ExpenseBottomDaysChartProps {
+interface ExpenseDaysChartProps {
   expenses: ExpenseRecord[];
   selectedMonth: string;
+  type: 'top' | 'bottom'; // 新增类型参数
   title?: string;
+  count?: number; // 显示天数，默认7天
 }
 
 interface DayData {
@@ -16,11 +18,20 @@ interface DayData {
   displayDate: string;
 }
 
-const ExpenseBottomDaysChart: React.FC<ExpenseBottomDaysChartProps> = ({ 
+const ExpenseDaysChart: React.FC<ExpenseDaysChartProps> = ({ 
   expenses, 
   selectedMonth, 
-  title = "本月开销最低的7天" 
+  type,
+  title,
+  count = 7
 }) => {
+  // 根据类型生成默认标题
+  const getDefaultTitle = () => {
+    return type === 'top' ? `本月开销最高的${count}天` : `本月开销最低的${count}天`;
+  };
+
+  const finalTitle = title || getDefaultTitle();
+
   // 计算每天的总开销
   const getDailyExpenses = () => {
     const dailyExpenses: Record<string, number> = {};
@@ -35,19 +46,32 @@ const ExpenseBottomDaysChart: React.FC<ExpenseBottomDaysChartProps> = ({
     return dailyExpenses;
   };
 
-  // 获取开销最低的7天（排除0开销的天）
-  const getBottomDays = (): DayData[] => {
+  // 获取指定类型的天数数据
+  const getDaysData = (): DayData[] => {
     const dailyExpenses = getDailyExpenses();
     
-    return Object.entries(dailyExpenses)
+    let sortedEntries = Object.entries(dailyExpenses)
       .map(([date, amount]) => ({
         date,
         amount,
         displayDate: formatDisplayDate(date)
-      }))
-      .filter(item => item.amount > 0) // 排除没有开销的天
-      .sort((a, b) => a.amount - b.amount) // 从低到高排序
-      .slice(0, 7);
+      }));
+
+    if (type === 'bottom') {
+      // 最低开销：排除0开销的天，然后从低到高排序
+      sortedEntries = sortedEntries
+        .filter(item => item.amount > 0)
+        .sort((a, b) => a.amount - b.amount);
+    } else {
+      // 最高开销：从高到低排序，然后反转以便在图表中从低到高显示
+      sortedEntries = sortedEntries
+        .sort((a, b) => b.amount - a.amount)
+        .slice(0, count)
+        .reverse();
+      return sortedEntries;
+    }
+
+    return sortedEntries.slice(0, count);
   };
 
   // 格式化日期显示
@@ -66,7 +90,7 @@ const ExpenseBottomDaysChart: React.FC<ExpenseBottomDaysChartProps> = ({
   }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="expense-bottom-days-chart__tooltip">
+        <div className="expense-days-chart__tooltip">
           <p className="tooltip__label">{label}</p>
           <p className="tooltip__value">{formatCurrency(payload[0].value)}</p>
         </div>
@@ -75,21 +99,26 @@ const ExpenseBottomDaysChart: React.FC<ExpenseBottomDaysChartProps> = ({
     return null;
   };
 
-  const data = getBottomDays();
+  // 根据类型获取柱子颜色
+  const getBarColor = () => {
+    return type === 'top' ? '#FF6B6B' : '#4ECDC4';
+  };
+
+  const data = getDaysData();
 
   if (data.length === 0) {
     return (
-      <div className="expense-bottom-days-chart expense-bottom-days-chart--empty">
-        <h3 className="expense-bottom-days-chart__title">{title}</h3>
-        <p className="expense-bottom-days-chart__empty-message">本月暂无支出记录</p>
+      <div className="expense-days-chart expense-days-chart--empty">
+        <h3 className="expense-days-chart__title">{finalTitle}</h3>
+        <p className="expense-days-chart__empty-message">本月暂无支出记录</p>
       </div>
     );
   }
 
   return (
-    <div className="expense-bottom-days-chart">
-      <h3 className="expense-bottom-days-chart__title">{title}</h3>
-      <div className="expense-bottom-days-chart__container">
+    <div className="expense-days-chart">
+      <h3 className="expense-days-chart__title">{finalTitle}</h3>
+      <div className="expense-days-chart__container">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
             data={data}
@@ -114,7 +143,7 @@ const ExpenseBottomDaysChart: React.FC<ExpenseBottomDaysChartProps> = ({
             <Tooltip content={<CustomTooltip />} />
             <Bar 
               dataKey="amount" 
-              fill="#4ECDC4"
+              fill={getBarColor()}
               radius={[4, 4, 0, 0]}
             />
           </BarChart>
@@ -124,4 +153,4 @@ const ExpenseBottomDaysChart: React.FC<ExpenseBottomDaysChartProps> = ({
   );
 };
 
-export default ExpenseBottomDaysChart;
+export default ExpenseDaysChart;

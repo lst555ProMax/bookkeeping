@@ -39,13 +39,13 @@
     font-size: 1rem;
     transition: all 0.3s ease;
     box-sizing: border-box;
-    background: #fafafa;
-    color: #999999;
+    background: #f4f5f7;
+    color: #000000;
 
     &:focus {
       outline: none;
       border-color: #667eea;
-      background: white;
+      background: #43bc8e;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
     }

@@ -1,4 +1,4 @@
-.expense-top-days-chart {
+.expense-days-chart {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
@@ -56,7 +56,7 @@
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .expense-top-days-chart {
+  .expense-days-chart {
     padding: 1rem;
 
     &__title {
@@ -70,7 +70,7 @@
 }
 
 @media (max-width: 480px) {
-  .expense-top-days-chart {
+  .expense-days-chart {
     padding: 0.8rem;
 
     &__title {

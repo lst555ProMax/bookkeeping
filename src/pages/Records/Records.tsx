@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ExpensePieChart, MonthSelector, ExpenseTopDaysChart, ExpenseBottomDaysChart, ExpenseTrendChart } from '@/components';
+import { ExpensePieChart, MonthSelector, ExpenseDaysChart, ExpenseTrendChart } from '@/components';
 import { ExpenseRecord } from '@/types';
 import { loadExpenses, formatCurrency } from '@/utils';
 import './Records.scss';
@@ -109,16 +109,18 @@ const Records: React.FC = () => {
               {/* 第二行：最高和最低开销柱状图 */}
               <div className="charts-row">
                 <div className="chart-item">
-                  <ExpenseTopDaysChart 
+                  <ExpenseDaysChart 
                     expenses={expenses}
                     selectedMonth={selectedMonth}
+                    type="top"
                     title="本月开销最高的7天"
                   />
                 </div>
                 <div className="chart-item">
-                  <ExpenseBottomDaysChart 
+                  <ExpenseDaysChart 
                     expenses={expenses}
                     selectedMonth={selectedMonth}
+                    type="bottom"
                     title="本月开销最低的7天"
                   />
                 </div>
