@@ -33,3 +33,11 @@ export const deleteExpense = (id: string): void => {
   const filteredExpenses = expenses.filter(expense => expense.id !== id);
   saveExpenses(filteredExpenses);
 };
+
+export const updateExpense = (updatedExpense: ExpenseRecord): void => {
+  const expenses = loadExpenses();
+  const updatedExpenses = expenses.map(expense => 
+    expense.id === updatedExpense.id ? updatedExpense : expense
+  );
+  saveExpenses(updatedExpenses);
+};

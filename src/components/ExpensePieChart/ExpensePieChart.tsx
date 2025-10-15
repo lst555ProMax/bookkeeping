@@ -1,7 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { ExpenseRecord, ExpenseCategory } from '@/types';
-import { formatCurrency } from '@/utils';
+import { ExpenseRecord } from '@/types';
+import { formatCurrency, getCategories } from '@/utils';
 import './ExpensePieChart.scss';
 
 interface ExpensePieChartProps {
@@ -16,29 +16,35 @@ interface CategoryData {
   [key: string]: string | number; // 添加索引签名
 }
 
-// 为不同分类定义颜色
-const CATEGORY_COLORS: Record<ExpenseCategory, string> = {
-  [ExpenseCategory.MEALS]: '#FF6B6B',
-  [ExpenseCategory.SNACKS]: '#4ECDC4', 
-  [ExpenseCategory.TRANSPORT]: '#45B7D1',
-  [ExpenseCategory.TRAVEL]: '#96CEB4',
-  [ExpenseCategory.SOFTWARE]: '#FECA57',
-  [ExpenseCategory.MEDICAL]: '#FF9FF3',
-  [ExpenseCategory.HOUSING]: '#54A0FF',
-  [ExpenseCategory.GIFTS]: '#5F27CD',
-  [ExpenseCategory.OTHER]: '#C8D6E5'
+
+// 生成颜色的函数
+const generateColor = (index: number): string => {
+  const colors = [
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', 
+    '#FF9FF3', '#54A0FF', '#5F27CD', '#C8D6E5', '#A8E6CF',
+    '#FFD93D', '#6C5CE7', '#FD79A8', '#00B894', '#E17055'
+  ];
+  return colors[index % colors.length];
+};
+
+// 获取分类颜色
+const getCategoryColor = (category: string, index: number): string => {
+  return generateColor(index);
 };
 
 const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ expenses, title = "支出分类统计" }) => {
+  // 获取所有分类
+  const categories = getCategories();
+  
   // 计算每个分类的总金额
-  const categoryData: CategoryData[] = Object.values(ExpenseCategory).map(category => {
+  const categoryData: CategoryData[] = categories.map((category, index) => {
     const categoryExpenses = expenses.filter(expense => expense.category === category);
     const total = categoryExpenses.reduce((sum, expense) => sum + expense.amount, 0);
     
     return {
       name: category,
       value: total,
-      color: CATEGORY_COLORS[category]
+      color: getCategoryColor(category, index)
     };
   }).filter(item => item.value > 0); // 只显示有支出的分类
 

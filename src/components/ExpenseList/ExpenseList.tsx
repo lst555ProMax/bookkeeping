@@ -6,9 +6,10 @@ import './ExpenseList.scss';
 interface ExpenseListProps {
   expenses: ExpenseRecord[];
   onDeleteExpense: (id: string) => void;
+  onEditExpense: (expense: ExpenseRecord) => void;
 }
 
-const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onDeleteExpense }) => {
+const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onDeleteExpense, onEditExpense }) => {
   // 按日期分组支出记录
   const groupedExpenses = expenses.reduce((groups, expense) => {
     const date = expense.date;
@@ -56,13 +57,22 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onDeleteExpense }) 
                   .map(record => (
                     <div key={record.id} className="expense-record">
                       <div className="expense-record__info">
-                        <div className="expense-record__category">{record.category}</div>
-                        {record.description && (
-                          <div className="expense-record__description">{record.description}</div>
-                        )}
+                        <div className="expense-record__main">
+                          <span className="expense-record__category">{record.category}</span>
+                          {record.description && (
+                            <span className="expense-record__description">{record.description}</span>
+                          )}
+                        </div>
                       </div>
                       <div className="expense-record__actions">
                         <span className="expense-record__amount">{formatCurrency(record.amount)}</span>
+                        <button
+                          className="expense-record__edit"
+                          onClick={() => onEditExpense(record)}
+                          title="编辑记录"
+                        >
+                          ✏️
+                        </button>
                         <button
                           className="expense-record__delete"
                           onClick={() => onDeleteExpense(record.id)}

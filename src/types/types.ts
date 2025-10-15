@@ -1,15 +1,18 @@
-// 支出类别枚举
-export enum ExpenseCategory {
-  MEALS = '餐饮',
-  SNACKS = '零食',
-  TRANSPORT = '出行',
-  TRAVEL = '旅游',
-  SOFTWARE = '软件订阅',
-  MEDICAL = '医疗',
-  HOUSING = '住房',
-  GIFTS = '人情往来',
-  OTHER = '其他'
-}
+// 支出类别类型
+export type ExpenseCategory = string;
+
+// 默认支出类别
+export const DEFAULT_CATEGORIES: ExpenseCategory[] = [
+  '餐饮',
+  '零食',
+  '出行',
+  '旅游',
+  '软件订阅',
+  '医疗',
+  '住房',
+  '人情往来',
+  '其他'
+];
 
 // 支出记录接口
 export interface ExpenseRecord {

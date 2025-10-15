@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ExpenseForm, ExpenseList } from '@/components';
+import { ExpenseForm, ExpenseList, CategoryManager } from '@/components';
 import { ExpenseRecord } from '@/types';
-import { loadExpenses, addExpense, deleteExpense, exportExpenses, importExpenses, validateImportFile } from '@/utils';
+import { loadExpenses, addExpense, deleteExpense, updateExpense, exportExpenses, importExpenses, validateImportFile } from '@/utils';
 import './Home.scss';
 
 const Home: React.FC = () => {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [isImporting, setIsImporting] = useState(false);
+  const [showCategoryManager, setShowCategoryManager] = useState(false);
+  const [categoriesKey, setCategoriesKey] = useState(0);
+  const [editingExpense, setEditingExpense] = useState<ExpenseRecord | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 加载存储的支出记录
@@ -85,6 +88,41 @@ const Home: React.FC = () => {
     fileInputRef.current?.click();
   };
 
+  // 打开分类管理器
+  const handleOpenCategoryManager = () => {
+    setShowCategoryManager(true);
+  };
+
+  // 关闭分类管理器
+  const handleCloseCategoryManager = () => {
+    setShowCategoryManager(false);
+  };
+
+  // 分类变化时刷新
+  const handleCategoriesChange = () => {
+    setCategoriesKey(prev => prev + 1);
+  };
+
+  // 开始编辑支出记录
+  const handleEditExpense = (expense: ExpenseRecord) => {
+    setEditingExpense(expense);
+  };
+
+  // 取消编辑
+  const handleCancelEdit = () => {
+    setEditingExpense(null);
+  };
+
+  // 更新支出记录
+  const handleUpdateExpense = (updatedExpense: ExpenseRecord) => {
+    // 这里需要创建一个更新函数
+    updateExpense(updatedExpense);
+    setExpenses(prev => prev.map(expense => 
+      expense.id === updatedExpense.id ? updatedExpense : expense
+    ));
+    setEditingExpense(null);
+  };
+
   return (
     <div className="home">
       <header className="home__header">
@@ -122,7 +160,14 @@ const Home: React.FC = () => {
           <div className="home__section-group">
           {/* 添加支出表单 */}
           <div className="home__form-section">
-            <ExpenseForm onAddExpense={handleAddExpense} />
+            <ExpenseForm 
+              onAddExpense={handleAddExpense}
+              onUpdateExpense={handleUpdateExpense}
+              onOpenCategoryManager={handleOpenCategoryManager}
+              onCancelEdit={handleCancelEdit}
+              categoriesKey={categoriesKey}
+              editingExpense={editingExpense}
+            />
           </div>
 
           {/* 支出记录列表 */}
@@ -130,13 +175,22 @@ const Home: React.FC = () => {
             <div className="expense-list-container">
               <ExpenseList 
                 expenses={expenses} 
-                onDeleteExpense={handleDeleteExpense} 
+                onDeleteExpense={handleDeleteExpense}
+                onEditExpense={handleEditExpense}
               />
             </div>
           </div>
           </div>
         </div>
       </main>
+
+      {/* 分类管理器模态框 */}
+      {showCategoryManager && (
+        <CategoryManager
+          onClose={handleCloseCategoryManager}
+          onCategoriesChange={handleCategoriesChange}
+        />
+      )}
     </div>
   );
 };
