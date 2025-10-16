@@ -32,13 +32,14 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     const loadCategoriesEffect = () => {
       const loadedCategories = getCategories();
       setCategories(loadedCategories);
-      // 如果当前选中的分类不存在，选择第一个分类
-      if (!loadedCategories.includes(category)) {
+      // 只有在分类列表为空或当前分类确实不存在时才重置
+      if (loadedCategories.length > 0 && !loadedCategories.includes(category)) {
         setCategory(loadedCategories[0] || '其他');
       }
     };
     loadCategoriesEffect();
-  }, [category, categoriesKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoriesKey]); // 故意移除 category 依赖，避免循环更新
 
   // 当编辑状态变化时，更新表单数据
   useEffect(() => {
