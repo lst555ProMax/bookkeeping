@@ -35,6 +35,10 @@
     position: absolute;
     top: 1rem;
     left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   &__back-btn {
@@ -51,6 +55,30 @@
     &:hover {
       background: rgba(255, 255, 255, 0.3);
       transform: translateX(-2px);
+    }
+  }
+
+  &__toggle-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
   }
 
@@ -255,5 +283,32 @@
         padding: 0.8rem;
       }
     }
+  }
+}
+
+.placeholder-chart {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  h3 {
+    margin: 0 0 1rem 0;
+    color: #495057;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 1.1rem;
+    font-style: italic;
   }
 }

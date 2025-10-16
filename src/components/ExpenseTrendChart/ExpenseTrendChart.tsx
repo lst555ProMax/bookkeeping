@@ -1,11 +1,12 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { ExpenseRecord } from '@/types';
+import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
 import { formatCurrency } from '@/utils';
 import './ExpenseTrendChart.scss';
 
 interface ExpenseTrendChartProps {
-  expenses: ExpenseRecord[];
+  records: ExpenseRecord[] | IncomeRecord[];
+  recordType: RecordType;
   title?: string;
 }
 
@@ -16,9 +17,19 @@ interface DayData {
 }
 
 const ExpenseTrendChart: React.FC<ExpenseTrendChartProps> = ({ 
-  expenses, 
-  title = "最近7天开销趋势" 
+  records,
+  recordType,
+  title
 }) => {
+  const isIncome = recordType === RecordType.INCOME;
+  
+  // 根据类型生成默认标题
+  const getDefaultTitle = () => {
+    return isIncome ? "最近7天收入趋势" : "最近7天开销趋势";
+  };
+  
+  const finalTitle = title || getDefaultTitle();
+
   // 获取最近7天的日期
   const getLast7Days = (): string[] => {
     const dates: string[] = [];
@@ -33,15 +44,15 @@ const ExpenseTrendChart: React.FC<ExpenseTrendChartProps> = ({
     return dates;
   };
 
-  // 计算最近7天每天的开销
+  // 计算最近7天每天的记录
   const getTrendData = (): DayData[] => {
     const last7Days = getLast7Days();
     const dailyExpenses: Record<string, number> = {};
     
-    // 计算每天的总开销
-    expenses.forEach(expense => {
-      const date = expense.date;
-      dailyExpenses[date] = (dailyExpenses[date] || 0) + expense.amount;
+    // 计算每天的总金额
+    records.forEach(record => {
+      const date = record.date;
+      dailyExpenses[date] = (dailyExpenses[date] || 0) + record.amount;
     });
 
     // 为最近7天生成数据，没有记录的天数金额为0
@@ -78,10 +89,15 @@ const ExpenseTrendChart: React.FC<ExpenseTrendChartProps> = ({
   };
 
   const data = getTrendData();
+  
+  // 根据类型获取线条颜色
+  const getLineColor = () => {
+    return isIncome ? '#28a745' : '#45B7D1';
+  };
 
   return (
     <div className="expense-trend-chart">
-      <h3 className="expense-trend-chart__title">{title}</h3>
+      <h3 className="expense-trend-chart__title">{finalTitle}</h3>
       <div className="expense-trend-chart__container">
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
@@ -108,10 +124,10 @@ const ExpenseTrendChart: React.FC<ExpenseTrendChartProps> = ({
             <Line 
               type="monotone" 
               dataKey="amount" 
-              stroke="#45B7D1"
+              stroke={getLineColor()}
               strokeWidth={3}
-              dot={{ fill: '#45B7D1', strokeWidth: 2, r: 5 }}
-              activeDot={{ r: 7, stroke: '#45B7D1', strokeWidth: 2 }}
+              dot={{ fill: getLineColor(), strokeWidth: 2, r: 5 }}
+              activeDot={{ r: 7, stroke: getLineColor(), strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>

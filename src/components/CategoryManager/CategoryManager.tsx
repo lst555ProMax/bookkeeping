@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { ExpenseCategory } from '@/types';
+import { ExpenseCategory, IncomeCategory, RecordType } from '@/types';
 import { 
   getManageableCategories, 
   addCategory, 
   deleteCategory, 
   updateCategory, 
   categoryHasRecords,
-  saveCategoriesOrder
+  saveCategoriesOrder,
+  getManageableIncomeCategories,
+  addIncomeCategory,
+  deleteIncomeCategory,
+  updateIncomeCategory,
+  incomeCategoryHasRecords,
+  saveIncomeCategoriesOrder
 } from '@/utils';
 import './CategoryManager.scss';
 
 interface CategoryManagerProps {
+  recordType: RecordType;
   onClose: () => void;
   onCategoriesChange: () => void;
 }
 
-const CategoryManager: React.FC<CategoryManagerProps> = ({ onClose, onCategoriesChange }) => {
-  const [categories, setCategories] = useState<ExpenseCategory[]>([]);
+const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, onCategoriesChange }) => {
+  const isIncome = recordType === RecordType.INCOME;
+  const [categories, setCategories] = useState<(ExpenseCategory | IncomeCategory)[]>([]);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
@@ -24,11 +32,12 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ onClose, onCategories
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    loadCategories();
-  }, []);
+    const loadedCategories = isIncome ? getManageableIncomeCategories() : getManageableCategories();
+    setCategories(loadedCategories);
+  }, [recordType, isIncome]); // 当类型改变时重新加载
 
   const loadCategories = () => {
-    const loadedCategories = getManageableCategories();
+    const loadedCategories = isIncome ? getManageableIncomeCategories() : getManageableCategories();
     setCategories(loadedCategories);
   };
 
@@ -40,30 +49,40 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ onClose, onCategories
     }
 
     if(window.confirm(`确定要添加"${newCategoryName}"分类吗？`)){
-        const success = addCategory(newCategoryName);
+        const success = isIncome 
+          ? addIncomeCategory(newCategoryName)
+          : addCategory(newCategoryName);
+        
         if (success) {
-        setNewCategoryName('');
-        loadCategories();
-        onCategoriesChange();
+          setNewCategoryName('');
+          loadCategories();
+          onCategoriesChange();
         } else {
-        window.alert('分类名称已存在');
+          window.alert('分类名称已存在');
         }
     }
   };
 
-  const handleDeleteCategory = (category: ExpenseCategory) => {
+  const handleDeleteCategory = (category: ExpenseCategory | IncomeCategory) => {
     if (category === '其他') {
       window.alert('不能删除"其他"分类');
       return;
     }
 
-    const hasRecords = categoryHasRecords(category);
+    const hasRecords = isIncome 
+      ? incomeCategoryHasRecords(category as IncomeCategory)
+      : categoryHasRecords(category as ExpenseCategory);
+    
+    const recordLabel = isIncome ? '收入' : '支出';
     const confirmMessage = hasRecords 
-      ? `删除"${category}"分类将把该分类下的所有记录转移到"其他"分类，确定要删除吗？`
+      ? `删除"${category}"分类将把该分类下的所有${recordLabel}记录转移到"其他"分类，确定要删除吗？`
       : `确定要删除"${category}"分类吗？`;
 
     if (window.confirm(confirmMessage)) {
-      const success = deleteCategory(category);
+      const success = isIncome
+        ? deleteIncomeCategory(category as IncomeCategory)
+        : deleteCategory(category as ExpenseCategory);
+      
       if (success) {
         loadCategories();
         onCategoriesChange();
@@ -74,7 +93,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ onClose, onCategories
     }
   };
 
-  const handleStartEdit = (category: ExpenseCategory) => {
+  const handleStartEdit = (category: ExpenseCategory | IncomeCategory) => {
     setEditingCategory(category);
     setEditingName(category);
     setError('');
@@ -94,7 +113,10 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ onClose, onCategories
     }
 
     if (editingCategory) {
-      const success = updateCategory(editingCategory, editingName);
+      const success = isIncome
+        ? updateIncomeCategory(editingCategory as IncomeCategory, editingName)
+        : updateCategory(editingCategory as ExpenseCategory, editingName);
+      
       if (success) {
         setEditingCategory(null);
         setEditingName('');
@@ -150,7 +172,11 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ onClose, onCategories
     setCategories(newCategories);
     
     // 保存新顺序（包含"其他"）
-    saveCategoriesOrder(newCategories);
+    if (isIncome) {
+      saveIncomeCategoriesOrder(newCategories as IncomeCategory[]);
+    } else {
+      saveCategoriesOrder(newCategories as ExpenseCategory[]);
+    }
     onCategoriesChange();
     
     setDraggedIndex(null);
@@ -161,7 +187,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ onClose, onCategories
       <div className="category-manager__overlay" onClick={onClose}></div>
       <div className="category-manager__modal">
         <div className="category-manager__header">
-          <h3>管理分类</h3>
+          <h3>管理{isIncome ? '收入' : '支出'}分类</h3>
           <button 
             className="category-manager__close" 
             onClick={onClose}
@@ -246,7 +272,10 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ onClose, onCategories
                       </div>
                       <span className="category-manager__name">
                         {category}
-                        {categoryHasRecords(category) && (
+                        {(isIncome 
+                          ? incomeCategoryHasRecords(category as IncomeCategory)
+                          : categoryHasRecords(category as ExpenseCategory)
+                        ) && (
                           <span className="category-manager__has-records"> (有记录)</span>
                         )}
                       </span>

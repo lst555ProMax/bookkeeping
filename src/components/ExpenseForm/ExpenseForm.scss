@@ -6,16 +6,48 @@
   margin-bottom: 0; /* 移除外边距 */
   max-width: none; /* 移除最大宽度限制 */
 
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
   &__title {
     margin: 1rem 0 1rem 0;
     color: #333;
     font-size: 1.6rem;
-    text-align: center;
+    text-align: left;
     font-weight: 700;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  &__toggle {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+
+    &:hover {
+      transform: scale(1.1) rotate(180deg);
+      box-shadow: 0 4px 16px rgba(108, 117, 125, 0.4);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
   }
 
   &__group {

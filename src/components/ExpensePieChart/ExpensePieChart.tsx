@@ -1,11 +1,12 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { ExpenseRecord } from '@/types';
-import { formatCurrency, getCategories } from '@/utils';
+import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
+import { formatCurrency, getCategories, getIncomeCategories } from '@/utils';
 import './ExpensePieChart.scss';
 
 interface ExpensePieChartProps {
-  expenses: ExpenseRecord[];
+  records: ExpenseRecord[] | IncomeRecord[];
+  recordType: RecordType;
   title?: string;
 }
 
@@ -16,37 +17,59 @@ interface CategoryData {
   [key: string]: string | number; // 添加索引签名
 }
 
-
 // 生成颜色的函数
-const generateColor = (index: number): string => {
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', 
-    '#FF9FF3', '#54A0FF', '#5F27CD', '#C8D6E5', '#A8E6CF',
-    '#FFD93D', '#6C5CE7', '#FD79A8', '#00B894', '#E17055'
-  ];
-  return colors[index % colors.length];
+const generateColor = (index: number, isIncome: boolean = false): string => {
+  if (isIncome) {
+    // 收入使用绿色系
+    const incomeColors = [
+      '#28a745', '#20c997', '#6f9654', '#52b788', '#2d6a4f',
+      '#40916c', '#74c69d', '#95d5b2', '#b7e4c7', '#d8f3dc'
+    ];
+    return incomeColors[index % incomeColors.length];
+  } else {
+    // 支出使用暖色系
+    const expenseColors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', 
+      '#FF9FF3', '#54A0FF', '#5F27CD', '#C8D6E5', '#A8E6CF',
+      '#FFD93D', '#6C5CE7', '#FD79A8', '#00B894', '#E17055'
+    ];
+    return expenseColors[index % expenseColors.length];
+  }
 };
 
 // 获取分类颜色
-const getCategoryColor = (index: number): string => {
-  return generateColor(index);
+const getCategoryColor = (index: number, isIncome: boolean = false): string => {
+  return generateColor(index, isIncome);
 };
 
-const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ expenses, title = "支出分类统计" }) => {
-  // 获取所有分类
-  const categories = getCategories();
+
+const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ 
+  records, 
+  recordType,
+  title 
+}) => {
+  // 根据记录类型生成默认标题
+  const getDefaultTitle = () => {
+    return recordType === RecordType.EXPENSE ? "支出分类统计" : "收入分类统计";
+  };
+  
+  const finalTitle = title || getDefaultTitle();
+  const isIncome = recordType === RecordType.INCOME;
+  
+  // 获取对应类型的分类
+  const categories = isIncome ? getIncomeCategories() : getCategories();
   
   // 计算每个分类的总金额
   const categoryData: CategoryData[] = categories.map((category, index) => {
-    const categoryExpenses = expenses.filter(expense => expense.category === category);
-    const total = categoryExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const categoryRecords = records.filter(record => record.category === category);
+    const total = categoryRecords.reduce((sum, record) => sum + record.amount, 0);
     
     return {
       name: category,
       value: total,
-      color: getCategoryColor(index)
+      color: getCategoryColor(index, isIncome)
     };
-  }).filter(item => item.value > 0); // 只显示有支出的分类
+  }).filter(item => item.value > 0); // 只显示有记录的分类
 
   // 自定义Tooltip
   const CustomTooltip = ({ active, payload }: {
@@ -68,9 +91,9 @@ const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ expenses, title = "�
   if (categoryData.length === 0) {
     return (
       <div className="expense-pie-chart expense-pie-chart--empty">
-        <h3 className="expense-pie-chart__title">{title}</h3>
+        <h3 className="expense-pie-chart__title">{finalTitle}</h3>
         <div className="expense-pie-chart__empty-message">
-          <p>暂无支出数据</p>
+          <p>暂无{recordType === RecordType.EXPENSE ? '支出' : '收入'}数据</p>
         </div>
       </div>
     );
@@ -78,7 +101,7 @@ const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ expenses, title = "�
 
   return (
     <div className="expense-pie-chart">
-      <h3 className="expense-pie-chart__title">{title}</h3>
+      <h3 className="expense-pie-chart__title">{finalTitle}</h3>
       <div className="expense-pie-chart__container">
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>

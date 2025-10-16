@@ -1,26 +1,64 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ExpenseForm, ExpenseList, CategoryManager } from '@/components';
-import { ExpenseRecord } from '@/types';
-import { loadExpenses, addExpense, deleteExpense, updateExpense, exportExpenses, importExpenses, validateImportFile } from '@/utils';
+import { ExpenseForm, ExpenseList, IncomeList, CategoryManager } from '@/components';
+import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
+import { 
+  loadExpenses, addExpense, deleteExpense, updateExpense,
+  loadIncomes, addIncome, deleteIncome, updateIncome,
+  exportExpenses, importExpenses, validateImportFile 
+} from '@/utils';
 import './Home.scss';
 
 const Home: React.FC = () => {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
+  const [incomes, setIncomes] = useState<IncomeRecord[]>([]);
   const [isImporting, setIsImporting] = useState(false);
   const [showCategoryManager, setShowCategoryManager] = useState(false);
+  const [categoryManagerType, setCategoryManagerType] = useState<RecordType>(RecordType.EXPENSE);
   const [categoriesKey, setCategoriesKey] = useState(0);
   const [editingExpense, setEditingExpense] = useState<ExpenseRecord | null>(null);
+  const [editingIncome, setEditingIncome] = useState<IncomeRecord | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 加载存储的支出记录
+  // 加载存储的支出和收入记录
   const loadData = () => {
     const savedExpenses = loadExpenses();
+    const savedIncomes = loadIncomes();
     setExpenses(savedExpenses);
+    setIncomes(savedIncomes);
   };
 
   useEffect(() => {
     loadData();
   }, []);
+
+  // 添加新收入
+  const handleAddIncome = (income: IncomeRecord) => {
+    addIncome(income);
+    const updatedIncomes = loadIncomes();
+    setIncomes(updatedIncomes);
+  };
+
+  // 删除收入
+  const handleDeleteIncome = (id: string) => {
+    if (window.confirm('确定要删除这条收入记录吗？')) {
+      deleteIncome(id);
+      const updatedIncomes = loadIncomes();
+      setIncomes(updatedIncomes);
+    }
+  };
+
+  // 编辑收入
+  const handleEditIncome = (income: IncomeRecord) => {
+    setEditingIncome(income);
+  };
+
+  // 更新收入
+  const handleUpdateIncome = (updatedIncome: IncomeRecord) => {
+    updateIncome(updatedIncome);
+    const updatedIncomes = loadIncomes();
+    setIncomes(updatedIncomes);
+    setEditingIncome(null);
+  };
 
   // 添加新支出
   const handleAddExpense = (expense: ExpenseRecord) => {
@@ -57,7 +95,20 @@ const Home: React.FC = () => {
     try {
       const result = await importExpenses(file);
       loadData(); // 重新加载数据
-      alert(`导入完成！新增 ${result.imported} 条记录，跳过 ${result.skipped} 条记录`);
+      
+      const totalImported = result.importedExpenses + result.importedIncomes;
+      const totalSkipped = result.skippedExpenses + result.skippedIncomes;
+      
+      let message = `导入完成！\n`;
+      if (result.importedExpenses > 0 || result.skippedExpenses > 0) {
+        message += `支出记录：新增 ${result.importedExpenses} 条，跳过 ${result.skippedExpenses} 条\n`;
+      }
+      if (result.importedIncomes > 0 || result.skippedIncomes > 0) {
+        message += `收入记录：新增 ${result.importedIncomes} 条，跳过 ${result.skippedIncomes} 条\n`;
+      }
+      message += `总计：新增 ${totalImported} 条，跳过 ${totalSkipped} 条`;
+      
+      alert(message);
     } catch (error) {
       alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
     } finally {
@@ -89,7 +140,8 @@ const Home: React.FC = () => {
   };
 
   // 打开分类管理器
-  const handleOpenCategoryManager = () => {
+  const handleOpenCategoryManager = (type: RecordType = RecordType.EXPENSE) => {
+    setCategoryManagerType(type);
     setShowCategoryManager(true);
   };
 
@@ -111,6 +163,7 @@ const Home: React.FC = () => {
   // 取消编辑
   const handleCancelEdit = () => {
     setEditingExpense(null);
+    setEditingIncome(null);
   };
 
   // 更新支出记录
@@ -160,24 +213,41 @@ const Home: React.FC = () => {
           <div className="home__section-group">
           {/* 添加支出表单 */}
           <div className="home__form-section">
-            <ExpenseForm 
+            <ExpenseForm
               onAddExpense={handleAddExpense}
+              onAddIncome={handleAddIncome}
               onUpdateExpense={handleUpdateExpense}
+              onUpdateIncome={handleUpdateIncome}
               onOpenCategoryManager={handleOpenCategoryManager}
               onCancelEdit={handleCancelEdit}
               categoriesKey={categoriesKey}
               editingExpense={editingExpense}
+              editingIncome={editingIncome}
             />
           </div>
 
-          {/* 支出记录列表 */}
+          {/* 记录列表 */}
           <div className="home__list-section">
-            <div className="expense-list-container">
-              <ExpenseList 
-                expenses={expenses} 
-                onDeleteExpense={handleDeleteExpense}
-                onEditExpense={handleEditExpense}
-              />
+            <div className="records-container">
+              {/* 支出记录列表 */}
+              <div className="expense-list-container">
+                <h3>支出记录</h3>
+                <ExpenseList 
+                  expenses={expenses} 
+                  onDeleteExpense={handleDeleteExpense}
+                  onEditExpense={handleEditExpense}
+                />
+              </div>
+              
+              {/* 收入记录列表 */}
+              <div className="income-list-container">
+                <h3>收入记录</h3>
+                <IncomeList 
+                  incomes={incomes} 
+                  onDeleteIncome={handleDeleteIncome}
+                  onEditIncome={handleEditIncome}
+                />
+              </div>
             </div>
           </div>
           </div>
@@ -187,6 +257,7 @@ const Home: React.FC = () => {
       {/* 分类管理器模态框 */}
       {showCategoryManager && (
         <CategoryManager
+          recordType={categoryManagerType}
           onClose={handleCloseCategoryManager}
           onCategoriesChange={handleCategoriesChange}
         />

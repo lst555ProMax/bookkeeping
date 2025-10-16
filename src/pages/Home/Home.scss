@@ -134,12 +134,18 @@ body {
     flex: 1;
     min-width: 0; /* 允许flex项目收缩 */
     
-    .expense-list-container {
+    .records-container {
+      display: flex;
+      gap: 2rem;
+      height: 70vh; /* 固定高度 */
+    }
+    
+    .expense-list-container, .income-list-container {
       background: white;
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       overflow: hidden;
-      height: 70vh; /* 固定高度 */
+      flex: 1; /* 等宽分布 */
       display: flex;
       flex-direction: column;
       transition: all 0.3s ease;
@@ -149,8 +155,16 @@ body {
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
       }
 
-      /* 支出列表滚动容器 */
-      :global(.expense-list) {
+      h3 {
+        padding: 1.5rem 1.5rem 1rem;
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      /* 列表滚动容器 */
+      :global(.expense-list), :global(.income-list) {
         flex: 1;
         overflow-y: auto;
         
@@ -179,6 +193,28 @@ body {
 /* 响应式设计 */
 @media (max-width: 768px) {
   .home {
+    &__section-group {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    &__form-section {
+      flex: none;
+      width: 100%;
+    }
+
+    &__list-section {
+      .records-container {
+        flex-direction: column;
+        gap: 1.5rem;
+        height: auto;
+      }
+
+      .expense-list-container, .income-list-container {
+        height: 400px;
+      }
+    }
+
     &__quick-actions {
       gap: 0.8rem;
 

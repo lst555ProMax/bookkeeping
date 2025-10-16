@@ -1,11 +1,12 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { ExpenseRecord } from '@/types';
+import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
 import { formatCurrency } from '@/utils';
 import './ExpenseDaysChart.scss';
 
 interface ExpenseDaysChartProps {
-  expenses: ExpenseRecord[];
+  records: ExpenseRecord[] | IncomeRecord[];
+  recordType: RecordType;
   selectedMonth: string;
   type: 'top' | 'bottom'; // 新增类型参数
   title?: string;
@@ -19,28 +20,32 @@ interface DayData {
 }
 
 const ExpenseDaysChart: React.FC<ExpenseDaysChartProps> = ({ 
-  expenses, 
+  records,
+  recordType,
   selectedMonth, 
   type,
   title,
   count = 7
 }) => {
+  const isIncome = recordType === RecordType.INCOME;
+  
   // 根据类型生成默认标题
   const getDefaultTitle = () => {
-    return type === 'top' ? `本月开销最高的${count}天` : `本月开销最低的${count}天`;
+    const recordLabel = isIncome ? '收入' : '开销';
+    return type === 'top' ? `本月${recordLabel}最高的${count}天` : `本月${recordLabel}最低的${count}天`;
   };
 
   const finalTitle = title || getDefaultTitle();
 
-  // 计算每天的总开销
+  // 计算每天的总额
   const getDailyExpenses = () => {
     const dailyExpenses: Record<string, number> = {};
     
-    expenses
-      .filter(expense => expense.date.startsWith(selectedMonth))
-      .forEach(expense => {
-        const date = expense.date;
-        dailyExpenses[date] = (dailyExpenses[date] || 0) + expense.amount;
+    records
+      .filter(record => record.date.startsWith(selectedMonth))
+      .forEach(record => {
+        const date = record.date;
+        dailyExpenses[date] = (dailyExpenses[date] || 0) + record.amount;
       });
 
     return dailyExpenses;
@@ -101,7 +106,11 @@ const ExpenseDaysChart: React.FC<ExpenseDaysChartProps> = ({
 
   // 根据类型获取柱子颜色
   const getBarColor = () => {
-    return type === 'top' ? '#FF6B6B' : '#4ECDC4';
+    if (isIncome) {
+      return type === 'top' ? '#28a745' : '#74c69d';
+    } else {
+      return type === 'top' ? '#FF6B6B' : '#4ECDC4';
+    }
   };
 
   const data = getDaysData();
@@ -110,7 +119,7 @@ const ExpenseDaysChart: React.FC<ExpenseDaysChartProps> = ({
     return (
       <div className="expense-days-chart expense-days-chart--empty">
         <h3 className="expense-days-chart__title">{finalTitle}</h3>
-        <p className="expense-days-chart__empty-message">本月暂无支出记录</p>
+        <p className="expense-days-chart__empty-message">本月暂无{isIncome ? '收入' : '支出'}记录</p>
       </div>
     );
   }
