@@ -1,0 +1,65 @@
+.sleep-time-trend-chart {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+
+  h3 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .chart-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #999;
+
+    p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+
+      &:first-child {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+    }
+
+    .hint {
+      font-size: 0.9rem;
+      color: #bbb;
+    }
+  }
+}
+
+.custom-tooltip {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  .tooltip-date {
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .tooltip-item {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.85rem;
+
+    &.sleep {
+      color: #667eea;
+    }
+
+    &.wake {
+      color: #ffc107;
+    }
+  }
+}

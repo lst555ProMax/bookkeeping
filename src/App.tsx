@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Records } from '@/pages';
+import { Home, Records, SleepRecords } from '@/pages';
 import './App.scss';
 
 const App: React.FC = () => {
@@ -11,6 +11,8 @@ const App: React.FC = () => {
       const hash = window.location.hash;
       if (hash === '#/records') {
         setCurrentPage('records');
+      } else if (hash === '#/sleep-records') {
+        setCurrentPage('sleep-records');
       } else {
         setCurrentPage('home');
       }
@@ -32,6 +34,8 @@ const App: React.FC = () => {
     switch (currentPage) {
       case 'records':
         return <Records />;
+      case 'sleep-records':
+        return <SleepRecords />;
       default:
         return <Home />;
     }

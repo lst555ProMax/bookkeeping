@@ -4,3 +4,4 @@ export * from './helpers';
 export * from './dataManager';
 export * from './categoryManager';
 export * from './incomeStorage';
+export * from './sleepStorage';

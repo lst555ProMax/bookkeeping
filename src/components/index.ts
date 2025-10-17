@@ -7,3 +7,7 @@ export { default as ExpensePieChart } from './ExpensePieChart/ExpensePieChart';
 export { default as ExpenseDaysChart } from './ExpenseDaysChart/ExpenseDaysChart';
 export { default as ExpenseTrendChart } from './ExpenseTrendChart/ExpenseTrendChart';
 export { default as CategoryManager } from './CategoryManager/CategoryManager';
+export { default as SleepForm } from './SleepForm/SleepForm';
+export { default as SleepList } from './SleepList/SleepList';
+export { default as SleepTimeTrendChart } from './SleepTimeTrendChart/SleepTimeTrendChart';
+export { default as SleepDurationTrendChart } from './SleepDurationTrendChart/SleepDurationTrendChart';

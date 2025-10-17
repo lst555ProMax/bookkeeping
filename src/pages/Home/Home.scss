@@ -27,6 +27,7 @@ body {
     padding: 2rem 1rem;
     text-align: center;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
 
     h1 {
       font-size: 2.5rem;
@@ -38,6 +39,44 @@ body {
       font-size: 1.1rem;
       opacity: 0.9;
       margin: 0;
+    }
+  }
+
+  &__mode-switcher {
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+
+    .mode-btn {
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      &--active {
+        background: white;
+        color: #667eea;
+        border-color: white;
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+      }
     }
   }
 
@@ -140,6 +179,22 @@ body {
       height: 70vh; /* 固定高度 */
     }
     
+    .form-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      flex: 0 0 400px; /* 固定宽度 */
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+    }
+    
     .expense-list-container, .income-list-container {
       background: white;
       border-radius: 16px;
@@ -187,12 +242,49 @@ body {
         }
       }
     }
+
+    /* 睡眠记录容器样式 */
+    .sleep-records-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      height: 70vh;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      h3 {
+        padding: 1.5rem 1.5rem 1rem;
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        border-bottom: 1px solid #f0f0f0;
+      }
+    }
   }
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
   .home {
+    &__mode-switcher {
+      position: static;
+      transform: none;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+
+      .mode-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+      }
+    }
+
     &__section-group {
       flex-direction: column;
       gap: 1.5rem;
@@ -210,8 +302,13 @@ body {
         height: auto;
       }
 
-      .expense-list-container, .income-list-container {
+      .form-container,
+      .expense-list-container, 
+      .income-list-container, 
+      .sleep-records-container {
         height: 400px;
+        flex: none;
+        width: 100%;
       }
     }
 
@@ -229,6 +326,26 @@ body {
 
 @media (max-width: 480px) {
   .home {
+    &__header {
+      h1 {
+        font-size: 2rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    &__mode-switcher {
+      flex-direction: column;
+      padding: 0.4rem;
+
+      .mode-btn {
+        width: 100%;
+        padding: 0.7rem 1rem;
+      }
+    }
+
     &__quick-actions {
       flex-direction: column;
       align-items: center;

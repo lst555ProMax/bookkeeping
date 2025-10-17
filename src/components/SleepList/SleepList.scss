@@ -1,0 +1,243 @@
+.sleep-list {
+  padding: 1.5rem;
+  max-height: calc(100% - 80px);
+  overflow-y: auto;
+
+  /* 自定义滚动条 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #999;
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+
+    .empty-hint {
+      font-size: 0.9rem;
+      color: #bbb;
+    }
+  }
+}
+
+.sleep-item {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateX(4px);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  &__date {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &--edit:hover {
+    background: rgba(102, 126, 234, 0.1);
+  }
+
+  &--delete:hover {
+    background: rgba(231, 76, 60, 0.1);
+  }
+}
+
+.sleep-detail-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.sleep-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+
+  .detail-label {
+    color: #666;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .detail-value {
+    color: #333;
+    font-weight: 600;
+    text-align: right;
+
+    &--highlight {
+      color: #667eea;
+      font-size: 1.05rem;
+    }
+  }
+}
+
+.sleep-quality {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &.quality--excellent {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  &.quality--good {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+  }
+
+  &.quality--fair {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: white;
+  }
+
+  &.quality--poor {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+  }
+}
+
+.sleep-notes {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  border-left: 3px solid #667eea;
+  display: flex;
+  flex-direction: row;
+
+  .notes-label {
+    color: #666;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin: 0.5rem;
+  }
+
+  .notes-content {
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .sleep-list {
+    padding: 1rem;
+  }
+
+  .sleep-item {
+    padding: 1rem;
+
+    &__date {
+      font-size: 0.9rem;
+    }
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    &__actions {
+      align-self: flex-end;
+    }
+  }
+
+  .sleep-detail {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+
+    .detail-value {
+      text-align: left;
+    }
+  }
+
+  .sleep-quality {
+    font-size: 0.85rem;
+  }
+}
