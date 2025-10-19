@@ -1,0 +1,29 @@
+.sleep-quality-trend-chart {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .chart-title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .chart-average {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #8884d8;
+    padding: 0.5rem 1rem;
+    background: #f0f0ff;
+    border-radius: 8px;
+  }
+}

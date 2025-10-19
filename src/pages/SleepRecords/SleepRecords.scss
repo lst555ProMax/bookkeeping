@@ -50,19 +50,74 @@
     padding: 0 1rem;
   }
 
-  &__stats {
+  &__overview {
     max-width: 1200px;
     margin: 2rem auto;
     padding: 0 1rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
   }
 
   &__charts {
     max-width: 1200px;
     margin: 2rem auto;
     padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+
+.overview-card {
+  background: white;
+  border-radius: 16px;
+  padding: 0.5rem 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  justify-content: center;
+
+  .overview-icon {
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  .overview-content {
+    text-align: center;
+  }
+
+  .overview-label {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+
+  .overview-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+  }
+}
+
+.chart-with-stats {
+  position: relative;
+
+  .chart-header-stats {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    z-index: 10;
+
+    .stat-item {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #666;
+      padding: 0.5rem 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
   }
 }
 

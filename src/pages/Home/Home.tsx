@@ -7,7 +7,8 @@ import {
   exportExpenses, importExpenses, validateImportFile,
   loadSleepRecords, addSleepRecord, deleteSleepRecord, updateSleepRecord,
   exportSleepRecords, importSleepRecords, validateSleepImportFile,
-  getCategories, getIncomeCategories
+  getCategories, getIncomeCategories,
+  clearAllExpenses, clearAllSleepRecords
 } from '@/utils';
 import './Home.scss';
 
@@ -259,6 +260,30 @@ const Home: React.FC = () => {
     setBusinessMode(mode);
   };
 
+  // === 清除数据功能 ===
+  
+  // 清除记账数据
+  const handleClearAccountingData = () => {
+    const message = `⚠️ 警告：此操作将清空所有记账数据！\n\n当前数据：\n• 支出记录：${expenses.length} 条\n• 收入记录：${incomes.length} 条\n\n此操作不可恢复，确定要清空吗？`;
+    
+    if (window.confirm(message)) {
+      const result = clearAllExpenses();
+      loadData(); // 重新加载数据
+      alert(`已清空数据！\n支出记录：${result.expenses} 条\n收入记录：${result.incomes} 条`);
+    }
+  };
+
+  // 清除睡眠记录
+  const handleClearSleepData = () => {
+    const message = `⚠️ 警告：此操作将清空所有睡眠记录！\n\n当前数据：\n• 睡眠记录：${sleepRecords.length} 条\n\n此操作不可恢复，确定要清空吗？`;
+    
+    if (window.confirm(message)) {
+      const count = clearAllSleepRecords();
+      loadData(); // 重新加载数据
+      alert(`已清空 ${count} 条睡眠记录！`);
+    }
+  };
+
   // === 睡眠记录导入导出功能 ===
 
   // 导出睡眠记录
@@ -367,6 +392,12 @@ const Home: React.FC = () => {
                 >
                   {isImporting ? '📥 导入中...' : '📥 导入数据'}
                 </button>
+                <button 
+                  className="quick-action-btn quick-action-btn--danger" 
+                  onClick={handleClearAccountingData}
+                >
+                  🗑️ 清空数据
+                </button>
               </div>
 
               {/* 隐藏的文件输入 */}
@@ -419,6 +450,7 @@ const Home: React.FC = () => {
                     <div className="income-list-container">
                       <CategoryFilter
                         title="收入记录"
+                        theme="income"
                         categories={getIncomeCategories()}
                         selectedCategories={selectedIncomeCategories}
                         onCategoryChange={setSelectedIncomeCategories}
@@ -453,6 +485,12 @@ const Home: React.FC = () => {
                   disabled={isImportingSleep}
                 >
                   {isImportingSleep ? '📥 导入中...' : '📥 导入睡眠记录'}
+                </button>
+                <button 
+                  className="quick-action-btn quick-action-btn--danger" 
+                  onClick={handleClearSleepData}
+                >
+                  🗑️ 清空数据
                 </button>
               </div>
 

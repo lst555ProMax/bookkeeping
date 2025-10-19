@@ -249,12 +249,27 @@ export const validateImportFile = (file: File): string | null => {
 };
 
 /**
- * 清空所有数据（谨慎使用）
+ * 清空所有记账数据（谨慎使用）
  */
-export const clearAllExpenses = (): number => {
+export const clearAllExpenses = (): { expenses: number; incomes: number } => {
   const expenses = loadExpenses();
-  const count = expenses.length;
-  localStorage.removeItem('bookkeeping-expenses');
+  const incomes = loadIncomes();
+  const expenseCount = expenses.length;
+  const incomeCount = incomes.length;
+  
+  localStorage.removeItem('bookkeeping_expenses');
+  localStorage.removeItem('bookkeeping_incomes');
+  
+  return { expenses: expenseCount, incomes: incomeCount };
+};
+
+/**
+ * 清空所有睡眠记录（谨慎使用）
+ */
+export const clearAllSleepRecords = (): number => {
+  const records = loadSleepRecords();
+  const count = records.length;
+  localStorage.removeItem('sleep_records');
   return count;
 };
 

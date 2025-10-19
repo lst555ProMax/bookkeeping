@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MonthSelector, SleepTimeTrendChart, SleepDurationTrendChart } from '@/components';
+import { MonthSelector, SleepTimeTrendChart, SleepDurationTrendChart, SleepQualityTrendChart } from '@/components';
 import { getMonthSleepStats, getMonthSleepTrend, formatSleepDuration } from '@/utils';
 import './SleepRecords.scss';
 
@@ -17,6 +17,12 @@ const SleepRecords: React.FC = () => {
 
   // 获取趋势数据
   const trendData = getMonthSleepTrend(year, month);
+
+  // 准备睡眠质量数据
+  const qualityData = trendData.map(item => ({
+    date: item.date,
+    quality: item.quality
+  }));
 
   // 返回首页
   const goToHome = () => {
@@ -42,45 +48,13 @@ const SleepRecords: React.FC = () => {
         />
       </div>
 
-      {/* 统计卡片 */}
-      <div className="sleep-records__stats">
-        <div className="stat-card">
-          <div className="stat-icon">📊</div>
-          <div className="stat-content">
-            <div className="stat-label">本月记录天数</div>
-            <div className="stat-value">{stats.totalRecords} 天</div>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon">🌙</div>
-          <div className="stat-content">
-            <div className="stat-label">平均入睡时间</div>
-            <div className="stat-value">{stats.averageSleepTime}</div>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon">☀️</div>
-          <div className="stat-content">
-            <div className="stat-label">平均醒来时间</div>
-            <div className="stat-value">{stats.averageWakeTime}</div>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon">⏱️</div>
-          <div className="stat-content">
-            <div className="stat-label">平均睡眠时长</div>
-            <div className="stat-value">{formatSleepDuration(stats.averageDuration)}</div>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon">💯</div>
-          <div className="stat-content">
-            <div className="stat-label">平均睡眠质量</div>
-            <div className="stat-value">{stats.averageQuality} 分</div>
+      {/* 统计概览卡片 */}
+      <div className="sleep-records__overview">
+        <div className="overview-card">
+          <div className="overview-icon">📊</div>
+          <div className="overview-content">
+            <div className="overview-label">本月记录天数</div>
+            <div className="overview-value">{stats.totalRecords} 天</div>
           </div>
         </div>
       </div>
@@ -88,10 +62,27 @@ const SleepRecords: React.FC = () => {
       {/* 图表区域 */}
       <div className="sleep-records__charts">
         {/* 入睡与醒来时间趋势 */}
-        <SleepTimeTrendChart data={trendData} />
+        <div className="chart-with-stats">
+          <div className="chart-header-stats">
+            <span className="stat-item">🌙 平均入睡：{stats.averageSleepTime}</span>
+            <span className="stat-item">☀️ 平均醒来：{stats.averageWakeTime}</span>
+          </div>
+          <SleepTimeTrendChart data={trendData} />
+        </div>
 
         {/* 睡眠时长趋势 */}
-        <SleepDurationTrendChart data={trendData} />
+        <div className="chart-with-stats">
+          <div className="chart-header-stats">
+            <span className="stat-item">⏱️ 平均时长：{formatSleepDuration(stats.averageDuration)}</span>
+          </div>
+          <SleepDurationTrendChart data={trendData} />
+        </div>
+
+        {/* 睡眠质量趋势 */}
+        <SleepQualityTrendChart 
+          data={qualityData}
+          averageQuality={stats.averageQuality}
+        />
       </div>
     </div>
   );

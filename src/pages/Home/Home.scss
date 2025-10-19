@@ -144,6 +144,15 @@ body {
           box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
         }
       }
+
+      &--danger {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+
+        &:hover:not(:disabled) {
+          box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        }
+      }
     }
   }
 

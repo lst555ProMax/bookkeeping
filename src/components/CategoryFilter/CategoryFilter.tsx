@@ -7,6 +7,7 @@ interface CategoryFilterProps {
   onCategoryChange: (categories: string[]) => void;
   title?: string; // 可选标题
   totalAmount?: number; // 可选总金额
+  theme?: 'expense' | 'income'; // 主题：支出（紫色）或收入（绿色）
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
@@ -14,7 +15,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   selectedCategories,
   onCategoryChange,
   title,
-  totalAmount
+  totalAmount,
+  theme = 'expense'
 }) => {
   // 全选
   const handleSelectAll = () => {
@@ -39,11 +41,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const isNoneSelected = selectedCategories.length === 0;
 
   return (
-    <div className="category-filter">
+    <div className={`category-filter category-filter--${theme}`}>
       <div className="category-filter__header">
         {title && (
           <div className="category-filter__title-group">
-            <div className="category-filter__title">{title}</div>
+            <h3 className="category-filter__title">{title}</h3>
             {totalAmount !== undefined && (
               <span className="category-filter__total">¥{totalAmount.toFixed(2)}</span>
             )}
