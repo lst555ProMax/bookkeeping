@@ -6,6 +6,25 @@
   margin-bottom: 0; /* 移除外边距 */
   max-width: none; /* 移除最大宽度限制 */
 
+  // 主题变量
+  --theme-color-start: #667eea;
+  --theme-color-end: #764ba2;
+  --theme-color-rgb: 102, 126, 234;
+
+  // 收入模式主题（绿色）
+  &.theme-income {
+    --theme-color-start: #43bc8e;
+    --theme-color-end: #2d8a64;
+    --theme-color-rgb: 67, 188, 142;
+  }
+
+  // 编辑模式主题（蓝色）
+  &.theme-edit {
+    --theme-color-start: #4a90e2;
+    --theme-color-end: #357abd;
+    --theme-color-rgb: 74, 144, 226;
+  }
+
   &__header {
     display: flex;
     align-items: center;
@@ -19,7 +38,7 @@
     font-size: 1.6rem;
     text-align: left;
     font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--theme-color-start) 0%, var(--theme-color-end) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -75,10 +94,10 @@
     min-width: 48px;
 
     &:hover {
-      border-color: #667eea;
+      border-color: var(--theme-color-start);
       background: #f0f0f0;
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+      box-shadow: 0 4px 12px rgba(var(--theme-color-rgb), 0.15);
     }
 
     &:active {
@@ -108,10 +127,10 @@
 
     &:focus {
       outline: none;
-      border-color: #667eea;
-      background: #43bc8e;
+      border-color: var(--theme-color-start);
+      background: #ffffff;
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+      box-shadow: 0 4px 12px rgba(var(--theme-color-rgb), 0.15);
     }
 
     &::placeholder {
@@ -126,7 +145,7 @@
   }
 
   &__submit {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--theme-color-start) 0%, var(--theme-color-end) 100%);
     color: white;
     padding: 1.1rem;
     border: none;
@@ -135,12 +154,12 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(var(--theme-color-rgb), 0.3);
     flex: 1;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 6px 25px rgba(var(--theme-color-rgb), 0.4);
     }
 
     &:active {

@@ -1,0 +1,135 @@
+.category-filter {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  &__title-group {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  &__total {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__controls {
+    display: flex;
+    gap: 0.5rem;
+
+    .control-btn {
+      padding: 0.4rem 1rem;
+      border: 1px solid #e0e0e0;
+      background: white;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #666;
+
+      &:hover {
+        background: #f5f5f5;
+        border-color: #667eea;
+      }
+
+      &--active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+      }
+    }
+  }
+
+  &__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+  user-select: none;
+
+  &:hover {
+    background: #f9f9f9;
+    border-color: #667eea;
+  }
+
+  input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: #667eea;
+    
+    // 自定义复选框样式
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid #999;
+    border-radius: 3px;
+    background-color: white;
+    position: relative;
+    
+    &:checked {
+      background-color: #667eea;
+      border-color: #667eea;
+      
+      &::after {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+    
+    &:hover {
+      border-color: #667eea;
+    }
+  }
+
+  .category-name {
+    font-size: 0.9rem;
+    color: #555;
+  }
+
+  &:has(input:checked) {
+    background: #e8ebfa;
+    border-color: #667eea;
+
+    .category-name {
+      color: #667eea;
+      font-weight: 500;
+    }
+  }
+}

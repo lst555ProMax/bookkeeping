@@ -16,25 +16,26 @@ const SleepForm: React.FC<SleepFormProps> = ({
   onCancelEdit,
   editingSleep
 }) => {
-  // 获取默认日期（本月1号）
+  // 获取默认日期（今天）
   const getDefaultDate = () => {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
-    return `${year}-${month}-01`;
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const [date, setDate] = useState(getDefaultDate());
   const [sleepTime, setSleepTime] = useState('00:00');
   const [wakeTime, setWakeTime] = useState('08:00');
-  const [quality, setQuality] = useState<number>(80);
+  const [quality, setQuality] = useState<string>('80');
   const [notes, setNotes] = useState('');
 
   const resetForm = () => {
     setDate(getDefaultDate());
     setSleepTime('00:00');
     setWakeTime('08:00');
-    setQuality(80);
+    setQuality('80');
     setNotes('');
   };
 
@@ -44,7 +45,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
       setDate(editingSleep.date);
       setSleepTime(editingSleep.sleepTime);
       setWakeTime(editingSleep.wakeTime);
-      setQuality(editingSleep.quality);
+      setQuality(String(editingSleep.quality));
       setNotes(editingSleep.notes || '');
     } else {
       resetForm();
@@ -70,7 +71,8 @@ const SleepForm: React.FC<SleepFormProps> = ({
     }
 
     // 验证质量分数范围
-    if (quality < 0 || quality > 100) {
+    const qualityNum = Number(quality);
+    if (!quality || isNaN(qualityNum) || qualityNum < 0 || qualityNum > 100) {
       alert('睡眠质量分数必须在0-100之间');
       return;
     }
@@ -83,7 +85,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
       date,
       sleepTime,
       wakeTime,
-      quality,
+      quality: qualityNum,
       duration,
       notes: notes.trim() || undefined,
       createdAt: editingSleep?.createdAt || new Date()
@@ -162,7 +164,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
             type="number"
             id="quality"
             value={quality}
-            onChange={(e) => setQuality(Number(e.target.value))}
+            onChange={(e) => setQuality(e.target.value)}
             min="0"
             max="100"
             placeholder="输入手环监测的睡眠质量分数"

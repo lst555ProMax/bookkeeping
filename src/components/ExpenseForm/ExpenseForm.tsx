@@ -37,6 +37,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   const isEditing = !!(editingExpense || editingIncome);
   const currentCategories = recordType === RecordType.EXPENSE ? expenseCategories : incomeCategories;
 
+  // 动态确定主题类
+  const getThemeClass = () => {
+    if (isEditing) return 'theme-edit'; // 编辑模式：蓝色
+    if (recordType === RecordType.INCOME) return 'theme-income'; // 收入模式：绿色
+    return 'theme-expense'; // 支出模式：紫色（默认）
+  };
+
   useEffect(() => {
     const loadCategoriesEffect = () => {
       const loadedExpenseCategories = getCategories();
@@ -164,7 +171,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   };
 
   return (
-    <form className="expense-form" onSubmit={handleSubmit}>
+    <form className={`expense-form ${getThemeClass()}`} onSubmit={handleSubmit}>
       <div className="expense-form__header">
         <h2 className="expense-form__title">
           {isEditing 

@@ -30,7 +30,6 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onDeleteExpense, on
   if (expenses.length === 0) {
     return (
       <div className="expense-list">
-        <h2 className="expense-list__title">支出记录</h2>
         <div className="expense-list--empty">
           <p>还没有支出记录，快来添加第一笔吧！</p>
         </div>
@@ -40,7 +39,6 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onDeleteExpense, on
 
   return (
     <div className="expense-list">
-      <h2 className="expense-list__title">支出记录</h2>
       <div className="expense-list__scroll-content">
         {sortedDates.map(date => {
           const dayRecords = groupedExpenses[date];
@@ -78,7 +76,7 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, onDeleteExpense, on
                           onClick={() => onDeleteExpense(record.id)}
                           title="删除记录"
                         >
-                          ×
+                          🗑️
                         </button>
                       </div>
                     </div>

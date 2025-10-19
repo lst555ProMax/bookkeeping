@@ -30,7 +30,6 @@ const IncomeList: React.FC<IncomeListProps> = ({ incomes, onDeleteIncome, onEdit
   if (incomes.length === 0) {
     return (
       <div className="income-list">
-        <h2 className="income-list__title">收入记录</h2>
         <div className="income-list--empty">
           <p>还没有收入记录，快来添加第一笔吧！</p>
         </div>
@@ -40,7 +39,6 @@ const IncomeList: React.FC<IncomeListProps> = ({ incomes, onDeleteIncome, onEdit
 
   return (
     <div className="income-list">
-      <h2 className="income-list__title">收入记录</h2>
       <div className="income-list__scroll-content">
         {sortedDates.map(date => {
           const dayRecords = groupedIncomes[date];
@@ -78,7 +76,7 @@ const IncomeList: React.FC<IncomeListProps> = ({ incomes, onDeleteIncome, onEdit
                           onClick={() => onDeleteIncome(record.id)}
                           title="删除记录"
                         >
-                          ×
+                          🗑️
                         </button>
                       </div>
                     </div>

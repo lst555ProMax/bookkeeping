@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ExpenseForm, ExpenseList, IncomeList, CategoryManager, SleepForm, SleepList } from '@/components';
+import { ExpenseForm, ExpenseList, IncomeList, CategoryManager, SleepForm, SleepList, CategoryFilter } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
   loadIncomes, addIncome, deleteIncome, updateIncome,
   exportExpenses, importExpenses, validateImportFile,
   loadSleepRecords, addSleepRecord, deleteSleepRecord, updateSleepRecord,
-  exportSleepRecords, importSleepRecords, validateSleepImportFile
+  exportSleepRecords, importSleepRecords, validateSleepImportFile,
+  getCategories, getIncomeCategories
 } from '@/utils';
 import './Home.scss';
 
@@ -30,6 +31,18 @@ const Home: React.FC = () => {
   const [editingSleep, setEditingSleep] = useState<SleepRecord | null>(null);
   const [isImportingSleep, setIsImportingSleep] = useState(false);
   const sleepFileInputRef = useRef<HTMLInputElement>(null);
+
+  // 分类筛选状态
+  const [selectedExpenseCategories, setSelectedExpenseCategories] = useState<string[]>([]);
+  const [selectedIncomeCategories, setSelectedIncomeCategories] = useState<string[]>([]);
+
+  // 初始化分类筛选（默认全选）
+  useEffect(() => {
+    const expenseCategories = getCategories();
+    const incomeCategories = getIncomeCategories();
+    setSelectedExpenseCategories(expenseCategories);
+    setSelectedIncomeCategories(incomeCategories);
+  }, [categoriesKey]); // 当分类变化时重新初始化
 
   // 加载存储的支出和收入记录
   const loadData = () => {
@@ -357,9 +370,17 @@ const Home: React.FC = () => {
                   <div className="records-container">
                     {/* 支出记录列表 */}
                     <div className="expense-list-container">
-                      <h3>支出记录</h3>
+                      <CategoryFilter
+                        title="支出记录"
+                        categories={getCategories()}
+                        selectedCategories={selectedExpenseCategories}
+                        onCategoryChange={setSelectedExpenseCategories}
+                        totalAmount={expenses
+                          .filter(e => selectedExpenseCategories.includes(e.category))
+                          .reduce((sum, e) => sum + e.amount, 0)}
+                      />
                       <ExpenseList 
-                        expenses={expenses} 
+                        expenses={expenses.filter(e => selectedExpenseCategories.includes(e.category))} 
                         onDeleteExpense={handleDeleteExpense}
                         onEditExpense={handleEditExpense}
                       />
@@ -382,9 +403,17 @@ const Home: React.FC = () => {
                     
                     {/* 收入记录列表 */}
                     <div className="income-list-container">
-                      <h3>收入记录</h3>
+                      <CategoryFilter
+                        title="收入记录"
+                        categories={getIncomeCategories()}
+                        selectedCategories={selectedIncomeCategories}
+                        onCategoryChange={setSelectedIncomeCategories}
+                        totalAmount={incomes
+                          .filter(i => selectedIncomeCategories.includes(i.category))
+                          .reduce((sum, i) => sum + i.amount, 0)}
+                      />
                       <IncomeList 
-                        incomes={incomes} 
+                        incomes={incomes.filter(i => selectedIncomeCategories.includes(i.category))} 
                         onDeleteIncome={handleDeleteIncome}
                         onEditIncome={handleEditIncome}
                       />

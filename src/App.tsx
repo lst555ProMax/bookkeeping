@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Home, Records, SleepRecords } from '@/pages';
+import { getCurrentPath, findRouteByPath } from '@/router';
 import './App.scss';
 
 const App: React.FC = () => {
@@ -8,11 +9,11 @@ const App: React.FC = () => {
   // 监听hash变化来实现简单路由
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash === '#/records') {
-        setCurrentPage('records');
-      } else if (hash === '#/sleep-records') {
-        setCurrentPage('sleep-records');
+      const path = getCurrentPath();
+      const route = findRouteByPath(path);
+      
+      if (route) {
+        setCurrentPage(route.name);
       } else {
         setCurrentPage('home');
       }
@@ -34,8 +35,9 @@ const App: React.FC = () => {
     switch (currentPage) {
       case 'records':
         return <Records />;
-      case 'sleep-records':
+      case 'sleepRecords':
         return <SleepRecords />;
+      case 'home':
       default:
         return <Home />;
     }

@@ -16,10 +16,16 @@ export const formatDisplayDate = (dateString: string): string => {
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
   
+  // 格式化为 "10月19日"
+  const monthDay = date.toLocaleDateString('zh-CN', {
+    month: 'long',
+    day: 'numeric'
+  });
+  
   if (formatDate(date) === formatDate(today)) {
-    return '今天';
+    return `${monthDay} 今天`;
   } else if (formatDate(date) === formatDate(yesterday)) {
-    return '昨天';
+    return `${monthDay} 昨天`;
   } else {
     return date.toLocaleDateString('zh-CN', {
       month: 'long',
