@@ -2,6 +2,7 @@ import { ExpenseRecord, IncomeRecord, SleepRecord } from '@/types';
 import { loadExpenses, addExpense } from './storage';
 import { loadIncomes, addIncome } from './incomeStorage';
 import { loadSleepRecords, addSleepRecord } from './sleepStorage';
+import { getCategories, getIncomeCategories, addCategory, addIncomeCategory } from './categoryManager';
 
 /**
  * 导出数据接口
@@ -17,19 +18,21 @@ export interface ExportData {
 
 /**
  * 导出所有记录到JSON文件（包括支出和收入）
+ * @param expenses 可选的支出记录数组，如果不提供则导出所有支出记录
+ * @param incomes 可选的收入记录数组，如果不提供则导出所有收入记录
  */
-export const exportExpenses = (): void => {
+export const exportExpenses = (expenses?: ExpenseRecord[], incomes?: IncomeRecord[]): void => {
   try {
-    const expenses = loadExpenses();
-    const incomes = loadIncomes();
+    const expensesToExport = expenses || loadExpenses();
+    const incomesToExport = incomes || loadIncomes();
     
     const exportData: ExportData = {
       version: '2.0.0', // 更新版本号以支持收入
       exportDate: new Date().toISOString(),
-      expenses,
-      incomes,
-      totalExpenses: expenses.length,
-      totalIncomes: incomes.length
+      expenses: expensesToExport,
+      incomes: incomesToExport,
+      totalExpenses: expensesToExport.length,
+      totalIncomes: incomesToExport.length
     };
 
     // 创建JSON字符串
@@ -56,7 +59,7 @@ export const exportExpenses = (): void => {
     // 清理URL对象
     URL.revokeObjectURL(url);
     
-    console.log(`成功导出 ${expenses.length} 条支出记录和 ${incomes.length} 条收入记录`);
+    console.log(`成功导出 ${expensesToExport.length} 条支出记录和 ${incomesToExport.length} 条收入记录`);
   } catch (error) {
     console.error('导出失败:', error);
     throw new Error('导出数据失败，请重试');
@@ -86,6 +89,64 @@ export const importExpenses = (file: File): Promise<{
           // 验证数据格式
           if (!importData.expenses && !importData.incomes) {
             throw new Error('无效的数据格式：缺少expenses或incomes数组');
+          }
+          
+          // 检查缺失的分类
+          const currentExpenseCategories = getCategories();
+          const currentIncomeCategories = getIncomeCategories();
+          
+          const missingExpenseCategories = new Set<string>();
+          const missingIncomeCategories = new Set<string>();
+          
+          // 检查支出记录的分类
+          if (importData.expenses && Array.isArray(importData.expenses)) {
+            importData.expenses.forEach(expense => {
+              if (expense.category && !currentExpenseCategories.includes(expense.category)) {
+                missingExpenseCategories.add(expense.category);
+              }
+            });
+          }
+          
+          // 检查收入记录的分类
+          if (importData.incomes && Array.isArray(importData.incomes)) {
+            importData.incomes.forEach(income => {
+              if (income.category && !currentIncomeCategories.includes(income.category)) {
+                missingIncomeCategories.add(income.category);
+              }
+            });
+          }
+          
+          // 如果有缺失的分类，提示用户
+          const hasMissingCategories = missingExpenseCategories.size > 0 || missingIncomeCategories.size > 0;
+          
+          if (hasMissingCategories) {
+            let message = '导入的数据中有以下分类没有创建：\n\n';
+            
+            if (missingExpenseCategories.size > 0) {
+              message += '支出分类：' + Array.from(missingExpenseCategories).join('、') + '\n';
+            }
+            
+            if (missingIncomeCategories.size > 0) {
+              message += '收入分类：' + Array.from(missingIncomeCategories).join('、') + '\n';
+            }
+            
+            message += '\n是否创建这些分类并继续导入？';
+            
+            const userConfirmed = window.confirm(message);
+            
+            if (!userConfirmed) {
+              reject(new Error('用户取消导入'));
+              return;
+            }
+            
+            // 创建缺失的分类
+            missingExpenseCategories.forEach(category => {
+              addCategory(category);
+            });
+            
+            missingIncomeCategories.forEach(category => {
+              addIncomeCategory(category);
+            });
           }
           
           // 获取现有记录

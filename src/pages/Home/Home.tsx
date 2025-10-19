@@ -114,8 +114,17 @@ const Home: React.FC = () => {
   // 处理导出
   const handleExport = () => {
     try {
-      exportExpenses();
-      alert('数据导出成功！');
+      // 获取筛选后的记录
+      const filteredExpenses = expenses.filter(e => selectedExpenseCategories.includes(e.category));
+      const filteredIncomes = incomes.filter(i => selectedIncomeCategories.includes(i.category));
+      
+      // 显示确认提示
+      const message = `确定按照当前筛选记录进行导出吗？\n\n支出记录：${filteredExpenses.length} 条\n收入记录：${filteredIncomes.length} 条`;
+      
+      if (window.confirm(message)) {
+        exportExpenses(filteredExpenses, filteredIncomes);
+        alert('数据导出成功！');
+      }
     } catch (error) {
       alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
@@ -127,6 +136,7 @@ const Home: React.FC = () => {
     try {
       const result = await importExpenses(file);
       loadData(); // 重新加载数据
+      setCategoriesKey(prev => prev + 1); // 触发分类重新加载
       
       const totalImported = result.importedExpenses + result.importedIncomes;
       const totalSkipped = result.skippedExpenses + result.skippedIncomes;
@@ -254,8 +264,12 @@ const Home: React.FC = () => {
   // 导出睡眠记录
   const handleExportSleep = () => {
     try {
-      exportSleepRecords();
-      alert('睡眠记录导出成功！');
+      const message = `确定导出睡眠记录吗？\n\n总共 ${sleepRecords.length} 条记录`;
+      
+      if (window.confirm(message)) {
+        exportSleepRecords();
+        alert('睡眠记录导出成功！');
+      }
     } catch (error) {
       alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
