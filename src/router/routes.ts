@@ -34,10 +34,12 @@ export const routes: RouteConfig[] = [
 ];
 
 /**
- * 获取当前路由路径
+ * 获取当前路由路径（不包含查询参数）
  */
 export const getCurrentPath = (): string => {
-  return window.location.hash.slice(1) || '/';
+  const hash = window.location.hash.slice(1) || '/';
+  // 移除查询参数
+  return hash.split('?')[0];
 };
 
 /**

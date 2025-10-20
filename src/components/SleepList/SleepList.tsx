@@ -7,9 +7,24 @@ interface SleepListProps {
   sleeps: SleepRecord[];
   onDeleteSleep: (id: string) => void;
   onEditSleep: (sleep: SleepRecord) => void;
+  // 操作按钮相关
+  onViewDashboard?: () => void;
+  onExport?: () => void;
+  onImport?: () => void;
+  onClear?: () => void;
+  isImporting?: boolean;
 }
 
-const SleepList: React.FC<SleepListProps> = ({ sleeps, onDeleteSleep, onEditSleep }) => {
+const SleepList: React.FC<SleepListProps> = ({ 
+  sleeps, 
+  onDeleteSleep, 
+  onEditSleep,
+  onViewDashboard,
+  onExport,
+  onImport,
+  onClear,
+  isImporting = false
+}) => {
   // 按日期排序（最新的在前）
   const sortedSleeps = [...sleeps].sort((a, b) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -52,6 +67,51 @@ const SleepList: React.FC<SleepListProps> = ({ sleeps, onDeleteSleep, onEditSlee
   if (sleeps.length === 0) {
     return (
       <div className="sleep-list">
+        {/* 标题和操作按钮区域 */}
+        <div className="sleep-list__header">
+          <h3 className="sleep-list__title">睡眠记录</h3>
+          {(onViewDashboard || onExport || onImport || onClear) && (
+            <div className="sleep-list__actions">
+              {onViewDashboard && (
+                <button 
+                  className="action-icon-btn" 
+                  onClick={onViewDashboard}
+                  title="查看数据面板"
+                >
+                  📊
+                </button>
+              )}
+              {onExport && (
+                <button 
+                  className="action-icon-btn action-icon-btn--export" 
+                  onClick={onExport}
+                  title="导出数据"
+                >
+                  📤
+                </button>
+              )}
+              {onImport && (
+                <button 
+                  className="action-icon-btn action-icon-btn--import" 
+                  onClick={onImport}
+                  disabled={isImporting}
+                  title={isImporting ? "导入中..." : "导入数据"}
+                >
+                  📥
+                </button>
+              )}
+              {onClear && (
+                <button 
+                  className="action-icon-btn action-icon-btn--danger" 
+                  onClick={onClear}
+                  title="清空数据"
+                >
+                  🗑️
+                </button>
+              )}
+            </div>
+          )}
+        </div>
         <div className="sleep-list__empty">
           <div className="empty-icon">🌙</div>
           <p>还没有睡眠记录</p>
@@ -63,6 +123,51 @@ const SleepList: React.FC<SleepListProps> = ({ sleeps, onDeleteSleep, onEditSlee
 
   return (
     <div className="sleep-list">
+      {/* 标题和操作按钮区域 */}
+      <div className="sleep-list__header">
+        <h3 className="sleep-list__title">睡眠记录</h3>
+        {(onViewDashboard || onExport || onImport || onClear) && (
+          <div className="sleep-list__actions">
+            {onViewDashboard && (
+              <button 
+                className="action-icon-btn" 
+                onClick={onViewDashboard}
+                title="查看数据面板"
+              >
+                📊
+              </button>
+            )}
+            {onExport && (
+              <button 
+                className="action-icon-btn action-icon-btn--export" 
+                onClick={onExport}
+                title="导出数据"
+              >
+                📤
+              </button>
+            )}
+            {onImport && (
+              <button 
+                className="action-icon-btn action-icon-btn--import" 
+                onClick={onImport}
+                disabled={isImporting}
+                title={isImporting ? "导入中..." : "导入数据"}
+              >
+                📥
+              </button>
+            )}
+            {onClear && (
+              <button 
+                className="action-icon-btn action-icon-btn--danger" 
+                onClick={onClear}
+                title="清空数据"
+              >
+                🗑️
+              </button>
+            )}
+          </div>
+        )}
+      </div>
       {sortedSleeps.map((sleep) => (
         <div key={sleep.id} className="sleep-item">
           <div className="sleep-item__header">

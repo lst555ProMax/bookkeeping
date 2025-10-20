@@ -24,9 +24,9 @@ const SleepRecords: React.FC = () => {
     quality: item.quality
   }));
 
-  // 返回首页
+  // 返回首页（切换到睡眠记录模式）
   const goToHome = () => {
-    window.location.hash = '#/';
+    window.location.hash = '#/?mode=sleep';
   };
 
   return (
@@ -40,49 +40,51 @@ const SleepRecords: React.FC = () => {
         <p>查看你的睡眠统计与趋势分析</p>
       </header>
 
-      {/* 月份选择器 */}
-      <div className="sleep-records__month-selector">
-        <MonthSelector
-          selectedMonth={selectedMonth}
-          onMonthChange={setSelectedMonth}
-        />
-      </div>
-
-      {/* 统计概览卡片 */}
-      <div className="sleep-records__overview">
-        <div className="overview-card">
-          <div className="overview-icon">📊</div>
-          <div className="overview-content">
-            <div className="overview-label">本月记录天数</div>
-            <div className="overview-value">{stats.totalRecords} 天</div>
-          </div>
-        </div>
-      </div>
-
-      {/* 图表区域 */}
-      <div className="sleep-records__charts">
-        {/* 入睡与醒来时间趋势 */}
-        <div className="chart-with-stats">
-          <div className="chart-header-stats">
-            <span className="stat-item">🌙 平均入睡：{stats.averageSleepTime}</span>
-            <span className="stat-item">☀️ 平均醒来：{stats.averageWakeTime}</span>
-          </div>
-          <SleepTimeTrendChart data={trendData} />
+      <div className="sleep-records__content">
+        {/* 月份选择器 */}
+        <div className="sleep-records__month-selector">
+          <MonthSelector
+            selectedMonth={selectedMonth}
+            onMonthChange={setSelectedMonth}
+          />
         </div>
 
-        {/* 睡眠时长趋势 */}
-        <div className="chart-with-stats">
-          <div className="chart-header-stats">
-            <span className="stat-item">⏱️ 平均时长：{formatSleepDuration(stats.averageDuration)}</span>
+        {/* 统计概览卡片 */}
+        <div className="sleep-records__overview">
+          <div className="overview-card">
+            <div className="overview-icon">📊</div>
+            <div className="overview-content">
+              <div className="overview-label">本月记录天数</div>
+              <div className="overview-value">{stats.totalRecords} 天</div>
+            </div>
           </div>
-          <SleepDurationTrendChart data={trendData} />
         </div>
 
-        {/* 睡眠质量趋势 */}
-        <SleepQualityTrendChart 
-          data={qualityData}
-          averageQuality={stats.averageQuality}
-        />
+        {/* 图表区域 */}
+        <div className="sleep-records__charts">
+          {/* 入睡与醒来时间趋势 */}
+          <div className="chart-with-stats">
+            <div className="chart-header-stats">
+              <span className="stat-item">🌙 平均入睡：{stats.averageSleepTime}</span>
+              <span className="stat-item">☀️ 平均醒来：{stats.averageWakeTime}</span>
+            </div>
+            <SleepTimeTrendChart data={trendData} />
+          </div>
+
+          {/* 睡眠时长趋势 */}
+          <div className="chart-with-stats">
+            <div className="chart-header-stats">
+              <span className="stat-item">⏱️ 平均时长：{formatSleepDuration(stats.averageDuration)}</span>
+            </div>
+            <SleepDurationTrendChart data={trendData} />
+          </div>
+
+          {/* 睡眠质量趋势 */}
+          <SleepQualityTrendChart 
+            data={qualityData}
+            averageQuality={stats.averageQuality}
+          />
+        </div>
       </div>
     </div>
   );

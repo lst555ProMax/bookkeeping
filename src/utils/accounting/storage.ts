@@ -104,3 +104,27 @@ export const clearAllAccountingData = (): { expenses: number; incomes: number } 
   
   return { expenses: expenseCount, incomes: incomeCount };
 };
+
+/**
+ * 只清空支出数据
+ */
+export const clearExpensesOnly = (): number => {
+  const expenses = loadExpenses();
+  const count = expenses.length;
+  
+  localStorage.removeItem(EXPENSE_STORAGE_KEY);
+  
+  return count;
+};
+
+/**
+ * 只清空收入数据
+ */
+export const clearIncomesOnly = (): number => {
+  const incomes = loadIncomes();
+  const count = incomes.length;
+  
+  localStorage.removeItem(INCOME_STORAGE_KEY);
+  
+  return count;
+};

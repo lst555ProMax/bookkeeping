@@ -48,23 +48,49 @@ const RecordForm: React.FC<RecordFormProps> = ({
     const loadCategoriesEffect = () => {
       const loadedExpenseCategories = getCategories();
       const loadedIncomeCategories = getIncomeCategories();
+      
+      // 保存旧的分类列表用于比对
+      const oldExpenseCategories = expenseCategories;
+      const oldIncomeCategories = incomeCategories;
+      
       setExpenseCategories(loadedExpenseCategories);
       setIncomeCategories(loadedIncomeCategories);
       
-      // 只有在分类列表为空或当前分类确实不存在时才重置
+      // 在编辑模式下，不自动重置分类
+      // 因为记录的分类已经在 categoryManager 中被更新了
+      if (isEditing) {
+        return;
+      }
+      
+      // 非编辑模式下，智能处理分类变化
       if (recordType === RecordType.EXPENSE) {
+        // 如果当前分类不在新列表中
         if (loadedExpenseCategories.length > 0 && !loadedExpenseCategories.includes(category as ExpenseCategory)) {
-          setCategory(loadedExpenseCategories[0] || '其他');
+          // 尝试找到被重命名的分类（通过索引位置）
+          const oldIndex = oldExpenseCategories.indexOf(category as ExpenseCategory);
+          if (oldIndex !== -1 && oldIndex < loadedExpenseCategories.length) {
+            // 如果索引位置有效，使用新列表中相同位置的分类（可能是重命名的）
+            setCategory(loadedExpenseCategories[oldIndex]);
+          } else {
+            // 否则选择"其他"分类（永远存在且不会被删除）
+            setCategory('其他');
+          }
         }
       } else {
+        // 收入分类同样处理
         if (loadedIncomeCategories.length > 0 && !loadedIncomeCategories.includes(category as IncomeCategory)) {
-          setCategory(loadedIncomeCategories[0] || '其他');
+          const oldIndex = oldIncomeCategories.indexOf(category as IncomeCategory);
+          if (oldIndex !== -1 && oldIndex < loadedIncomeCategories.length) {
+            setCategory(loadedIncomeCategories[oldIndex]);
+          } else {
+            setCategory('其他');
+          }
         }
       }
     };
     loadCategoriesEffect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoriesKey, recordType]); // 故意移除 category 依赖，避免循环更新
+  }, [categoriesKey, recordType]); // 故意移除 category 和 isEditing 依赖，避免循环更新
 
   // 当编辑状态变化时，更新表单数据
   useEffect(() => {
@@ -91,7 +117,8 @@ const RecordForm: React.FC<RecordFormProps> = ({
         setCategory(incomeCategories[0] || '工资收入');
       }
     }
-  }, [editingExpense, editingIncome, expenseCategories, incomeCategories, recordType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingExpense, editingIncome]); // 移除 expenseCategories, incomeCategories, recordType 依赖
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,13 +188,6 @@ const RecordForm: React.FC<RecordFormProps> = ({
   const handleToggleRecordType = () => {
     const newType = recordType === RecordType.EXPENSE ? RecordType.INCOME : RecordType.EXPENSE;
     setRecordType(newType);
-    
-    // 重置分类到新类型的默认分类
-    if (newType === RecordType.EXPENSE) {
-      setCategory(expenseCategories[0] || '餐饮');
-    } else {
-      setCategory(incomeCategories[0] || '工资收入');
-    }
   };
 
   return (

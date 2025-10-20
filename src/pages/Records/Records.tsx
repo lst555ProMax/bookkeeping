@@ -5,7 +5,12 @@ import { loadExpenses, loadIncomes, formatCurrency } from '@/utils';
 import './Records.scss';
 
 const Records: React.FC = () => {
-  const [recordType, setRecordType] = useState<RecordType>(RecordType.EXPENSE);
+  // 从 URL 参数读取初始类型
+  const [recordType, setRecordType] = useState<RecordType>(() => {
+    const params = new URLSearchParams(window.location.hash.split('?')[1]);
+    const type = params.get('type');
+    return type === 'income' ? RecordType.INCOME : RecordType.EXPENSE;
+  });
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [incomes, setIncomes] = useState<IncomeRecord[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
@@ -43,7 +48,7 @@ const Records: React.FC = () => {
     setRecordType(recordType === RecordType.EXPENSE ? RecordType.INCOME : RecordType.EXPENSE);
   };
 
-  // 返回首页
+  // 返回首页（保持在记账模式）
   const goToHome = () => {
     window.location.hash = '#/';
   };
@@ -116,6 +121,7 @@ const Records: React.FC = () => {
                     records={monthlyRecords}
                     recordType={recordType}
                     title={`${selectedMonth.split('-')[0]}年${selectedMonth.split('-')[1]}月${recordType === RecordType.EXPENSE ? '支出' : '收入'}分析`}
+                    totalAmount={totalAmount}
                   />
                 </div>
                 <div className="chart-item">

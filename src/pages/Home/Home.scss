@@ -16,7 +16,7 @@ body {
 }
 
 .home {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   background: #f5f7fa;
@@ -28,6 +28,7 @@ body {
     text-align: center;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
     position: relative;
+    flex-shrink: 0;
 
     h1 {
       font-size: 2.5rem;
@@ -82,7 +83,10 @@ body {
 
   &__main {
     flex: 1;
-    padding: 1rem 1rem;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 
   &__container {
@@ -91,86 +95,27 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-  }
-
-  &__quick-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    
-    .quick-action-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 1rem 2rem;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-      min-width: 140px;
-
-      &:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-      }
-
-      &:active:not(:disabled) {
-        transform: translateY(0);
-      }
-
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-      }
-
-      &--export {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-
-        &:hover:not(:disabled) {
-          box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-        }
-      }
-
-      &--import {
-        background: linear-gradient(135deg, #007bff 0%, #6f42c1 100%);
-        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-
-        &:hover:not(:disabled) {
-          box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
-        }
-      }
-
-      &--danger {
-        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-
-        &:hover:not(:disabled) {
-          box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
-        }
-      }
-    }
+    flex: 1;
+    width: 100%;
+    min-height: 0;
   }
 
   &__section-group {
     display: flex;
     flex-direction: row;
     gap: 2rem;
-    align-items: flex-start;
-    min-height: 70vh;
+    align-items: center;
+    flex: 1;
+    min-height: 0;
   }
 
   &__form-section {
     background: white;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
     flex: 0 0 400px; /* 固定宽度，不伸缩 */
     transition: all 0.3s ease;
+    align-self: center;
     
     &:hover {
       transform: translateY(-2px);
@@ -181,22 +126,24 @@ body {
   &__list-section {
     flex: 1;
     min-width: 0; /* 允许flex项目收缩 */
+    min-height: 0;
+    display: flex;
+    align-self: stretch;
     
     .records-container {
       display: flex;
       gap: 2rem;
-      height: 70vh; /* 固定高度 */
+      flex: 1;
+      min-height: 0;
     }
     
     .form-container {
       background: white;
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
       flex: 0 0 400px; /* 固定宽度 */
-      display: flex;
-      flex-direction: column;
       transition: all 0.3s ease;
+      align-self: center;
       
       &:hover {
         transform: translateY(-2px);
@@ -208,11 +155,11 @@ body {
       background: white;
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
       flex: 1; /* 等宽分布 */
       display: flex;
       flex-direction: column;
       transition: all 0.3s ease;
+      min-height: 0;
       
       &:hover {
         transform: translateY(-2px);
@@ -230,6 +177,7 @@ body {
       /* 列表滚动容器 */
       :global(.record-list) {
         flex: 1;
+        min-height: 0;
         overflow-y: auto;
         
         /* 自定义滚动条样式 */
@@ -257,23 +205,15 @@ body {
       background: white;
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
       display: flex;
       flex-direction: column;
       transition: all 0.3s ease;
-      height: 70vh;
+      min-height: 0;
+      flex: 1;
       
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-      }
-
-      h3 {
-        padding: 1.5rem 1.5rem 1rem;
-        margin: 0;
-        font-size: 1.3rem;
-        font-weight: 600;
-        border-bottom: 1px solid #f0f0f0;
       }
     }
   }
@@ -320,16 +260,6 @@ body {
         width: 100%;
       }
     }
-
-    &__quick-actions {
-      gap: 0.8rem;
-
-      .quick-action-btn {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-        min-width: 120px;
-      }
-    }
   }
 }
 
@@ -352,19 +282,6 @@ body {
       .mode-btn {
         width: 100%;
         padding: 0.7rem 1rem;
-      }
-    }
-
-    &__quick-actions {
-      flex-direction: column;
-      align-items: center;
-      gap: 0.8rem;
-
-      .quick-action-btn {
-        width: 100%;
-        max-width: 280px;
-        padding: 0.8rem 1rem;
-        font-size: 0.95rem;
       }
     }
   }

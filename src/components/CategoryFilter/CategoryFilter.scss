@@ -44,9 +44,58 @@
     background-clip: text;
   }
 
+  &__percentage {
+    font-size: 0.9rem;
+    font-weight: 600;
+    
+    .category-filter--expense & {
+      color: #667eea;
+    }
+    
+    .category-filter--income & {
+      color: #28a745;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+
+    .action-icon-btn {
+      padding: 0;
+      border: none;
+      background: transparent;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover:not(:disabled) {
+        transform: scale(1.2);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      }
+
+      &:active:not(:disabled) {
+        transform: scale(1.1);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+  }
+
   &__controls {
     display: flex;
     gap: 0.5rem;
+    justify-content: flex-start;
+    padding-top: 0.5rem;
+    border-top: 1px solid #f0f0f0;
 
     .control-btn {
       padding: 0.4rem 1rem;
@@ -75,6 +124,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 }
 

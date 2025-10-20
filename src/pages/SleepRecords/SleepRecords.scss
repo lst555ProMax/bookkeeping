@@ -1,7 +1,9 @@
 .sleep-records {
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: #f5f7fa;
-  padding-bottom: 2rem;
+  overflow: hidden;
 
   &__header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -9,6 +11,7 @@
     padding: 2rem 1rem;
     position: relative;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 
     .back-btn {
       position: absolute;
@@ -44,6 +47,12 @@
     }
   }
 
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
   &__month-selector {
     max-width: 1200px;
     margin: 2rem auto 0;
@@ -58,7 +67,7 @@
 
   &__charts {
     max-width: 1200px;
-    margin: 2rem auto;
+    margin: 2rem auto 2rem;
     padding: 0 1rem;
     display: flex;
     flex-direction: column;

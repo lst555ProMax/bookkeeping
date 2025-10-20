@@ -4,28 +4,36 @@ import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BusinessMode, BUS
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
   loadIncomes, addIncome, deleteIncome, updateIncome,
-  exportExpenses, importExpenses, validateImportFile,
+  exportExpensesOnly, exportIncomesOnly, 
+  importExpensesOnly, importIncomesOnly, 
+  validateImportFile,
   loadSleepRecords, addSleepRecord, deleteSleepRecord, updateSleepRecord,
   exportSleepRecords, importSleepRecords, validateSleepImportFile,
   getCategories, getIncomeCategories,
-  clearAllExpenses, clearAllSleepRecords
+  clearExpensesOnly, clearIncomesOnly, clearAllSleepRecords
 } from '@/utils';
 import './Home.scss';
 
 const Home: React.FC = () => {
-  // 业务模式状态
-  const [businessMode, setBusinessMode] = useState<BusinessMode>(BusinessMode.ACCOUNTING);
+  // 业务模式状态（从 URL 参数读取）
+  const [businessMode, setBusinessMode] = useState<BusinessMode>(() => {
+    const params = new URLSearchParams(window.location.hash.split('?')[1]);
+    const mode = params.get('mode');
+    return mode === 'sleep' ? BusinessMode.SLEEP : BusinessMode.ACCOUNTING;
+  });
   
   // 记账相关状态
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [incomes, setIncomes] = useState<IncomeRecord[]>([]);
-  const [isImporting, setIsImporting] = useState(false);
+  const [isImportingExpense, setIsImportingExpense] = useState(false);
+  const [isImportingIncome, setIsImportingIncome] = useState(false);
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [categoryManagerType, setCategoryManagerType] = useState<RecordType>(RecordType.EXPENSE);
   const [categoriesKey, setCategoriesKey] = useState(0);
   const [editingExpense, setEditingExpense] = useState<ExpenseRecord | null>(null);
   const [editingIncome, setEditingIncome] = useState<IncomeRecord | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const expenseFileInputRef = useRef<HTMLInputElement>(null);
+  const incomeFileInputRef = useRef<HTMLInputElement>(null);
 
   // 睡眠记录相关状态
   const [sleepRecords, setSleepRecords] = useState<SleepRecord[]>([]);
@@ -78,6 +86,7 @@ const Home: React.FC = () => {
   // 编辑收入
   const handleEditIncome = (income: IncomeRecord) => {
     setEditingIncome(income);
+    setEditingExpense(null); // 清除支出编辑状态
   };
 
   // 更新收入
@@ -102,9 +111,14 @@ const Home: React.FC = () => {
     }
   };
 
-  // 跳转到数据看板页面
-  const goToDashboard = () => {
-    window.location.hash = '#/records';
+  // 跳转到支出数据看板页面
+  const goToExpenseDashboard = () => {
+    window.location.hash = '#/records?type=expense';
+  };
+
+  // 跳转到收入数据看板页面
+  const goToIncomeDashboard = () => {
+    window.location.hash = '#/records?type=income';
   };
 
   // 跳转到睡眠数据面板页面
@@ -112,59 +126,46 @@ const Home: React.FC = () => {
     window.location.hash = '#/sleep-records';
   };
 
-  // 处理导出
-  const handleExport = () => {
+  // === 支出相关操作 ===
+  
+  // 处理支出导出
+  const handleExportExpenses = () => {
     try {
-      // 获取筛选后的记录
       const filteredExpenses = expenses.filter(e => selectedExpenseCategories.includes(e.category));
-      const filteredIncomes = incomes.filter(i => selectedIncomeCategories.includes(i.category));
       
-      // 显示确认提示
-      const message = `确定按照当前筛选记录进行导出吗？\n\n支出记录：${filteredExpenses.length} 条\n收入记录：${filteredIncomes.length} 条`;
+      const message = `确定导出支出记录吗？\n\n支出记录：${filteredExpenses.length} 条`;
       
       if (window.confirm(message)) {
-        exportExpenses(filteredExpenses, filteredIncomes);
-        alert('数据导出成功！');
+        exportExpensesOnly(filteredExpenses);
+        alert('支出数据导出成功！');
       }
     } catch (error) {
       alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
   };
 
-  // 处理导入
-  const handleImport = async (file: File) => {
-    setIsImporting(true);
+  // 处理支出导入
+  const handleImportExpenses = async (file: File) => {
+    setIsImportingExpense(true);
     try {
-      const result = await importExpenses(file);
+      const result = await importExpensesOnly(file);
       loadData(); // 重新加载数据
       setCategoriesKey(prev => prev + 1); // 触发分类重新加载
       
-      const totalImported = result.importedExpenses + result.importedIncomes;
-      const totalSkipped = result.skippedExpenses + result.skippedIncomes;
-      
-      let message = `导入完成！\n`;
-      if (result.importedExpenses > 0 || result.skippedExpenses > 0) {
-        message += `支出记录：新增 ${result.importedExpenses} 条，跳过 ${result.skippedExpenses} 条\n`;
-      }
-      if (result.importedIncomes > 0 || result.skippedIncomes > 0) {
-        message += `收入记录：新增 ${result.importedIncomes} 条，跳过 ${result.skippedIncomes} 条\n`;
-      }
-      message += `总计：新增 ${totalImported} 条，跳过 ${totalSkipped} 条`;
-      
+      const message = `导入完成！\n新增 ${result.imported} 条支出记录，跳过 ${result.skipped} 条重复记录`;
       alert(message);
     } catch (error) {
       alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
     } finally {
-      setIsImporting(false);
-      // 清空文件输入
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+      setIsImportingExpense(false);
+      if (expenseFileInputRef.current) {
+        expenseFileInputRef.current.value = '';
       }
     }
   };
 
-  // 处理文件选择
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // 处理支出文件选择
+  const handleExpenseFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -174,12 +175,91 @@ const Home: React.FC = () => {
       return;
     }
 
-    handleImport(file);
+    handleImportExpenses(file);
   };
 
-  // 触发文件选择
-  const triggerFileSelect = () => {
-    fileInputRef.current?.click();
+  // 触发支出文件选择
+  const triggerExpenseFileSelect = () => {
+    expenseFileInputRef.current?.click();
+  };
+
+  // 清空支出数据
+  const handleClearExpenses = () => {
+    const message = `⚠️ 警告：此操作将清空所有支出数据！\n\n当前支出记录：${expenses.length} 条\n\n此操作不可恢复，确定要清空吗？`;
+    
+    if (window.confirm(message)) {
+      const count = clearExpensesOnly();
+      loadData();
+      alert(`已清空 ${count} 条支出记录！`);
+    }
+  };
+
+  // === 收入相关操作 ===
+  
+  // 处理收入导出
+  const handleExportIncomes = () => {
+    try {
+      const filteredIncomes = incomes.filter(i => selectedIncomeCategories.includes(i.category));
+      
+      const message = `确定导出收入记录吗？\n\n收入记录：${filteredIncomes.length} 条`;
+      
+      if (window.confirm(message)) {
+        exportIncomesOnly(filteredIncomes);
+        alert('收入数据导出成功！');
+      }
+    } catch (error) {
+      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+    }
+  };
+
+  // 处理收入导入
+  const handleImportIncomes = async (file: File) => {
+    setIsImportingIncome(true);
+    try {
+      const result = await importIncomesOnly(file);
+      loadData(); // 重新加载数据
+      setCategoriesKey(prev => prev + 1); // 触发分类重新加载
+      
+      const message = `导入完成！\n新增 ${result.imported} 条收入记录，跳过 ${result.skipped} 条重复记录`;
+      alert(message);
+    } catch (error) {
+      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+    } finally {
+      setIsImportingIncome(false);
+      if (incomeFileInputRef.current) {
+        incomeFileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // 处理收入文件选择
+  const handleIncomeFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const validationError = validateImportFile(file);
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    handleImportIncomes(file);
+  };
+
+  // 触发收入文件选择
+  const triggerIncomeFileSelect = () => {
+    incomeFileInputRef.current?.click();
+  };
+
+  // 清空收入数据
+  const handleClearIncomes = () => {
+    const message = `⚠️ 警告：此操作将清空所有收入数据！\n\n当前收入记录：${incomes.length} 条\n\n此操作不可恢复，确定要清空吗？`;
+    
+    if (window.confirm(message)) {
+      const count = clearIncomesOnly();
+      loadData();
+      alert(`已清空 ${count} 条收入记录！`);
+    }
   };
 
   // 打开分类管理器
@@ -196,11 +276,32 @@ const Home: React.FC = () => {
   // 分类变化时刷新
   const handleCategoriesChange = () => {
     setCategoriesKey(prev => prev + 1);
+    // 重新加载数据，确保分类修改后的记录能正确显示
+    const updatedExpenses = loadExpenses();
+    const updatedIncomes = loadIncomes();
+    setExpenses(updatedExpenses);
+    setIncomes(updatedIncomes);
+    
+    // 如果正在编辑记录，需要同步更新编辑状态中的数据
+    if (editingExpense) {
+      const updatedEditingExpense = updatedExpenses.find(e => e.id === editingExpense.id);
+      if (updatedEditingExpense) {
+        setEditingExpense(updatedEditingExpense);
+      }
+    }
+    
+    if (editingIncome) {
+      const updatedEditingIncome = updatedIncomes.find(i => i.id === editingIncome.id);
+      if (updatedEditingIncome) {
+        setEditingIncome(updatedEditingIncome);
+      }
+    }
   };
 
   // 开始编辑支出记录
   const handleEditExpense = (expense: ExpenseRecord) => {
     setEditingExpense(expense);
+    setEditingIncome(null); // 清除收入编辑状态
   };
 
   // 取消编辑
@@ -262,17 +363,8 @@ const Home: React.FC = () => {
 
   // === 清除数据功能 ===
   
-  // 清除记账数据
-  const handleClearAccountingData = () => {
-    const message = `⚠️ 警告：此操作将清空所有记账数据！\n\n当前数据：\n• 支出记录：${expenses.length} 条\n• 收入记录：${incomes.length} 条\n\n此操作不可恢复，确定要清空吗？`;
-    
-    if (window.confirm(message)) {
-      const result = clearAllExpenses();
-      loadData(); // 重新加载数据
-      alert(`已清空数据！\n支出记录：${result.expenses} 条\n收入记录：${result.incomes} 条`);
-    }
-  };
-
+  // === 清除记账数据功能已移到各自的CategoryFilter中 ===
+  
   // 清除睡眠记录
   const handleClearSleepData = () => {
     const message = `⚠️ 警告：此操作将清空所有睡眠记录！\n\n当前数据：\n• 睡眠记录：${sleepRecords.length} 条\n\n此操作不可恢复，确定要清空吗？`;
@@ -377,35 +469,19 @@ const Home: React.FC = () => {
           {/* 根据业务模式渲染不同的内容 */}
           {businessMode === BusinessMode.ACCOUNTING ? (
             <>
-              {/* 快捷操作区 */}
-              <div className="home__quick-actions">
-                <button className="quick-action-btn" onClick={goToDashboard}>
-                  📊 查看数据看板
-                </button>
-                <button className="quick-action-btn quick-action-btn--export" onClick={handleExport}>
-                  📤 导出数据
-                </button>
-                <button 
-                  className="quick-action-btn quick-action-btn--import" 
-                  onClick={triggerFileSelect}
-                  disabled={isImporting}
-                >
-                  {isImporting ? '📥 导入中...' : '📥 导入数据'}
-                </button>
-                <button 
-                  className="quick-action-btn quick-action-btn--danger" 
-                  onClick={handleClearAccountingData}
-                >
-                  🗑️ 清空数据
-                </button>
-              </div>
-
               {/* 隐藏的文件输入 */}
               <input
-                ref={fileInputRef}
+                ref={expenseFileInputRef}
                 type="file"
                 accept=".json,application/json"
-                onChange={handleFileSelect}
+                onChange={handleExpenseFileSelect}
+                style={{ display: 'none' }}
+              />
+              <input
+                ref={incomeFileInputRef}
+                type="file"
+                accept=".json,application/json"
+                onChange={handleIncomeFileSelect}
                 style={{ display: 'none' }}
               />
               
@@ -423,6 +499,12 @@ const Home: React.FC = () => {
                         totalAmount={expenses
                           .filter(e => selectedExpenseCategories.includes(e.category))
                           .reduce((sum, e) => sum + e.amount, 0)}
+                        allTotalAmount={expenses.reduce((sum, e) => sum + e.amount, 0)}
+                        onViewDashboard={goToExpenseDashboard}
+                        onExport={handleExportExpenses}
+                        onImport={triggerExpenseFileSelect}
+                        onClear={handleClearExpenses}
+                        isImporting={isImportingExpense}
                       />
                       <RecordList 
                         records={expenses.filter(e => selectedExpenseCategories.includes(e.category))} 
@@ -458,6 +540,12 @@ const Home: React.FC = () => {
                         totalAmount={incomes
                           .filter(i => selectedIncomeCategories.includes(i.category))
                           .reduce((sum, i) => sum + i.amount, 0)}
+                        allTotalAmount={incomes.reduce((sum, i) => sum + i.amount, 0)}
+                        onViewDashboard={goToIncomeDashboard}
+                        onExport={handleExportIncomes}
+                        onImport={triggerIncomeFileSelect}
+                        onClear={handleClearIncomes}
+                        isImporting={isImportingIncome}
                       />
                       <RecordList 
                         records={incomes.filter(i => selectedIncomeCategories.includes(i.category))} 
@@ -473,29 +561,6 @@ const Home: React.FC = () => {
           ) : (
             <>
               {/* 睡眠记录模式 */}
-              {/* 快捷操作区 */}
-              <div className="home__quick-actions">
-                <button className="quick-action-btn" onClick={goToSleepDashboard}>
-                  📊 查看数据面板
-                </button>
-                <button className="quick-action-btn quick-action-btn--export" onClick={handleExportSleep}>
-                  📤 导出睡眠记录
-                </button>
-                <button 
-                  className="quick-action-btn quick-action-btn--import" 
-                  onClick={triggerSleepFileSelect}
-                  disabled={isImportingSleep}
-                >
-                  {isImportingSleep ? '📥 导入中...' : '📥 导入睡眠记录'}
-                </button>
-                <button 
-                  className="quick-action-btn quick-action-btn--danger" 
-                  onClick={handleClearSleepData}
-                >
-                  🗑️ 清空数据
-                </button>
-              </div>
-
               {/* 隐藏的文件输入 */}
               <input
                 ref={sleepFileInputRef}
@@ -519,11 +584,15 @@ const Home: React.FC = () => {
                 {/* 睡眠记录列表 */}
                 <div className="home__list-section">
                   <div className="sleep-records-container">
-                    <h3>睡眠记录</h3>
                     <SleepList 
                       sleeps={sleepRecords} 
                       onDeleteSleep={handleDeleteSleep}
                       onEditSleep={handleEditSleep}
+                      onViewDashboard={goToSleepDashboard}
+                      onExport={handleExportSleep}
+                      onImport={triggerSleepFileSelect}
+                      onClear={handleClearSleepData}
+                      isImporting={isImportingSleep}
                     />
                   </div>
                 </div>

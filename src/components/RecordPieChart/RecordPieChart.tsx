@@ -8,6 +8,7 @@ interface RecordPieChartProps {
   records: ExpenseRecord[] | IncomeRecord[];
   recordType: RecordType;
   title?: string;
+  totalAmount?: number; // 总金额（保留作为备用参数）
 }
 
 interface CategoryData {
@@ -46,7 +47,8 @@ const getCategoryColor = (index: number, isIncome: boolean = false): string => {
 const RecordPieChart: React.FC<RecordPieChartProps> = ({ 
   records, 
   recordType,
-  title 
+  title
+  // totalAmount 参数暂时保留,未来可能使用
 }) => {
   // 根据记录类型生成默认标题
   const getDefaultTitle = () => {
@@ -101,7 +103,9 @@ const RecordPieChart: React.FC<RecordPieChartProps> = ({
 
   return (
     <div className="expense-pie-chart">
-      <h3 className="expense-pie-chart__title">{finalTitle}</h3>
+      <h3 className="expense-pie-chart__title">
+        {finalTitle}
+      </h3>
       <div className="expense-pie-chart__container">
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>

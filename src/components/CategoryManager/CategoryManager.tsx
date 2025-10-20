@@ -215,11 +215,11 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
                 maxLength={20}
               />
               <button 
-                className="category-manager__btn category-manager__btn--primary"
+                className="category-manager__btn"
                 onClick={handleAddCategory}
-                type="button"
+                title="添加分类"
               >
-                添加
+                🏷️➕
               </button>
             </div>
           </div>
@@ -250,18 +250,18 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
                       />
                       <div className="category-manager__edit-actions">
                         <button 
-                          className="category-manager__btn category-manager__btn--primary"
+                          className="category-manager__btn"
                           onClick={handleSaveEdit}
-                          type="button"
+                          title="保存编辑"
                         >
-                          保存
+                          💾
                         </button>
                         <button 
-                          className="category-manager__btn category-manager__btn--secondary"
+                          className="category-manager__btn"
                           onClick={handleCancelEdit}
-                          type="button"
+                          title="取消编辑"
                         >
-                          取消
+                          ❌
                         </button>
                       </div>
                     </div>
@@ -281,18 +281,18 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
                       </span>
                       <div className="category-manager__actions">
                         <button 
-                          className="category-manager__btn category-manager__btn--secondary"
+                          className="category-manager__btn"
                           onClick={() => handleStartEdit(category)}
-                          type="button"
+                          title="编辑分类"
                         >
-                          编辑
+                          ✏️
                         </button>
                         <button 
-                          className="category-manager__btn category-manager__btn--danger"
+                          className="category-manager__btn"
                           onClick={() => handleDeleteCategory(category)}
-                          type="button"
+                          title="删除分类"
                         >
-                          删除
+                          🗑️
                         </button>
                       </div>
                     </div>
