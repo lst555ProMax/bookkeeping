@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ExpenseForm, ExpenseList, IncomeList, CategoryManager, SleepForm, SleepList, CategoryFilter } from '@/components';
+import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
@@ -424,16 +424,17 @@ const Home: React.FC = () => {
                           .filter(e => selectedExpenseCategories.includes(e.category))
                           .reduce((sum, e) => sum + e.amount, 0)}
                       />
-                      <ExpenseList 
-                        expenses={expenses.filter(e => selectedExpenseCategories.includes(e.category))} 
-                        onDeleteExpense={handleDeleteExpense}
-                        onEditExpense={handleEditExpense}
+                      <RecordList 
+                        records={expenses.filter(e => selectedExpenseCategories.includes(e.category))} 
+                        onDeleteRecord={handleDeleteExpense}
+                        onEditRecord={handleEditExpense}
+                        type="expense"
                       />
                     </div>
                     
                     {/* 添加支出表单 */}
                     <div className="form-container">
-                      <ExpenseForm
+                      <RecordForm
                         onAddExpense={handleAddExpense}
                         onAddIncome={handleAddIncome}
                         onUpdateExpense={handleUpdateExpense}
@@ -458,10 +459,11 @@ const Home: React.FC = () => {
                           .filter(i => selectedIncomeCategories.includes(i.category))
                           .reduce((sum, i) => sum + i.amount, 0)}
                       />
-                      <IncomeList 
-                        incomes={incomes.filter(i => selectedIncomeCategories.includes(i.category))} 
-                        onDeleteIncome={handleDeleteIncome}
-                        onEditIncome={handleEditIncome}
+                      <RecordList 
+                        records={incomes.filter(i => selectedIncomeCategories.includes(i.category))} 
+                        onDeleteRecord={handleDeleteIncome}
+                        onEditRecord={handleEditIncome}
+                        type="income"
                       />
                     </div>
                   </div>

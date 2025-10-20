@@ -2,6 +2,8 @@ import { SleepRecord } from '@/types';
 
 const STORAGE_KEY = 'sleep_records';
 
+// ==================== 基础存储操作 ====================
+
 /**
  * 加载所有睡眠记录
  */
@@ -11,7 +13,6 @@ export const loadSleepRecords = (): SleepRecord[] => {
     if (!data) return [];
     
     const records = JSON.parse(data) as SleepRecord[];
-    // 将日期字符串转换回Date对象
     return records.map((record) => ({
       ...record,
       createdAt: new Date(record.createdAt)
@@ -73,6 +74,18 @@ export const getSleepRecordById = (id: string): SleepRecord | undefined => {
 };
 
 /**
+ * 清空所有睡眠记录（谨慎使用）
+ */
+export const clearAllSleepRecords = (): number => {
+  const records = loadSleepRecords();
+  const count = records.length;
+  localStorage.removeItem(STORAGE_KEY);
+  return count;
+};
+
+// ==================== 睡眠时长计算 ====================
+
+/**
  * 计算睡眠时长（分钟）
  * @param sleepTime 入睡时间 HH:mm
  * @param wakeTime 醒来时间 HH:mm
@@ -87,7 +100,7 @@ export const calculateSleepDuration = (sleepTime: string, wakeTime: string): num
   
   // 如果醒来时间小于入睡时间，说明跨越了午夜
   if (wakeMinutes < sleepMinutes) {
-    wakeMinutes += 24 * 60; // 加上一天的分钟数
+    wakeMinutes += 24 * 60;
   }
   
   return wakeMinutes - sleepMinutes;
@@ -112,19 +125,6 @@ export const formatSleepDuration = (minutes: number): string => {
 };
 
 /**
- * 获取指定月份的睡眠记录
- * @param year 年份
- * @param month 月份（1-12）
- */
-export const getSleepRecordsByMonth = (year: number, month: number): SleepRecord[] => {
-  const records = loadSleepRecords();
-  return records.filter(record => {
-    const recordDate = new Date(record.date);
-    return recordDate.getFullYear() === year && recordDate.getMonth() + 1 === month;
-  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-};
-
-/**
  * 将时间字符串转换为分钟数（从午夜开始计算）
  * @param time HH:mm格式
  * @returns 分钟数
@@ -143,6 +143,21 @@ export const minutesToTime = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = Math.round(minutes % 60);
   return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+};
+
+// ==================== 查询和统计 ====================
+
+/**
+ * 获取指定月份的睡眠记录
+ * @param year 年份
+ * @param month 月份（1-12）
+ */
+export const getSleepRecordsByMonth = (year: number, month: number): SleepRecord[] => {
+  const records = loadSleepRecords();
+  return records.filter(record => {
+    const recordDate = new Date(record.date);
+    return recordDate.getFullYear() === year && recordDate.getMonth() + 1 === month;
+  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
 
 /**

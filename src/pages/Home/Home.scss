@@ -228,7 +228,7 @@ body {
       }
 
       /* 列表滚动容器 */
-      :global(.expense-list), :global(.income-list) {
+      :global(.record-list) {
         flex: 1;
         overflow-y: auto;
         

@@ -1,0 +1,269 @@
+.record-list {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__title {
+    padding: 1rem 2rem;
+    margin: 0;
+    color: #333;
+    font-size: 1.6rem;
+    font-weight: 700;
+    border-bottom: 2px solid #f0f0f0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    flex-shrink: 0;
+    text-align: center;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__empty {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+  }
+
+  &__day-group {
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #e1e5e9;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  &__day-date {
+    font-weight: 700;
+    color: #495057;
+    font-size: 1.1rem;
+  }
+
+  &__day-total {
+    font-weight: 800;
+    font-size: 1.2rem;
+  }
+
+  &__day-records {
+    padding: 0;
+  }
+
+  &__record {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+    background: white;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &-info {
+      flex: 1;
+    }
+
+    &-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    &-category {
+      font-weight: 700;
+      color: #495057;
+      font-size: 1rem;
+    }
+
+    &-description {
+      font-size: 0.9rem;
+      color: #6c757d;
+      font-style: italic;
+      
+      &::before {
+        content: '·';
+        margin-right: 4px;
+        font-weight: bold;
+      }
+    }
+
+    &-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    &-amount {
+      font-weight: 800;
+      font-size: 1.2rem;
+      min-width: 90px;
+      text-align: right;
+    }
+
+    &-edit,
+    &-delete {
+      background: transparent;
+      color: inherit;
+      border: none;
+      padding: 0.25rem;
+      cursor: pointer;
+      font-size: 1.3rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+
+      &:active {
+        transform: scale(0.9);
+      }
+    }
+  }
+
+  // 支出样式（紫色）
+  &--expense {
+    .record-list__title {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .record-list__day-total {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .record-list__record {
+      &:hover {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%);
+        transform: translateX(4px);
+        border-left: 4px solid #667eea;
+      }
+
+      &-amount {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    }
+  }
+
+  // 收入样式（绿色）
+  &--income {
+    .record-list__title {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .record-list__day-total {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .record-list__record {
+      &:hover {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%);
+        transform: translateX(4px);
+        border-left: 4px solid #28a745;
+      }
+
+      &-amount {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .record-list {
+    &__title {
+      padding: 1rem 1.5rem;
+      font-size: 1.3rem;
+    }
+
+    &__day-header {
+      padding: 0.75rem 1.5rem;
+    }
+
+    &__empty {
+      padding: 2rem 1.5rem;
+    }
+
+    &__record {
+      padding: 1rem 1.5rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+
+      &-actions {
+        align-self: flex-end;
+        gap: 0.75rem;
+      }
+
+      &-amount {
+        min-width: auto;
+      }
+    }
+  }
+}

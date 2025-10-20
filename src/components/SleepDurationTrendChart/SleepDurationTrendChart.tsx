@@ -9,7 +9,7 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-import { formatSleepDuration } from '@/utils/sleepStorage';
+import { formatSleepDuration } from '@/utils';
 import './SleepDurationTrendChart.scss';
 
 interface SleepDurationTrendChartProps {

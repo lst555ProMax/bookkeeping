@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MonthSelector, ExpenseDaysChart, ExpenseTrendChart, ExpensePieChart } from '@/components';
+import { MonthSelector, RecordDaysChart, RecordTrendChart, RecordPieChart } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
 import { loadExpenses, loadIncomes, formatCurrency } from '@/utils';
 import './Records.scss';
@@ -112,14 +112,14 @@ const Records: React.FC = () => {
               {/* 第一行：饼状图和趋势图 */}
               <div className="charts-row">
                 <div className="chart-item">
-                  <ExpensePieChart 
+                  <RecordPieChart 
                     records={monthlyRecords}
                     recordType={recordType}
                     title={`${selectedMonth.split('-')[0]}年${selectedMonth.split('-')[1]}月${recordType === RecordType.EXPENSE ? '支出' : '收入'}分析`}
                   />
                 </div>
                 <div className="chart-item">
-                  <ExpenseTrendChart 
+                  <RecordTrendChart 
                     records={currentRecords}
                     recordType={recordType}
                     title={`最近7天${recordType === RecordType.EXPENSE ? '开销' : '收入'}趋势`}
@@ -130,7 +130,7 @@ const Records: React.FC = () => {
               {/* 第二行：最高和最低开销柱状图 */}
               <div className="charts-row">
                 <div className="chart-item">
-                  <ExpenseDaysChart 
+                  <RecordDaysChart 
                     records={currentRecords}
                     recordType={recordType}
                     selectedMonth={selectedMonth}
@@ -139,7 +139,7 @@ const Records: React.FC = () => {
                   />
                 </div>
                 <div className="chart-item">
-                  <ExpenseDaysChart 
+                  <RecordDaysChart 
                     records={currentRecords}
                     recordType={recordType}
                     selectedMonth={selectedMonth}

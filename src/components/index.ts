@@ -1,11 +1,10 @@
 // 导出所有组件
-export { default as ExpenseForm } from './ExpenseForm/ExpenseForm';
-export { default as ExpenseList } from './ExpenseList/ExpenseList';
-export { default as IncomeList } from './IncomeList/IncomeList';
+export { default as RecordForm } from './RecordForm/RecordForm';
+export { default as RecordList } from './RecordList/RecordList';
 export { default as MonthSelector } from './MonthSelector/MonthSelector';
-export { default as ExpensePieChart } from './ExpensePieChart/ExpensePieChart';
-export { default as ExpenseDaysChart } from './ExpenseDaysChart/ExpenseDaysChart';
-export { default as ExpenseTrendChart } from './ExpenseTrendChart/ExpenseTrendChart';
+export { default as RecordPieChart } from './RecordPieChart/RecordPieChart';
+export { default as RecordDaysChart } from './RecordDaysChart/RecordDaysChart';
+export { default as RecordTrendChart } from './RecordTrendChart/RecordTrendChart';
 export { default as CategoryManager } from './CategoryManager/CategoryManager';
 export { default as SleepForm } from './SleepForm/SleepForm';
 export { default as SleepList } from './SleepList/SleepList';

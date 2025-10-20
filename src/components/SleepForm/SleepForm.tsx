@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SleepRecord } from '@/types';
-import { calculateSleepDuration } from '@/utils/sleepStorage';
+import { calculateSleepDuration } from '@/utils';
 import './SleepForm.scss';
 
 interface SleepFormProps {

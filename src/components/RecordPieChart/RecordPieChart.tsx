@@ -2,9 +2,9 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
 import { formatCurrency, getCategories, getIncomeCategories } from '@/utils';
-import './ExpensePieChart.scss';
+import './RecordPieChart.scss';
 
-interface ExpensePieChartProps {
+interface RecordPieChartProps {
   records: ExpenseRecord[] | IncomeRecord[];
   recordType: RecordType;
   title?: string;
@@ -43,7 +43,7 @@ const getCategoryColor = (index: number, isIncome: boolean = false): string => {
 };
 
 
-const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ 
+const RecordPieChart: React.FC<RecordPieChartProps> = ({ 
   records, 
   recordType,
   title 
@@ -131,4 +131,4 @@ const ExpensePieChart: React.FC<ExpensePieChartProps> = ({
   );
 };
 
-export default ExpensePieChart;
+export default RecordPieChart;

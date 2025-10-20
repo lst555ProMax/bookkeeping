@@ -1,25 +1,25 @@
 import { ExpenseCategory, IncomeCategory, DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } from '@/types';
-import { loadExpenses, saveExpenses } from './storage';
-import { loadIncomes, saveIncomes } from './incomeStorage';
+import { loadExpenses, saveExpenses, loadIncomes, saveIncomes } from './storage';
 
+// ==================== 存储键 ====================
 const EXPENSE_CATEGORIES_STORAGE_KEY = 'bookkeeping_categories';
 const INCOME_CATEGORIES_STORAGE_KEY = 'bookkeeping_income_categories';
 
 // ==================== 支出分类管理 ====================
 
-// 获取所有支出分类（用于下拉选择，"其他"在最后）
+/**
+ * 获取所有支出分类（用于下拉选择，"其他"在最后）
+ */
 export const getCategories = (): ExpenseCategory[] => {
   const stored = localStorage.getItem(EXPENSE_CATEGORIES_STORAGE_KEY);
   let categories: ExpenseCategory[];
   
   if (!stored) {
-    // 如果没有存储的分类，使用默认分类并保存
     categories = DEFAULT_EXPENSE_CATEGORIES.slice();
   } else {
     try {
       categories = JSON.parse(stored) as ExpenseCategory[];
     } catch {
-      // 解析失败时使用默认分类
       categories = DEFAULT_EXPENSE_CATEGORIES.slice();
     }
   }
@@ -27,23 +27,33 @@ export const getCategories = (): ExpenseCategory[] => {
   // 确保"其他"分类始终存在且在最后
   const otherIndex = categories.indexOf('其他');
   if (otherIndex !== -1) {
-    categories.splice(otherIndex, 1); // 移除原来的"其他"
+    categories.splice(otherIndex, 1);
   }
-  categories.push('其他'); // 添加到末尾
+  categories.push('其他');
   
   saveCategories(categories);
   return categories;
 };
 
-// 获取可管理的分类（排除"其他"）
+/**
+ * 获取可管理的分类（排除"其他"）
+ */
 export const getManageableCategories = (): ExpenseCategory[] => {
   const allCategories = getCategories();
   return allCategories.filter(cat => cat !== '其他');
 };
 
-// 保存分类顺序
+/**
+ * 保存分类到localStorage
+ */
+export const saveCategories = (categories: ExpenseCategory[]): void => {
+  localStorage.setItem(EXPENSE_CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
+};
+
+/**
+ * 保存分类顺序
+ */
 export const saveCategoriesOrder = (categories: ExpenseCategory[]): void => {
-  // 确保"其他"在最后
   const otherIndex = categories.indexOf('其他');
   if (otherIndex !== -1) {
     categories.splice(otherIndex, 1);
@@ -53,24 +63,19 @@ export const saveCategoriesOrder = (categories: ExpenseCategory[]): void => {
   saveCategories(categories);
 };
 
-// 保存分类到localStorage
-export const saveCategories = (categories: ExpenseCategory[]): void => {
-  localStorage.setItem(EXPENSE_CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
-};
-
-// 添加新分类
+/**
+ * 添加新分类
+ */
 export const addCategory = (newCategory: string): boolean => {
   const trimmedCategory = newCategory.trim();
   if (!trimmedCategory) return false;
   
   const currentCategories = getCategories();
   
-  // 检查是否已存在
   if (currentCategories.includes(trimmedCategory)) {
     return false;
   }
   
-  // 移除"其他"，添加新分类，再加回"其他"
   const otherIndex = currentCategories.indexOf('其他');
   if (otherIndex !== -1) {
     currentCategories.splice(otherIndex, 1);
@@ -83,9 +88,10 @@ export const addCategory = (newCategory: string): boolean => {
   return true;
 };
 
-// 删除分类
+/**
+ * 删除分类
+ */
 export const deleteCategory = (categoryToDelete: ExpenseCategory): boolean => {
-  // 不能删除"其他"分类
   if (categoryToDelete === '其他') {
     return false;
   }
@@ -106,36 +112,29 @@ export const deleteCategory = (categoryToDelete: ExpenseCategory): boolean => {
   return true;
 };
 
-// 修改分类名称
+/**
+ * 修改分类名称
+ */
 export const updateCategory = (oldCategory: ExpenseCategory, newCategory: string): boolean => {
   const trimmedNewCategory = newCategory.trim();
-  if (!trimmedNewCategory) return false;
-  
-  // 不能修改"其他"分类
-  if (oldCategory === '其他') {
-    return false;
-  }
+  if (!trimmedNewCategory || oldCategory === '其他') return false;
   
   const currentCategories = getCategories();
   
-  // 检查新名称是否已存在（除了当前分类）
   if (trimmedNewCategory !== oldCategory && currentCategories.includes(trimmedNewCategory)) {
     return false;
   }
   
-  // 更新分类列表，确保"其他"在最后
   const updatedCategories = currentCategories.map(cat => 
     cat === oldCategory ? trimmedNewCategory : cat
   );
   
-  // 再次确保"其他"在最后
   const otherIndex = updatedCategories.indexOf('其他');
   if (otherIndex !== -1 && otherIndex !== updatedCategories.length - 1) {
     updatedCategories.splice(otherIndex, 1);
     updatedCategories.push('其他');
   }
   
-  // 更新所有使用该分类的记录
   const expenses = loadExpenses();
   const updatedExpenses = expenses.map(expense => 
     expense.category === oldCategory 
@@ -148,7 +147,9 @@ export const updateCategory = (oldCategory: ExpenseCategory, newCategory: string
   return true;
 };
 
-// 检查分类是否有相关记录
+/**
+ * 检查分类是否有相关记录
+ */
 export const categoryHasRecords = (category: ExpenseCategory): boolean => {
   const expenses = loadExpenses();
   return expenses.some(expense => expense.category === category);
@@ -156,48 +157,52 @@ export const categoryHasRecords = (category: ExpenseCategory): boolean => {
 
 // ==================== 收入分类管理 ====================
 
-// 获取所有收入分类（用于下拉选择，"其他"在最后）
+/**
+ * 获取所有收入分类（用于下拉选择，"其他"在最后）
+ */
 export const getIncomeCategories = (): IncomeCategory[] => {
   const stored = localStorage.getItem(INCOME_CATEGORIES_STORAGE_KEY);
   let categories: IncomeCategory[];
   
   if (!stored) {
-    // 如果没有存储的分类，使用默认分类并保存
     categories = DEFAULT_INCOME_CATEGORIES.slice();
   } else {
     try {
       categories = JSON.parse(stored) as IncomeCategory[];
     } catch {
-      // 解析失败时使用默认分类
       categories = DEFAULT_INCOME_CATEGORIES.slice();
     }
   }
   
-  // 确保"其他"分类始终存在且在最后
   const otherIndex = categories.indexOf('其他');
   if (otherIndex !== -1) {
-    categories.splice(otherIndex, 1); // 移除原来的"其他"
+    categories.splice(otherIndex, 1);
   }
-  categories.push('其他'); // 添加到末尾
+  categories.push('其他');
   
   saveIncomeCategories(categories);
   return categories;
 };
 
-// 获取可管理的收入分类（排除"其他"）
+/**
+ * 获取可管理的收入分类（排除"其他"）
+ */
 export const getManageableIncomeCategories = (): IncomeCategory[] => {
   const allCategories = getIncomeCategories();
   return allCategories.filter(cat => cat !== '其他');
 };
 
-// 保存收入分类到localStorage
+/**
+ * 保存收入分类到localStorage
+ */
 export const saveIncomeCategories = (categories: IncomeCategory[]): void => {
   localStorage.setItem(INCOME_CATEGORIES_STORAGE_KEY, JSON.stringify(categories));
 };
 
-// 保存收入分类顺序
+/**
+ * 保存收入分类顺序
+ */
 export const saveIncomeCategoriesOrder = (categories: IncomeCategory[]): void => {
-  // 确保"其他"在最后
   const otherIndex = categories.indexOf('其他');
   if (otherIndex !== -1) {
     categories.splice(otherIndex, 1);
@@ -207,19 +212,19 @@ export const saveIncomeCategoriesOrder = (categories: IncomeCategory[]): void =>
   saveIncomeCategories(categories);
 };
 
-// 添加新收入分类
+/**
+ * 添加新收入分类
+ */
 export const addIncomeCategory = (newCategory: string): boolean => {
   const trimmedCategory = newCategory.trim();
   if (!trimmedCategory) return false;
   
   const currentCategories = getIncomeCategories();
   
-  // 检查是否已存在
   if (currentCategories.includes(trimmedCategory)) {
     return false;
   }
   
-  // 移除"其他"，添加新分类，再加回"其他"
   const otherIndex = currentCategories.indexOf('其他');
   if (otherIndex !== -1) {
     currentCategories.splice(otherIndex, 1);
@@ -232,9 +237,10 @@ export const addIncomeCategory = (newCategory: string): boolean => {
   return true;
 };
 
-// 删除收入分类
+/**
+ * 删除收入分类
+ */
 export const deleteIncomeCategory = (categoryToDelete: IncomeCategory): boolean => {
-  // 不能删除"其他"分类
   if (categoryToDelete === '其他') {
     return false;
   }
@@ -242,7 +248,6 @@ export const deleteIncomeCategory = (categoryToDelete: IncomeCategory): boolean 
   const currentCategories = getIncomeCategories();
   const updatedCategories = currentCategories.filter(cat => cat !== categoryToDelete);
   
-  // 将所有使用该分类的记录改为"其他"
   const incomes = loadIncomes();
   const updatedIncomes = incomes.map(income => 
     income.category === categoryToDelete 
@@ -255,36 +260,29 @@ export const deleteIncomeCategory = (categoryToDelete: IncomeCategory): boolean 
   return true;
 };
 
-// 修改收入分类名称
+/**
+ * 修改收入分类名称
+ */
 export const updateIncomeCategory = (oldCategory: IncomeCategory, newCategory: string): boolean => {
   const trimmedNewCategory = newCategory.trim();
-  if (!trimmedNewCategory) return false;
-  
-  // 不能修改"其他"分类
-  if (oldCategory === '其他') {
-    return false;
-  }
+  if (!trimmedNewCategory || oldCategory === '其他') return false;
   
   const currentCategories = getIncomeCategories();
   
-  // 检查新名称是否已存在（除了当前分类）
   if (trimmedNewCategory !== oldCategory && currentCategories.includes(trimmedNewCategory)) {
     return false;
   }
   
-  // 更新分类列表，确保"其他"在最后
   const updatedCategories = currentCategories.map(cat => 
     cat === oldCategory ? trimmedNewCategory : cat
   );
   
-  // 再次确保"其他"在最后
   const otherIndex = updatedCategories.indexOf('其他');
   if (otherIndex !== -1 && otherIndex !== updatedCategories.length - 1) {
     updatedCategories.splice(otherIndex, 1);
     updatedCategories.push('其他');
   }
   
-  // 更新所有使用该分类的记录
   const incomes = loadIncomes();
   const updatedIncomes = incomes.map(income => 
     income.category === oldCategory 
@@ -297,7 +295,9 @@ export const updateIncomeCategory = (oldCategory: IncomeCategory, newCategory: s
   return true;
 };
 
-// 检查收入分类是否有相关记录
+/**
+ * 检查收入分类是否有相关记录
+ */
 export const incomeCategoryHasRecords = (category: IncomeCategory): boolean => {
   const incomes = loadIncomes();
   return incomes.some(income => income.category === category);

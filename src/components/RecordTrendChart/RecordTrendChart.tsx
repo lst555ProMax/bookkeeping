@@ -2,9 +2,9 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
 import { formatCurrency } from '@/utils';
-import './ExpenseTrendChart.scss';
+import './RecordTrendChart.scss';
 
-interface ExpenseTrendChartProps {
+interface RecordTrendChartProps {
   records: ExpenseRecord[] | IncomeRecord[];
   recordType: RecordType;
   title?: string;
@@ -16,7 +16,7 @@ interface DayData {
   displayDate: string;
 }
 
-const ExpenseTrendChart: React.FC<ExpenseTrendChartProps> = ({ 
+const RecordTrendChart: React.FC<RecordTrendChartProps> = ({ 
   records,
   recordType,
   title
@@ -136,4 +136,4 @@ const ExpenseTrendChart: React.FC<ExpenseTrendChartProps> = ({
   );
 };
 
-export default ExpenseTrendChart;
+export default RecordTrendChart;

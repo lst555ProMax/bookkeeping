@@ -1,7 +1,22 @@
-// 导出所有工具函数
-export * from './storage';
+// ==================== 通用工具函数 ====================
 export * from './helpers';
-export * from './dataManager';
-export * from './categoryManager';
-export * from './incomeStorage';
-export * from './sleepStorage';
+
+// ==================== 记账模块 ====================
+export * from './accounting/storage';
+export * from './accounting/category';
+export * from './accounting/dataImportExport';
+
+// ==================== 睡眠记录模块 ====================
+export * from './sleep/storage';
+export * from './sleep/dataImportExport';
+
+// ==================== 向后兼容的别名导出 ====================
+// 为了不破坏现有代码，保留一些常用的别名
+export { 
+  exportAccountingData as exportExpenses,
+  importAccountingData as importExpenses 
+} from './accounting/dataImportExport';
+
+export {
+  clearAllAccountingData as clearAllExpenses
+} from './accounting/storage';

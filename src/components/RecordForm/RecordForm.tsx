@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ExpenseCategory, ExpenseRecord, IncomeCategory, IncomeRecord, RecordType } from '@/types';
 import { generateId, formatDate, getCategories, getIncomeCategories } from '@/utils';
-import './ExpenseForm.scss';
+import './RecordForm.scss';
 
-interface ExpenseFormProps {
+interface RecordFormProps {
   onAddExpense: (expense: ExpenseRecord) => void;
   onAddIncome: (income: IncomeRecord) => void;
   onUpdateExpense?: (expense: ExpenseRecord) => void;
@@ -15,7 +15,7 @@ interface ExpenseFormProps {
   editingIncome?: IncomeRecord | null; // 正在编辑的收入
 }
 
-const ExpenseForm: React.FC<ExpenseFormProps> = ({ 
+const RecordForm: React.FC<RecordFormProps> = ({ 
   onAddExpense,
   onAddIncome,
   onUpdateExpense,
@@ -280,4 +280,4 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   );
 };
 
-export default ExpenseForm;
+export default RecordForm;
