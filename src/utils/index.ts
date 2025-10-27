@@ -10,6 +10,14 @@ export * from './accounting/dataImportExport';
 export * from './sleep/storage';
 export * from './sleep/dataImportExport';
 
+// ==================== 浏览器使用记录模块 ====================
+export * from './browser/storage';
+export * from './browser/dataImportExport';
+
+// ==================== 日常记录模块 ====================
+export * from './daily/storage';
+export * from './daily/dataImportExport';
+
 // ==================== 向后兼容的别名导出 ====================
 // 为了不破坏现有代码，保留一些常用的别名
 export { 

@@ -78,6 +78,16 @@ body {
         border-color: white;
         box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
       }
+
+      &--software {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.5);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.25);
+          border-color: white;
+        }
+      }
     }
   }
 
@@ -113,13 +123,22 @@ body {
     background: white;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    flex: 0 0 400px; /* 固定宽度，不伸缩 */
+    flex: 0 0 400px; /* 默认宽度 400px */
     transition: all 0.3s ease;
     align-self: center;
     
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    /* 日常记录表单特殊宽度 */
+    &--daily {
+      flex: 0 0 600px;
+      max-height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
   }
 
@@ -216,6 +235,42 @@ body {
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
       }
     }
+
+    /* 浏览器使用记录容器样式 */
+    .browser-records-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      min-height: 0;
+      flex: 1;
+      width: 100%;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+    }
+
+    /* 日常记录容器样式 */
+    .daily-records-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      min-height: 0;
+      flex: 1;
+      width: 100%;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+    }
   }
 }
 
@@ -254,7 +309,8 @@ body {
       .form-container,
       .expense-list-container, 
       .income-list-container, 
-      .sleep-records-container {
+      .sleep-records-container,
+      .browser-records-container {
         height: 400px;
         flex: none;
         width: 100%;

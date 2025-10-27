@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter } from '@/components';
-import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
+import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList } from '@/components';
+import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
   loadIncomes, addIncome, deleteIncome, updateIncome,
@@ -9,6 +9,10 @@ import {
   validateImportFile,
   loadSleepRecords, addSleepRecord, deleteSleepRecord, updateSleepRecord,
   exportSleepRecords, importSleepRecords, validateSleepImportFile,
+  loadBrowserUsageRecords, exportBrowserUsageRecords, importBrowserUsageRecords, 
+  validateBrowserUsageImportFile, clearAllBrowserUsageRecords,
+  loadDailyRecords, addDailyRecord, deleteDailyRecord, updateDailyRecord,
+  exportDailyRecords, importDailyRecords, validateDailyImportFile, clearAllDailyRecords,
   getCategories, getIncomeCategories,
   clearExpensesOnly, clearIncomesOnly, clearAllSleepRecords
 } from '@/utils';
@@ -41,6 +45,17 @@ const Home: React.FC = () => {
   const [isImportingSleep, setIsImportingSleep] = useState(false);
   const sleepFileInputRef = useRef<HTMLInputElement>(null);
 
+  // 浏览器使用记录相关状态
+  const [browserRecords, setBrowserRecords] = useState<BrowserUsageRecord[]>([]);
+  const [isImportingBrowser, setIsImportingBrowser] = useState(false);
+  const browserFileInputRef = useRef<HTMLInputElement>(null);
+
+  // 日常记录相关状态
+  const [dailyRecords, setDailyRecords] = useState<DailyRecord[]>([]);
+  const [editingDaily, setEditingDaily] = useState<DailyRecord | null>(null);
+  const [isImportingDaily, setIsImportingDaily] = useState(false);
+  const dailyFileInputRef = useRef<HTMLInputElement>(null);
+
   // 分类筛选状态
   const [selectedExpenseCategories, setSelectedExpenseCategories] = useState<string[]>([]);
   const [selectedIncomeCategories, setSelectedIncomeCategories] = useState<string[]>([]);
@@ -58,9 +73,13 @@ const Home: React.FC = () => {
     const savedExpenses = loadExpenses();
     const savedIncomes = loadIncomes();
     const savedSleeps = loadSleepRecords();
+    const savedBrowserRecords = loadBrowserUsageRecords();
+    const savedDailyRecords = loadDailyRecords();
     setExpenses(savedExpenses);
     setIncomes(savedIncomes);
     setSleepRecords(savedSleeps);
+    setBrowserRecords(savedBrowserRecords);
+    setDailyRecords(savedDailyRecords);
   };
 
   useEffect(() => {
@@ -431,6 +450,170 @@ const Home: React.FC = () => {
     sleepFileInputRef.current?.click();
   };
 
+  // === 浏览器使用记录处理函数 ===
+
+  // 导出浏览器使用记录
+  const handleExportBrowser = () => {
+    try {
+      const message = `确定导出浏览器使用记录吗？\n\n总共 ${browserRecords.length} 条记录`;
+
+      if (window.confirm(message)) {
+        exportBrowserUsageRecords(browserRecords);
+        alert('浏览器使用记录导出成功！');
+      }
+    } catch (error) {
+      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+    }
+  };
+
+  // 导入浏览器使用记录
+  const handleImportBrowser = async (file: File) => {
+    setIsImportingBrowser(true);
+    try {
+      const result = await importBrowserUsageRecords(file);
+      loadData(); // 重新加载数据
+
+      const message = `导入完成！\n新增 ${result.imported} 条记录，更新 ${result.skipped} 条记录\n总计 ${result.total} 条记录`;
+      alert(message);
+    } catch (error) {
+      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+    } finally {
+      setIsImportingBrowser(false);
+      if (browserFileInputRef.current) {
+        browserFileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // 处理浏览器使用记录文件选择
+  const handleBrowserFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const validationError = validateBrowserUsageImportFile(file);
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    handleImportBrowser(file);
+  };
+
+  // 触发浏览器使用记录文件选择
+  const triggerBrowserFileSelect = () => {
+    browserFileInputRef.current?.click();
+  };
+
+  // 清空浏览器使用记录
+  const handleClearBrowserData = () => {
+    const message = `⚠️ 警告：此操作将清空所有浏览器使用记录！\n\n当前记录：${browserRecords.length} 条\n\n此操作不可恢复，确定要清空吗？`;
+
+    if (window.confirm(message)) {
+      const count = clearAllBrowserUsageRecords();
+      loadData();
+      alert(`已清空 ${count} 条浏览器使用记录！`);
+    }
+  };
+
+  // === 日常记录处理函数 ===
+
+  // 添加日常记录
+  const handleAddDaily = (record: DailyRecord) => {
+    addDailyRecord(record);
+    const updatedRecords = loadDailyRecords();
+    setDailyRecords(updatedRecords);
+  };
+
+  // 删除日常记录
+  const handleDeleteDaily = (id: string) => {
+    if (window.confirm('确定要删除这条日常记录吗？')) {
+      deleteDailyRecord(id);
+      const updatedRecords = loadDailyRecords();
+      setDailyRecords(updatedRecords);
+    }
+  };
+
+  // 编辑日常记录
+  const handleEditDaily = (record: DailyRecord) => {
+    setEditingDaily(record);
+  };
+
+  // 更新日常记录
+  const handleUpdateDaily = (updatedRecord: DailyRecord) => {
+    updateDailyRecord(updatedRecord);
+    const updatedRecords = loadDailyRecords();
+    setDailyRecords(updatedRecords);
+    setEditingDaily(null);
+  };
+
+  // 取消编辑日常记录
+  const handleCancelDailyEdit = () => {
+    setEditingDaily(null);
+  };
+
+  // 导出日常记录
+  const handleExportDaily = () => {
+    try {
+      const message = `确定导出日常记录吗？\n\n总共 ${dailyRecords.length} 条记录`;
+
+      if (window.confirm(message)) {
+        exportDailyRecords(dailyRecords);
+        alert('日常记录导出成功！');
+      }
+    } catch (error) {
+      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+    }
+  };
+
+  // 导入日常记录
+  const handleImportDaily = async (file: File) => {
+    setIsImportingDaily(true);
+    try {
+      const result = await importDailyRecords(file);
+      loadData(); // 重新加载数据
+
+      const message = `导入完成！\n新增 ${result.imported} 条记录，跳过 ${result.skipped} 条重复记录\n总计 ${result.total} 条记录`;
+      alert(message);
+    } catch (error) {
+      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+    } finally {
+      setIsImportingDaily(false);
+      if (dailyFileInputRef.current) {
+        dailyFileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // 处理日常记录文件选择
+  const handleDailyFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const validationError = validateDailyImportFile(file);
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    handleImportDaily(file);
+  };
+
+  // 触发日常记录文件选择
+  const triggerDailyFileSelect = () => {
+    dailyFileInputRef.current?.click();
+  };
+
+  // 清空日常记录
+  const handleClearDailyData = () => {
+    const message = `⚠️ 警告：此操作将清空所有日常记录！\n\n当前记录：${dailyRecords.length} 条\n\n此操作不可恢复，确定要清空吗？`;
+
+    if (window.confirm(message)) {
+      const count = clearAllDailyRecords();
+      loadData();
+      alert(`已清空 ${count} 条日常记录！`);
+    }
+  };
+
   return (
     <div className="home">
       <header className="home__header">
@@ -448,6 +631,18 @@ const Home: React.FC = () => {
           >
             🌙 {BUSINESS_MODE_LABELS[BusinessMode.SLEEP]}
           </button>
+          <button 
+            className={`mode-btn ${businessMode === BusinessMode.SOFTWARE ? 'mode-btn--active' : ''}`}
+            onClick={() => handleBusinessModeChange(BusinessMode.SOFTWARE)}
+          >
+            💻 {BUSINESS_MODE_LABELS[BusinessMode.SOFTWARE]}
+          </button>
+          <button 
+            className={`mode-btn ${businessMode === BusinessMode.DAILY ? 'mode-btn--active' : ''}`}
+            onClick={() => handleBusinessModeChange(BusinessMode.DAILY)}
+          >
+            📝 {BUSINESS_MODE_LABELS[BusinessMode.DAILY]}
+          </button>
         </div>
 
         {/* 根据业务模式显示不同的标题 */}
@@ -456,10 +651,20 @@ const Home: React.FC = () => {
             <h1>💰 记账本</h1>
             <p>轻松记录每一笔支出</p>
           </>
-        ) : (
+        ) : businessMode === BusinessMode.SLEEP ? (
           <>
             <h1>🌙 睡眠记录</h1>
             <p>记录你的每一次睡眠</p>
+          </>
+        ) : businessMode === BusinessMode.SOFTWARE ? (
+          <>
+            <h1>💻 软件使用记录</h1>
+            <p>记录和分析你的软件使用情况</p>
+          </>
+        ) : (
+          <>
+            <h1>📝 日常记录</h1>
+            <p>记录你的日常生活习惯</p>
           </>
         )}
       </header>
@@ -558,7 +763,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </>
-          ) : (
+          ) : businessMode === BusinessMode.SLEEP ? (
             <>
               {/* 睡眠记录模式 */}
               {/* 隐藏的文件输入 */}
@@ -593,6 +798,72 @@ const Home: React.FC = () => {
                       onImport={triggerSleepFileSelect}
                       onClear={handleClearSleepData}
                       isImporting={isImportingSleep}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : businessMode === BusinessMode.SOFTWARE ? (
+            <>
+              {/* 软件使用记录模式 */}
+              {/* 隐藏的文件输入 */}
+              <input
+                ref={browserFileInputRef}
+                type="file"
+                accept=".json,application/json"
+                onChange={handleBrowserFileSelect}
+                style={{ display: 'none' }}
+              />
+
+              <div className="home__section-group">
+                {/* 浏览器使用记录列表 */}
+                <div className="home__list-section">
+                  <div className="browser-records-container">
+                    <BrowserUsageList
+                      records={browserRecords}
+                      onExport={handleExportBrowser}
+                      onImport={triggerBrowserFileSelect}
+                      onClear={handleClearBrowserData}
+                      isImporting={isImportingBrowser}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* 日常记录模式 */}
+              {/* 隐藏的文件输入 */}
+              <input
+                ref={dailyFileInputRef}
+                type="file"
+                accept=".json,application/json"
+                onChange={handleDailyFileSelect}
+                style={{ display: 'none' }}
+              />
+
+              <div className="home__section-group">
+                {/* 添加日常记录表单 */}
+                <div className="home__form-section home__form-section--daily">
+                  <DailyRecordForm
+                    onAddRecord={handleAddDaily}
+                    onUpdateRecord={handleUpdateDaily}
+                    onCancelEdit={handleCancelDailyEdit}
+                    editingRecord={editingDaily}
+                  />
+                </div>
+
+                {/* 日常记录列表 */}
+                <div className="home__list-section">
+                  <div className="daily-records-container">
+                    <DailyRecordList 
+                      records={dailyRecords} 
+                      onDeleteRecord={handleDeleteDaily}
+                      onEditRecord={handleEditDaily}
+                      onExport={handleExportDaily}
+                      onImport={triggerDailyFileSelect}
+                      onClear={handleClearDailyData}
+                      isImporting={isImportingDaily}
                     />
                   </div>
                 </div>
