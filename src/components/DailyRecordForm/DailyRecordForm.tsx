@@ -208,179 +208,147 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
           />
         </div>
 
-        {/* 三餐情况 */}
-        <div className="form-section">
-          <h3 className="section-title">🍽️ 三餐情况</h3>
-          <div className="meal-buttons">
-            <button
-              type="button"
-              className={`meal-btn meal-btn--${getMealStatusDisplay(breakfast).class}`}
-              onClick={() => setBreakfast(cycleMealStatus(breakfast))}
-            >
-              <span className="meal-label">早餐</span>
-              <span className="meal-status">{getMealStatusDisplay(breakfast).text}</span>
-            </button>
-            <button
-              type="button"
-              className={`meal-btn meal-btn--${getMealStatusDisplay(lunch).class}`}
-              onClick={() => setLunch(cycleMealStatus(lunch))}
-            >
-              <span className="meal-label">午餐</span>
-              <span className="meal-status">{getMealStatusDisplay(lunch).text}</span>
-            </button>
-            <button
-              type="button"
-              className={`meal-btn meal-btn--${getMealStatusDisplay(dinner).class}`}
-              onClick={() => setDinner(cycleMealStatus(dinner))}
-            >
-              <span className="meal-label">晚餐</span>
-              <span className="meal-status">{getMealStatusDisplay(dinner).text}</span>
-            </button>
+        {/* 三餐 */}
+        <div className="form-group">
+          <label>🍽️ 三餐</label>
+          <div className="meal-checkboxes">
+            <div className="meal-item">
+              <span className="meal-name">早餐</span>
+              <button
+                type="button"
+                className={`meal-checkbox meal-checkbox--${getMealStatusDisplay(breakfast).class}`}
+                onClick={() => setBreakfast(cycleMealStatus(breakfast))}
+                title={getMealStatusDisplay(breakfast).text}
+              >
+                {breakfast === MealStatus.NOT_EATEN && '❌'}
+                {breakfast === MealStatus.EATEN_IRREGULAR && '⚠️'}
+                {breakfast === MealStatus.EATEN_REGULAR && '✅'}
+              </button>
+            </div>
+            <div className="meal-item">
+              <span className="meal-name">午餐</span>
+              <button
+                type="button"
+                className={`meal-checkbox meal-checkbox--${getMealStatusDisplay(lunch).class}`}
+                onClick={() => setLunch(cycleMealStatus(lunch))}
+                title={getMealStatusDisplay(lunch).text}
+              >
+                {lunch === MealStatus.NOT_EATEN && '❌'}
+                {lunch === MealStatus.EATEN_IRREGULAR && '⚠️'}
+                {lunch === MealStatus.EATEN_REGULAR && '✅'}
+              </button>
+            </div>
+            <div className="meal-item">
+              <span className="meal-name">晚餐</span>
+              <button
+                type="button"
+                className={`meal-checkbox meal-checkbox--${getMealStatusDisplay(dinner).class}`}
+                onClick={() => setDinner(cycleMealStatus(dinner))}
+                title={getMealStatusDisplay(dinner).text}
+              >
+                {dinner === MealStatus.NOT_EATEN && '❌'}
+                {dinner === MealStatus.EATEN_IRREGULAR && '⚠️'}
+                {dinner === MealStatus.EATEN_REGULAR && '✅'}
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* 洗漱情况 */}
-        <div className="form-section">
-          <h3 className="section-title">🧼 洗漱情况</h3>
-          <div className="checkbox-group">
-            <label className="checkbox-label">
+        {/* 内务 */}
+        <div className="form-group">
+          <label>🏠 内务</label>
+          <div className="housework-checkboxes">
+            <div className="checkbox-item">
+              <span>早洗</span>
               <input
                 type="checkbox"
                 checked={morningWash}
                 onChange={(e) => setMorningWash(e.target.checked)}
               />
-              <span>早上洗漱</span>
-            </label>
-            <label className="checkbox-label">
+            </div>
+            <div className="checkbox-item">
+              <span>晚洗</span>
               <input
                 type="checkbox"
                 checked={nightWash}
                 onChange={(e) => setNightWash(e.target.checked)}
               />
-              <span>晚上洗漱</span>
-            </label>
-          </div>
-        </div>
-
-        {/* 洗浴情况 */}
-        <div className="form-section">
-          <h3 className="section-title">🚿 洗浴情况</h3>
-          <div className="checkbox-group">
-            <label className="checkbox-label">
+            </div>
+            <div className="checkbox-item">
+              <span>洗澡</span>
               <input
                 type="checkbox"
                 checked={shower}
                 onChange={(e) => setShower(e.target.checked)}
               />
-              <span>洗澡</span>
-            </label>
-            <label className="checkbox-label">
+            </div>
+            <div className="checkbox-item">
+              <span>洗头</span>
               <input
                 type="checkbox"
                 checked={hairWash}
                 onChange={(e) => setHairWash(e.target.checked)}
               />
-              <span>洗头</span>
-            </label>
-            <label className="checkbox-label">
+            </div>
+            <div className="checkbox-item">
+              <span>洗脚</span>
               <input
                 type="checkbox"
                 checked={footWash}
                 onChange={(e) => setFootWash(e.target.checked)}
               />
-              <span>洗脚</span>
-            </label>
-            <label className="checkbox-label">
+            </div>
+            <div className="checkbox-item">
+              <span>洗脸</span>
               <input
                 type="checkbox"
                 checked={faceWash}
                 onChange={(e) => setFaceWash(e.target.checked)}
               />
-              <span>洗脸</span>
-            </label>
-          </div>
-        </div>
-
-        {/* 洗衣服和打扫 */}
-        <div className="form-section">
-          <h3 className="section-title">🏠 家务情况</h3>
-          <div className="radio-group">
-            <div className="radio-item">
-              <label className="radio-item-label">洗衣服</label>
-              <div className="radio-options">
-                <label className="radio-label">
-                  <input
-                    type="radio"
-                    name="laundry"
-                    checked={laundry === true}
-                    onChange={() => setLaundry(true)}
-                  />
-                  <span>是</span>
-                </label>
-                <label className="radio-label">
-                  <input
-                    type="radio"
-                    name="laundry"
-                    checked={laundry === false}
-                    onChange={() => setLaundry(false)}
-                  />
-                  <span>否</span>
-                </label>
-              </div>
             </div>
-            <div className="radio-item">
-              <label className="radio-item-label">打扫</label>
-              <div className="radio-options">
-                <label className="radio-label">
-                  <input
-                    type="radio"
-                    name="cleaning"
-                    checked={cleaning === true}
-                    onChange={() => setCleaning(true)}
-                  />
-                  <span>是</span>
-                </label>
-                <label className="radio-label">
-                  <input
-                    type="radio"
-                    name="cleaning"
-                    checked={cleaning === false}
-                    onChange={() => setCleaning(false)}
-                  />
-                  <span>否</span>
-                </label>
-              </div>
+            <div className="checkbox-item">
+              <span>洗衣</span>
+              <input
+                type="checkbox"
+                checked={laundry}
+                onChange={(e) => setLaundry(e.target.checked)}
+              />
+            </div>
+            <div className="checkbox-item">
+              <span>打扫</span>
+              <input
+                type="checkbox"
+                checked={cleaning}
+                onChange={(e) => setCleaning(e.target.checked)}
+              />
             </div>
           </div>
         </div>
 
         {/* 工作日打卡 */}
-        <div className="form-section">
-          <h3 className="section-title">💼 工作日打卡</h3>
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="checkInTime">签到时间</label>
+        <div className="form-group">
+          <label>💼 打卡</label>
+          <div className="time-inputs-inline">
+            <div className="time-item">
+              <span>签到</span>
               <input
                 type="time"
-                id="checkInTime"
                 value={checkInTime}
                 onChange={(e) => setCheckInTime(e.target.value)}
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="checkOutTime">签退时间</label>
+            <div className="time-item">
+              <span>签退</span>
               <input
                 type="time"
-                id="checkOutTime"
                 value={checkOutTime}
                 onChange={(e) => setCheckOutTime(e.target.value)}
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="leaveTime">离开时间</label>
+            <div className="time-item">
+              <span>离开</span>
               <input
                 type="time"
-                id="leaveTime"
                 value={leaveTime}
                 onChange={(e) => setLeaveTime(e.target.value)}
               />

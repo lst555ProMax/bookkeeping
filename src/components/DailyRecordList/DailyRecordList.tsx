@@ -161,8 +161,9 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
         )}
       </div>
       
-      {sortedRecords.map((record) => (
-        <div key={record.id} className="daily-item">
+      <div className="daily-list__content">
+        {sortedRecords.map((record) => (
+          <div key={record.id} className="daily-item">
           <div className="daily-item__header">
             <div className="daily-item__date">
               📅 {new Date(record.date).toLocaleDateString('zh-CN', {
@@ -193,92 +194,83 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
           <div className="daily-item__body">
             {/* 三餐情况 */}
             <div className="detail-section">
-              <div className="section-title">🍽️ 三餐情况</div>
-              <div className="meal-grid">
-                <div className={`meal-status ${getMealClass(record.meals.breakfast)}`}>
-                  <span className="meal-name">早餐:</span>
-                  <span className="meal-value">
-                    {getMealEmoji(record.meals.breakfast)} {MEAL_STATUS_LABELS[record.meals.breakfast]}
-                  </span>
-                </div>
-                <div className={`meal-status ${getMealClass(record.meals.lunch)}`}>
-                  <span className="meal-name">午餐:</span>
-                  <span className="meal-value">
-                    {getMealEmoji(record.meals.lunch)} {MEAL_STATUS_LABELS[record.meals.lunch]}
-                  </span>
-                </div>
-                <div className={`meal-status ${getMealClass(record.meals.dinner)}`}>
-                  <span className="meal-name">晚餐:</span>
-                  <span className="meal-value">
-                    {getMealEmoji(record.meals.dinner)} {MEAL_STATUS_LABELS[record.meals.dinner]}
-                  </span>
+              <div className="section-title">🍽️ 三餐</div>
+              <div className="section-content">
+                <div className="meal-grid">
+                  <div className={`meal-status ${getMealClass(record.meals.breakfast)}`}>
+                    <span className="meal-name">早餐:</span>
+                    <span className="meal-value">
+                      {getMealEmoji(record.meals.breakfast)} {MEAL_STATUS_LABELS[record.meals.breakfast]}
+                    </span>
+                  </div>
+                  <div className={`meal-status ${getMealClass(record.meals.lunch)}`}>
+                    <span className="meal-name">午餐:</span>
+                    <span className="meal-value">
+                      {getMealEmoji(record.meals.lunch)} {MEAL_STATUS_LABELS[record.meals.lunch]}
+                    </span>
+                  </div>
+                  <div className={`meal-status ${getMealClass(record.meals.dinner)}`}>
+                    <span className="meal-name">晚餐:</span>
+                    <span className="meal-value">
+                      {getMealEmoji(record.meals.dinner)} {MEAL_STATUS_LABELS[record.meals.dinner]}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 洗漱情况 */}
+            {/* 内务情况 - 合并洗漱/洗浴/家务 */}
             <div className="detail-section">
-              <div className="section-title">🧼 洗漱情况</div>
-              <div className="tag-group">
-                {record.hygiene.morningWash && <span className="tag tag--success">✅ 早上洗漱</span>}
-                {record.hygiene.nightWash && <span className="tag tag--success">✅ 晚上洗漱</span>}
-                {!record.hygiene.morningWash && !record.hygiene.nightWash && (
-                  <span className="tag tag--muted">未洗漱</span>
-                )}
-              </div>
-            </div>
-
-            {/* 洗浴情况 */}
-            <div className="detail-section">
-              <div className="section-title">🚿 洗浴情况</div>
-              <div className="tag-group">
-                {record.bathing.shower && <span className="tag tag--info">🚿 洗澡</span>}
-                {record.bathing.hairWash && <span className="tag tag--info">💆 洗头</span>}
-                {record.bathing.footWash && <span className="tag tag--info">🦶 洗脚</span>}
-                {record.bathing.faceWash && <span className="tag tag--info">😊 洗脸</span>}
-                {!record.bathing.shower && !record.bathing.hairWash && 
-                 !record.bathing.footWash && !record.bathing.faceWash && (
-                  <span className="tag tag--muted">未洗浴</span>
-                )}
-              </div>
-            </div>
-
-            {/* 家务情况 */}
-            <div className="detail-section">
-              <div className="section-title">🏠 家务情况</div>
-              <div className="tag-group">
-                <span className={`tag ${record.laundry ? 'tag--success' : 'tag--default'}`}>
-                  {record.laundry ? '✅' : '❌'} 洗衣服
-                </span>
-                <span className={`tag ${record.cleaning ? 'tag--success' : 'tag--default'}`}>
-                  {record.cleaning ? '✅' : '❌'} 打扫
-                </span>
+              <div className="section-title">🏠 内务</div>
+              <div className="section-content">
+                <div className="tag-group">
+                  {/* 洗漱 */}
+                  {record.hygiene.morningWash && <span className="tag tag--success">✅ 早洗</span>}
+                  {record.hygiene.nightWash && <span className="tag tag--success">✅ 晚洗</span>}
+                  {/* 洗浴 */}
+                  {record.bathing.shower && <span className="tag tag--info">🚿 洗澡</span>}
+                  {record.bathing.hairWash && <span className="tag tag--info">💆 洗头</span>}
+                  {record.bathing.footWash && <span className="tag tag--info">🦶 洗脚</span>}
+                  {record.bathing.faceWash && <span className="tag tag--info">😊 洗脸</span>}
+                  {/* 家务 */}
+                  {record.laundry && <span className="tag tag--warning">👕 洗衣</span>}
+                  {record.cleaning && <span className="tag tag--warning">🧹 打扫</span>}
+                  {/* 如果全空 */}
+                  {!record.hygiene.morningWash && !record.hygiene.nightWash && 
+                   !record.bathing.shower && !record.bathing.hairWash && 
+                   !record.bathing.footWash && !record.bathing.faceWash &&
+                   !record.laundry && !record.cleaning && (
+                    <span className="tag tag--muted">未记录</span>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* 工作日打卡 */}
             {(record.checkInTime || record.checkOutTime || record.leaveTime) && (
               <div className="detail-section">
-                <div className="section-title">💼 工作日打卡</div>
-                <div className="time-grid">
-                  {record.checkInTime && (
-                    <div className="time-item">
-                      <span className="time-label">签到:</span>
-                      <span className="time-value">{record.checkInTime}</span>
-                    </div>
-                  )}
-                  {record.checkOutTime && (
-                    <div className="time-item">
-                      <span className="time-label">签退:</span>
-                      <span className="time-value">{record.checkOutTime}</span>
-                    </div>
-                  )}
-                  {record.leaveTime && (
-                    <div className="time-item">
-                      <span className="time-label">离开:</span>
-                      <span className="time-value">{record.leaveTime}</span>
-                    </div>
-                  )}
+                <div className="section-title">💼 打卡</div>
+                <div className="section-content">
+                  <div className="time-grid">
+                    {record.checkInTime && (
+                      <div className="time-item">
+                        <span className="time-label">签到:</span>
+                        <span className="time-value">{record.checkInTime}</span>
+                      </div>
+                    )}
+                    {record.checkOutTime && (
+                      <div className="time-item">
+                        <span className="time-label">签退:</span>
+                        <span className="time-value">{record.checkOutTime}</span>
+                      </div>
+                    )}
+                    {record.leaveTime && (
+                      <div className="time-item">
+                        <span className="time-label">离开:</span>
+                        <span className="time-value">{record.leaveTime}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -293,6 +285,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 };
