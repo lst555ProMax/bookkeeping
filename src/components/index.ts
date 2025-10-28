@@ -1,17 +1,33 @@
-// 导出所有组件
-export { default as RecordForm } from './RecordForm/RecordForm';
-export { default as RecordList } from './RecordList/RecordList';
-export { default as MonthSelector } from './MonthSelector/MonthSelector';
-export { default as RecordPieChart } from './RecordPieChart/RecordPieChart';
-export { default as RecordDaysChart } from './RecordDaysChart/RecordDaysChart';
-export { default as RecordTrendChart } from './RecordTrendChart/RecordTrendChart';
-export { default as CategoryManager } from './CategoryManager/CategoryManager';
-export { default as SleepForm } from './SleepForm/SleepForm';
-export { default as SleepList } from './SleepList/SleepList';
-export { default as SleepTimeTrendChart } from './SleepTimeTrendChart/SleepTimeTrendChart';
-export { default as SleepDurationTrendChart } from './SleepDurationTrendChart/SleepDurationTrendChart';
-export { default as SleepQualityTrendChart } from './SleepQualityTrendChart/SleepQualityTrendChart';
-export { default as CategoryFilter } from './CategoryFilter/CategoryFilter';
-export { default as BrowserUsageList } from './BrowserUsageList/BrowserUsageList';
-export { default as DailyRecordForm } from './DailyRecordForm/DailyRecordForm';
-export { default as DailyRecordList } from './DailyRecordList/DailyRecordList';
+// 导出所有组件（按模块分类）
+
+// 账单记录相关组件
+export {
+  RecordForm,
+  RecordList,
+  MonthSelector,
+  RecordPieChart,
+  RecordDaysChart,
+  RecordTrendChart,
+  CategoryManager,
+  CategoryFilter
+} from './accounting';
+
+// 睡眠记录相关组件
+export {
+  SleepForm,
+  SleepList,
+  SleepTimeTrendChart,
+  SleepDurationTrendChart,
+  SleepQualityTrendChart
+} from './sleep';
+
+// 软件使用记录相关组件
+export {
+  BrowserUsageList
+} from './browser';
+
+// 日常记录相关组件
+export {
+  DailyRecordForm,
+  DailyRecordList
+} from './daily';

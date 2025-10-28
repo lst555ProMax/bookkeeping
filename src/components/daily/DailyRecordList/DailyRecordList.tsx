@@ -162,8 +162,9 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
       </div>
       
       <div className="daily-list__content">
-        {sortedRecords.map((record) => (
-          <div key={record.id} className="daily-item">
+        <div className="daily-list__grid">
+          {sortedRecords.map((record) => (
+            <div key={record.id} className="daily-item">
           <div className="daily-item__header">
             <div className="daily-item__date">
               📅 {new Date(record.date).toLocaleDateString('zh-CN', {
@@ -285,6 +286,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
           </div>
         </div>
       ))}
+        </div>
       </div>
     </div>
   );

@@ -63,6 +63,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
+    padding: 1rem 1.5rem;
 
     /* 自定义滚动条 */
     &::-webkit-scrollbar {
@@ -81,19 +82,14 @@
     &::-webkit-scrollbar-thumb:hover {
       background: #a8a8a8;
     }
+  }
 
-    /* 卡片间距 */
-    .daily-item {
-      margin: 1rem 1.5rem;
-
-      &:first-child {
-        margin-top: 1rem;
-      }
-
-      &:last-child {
-        margin-bottom: 1rem;
-      }
-    }
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    
+    /* 卡片样式在 .daily-item 中定义 */
   }
 
   &__empty {
@@ -163,7 +159,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0.75rem 1rem;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
   }
 
@@ -400,6 +396,10 @@
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+  .daily-list__grid {
+    grid-template-columns: 1fr;
+  }
+
   .meal-grid {
     grid-template-columns: 1fr;
   }

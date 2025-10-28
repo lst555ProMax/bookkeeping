@@ -97,12 +97,15 @@
   display: flex;
   gap: 1rem;
   align-items: center;
+  justify-content: space-between;
+  flex: 1;
 }
 
 .meal-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex: 1;
 
   .meal-name {
     font-size: 0.9rem;
@@ -124,6 +127,7 @@
   align-items: center;
   justify-content: center;
   padding: 0;
+  flex: 1;
 
   &:hover {
     transform: scale(1.1);
@@ -149,15 +153,22 @@
 // 内务复选框
 .housework-checkboxes {
   display: flex;
+  flex-direction: column;
   gap: 0.75rem;
-  flex-wrap: wrap;
-  align-items: center;
+}
+
+.housework-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  flex: 1;
 }
 
 .checkbox-item {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  flex: 1;
 
   span {
     font-size: 0.85rem;
@@ -203,14 +214,14 @@
 // 打卡时间输入
 .time-inputs-inline {
   display: flex;
-  gap: 1rem;
-  align-items: center;
+  gap: 0.5rem;
+  align-items: stretch;
 }
 
 .time-item {
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  flex-direction: column;
+  gap: 0.5rem;
   flex: 1;
 
   span {

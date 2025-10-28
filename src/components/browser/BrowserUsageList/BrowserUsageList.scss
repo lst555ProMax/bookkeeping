@@ -40,7 +40,7 @@
 
       .stat-value {
         font-weight: 600;
-        color: #1890ff;
+        color: #667eea;
       }
     }
   }
@@ -66,29 +66,35 @@
     }
 
     &--import {
-      background: #52c41a;
+      background: linear-gradient(135deg, #43bc8e 0%, #2d8a64 100%);
       color: white;
+      box-shadow: 0 4px 15px rgba(67, 188, 142, 0.3);
 
       &:hover:not(:disabled) {
-        background: #73d13d;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(67, 188, 142, 0.4);
       }
     }
 
     &--export {
-      background: #1890ff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 
       &:hover:not(:disabled) {
-        background: #40a9ff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
       }
     }
 
     &--clear {
-      background: #ff4d4f;
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
       color: white;
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
 
       &:hover:not(:disabled) {
-        background: #ff7875;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
       }
     }
   }
@@ -176,7 +182,7 @@
   &__rank {
     font-size: 16px;
     font-weight: 700;
-    color: #1890ff;
+    color: #667eea;
     min-width: 40px;
     text-align: center;
   }
@@ -233,8 +239,9 @@
   .category-badge {
     display: inline-block;
     padding: 4px 12px;
-    background: #e6f7ff;
-    color: #1890ff;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border: 1px solid rgba(102, 126, 234, 0.2);
     border-radius: 12px;
     font-size: 12px;
     font-weight: 500;

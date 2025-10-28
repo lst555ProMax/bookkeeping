@@ -132,9 +132,9 @@ body {
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     }
 
-    /* 日常记录表单特殊宽度 */
+    /* 日常记录表单特殊宽度 - 与睡眠记录表单保持一致 */
     &--daily {
-      flex: 0 0 600px;
+      flex: 0 0 400px;
       max-height: 100%;
       overflow: hidden;
       display: flex;

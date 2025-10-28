@@ -258,69 +258,73 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
         <div className="form-group">
           <label>🏠 内务</label>
           <div className="housework-checkboxes">
-            <div className="checkbox-item">
-              <span>早洗</span>
-              <input
-                type="checkbox"
-                checked={morningWash}
-                onChange={(e) => setMorningWash(e.target.checked)}
-              />
+            <div className="housework-row">
+              <div className="checkbox-item">
+                <span>早洗</span>
+                <input
+                  type="checkbox"
+                  checked={morningWash}
+                  onChange={(e) => setMorningWash(e.target.checked)}
+                />
+              </div>
+              <div className="checkbox-item">
+                <span>晚洗</span>
+                <input
+                  type="checkbox"
+                  checked={nightWash}
+                  onChange={(e) => setNightWash(e.target.checked)}
+                />
+              </div>
+              <div className="checkbox-item">
+                <span>洗衣</span>
+                <input
+                  type="checkbox"
+                  checked={laundry}
+                  onChange={(e) => setLaundry(e.target.checked)}
+                />
+              </div>
+              <div className="checkbox-item">
+                <span>打扫</span>
+                <input
+                  type="checkbox"
+                  checked={cleaning}
+                  onChange={(e) => setCleaning(e.target.checked)}
+                />
+              </div>
             </div>
-            <div className="checkbox-item">
-              <span>晚洗</span>
-              <input
-                type="checkbox"
-                checked={nightWash}
-                onChange={(e) => setNightWash(e.target.checked)}
-              />
-            </div>
-            <div className="checkbox-item">
-              <span>洗澡</span>
-              <input
-                type="checkbox"
-                checked={shower}
-                onChange={(e) => setShower(e.target.checked)}
-              />
-            </div>
-            <div className="checkbox-item">
-              <span>洗头</span>
-              <input
-                type="checkbox"
-                checked={hairWash}
-                onChange={(e) => setHairWash(e.target.checked)}
-              />
-            </div>
-            <div className="checkbox-item">
-              <span>洗脚</span>
-              <input
-                type="checkbox"
-                checked={footWash}
-                onChange={(e) => setFootWash(e.target.checked)}
-              />
-            </div>
-            <div className="checkbox-item">
-              <span>洗脸</span>
-              <input
-                type="checkbox"
-                checked={faceWash}
-                onChange={(e) => setFaceWash(e.target.checked)}
-              />
-            </div>
-            <div className="checkbox-item">
-              <span>洗衣</span>
-              <input
-                type="checkbox"
-                checked={laundry}
-                onChange={(e) => setLaundry(e.target.checked)}
-              />
-            </div>
-            <div className="checkbox-item">
-              <span>打扫</span>
-              <input
-                type="checkbox"
-                checked={cleaning}
-                onChange={(e) => setCleaning(e.target.checked)}
-              />
+            <div className="housework-row">
+              <div className="checkbox-item">
+                <span>洗脸</span>
+                <input
+                  type="checkbox"
+                  checked={faceWash}
+                  onChange={(e) => setFaceWash(e.target.checked)}
+                />
+              </div>
+              <div className="checkbox-item">
+                <span>洗脚</span>
+                <input
+                  type="checkbox"
+                  checked={footWash}
+                  onChange={(e) => setFootWash(e.target.checked)}
+                />
+              </div>
+              <div className="checkbox-item">
+                <span>洗头</span>
+                <input
+                  type="checkbox"
+                  checked={hairWash}
+                  onChange={(e) => setHairWash(e.target.checked)}
+                />
+              </div>
+              <div className="checkbox-item">
+                <span>洗澡</span>
+                <input
+                  type="checkbox"
+                  checked={shower}
+                  onChange={(e) => setShower(e.target.checked)}
+                />
+              </div>
             </div>
           </div>
         </div>
