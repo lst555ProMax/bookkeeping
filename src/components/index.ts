@@ -31,3 +31,8 @@ export {
   DailyRecordForm,
   DailyRecordList
 } from './daily';
+
+// 抽卡游戏组件
+export {
+  CardDraw
+} from './cardDraw';

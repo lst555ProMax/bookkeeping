@@ -18,6 +18,9 @@ export * from './browser/dataImportExport';
 export * from './daily/storage';
 export * from './daily/dataImportExport';
 
+// ==================== 抽卡游戏模块 ====================
+export * from './cardDraw/storage';
+
 // ==================== 向后兼容的别名导出 ====================
 // 为了不破坏现有代码，保留一些常用的别名
 export { 

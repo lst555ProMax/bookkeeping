@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList } from '@/components';
+import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
@@ -648,8 +648,8 @@ const Home: React.FC = () => {
         {/* 根据业务模式显示不同的标题 */}
         {businessMode === BusinessMode.ACCOUNTING ? (
           <>
-            <h1>💰 记账本</h1>
-            <p>轻松记录每一笔支出</p>
+            <h1>💰 账单记录</h1>
+            <p>记录你的每一笔收支</p>
           </>
         ) : businessMode === BusinessMode.SLEEP ? (
           <>
@@ -658,7 +658,7 @@ const Home: React.FC = () => {
           </>
         ) : businessMode === BusinessMode.SOFTWARE ? (
           <>
-            <h1>💻 软件使用记录</h1>
+            <h1>💻 软件使用</h1>
             <p>记录和分析你的软件使用情况</p>
           </>
         ) : (
@@ -667,6 +667,11 @@ const Home: React.FC = () => {
             <p>记录你的日常生活习惯</p>
           </>
         )}
+
+        {/* 抽卡游戏 - 在header右侧 */}
+        <div className="home__card-draw">
+          <CardDraw />
+        </div>
       </header>
 
       <main className="home__main">

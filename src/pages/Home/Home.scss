@@ -43,6 +43,13 @@ body {
     }
   }
 
+  &__card-draw {
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
   &__mode-switcher {
     position: absolute;
     left: 2rem;
@@ -287,6 +294,14 @@ body {
         padding: 0.6rem 1.2rem;
         font-size: 0.9rem;
       }
+    }
+
+    &__card-draw {
+      position: static;
+      transform: none;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
     }
 
     &__section-group {
