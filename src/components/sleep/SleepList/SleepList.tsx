@@ -198,7 +198,7 @@ const SleepList: React.FC<SleepListProps> = ({
           </div>
 
           <div className="sleep-item__body">
-            {/* 第一行：入睡时间和醒来时间 */}
+            {/* 睡眠数据：入睡、醒来、时长、质量 */}
             <div className="sleep-detail-row">
               <div className="sleep-detail">
                 <span className="detail-label">🌙 入睡时间:</span>
@@ -209,10 +209,7 @@ const SleepList: React.FC<SleepListProps> = ({
                 <span className="detail-label">☀️ 醒来时间:</span>
                 <span className="detail-value">{sleep.wakeTime}</span>
               </div>
-            </div>
 
-            {/* 第二行：睡眠时长和睡眠质量 */}
-            <div className="sleep-detail-row">
               {sleep.duration !== undefined && (
                 <div className="sleep-detail">
                   <span className="detail-label">⏱️ 睡眠时长:</span>
@@ -230,10 +227,13 @@ const SleepList: React.FC<SleepListProps> = ({
               </div>
             </div>
 
+            {/* 备注 */}
             {sleep.notes && (
-              <div className="sleep-notes">
-                <div className="notes-label">📝 备注:</div>
-                <div className="notes-content">{sleep.notes}</div>
+              <div className="sleep-detail-row">
+                <div className="sleep-notes">
+                  <span className="notes-label">📝 备注:</span>
+                  <span className="notes-content">{sleep.notes}</span>
+                </div>
               </div>
             )}
           </div>

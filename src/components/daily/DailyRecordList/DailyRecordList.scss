@@ -10,7 +10,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid #f0f0f0;
+    border-radius:12px;
     flex-shrink: 0;
     position: sticky;
     top: 0;
@@ -63,7 +63,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
-    padding: 1rem 1.5rem;
+    padding: 0rem 1.5rem 1rem 1.5rem;
 
     /* 自定义滚动条 */
     &::-webkit-scrollbar {
@@ -182,29 +182,22 @@
 }
 
 .action-btn {
-  padding: 0.4rem 0.7rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
+  background: none;
+  border: none;
   font-size: 1.1rem;
   cursor: pointer;
+  padding: 0;
   transition: all 0.2s ease;
+  line-height: 1;
+  color: white;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.2);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+
+  &:active {
     transform: scale(1.1);
-  }
-
-  &--edit {
-    &:hover {
-      background: rgba(52, 211, 153, 0.3);
-    }
-  }
-
-  &--delete {
-    &:hover {
-      background: rgba(239, 68, 68, 0.3);
-    }
   }
 }
 
@@ -215,6 +208,7 @@
   padding: 0.6rem 0.75rem;
   background: #f8f9fa;
   border-radius: 8px;
+  min-height: 48px;
 
   .section-title {
     font-size: 0.9rem;
@@ -341,7 +335,7 @@
   }
 }
 
-// 时间网格 - 改为行内显示
+// 时间网格 - time-item内部竖向排列
 .time-grid {
   display: flex;
   gap: 0.5rem;
@@ -351,13 +345,16 @@
 
 .time-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.3rem;
   padding: 0.4rem 0.6rem;
-  background: #f8f9fa;
+  background: white;
   border-radius: 6px;
   border: 1px solid #e9ecef;
   font-size: 0.85rem;
+  min-height: 48px;
 
   .time-label {
     font-size: 0.8rem;
@@ -372,18 +369,21 @@
   }
 }
 
-// 备注
+// 备注 - 行排列
 .daily-notes {
-  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
   background: #f8f9fa;
-  border-left: 3px solid #667eea;
   border-radius: 6px;
 
   .notes-label {
     font-weight: 600;
     font-size: 0.85rem;
     color: #495057;
-    margin-bottom: 0.4rem;
+    flex-shrink: 0;
+    width:90px;
   }
 
   .notes-content {
@@ -391,6 +391,7 @@
     font-size: 0.85rem;
     line-height: 1.5;
     white-space: pre-wrap;
+    flex: 1;
   }
 }
 

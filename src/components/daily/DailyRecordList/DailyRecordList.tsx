@@ -279,8 +279,8 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
             {/* 备注 */}
             {record.notes && (
               <div className="daily-notes">
-                <div className="notes-label">📝 备注:</div>
-                <div className="notes-content">{record.notes}</div>
+                <span className="notes-label">📝 备注:</span>
+                <span className="notes-content">{record.notes}</span>
               </div>
             )}
           </div>
