@@ -198,7 +198,7 @@ const SleepList: React.FC<SleepListProps> = ({
           </div>
 
           <div className="sleep-item__body">
-            {/* 睡眠数据：入睡、醒来、时长、质量 */}
+            {/* 第一行：入睡、醒来、时长、质量 */}
             <div className="sleep-detail-row">
               <div className="sleep-detail">
                 <span className="detail-label">🌙 入睡时间:</span>
@@ -227,13 +227,27 @@ const SleepList: React.FC<SleepListProps> = ({
               </div>
             </div>
 
-            {/* 备注 */}
-            {sleep.notes && (
-              <div className="sleep-detail-row">
-                <div className="sleep-notes">
-                  <span className="notes-label">📝 备注:</span>
-                  <span className="notes-content">{sleep.notes}</span>
-                </div>
+            {/* 第二行：小睡和备注 */}
+            {((sleep.naps && (sleep.naps.morning || sleep.naps.noon || sleep.naps.afternoon || sleep.naps.evening)) || sleep.notes) && (
+              <div className="sleep-detail-row sleep-detail-row--secondary">
+                {sleep.naps && (sleep.naps.morning || sleep.naps.noon || sleep.naps.afternoon || sleep.naps.evening) && (
+                  <div className="sleep-detail sleep-naps">
+                    <span className="detail-label">💤 小睡:</span>
+                    <div className="naps-tags">
+                      {sleep.naps.morning && <span className="nap-tag">上午</span>}
+                      {sleep.naps.noon && <span className="nap-tag">中午</span>}
+                      {sleep.naps.afternoon && <span className="nap-tag">下午</span>}
+                      {sleep.naps.evening && <span className="nap-tag">晚上</span>}
+                    </div>
+                  </div>
+                )}
+
+                {sleep.notes && (
+                  <div className="sleep-notes">
+                    <span className="notes-label">📝 备注:</span>
+                    <span className="notes-content">{sleep.notes}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>

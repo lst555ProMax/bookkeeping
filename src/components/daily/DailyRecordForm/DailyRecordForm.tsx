@@ -45,6 +45,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
   // 其他状态
   const [laundry, setLaundry] = useState(false);
   const [cleaning, setCleaning] = useState(false);
+  const [wechatSteps, setWechatSteps] = useState('');
   
   // 打卡时间
   const [checkInTime, setCheckInTime] = useState('');
@@ -67,6 +68,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     setFaceWash(false);
     setLaundry(false);
     setCleaning(false);
+    setWechatSteps('');
     setCheckInTime('');
     setCheckOutTime('');
     setLeaveTime('');
@@ -88,6 +90,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       setFaceWash(editingRecord.bathing.faceWash);
       setLaundry(editingRecord.laundry);
       setCleaning(editingRecord.cleaning);
+      setWechatSteps(editingRecord.wechatSteps?.toString() || '');
       setCheckInTime(editingRecord.checkInTime || '');
       setCheckOutTime(editingRecord.checkOutTime || '');
       setLeaveTime(editingRecord.leaveTime || '');
@@ -135,6 +138,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       },
       laundry,
       cleaning,
+      wechatSteps: wechatSteps ? parseInt(wechatSteps) : undefined,
       checkInTime: checkInTime.trim() || undefined,
       checkOutTime: checkOutTime.trim() || undefined,
       leaveTime: leaveTime.trim() || undefined,
@@ -327,6 +331,19 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
               </div>
             </div>
           </div>
+        </div>
+
+        {/* 微信步数 */}
+        <div className="form-group">
+          <label htmlFor="wechatSteps">👣 微信步数</label>
+          <input
+            type="number"
+            id="wechatSteps"
+            value={wechatSteps}
+            onChange={(e) => setWechatSteps(e.target.value)}
+            placeholder="输入今天的微信步数"
+            min="0"
+          />
         </div>
 
         {/* 工作日打卡 */}

@@ -30,6 +30,12 @@ const SleepForm: React.FC<SleepFormProps> = ({
   const [wakeTime, setWakeTime] = useState('08:00');
   const [quality, setQuality] = useState<string>('80');
   const [notes, setNotes] = useState('');
+  const [naps, setNaps] = useState({
+    morning: false,
+    noon: false,
+    afternoon: false,
+    evening: false
+  });
 
   const resetForm = () => {
     setDate(getDefaultDate());
@@ -37,6 +43,12 @@ const SleepForm: React.FC<SleepFormProps> = ({
     setWakeTime('08:00');
     setQuality('80');
     setNotes('');
+    setNaps({
+      morning: false,
+      noon: false,
+      afternoon: false,
+      evening: false
+    });
   };
 
   // 当编辑记录时，填充表单
@@ -47,6 +59,12 @@ const SleepForm: React.FC<SleepFormProps> = ({
       setWakeTime(editingSleep.wakeTime);
       setQuality(String(editingSleep.quality));
       setNotes(editingSleep.notes || '');
+      setNaps({
+        morning: editingSleep.naps?.morning || false,
+        noon: editingSleep.naps?.noon || false,
+        afternoon: editingSleep.naps?.afternoon || false,
+        evening: editingSleep.naps?.evening || false
+      });
     } else {
       resetForm();
     }
@@ -87,6 +105,12 @@ const SleepForm: React.FC<SleepFormProps> = ({
       wakeTime,
       quality: qualityNum,
       duration,
+      naps: {
+        morning: naps.morning,
+        noon: naps.noon,
+        afternoon: naps.afternoon,
+        evening: naps.evening
+      },
       notes: notes.trim() || undefined,
       createdAt: editingSleep?.createdAt || new Date()
     };
@@ -152,6 +176,44 @@ const SleepForm: React.FC<SleepFormProps> = ({
               onChange={(e) => setWakeTime(e.target.value)}
               required
             />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>💤 小睡</label>
+          <div className="checkbox-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={naps.morning}
+                onChange={(e) => setNaps({ ...naps, morning: e.target.checked })}
+              />
+              <span>上午</span>
+            </label>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={naps.noon}
+                onChange={(e) => setNaps({ ...naps, noon: e.target.checked })}
+              />
+              <span>中午</span>
+            </label>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={naps.afternoon}
+                onChange={(e) => setNaps({ ...naps, afternoon: e.target.checked })}
+              />
+              <span>下午</span>
+            </label>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={naps.evening}
+                onChange={(e) => setNaps({ ...naps, evening: e.target.checked })}
+              />
+              <span>晚上</span>
+            </label>
           </div>
         </div>
 

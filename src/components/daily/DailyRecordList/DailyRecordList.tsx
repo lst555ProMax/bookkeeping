@@ -247,32 +247,43 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
               </div>
             </div>
 
-            {/* 工作日打卡 */}
-            {(record.checkInTime || record.checkOutTime || record.leaveTime) && (
-              <div className="detail-section">
-                <div className="section-title">💼 打卡</div>
-                <div className="section-content">
-                  <div className="time-grid">
-                    {record.checkInTime && (
-                      <div className="time-item">
-                        <span className="time-label">签到:</span>
-                        <span className="time-value">{record.checkInTime}</span>
-                      </div>
-                    )}
-                    {record.checkOutTime && (
-                      <div className="time-item">
-                        <span className="time-label">签退:</span>
-                        <span className="time-value">{record.checkOutTime}</span>
-                      </div>
-                    )}
-                    {record.leaveTime && (
-                      <div className="time-item">
-                        <span className="time-label">离开:</span>
-                        <span className="time-value">{record.leaveTime}</span>
-                      </div>
-                    )}
+            {/* 步数和打卡 */}
+            {(record.wechatSteps || record.checkInTime || record.checkOutTime || record.leaveTime) && (
+              <div className="steps-checkin-row">
+                {/* 微信步数 */}
+                {record.wechatSteps && (
+                  <div className="steps-info">
+                    <span className="steps-label">👣 步数:</span>
+                    <span className="steps-value">{record.wechatSteps.toLocaleString()} 步</span>
                   </div>
-                </div>
+                )}
+
+                {/* 工作日打卡 */}
+                {(record.checkInTime || record.checkOutTime || record.leaveTime) && (
+                  <div className="checkin-info">
+                    <span className="checkin-label">💼 打卡:</span>
+                    <div className="time-grid">
+                      {record.checkInTime && (
+                        <div className="time-item">
+                          <span className="time-label">签到:</span>
+                          <span className="time-value">{record.checkInTime}</span>
+                        </div>
+                      )}
+                      {record.checkOutTime && (
+                        <div className="time-item">
+                          <span className="time-label">签退:</span>
+                          <span className="time-value">{record.checkOutTime}</span>
+                        </div>
+                      )}
+                      {record.leaveTime && (
+                        <div className="time-item">
+                          <span className="time-label">离开:</span>
+                          <span className="time-value">{record.leaveTime}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

@@ -102,6 +102,12 @@ export interface SleepRecord {
   wakeTime: string; // HH:mm格式 - 醒来时间
   quality: number; // 睡眠质量分数 (0-100)
   duration?: number; // 睡眠时长（分钟），可选，可以自动计算
+  naps?: {
+    morning?: boolean;   // 上午午睡/打盹
+    noon?: boolean;      // 中午午睡/打盹
+    afternoon?: boolean; // 下午午睡/打盹
+    evening?: boolean;   // 晚上午睡/打盹
+  };
   notes?: string; // 备注
   createdAt: Date;
 }
@@ -166,6 +172,7 @@ export interface DailyRecord {
   bathing: BathingRecord; // 洗浴情况
   laundry: boolean; // 洗衣服
   cleaning: boolean; // 打扫
+  wechatSteps?: number; // 微信步数
   checkInTime?: string; // 签到时间 HH:mm格式
   checkOutTime?: string; // 签退时间 HH:mm格式
   leaveTime?: string; // 离开时间 HH:mm格式

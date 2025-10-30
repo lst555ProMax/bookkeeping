@@ -178,6 +178,12 @@
   flex-wrap: wrap;
   justify-content: space-between;
   
+  &--secondary {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #e9ecef;
+  }
+  
   @media (max-width: 600px) {
     flex-direction: column;
     align-items: stretch;
@@ -238,14 +244,42 @@
   }
 }
 
+.sleep-naps {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .detail-label {
+    color: #666;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .naps-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .nap-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+  }
+}
+
 .sleep-notes {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 0rem;
-  background: #f8f9fa;
-  border-radius: 6px;
   flex: 1;
+  min-width: 0;
 
   .notes-label {
     color: #666;

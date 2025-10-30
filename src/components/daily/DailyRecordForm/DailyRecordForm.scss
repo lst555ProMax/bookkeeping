@@ -216,34 +216,34 @@
   display: flex;
   gap: 0.5rem;
   align-items: stretch;
-}
 
-.time-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
-
-  span {
-    font-size: 0.85rem;
-    color: #555;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  input[type="time"] {
+  .time-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     flex: 1;
-    padding: 0.5rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    background-color: #F4F5F7;
-    min-width: 0;
 
-    &:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    span {
+      font-size: 0.85rem;
+      color: #555;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    input[type="time"] {
+      flex: 1;
+      padding: 0.5rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background-color: #F4F5F7;
+      min-width: 0;
+
+      &:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
     }
   }
 }
