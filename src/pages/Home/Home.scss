@@ -43,11 +43,14 @@ body {
     }
   }
 
-  &__card-draw {
+  &__games {
     position: absolute;
     right: 2rem;
     top: 50%;
     transform: translateY(-50%);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
   }
 
   &__mode-switcher {

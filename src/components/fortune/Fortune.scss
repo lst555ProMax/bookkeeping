@@ -1,0 +1,344 @@
+.fortune {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  &__content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__button {
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &__result {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  &__result-title {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #495057;
+    margin-bottom: 1rem;
+  }
+
+  &__result-card {
+    background: #fff;
+    border: 3px solid;
+    border-radius: 16px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  &__result-level {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  &__result-score {
+    font-size: 1rem;
+    color: #495057;
+  }
+
+  &__result-extras {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  &__lucky-item {
+    font-size: 1rem;
+    color: #6c757d;
+  }
+
+  &__reset {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem;
+    font-size: 1.2rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0.3;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  // 模态框样式
+  &__modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+  }
+
+  &__modal-content {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  &__modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #adb5bd;
+    transition: color 0.2s;
+    line-height: 1;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+
+    &:hover {
+      color: #495057;
+    }
+  }
+
+  &__modal-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #495057;
+  }
+
+  &__generate-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 0;
+  }
+
+  &__generating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    p {
+      font-size: 1.2rem;
+      color: #6c757d;
+    }
+  }
+
+  &__crystal-ball {
+    font-size: 5rem;
+    animation: float 2s ease-in-out infinite;
+  }
+
+  &__generate-button {
+    padding: 1.5rem 3rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &__result-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__main-result {
+    text-align: center;
+    padding: 2rem;
+    border: 3px solid;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  &__main-level {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  &__main-score {
+    font-size: 1.3rem;
+    color: #495057;
+  }
+
+  &__aspects {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__aspect-item {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #e9ecef;
+      transform: translateX(5px);
+    }
+  }
+
+  &__aspect-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  &__aspect-name {
+    font-weight: bold;
+    color: #495057;
+    font-size: 1.1rem;
+  }
+
+  &__aspect-level {
+    font-weight: bold;
+    font-size: 0.95rem;
+  }
+
+  &__aspect-desc {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  &__extras {
+    background: linear-gradient(135deg, #667eea15, #764ba215);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  &__extra-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  &__extra-label {
+    font-weight: bold;
+    color: #495057;
+    white-space: nowrap;
+  }
+
+  &__extra-value {
+    color: #6c757d;
+    line-height: 1.6;
+  }
+
+  // 彩带动画
+  &__confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+  }
+
+  &__confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: confettiFall linear forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+  }
+}
+
+@keyframes confettiFall {
+  to {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}

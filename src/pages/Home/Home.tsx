@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw } from '@/components';
+import { Fortune } from '@/components/fortune';
 import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
@@ -668,9 +669,10 @@ const Home: React.FC = () => {
           </>
         )}
 
-        {/* 抽卡游戏 - 在header右侧 */}
-        <div className="home__card-draw">
+        {/* 抽卡和算命游戏 - 在header右侧 */}
+        <div className="home__games">
           <CardDraw />
+          <Fortune />
         </div>
       </header>
 

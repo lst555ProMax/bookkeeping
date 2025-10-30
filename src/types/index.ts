@@ -16,3 +16,6 @@ export * from './browser';
 
 // 抽卡相关
 export * from './cardDraw';
+
+// 算命/运势相关
+export * from './fortune';
