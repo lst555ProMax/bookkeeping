@@ -5,7 +5,7 @@ import {
   getTodayCardDraw, 
   hasTodayDrawn, 
   addCardDrawRecord, 
-  clearAllCardDrawRecords 
+  clearTodayCardDrawRecord 
 } from '@/utils/cardDraw/storage';
 import { loadActivityConfig, drawCardByConfig } from '@/utils/cardDraw/activityConfig';
 import ActivityManager from './ActivityManager';
@@ -68,34 +68,40 @@ const CardDraw: React.FC = () => {
 
     // 模拟抽卡动画
     setTimeout(() => {
-      const config = loadActivityConfig();
-      const result = drawCardByConfig(config);
-      const today = new Date().toISOString().split('T')[0];
-      
-      const newRecord: CardDrawRecord = {
-        id: `card_${Date.now()}`,
-        date: today,
-        cardType: result.cardType,
-        category: result.category,
-        createdAt: new Date()
-      };
-
-      // 如果是自定义类型，需要先输入内容
-      if (result.cardType === CardType.CUSTOM) {
-        setDrawnCard(newRecord);
-        setIsDrawing(false);
-      } else {
-        // 非自定义类型直接保存
-        addCardDrawRecord(newRecord);
-        setTodayCard(newRecord);
-        setDrawnCard(newRecord);
-        setIsDrawing(false);
-        createConfetti(); // 触发彩带效果
+      try {
+        const config = loadActivityConfig();
+        const result = drawCardByConfig(config);
+        const today = new Date().toISOString().split('T')[0];
         
-        // 延迟关闭模态框，让用户看到结果
-        setTimeout(() => {
-          handleCloseModal();
-        }, 3000);
+        const newRecord: CardDrawRecord = {
+          id: `card_${Date.now()}`,
+          date: today,
+          cardType: result.cardType,
+          category: result.category,
+          createdAt: new Date()
+        };
+
+        // 如果是自定义类型，需要先输入内容
+        if (result.cardType === CardType.CUSTOM) {
+          setDrawnCard(newRecord);
+          setIsDrawing(false);
+        } else {
+          // 非自定义类型直接保存
+          addCardDrawRecord(newRecord);
+          setTodayCard(newRecord);
+          setDrawnCard(newRecord);
+          setIsDrawing(false);
+          createConfetti(); // 触发彩带效果
+          
+          // 延迟关闭模态框，让用户看到结果
+          setTimeout(() => {
+            handleCloseModal();
+          }, 3000);
+        }
+      } catch (error) {
+        console.error('抽卡失败:', error);
+        alert('抽卡失败，请重试');
+        setIsDrawing(false);
       }
     }, 2000);
   };
@@ -106,30 +112,45 @@ const CardDraw: React.FC = () => {
 
     // 如果是自定义类型，需要输入内容
     if (drawnCard.cardType === CardType.CUSTOM) {
-      if (!customContent.trim()) {
+      const trimmedContent = customContent.trim();
+      if (!trimmedContent) {
         alert('请输入自定义内容！');
         return;
       }
-      drawnCard.customContent = customContent.trim();
+      
+      if (trimmedContent.length > 20) {
+        alert('自定义内容不能超过20个字符');
+        return;
+      }
+      
+      drawnCard.customContent = trimmedContent;
     }
 
-    // 保存抽卡记录
-    addCardDrawRecord(drawnCard);
-    setTodayCard(drawnCard);
-    createConfetti(); // 触发彩带效果
-    
-    // 延迟关闭，让用户看到结果
-    setTimeout(() => {
-      handleCloseModal();
-    }, 2000);
+    try {
+      // 保存抽卡记录
+      addCardDrawRecord(drawnCard);
+      setTodayCard(drawnCard);
+      createConfetti(); // 触发彩带效果
+      
+      // 延迟关闭，让用户看到结果
+      setTimeout(() => {
+        handleCloseModal();
+      }, 2000);
+    } catch (error) {
+      console.error('保存抽卡记录失败:', error);
+      alert('保存失败，请重试');
+    }
   };
 
   // 重置今天的抽卡（调试用）
   const handleReset = () => {
     if (window.confirm('确定要重置今天的抽卡记录吗？（仅用于调试）')) {
-      clearAllCardDrawRecords();
-      setTodayCard(null);
-      alert('已重置抽卡记录！');
+      const deleted = clearTodayCardDrawRecord();
+      if (deleted) {
+        setTodayCard(null);
+      } else {
+        alert('今天还没有抽卡记录');
+      }
     }
   };
 
@@ -258,7 +279,7 @@ const CardDraw: React.FC = () => {
       {/* 彩带特效 */}
       {showConfetti && ReactDOM.createPortal(
         <div className="card-draw__confetti">
-          {[...Array(50)].map((_, i) => (
+          {[...Array(500)].map((_, i) => (
             <div
               key={i}
               className="card-draw__confetti-piece"

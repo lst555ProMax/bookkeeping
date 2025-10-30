@@ -1,4 +1,4 @@
-import { CardDrawRecord, CardType, CardCategory } from '@/types';
+import { CardDrawRecord } from '@/types';
 
 const CARD_DRAW_STORAGE_KEY = 'bookkeeping_card_draws';
 
@@ -60,66 +60,48 @@ export const hasTodayDrawn = (): boolean => {
 };
 
 /**
- * 清空所有抽卡记录（调试用）
+ * 删除今天的抽卡记录（用于重置今日抽卡，历史记录会保留）
  */
-export const clearAllCardDrawRecords = (): number => {
+export const clearTodayCardDrawRecord = (): boolean => {
   const records = loadCardDrawRecords();
-  const count = records.length;
-  localStorage.removeItem(CARD_DRAW_STORAGE_KEY);
-  return count;
+  const today = new Date().toISOString().split('T')[0];
+  const filtered = records.filter(record => record.date !== today);
+  
+  if (filtered.length === records.length) {
+    // 今天没有记录
+    return false;
+  }
+  
+  saveCardDrawRecords(filtered);
+  return true;
 };
 
 /**
- * 抽卡配置 - 卡片类型及概率
+ * 获取历史抽卡记录（按日期降序排序）
+ * @param limit 可选，限制返回的记录数量
  */
-interface CardConfig {
-  type: CardType;
-  probability: number;
-  category: CardCategory;
-}
-
-const CARD_CONFIGS: CardConfig[] = [
-  // 研究向 30%
-  { type: CardType.ENTREPRENEURIAL_ANALYSIS, probability: 0.05, category: CardCategory.RESEARCH },
-  { type: CardType.ECONOMIC_SOCIETY, probability: 0.05, category: CardCategory.RESEARCH },
-  { type: CardType.AI_DEVELOPMENT, probability: 0.05, category: CardCategory.RESEARCH },
-  { type: CardType.MUSIC_HISTORY, probability: 0.05, category: CardCategory.RESEARCH },
-  { type: CardType.ART_HISTORY, probability: 0.05, category: CardCategory.RESEARCH },
-  { type: CardType.TYPOLOGY, probability: 0.05, category: CardCategory.RESEARCH },
+export const getCardDrawHistory = (limit?: number): CardDrawRecord[] => {
+  const records = loadCardDrawRecords();
   
-  // 欣赏向 30%
-  { type: CardType.ART_APPRECIATION, probability: 0.10, category: CardCategory.APPRECIATION },
-  { type: CardType.MUSIC_APPRECIATION, probability: 0.10, category: CardCategory.APPRECIATION },
-  { type: CardType.READING, probability: 0.10, category: CardCategory.APPRECIATION },
+  // 按日期降序排序（最新的在前）
+  const sorted = records.sort((a, b) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
   
-  // 娱乐向 15%
-  { type: CardType.PUBG, probability: 0.05, category: CardCategory.ENTERTAINMENT },
-  { type: CardType.MOVIE, probability: 0.05, category: CardCategory.ENTERTAINMENT },
-  { type: CardType.COMEDY, probability: 0.05, category: CardCategory.ENTERTAINMENT },
-  
-  // 学习向 15%
-  { type: CardType.ENGLISH_LISTENING, probability: 0.05, category: CardCategory.LEARNING },
-  { type: CardType.FRONTEND_BACKEND, probability: 0.05, category: CardCategory.LEARNING },
-  { type: CardType.AI_ALGORITHM, probability: 0.05, category: CardCategory.LEARNING },
-  
-  // 自定义 10%
-  { type: CardType.CUSTOM, probability: 0.10, category: CardCategory.CUSTOM }
-];
+  return limit ? sorted.slice(0, limit) : sorted;
+};
 
 /**
- * 执行抽卡
+ * 获取指定日期范围的抽卡记录
+ * @param startDate 开始日期 YYYY-MM-DD
+ * @param endDate 结束日期 YYYY-MM-DD
  */
-export const drawCard = (): CardConfig => {
-  const random = Math.random();
-  let cumulative = 0;
+export const getCardDrawRecordsByDateRange = (startDate: string, endDate: string): CardDrawRecord[] => {
+  const records = loadCardDrawRecords();
   
-  for (const config of CARD_CONFIGS) {
-    cumulative += config.probability;
-    if (random <= cumulative) {
-      return config;
-    }
-  }
-  
-  // 兜底返回（理论上不会到达这里）
-  return CARD_CONFIGS[CARD_CONFIGS.length - 1];
+  return records.filter(record => {
+    return record.date >= startDate && record.date <= endDate;
+  }).sort((a, b) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
 };

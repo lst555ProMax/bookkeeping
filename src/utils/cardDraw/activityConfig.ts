@@ -129,19 +129,6 @@ export const addCategory = (name: string, category: CardCategory): ActivityCateg
 };
 
 /**
- * 更新一级分类
- */
-export const updateCategory = (id: string, updates: Partial<ActivityCategoryConfig>): ActivityCategoryConfig[] => {
-  const config = loadActivityConfig();
-  const index = config.findIndex(c => c.id === id);
-  if (index !== -1) {
-    config[index] = { ...config[index], ...updates };
-    saveActivityConfig(config);
-  }
-  return config;
-};
-
-/**
  * 删除一级分类
  */
 export const deleteCategory = (id: string): ActivityCategoryConfig[] => {
@@ -205,7 +192,9 @@ export const deleteActivityItem = (categoryId: string, itemId: string): Activity
 export const validateProbabilities = (config: ActivityCategoryConfig[]): { valid: boolean; message: string } => {
   // 检查一级分类总概率
   const totalCategoryProbability = config.reduce((sum, cat) => sum + cat.totalProbability, 0);
-  if (Math.abs(totalCategoryProbability - 1) > 0.001) {
+  const TOLERANCE = 0.001; // 浮点数容差
+  
+  if (Math.abs(totalCategoryProbability - 1) > TOLERANCE) {
     return {
       valid: false,
       message: `一级分类总概率为 ${(totalCategoryProbability * 100).toFixed(1)}%，必须为 100%`
@@ -215,7 +204,7 @@ export const validateProbabilities = (config: ActivityCategoryConfig[]): { valid
   // 检查每个分类内的二级活动概率
   for (const category of config) {
     const itemsTotalProbability = category.items.reduce((sum, item) => sum + item.probability, 0);
-    if (Math.abs(itemsTotalProbability - category.totalProbability) > 0.001) {
+    if (Math.abs(itemsTotalProbability - category.totalProbability) > TOLERANCE) {
       return {
         valid: false,
         message: `"${category.name}" 分类的活动项概率总和为 ${(itemsTotalProbability * 100).toFixed(1)}%，应该等于该分类概率 ${(category.totalProbability * 100).toFixed(1)}%`
@@ -230,13 +219,26 @@ export const validateProbabilities = (config: ActivityCategoryConfig[]): { valid
  * 根据配置执行抽卡
  */
 export const drawCardByConfig = (config: ActivityCategoryConfig[]): { category: CardCategory; cardType: CardType; name: string } => {
+  // 过滤掉没有活动项的分类
+  const validCategories = config.filter(c => c.items.length > 0);
+  
+  if (validCategories.length === 0) {
+    // 如果没有任何有效分类，返回默认值
+    console.warn('没有可用的活动分类');
+    return {
+      category: CardCategory.CUSTOM,
+      cardType: CardType.CUSTOM,
+      name: '自定义活动'
+    };
+  }
+  
   const random = Math.random();
   let cumulative = 0;
 
   // 先确定一级分类
-  for (const category of config) {
+  for (const category of validCategories) {
     cumulative += category.totalProbability;
-    if (random <= cumulative && category.items.length > 0) {
+    if (random <= cumulative) {
       // 在该分类内抽取二级活动
       const itemRandom = Math.random();
       let itemCumulative = 0;
@@ -244,7 +246,7 @@ export const drawCardByConfig = (config: ActivityCategoryConfig[]): { category: 
       for (const item of category.items) {
         const itemProbabilityInCategory = category.totalProbability > 0 
           ? item.probability / category.totalProbability 
-          : 0;
+          : 1 / category.items.length; // 防御性编程：如果分类概率为0，平均分配
         itemCumulative += itemProbabilityInCategory;
         
         if (itemRandom <= itemCumulative) {
@@ -266,21 +268,12 @@ export const drawCardByConfig = (config: ActivityCategoryConfig[]): { category: 
     }
   }
 
-  // 兜底：返回第一个有活动的分类的第一个活动
-  const firstValidCategory = config.find(c => c.items.length > 0);
-  if (firstValidCategory && firstValidCategory.items.length > 0) {
-    const firstItem = firstValidCategory.items[0];
-    return {
-      category: firstValidCategory.category,
-      cardType: firstItem.cardType,
-      name: firstItem.name
-    };
-  }
-
-  // 最终兜底（不应该到达这里）
+  // 兜底：返回第一个有效分类的第一个活动
+  const firstCategory = validCategories[0];
+  const firstItem = firstCategory.items[0];
   return {
-    category: CardCategory.CUSTOM,
-    cardType: CardType.CUSTOM,
-    name: '自定义活动'
+    category: firstCategory.category,
+    cardType: firstItem.cardType,
+    name: firstItem.name
   };
 };

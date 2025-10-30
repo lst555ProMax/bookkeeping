@@ -31,11 +31,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
   const [editingItemProb, setEditingItemProb] = useState(0);
 
   useEffect(() => {
-    const loaded = loadActivityConfig();
-    setConfig(loaded);
-    if (loaded.length > 0 && !selectedCategoryId) {
-      setSelectedCategoryId(loaded[0].id);
-    }
+    loadConfig();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -125,12 +121,18 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     const category = config.find(c => c.id === id);
     if (!category) return;
 
-    if (window.confirm(`确定要删除"${category.name}"分类吗？该分类下的所有活动也将被删除。`)) {
+    const itemCount = category.items.length;
+    const message = itemCount > 0
+      ? `确定要删除"${category.name}"分类吗？该分类下的 ${itemCount} 个活动也将被删除。`
+      : `确定要删除"${category.name}"分类吗？`;
+
+    if (confirm(message)) {
       deleteCategory(id);
       loadConfig();
       onConfigChange();
       if (selectedCategoryId === id) {
-        setSelectedCategoryId(config[0]?.id || null);
+        const newConfig = config.filter(c => c.id !== id);
+        setSelectedCategoryId(newConfig[0]?.id || null);
       }
     }
   };
@@ -171,8 +173,10 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     if (!selectedCategoryId) return;
 
     const category = config.find(c => c.id === selectedCategoryId);
-    if (!category || category.items.length === 0) {
-      window.alert('当前分类没有活动项');
+    if (!category) return;
+    
+    if (category.items.length === 0) {
+      alert('当前分类没有活动项，请先添加活动');
       return;
     }
 
@@ -232,21 +236,27 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
   const handleDeleteItem = (categoryId: string, itemId: string) => {
     const category = config.find(c => c.id === categoryId);
     const item = category?.items.find(i => i.id === itemId);
-    if (!item) return;
+    if (!item || !category) return;
 
-    if (window.confirm(`确定要删除"${item.name}"活动吗？`)) {
+    if (confirm(`确定要删除"${item.name}"活动吗？`)) {
       deleteActivityItem(categoryId, itemId);
       loadConfig();
       onConfigChange();
+      
+      // 如果正在编辑这个项目，退出编辑状态
+      if (editingItemId === itemId) {
+        setEditingItemId(null);
+      }
     }
   };
 
   // 重置为默认配置
   const handleReset = () => {
-    if (window.confirm('确定要重置为默认配置吗？所有自定义设置将丢失！')) {
+    if (confirm('确定要重置为默认配置吗？\n\n所有自定义设置将丢失且无法恢复！')) {
       resetActivityConfig();
-      setEditingCategoryId(null); // 退出编辑状态
+      setEditingCategoryId(null); // 退出一级分类编辑状态
       setEditingItemId(null); // 退出活动编辑状态
+      setError(''); // 清空错误信息
       loadConfig();
       onConfigChange();
     }
@@ -254,12 +264,13 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
 
   // 验证并保存
   const handleSave = () => {
+    // 1. 检查自定义分类概率是否为负
     if (!isConfigValid()) {
-      window.alert('⚠️ 概率总和超过100%，自定义分类概率为负！请调整其他分类的概率。');
+      alert('⚠️ 概率总和超过100%，自定义分类概率为负！请调整其他分类的概率。');
       return;
     }
 
-    // 检查每个分类的二级活动概率总和是否与一级分类概率一致
+    // 2. 检查每个分类的二级活动概率总和是否与一级分类概率一致
     const mismatchCategories = config.filter(category => {
       const itemsSum = calculateItemsProbabilitySum(category.id);
       return Math.abs(itemsSum - category.totalProbability) > 0.001;
@@ -270,19 +281,30 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
         const itemsSum = calculateItemsProbabilitySum(cat.id);
         return `"${cat.name}": 二级分类概率总和 ${formatProbability(itemsSum)}% ≠ 一级分类概率 ${formatProbability(cat.totalProbability)}%`;
       });
-      window.alert(`⚠️ 以下分类的概率不匹配：\n\n${messages.join('\n')}\n\n请先调整概率或使用自动平衡功能。`);
+      alert(`⚠️ 以下分类的概率不匹配：\n\n${messages.join('\n')}\n\n请先调整概率或使用自动平衡功能。`);
       return;
     }
 
+    // 3. 使用完整的概率验证
     const validation = validateProbabilities(config);
     if (!validation.valid) {
-      window.alert(validation.message);
+      alert(`⚠️ ${validation.message}`);
       return;
     }
 
+    // 4. 检查是否有空分类（没有活动项的分类）
+    const emptyCategories = config.filter(cat => cat.name !== '自定义' && cat.items.length === 0);
+    if (emptyCategories.length > 0) {
+      const categoryNames = emptyCategories.map(cat => `"${cat.name}"`).join('、');
+      if (!confirm(`⚠️ 以下分类没有活动项：${categoryNames}\n\n这些分类将无法被抽中。是否继续保存？`)) {
+        return;
+      }
+    }
+
+    // 保存配置
     saveActivityConfig(config);
     setError('');
-    alert('保存成功！');
+    alert('✅ 保存成功！');
     onClose();
   };
 
