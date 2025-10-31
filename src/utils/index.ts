@@ -1,6 +1,7 @@
 // ==================== 通用工具函数 ====================
 export * from './helpers';
 export * from './common/menuConfig';
+export * from './common/sampleData';
 
 // ==================== 记账模块 ====================
 export * from './accounting/storage';

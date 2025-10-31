@@ -1,0 +1,122 @@
+[
+  {
+    "id": "browser_sample_1",
+    "host": "github.com",
+    "date": "20241015",
+    "alias": "GitHub",
+    "cate": "开发",
+    "focus": "3600",
+    "time": 25,
+    "createdAt": "2024-10-15T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_2",
+    "host": "stackoverflow.com",
+    "date": "20241015",
+    "alias": "Stack Overflow",
+    "cate": "开发",
+    "focus": "2400",
+    "time": 15,
+    "createdAt": "2024-10-15T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_3",
+    "host": "youtube.com",
+    "date": "20241016",
+    "alias": "YouTube",
+    "cate": "学习",
+    "focus": "5400",
+    "time": 12,
+    "createdAt": "2024-10-16T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_4",
+    "host": "bilibili.com",
+    "date": "20241016",
+    "alias": "哔哩哔哩",
+    "cate": "娱乐",
+    "focus": "7200",
+    "time": 30,
+    "createdAt": "2024-10-16T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_5",
+    "host": "zhihu.com",
+    "date": "20241017",
+    "alias": "知乎",
+    "cate": "学习",
+    "focus": "1800",
+    "time": 20,
+    "createdAt": "2024-10-17T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_6",
+    "host": "juejin.cn",
+    "date": "20241017",
+    "alias": "掘金",
+    "cate": "开发",
+    "focus": "2700",
+    "time": 18,
+    "createdAt": "2024-10-17T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_7",
+    "host": "taobao.com",
+    "date": "20241018",
+    "alias": "淘宝",
+    "cate": "购物",
+    "focus": "1200",
+    "time": 10,
+    "createdAt": "2024-10-18T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_8",
+    "host": "weixin.qq.com",
+    "date": "20241018",
+    "alias": "微信网页版",
+    "cate": "社交",
+    "focus": "3000",
+    "time": 50,
+    "createdAt": "2024-10-18T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_9",
+    "host": "baidu.com",
+    "date": "20241019",
+    "alias": "百度",
+    "cate": "工作",
+    "focus": "900",
+    "time": 15,
+    "createdAt": "2024-10-19T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_10",
+    "host": "google.com",
+    "date": "20241019",
+    "alias": "Google",
+    "cate": "工作",
+    "focus": "4500",
+    "time": 35,
+    "createdAt": "2024-10-19T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_11",
+    "host": "twitter.com",
+    "date": "20241020",
+    "alias": "Twitter",
+    "cate": "社交",
+    "focus": "1500",
+    "time": 20,
+    "createdAt": "2024-10-20T20:00:00.000Z"
+  },
+  {
+    "id": "browser_sample_12",
+    "host": "notion.so",
+    "date": "20241020",
+    "alias": "Notion",
+    "cate": "工作",
+    "focus": "3300",
+    "time": 8,
+    "createdAt": "2024-10-20T20:00:00.000Z"
+  }
+]
