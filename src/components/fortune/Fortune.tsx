@@ -154,8 +154,8 @@ const Fortune: React.FC = () => {
         )}
       </div>
 
-      {/* 调试按钮 */}
-      {todayFortune && (
+      {/* 调试按钮 - 仅在开发环境显示 */}
+      {import.meta.env.DEV && todayFortune && (
         <button className="fortune__reset" onClick={handleReset} title="重置运势（仅用于调试）">
           🔄
         </button>

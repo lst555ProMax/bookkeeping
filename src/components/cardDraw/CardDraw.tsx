@@ -178,8 +178,8 @@ const CardDraw: React.FC = () => {
         )}
       </div>
 
-      {/* 调试按钮 */}
-      {todayCard && (
+      {/* 调试按钮 - 仅在开发环境显示 */}
+      {import.meta.env.DEV && todayCard && (
         <button className="card-draw__reset" onClick={handleReset} title="重置抽卡（仅用于调试）">
           🔄
         </button>
