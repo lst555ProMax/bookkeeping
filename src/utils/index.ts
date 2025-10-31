@@ -19,6 +19,7 @@ export * from './browser/dataImportExport';
 // ==================== 日常记录模块 ====================
 export * from './daily/storage';
 export * from './daily/dataImportExport';
+export * from './daily/statistics';
 
 // ==================== 学习记录模块 ====================
 export * from './study/storage';

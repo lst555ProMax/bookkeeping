@@ -1,0 +1,30 @@
+.habit-stats-chart {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  height: 100%;
+
+  .chart-header {
+    margin-bottom: 1.5rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #333;
+      font-weight: 700;
+    }
+  }
+
+  .no-data {
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+      font-size: 1.1rem;
+      color: #999;
+    }
+  }
+}

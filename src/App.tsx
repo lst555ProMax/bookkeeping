@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, Records, SleepRecords } from '@/pages';
+import { Home, Records, SleepRecords, DailyRecords } from '@/pages';
 import { getCurrentPath, findRouteByPath } from '@/router';
 import './App.scss';
 
@@ -37,6 +37,8 @@ const App: React.FC = () => {
         return <Records />;
       case 'sleepRecords':
         return <SleepRecords />;
+      case 'dailyRecords':
+        return <DailyRecords />;
       case 'home':
       default:
         return <Home />;

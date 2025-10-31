@@ -30,6 +30,12 @@ export const routes: RouteConfig[] = [
     name: 'sleepRecords',
     component: 'SleepRecords',
     description: '睡眠记录 - 睡眠数据面板'
+  },
+  {
+    path: '/daily-records',
+    name: 'dailyRecords',
+    component: 'DailyRecords',
+    description: '日常记录 - 日常数据面板'
   }
 ];
 

@@ -50,7 +50,7 @@ const Records: React.FC = () => {
 
   // 返回首页（保持在记账模式）
   const goToHome = () => {
-    window.location.hash = '#/';
+    window.location.hash = '#/?mode=accounting';
   };
 
   return (

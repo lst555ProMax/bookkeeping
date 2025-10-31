@@ -31,7 +31,15 @@ const Home: React.FC = () => {
   const [businessMode, setBusinessMode] = useState<BusinessMode>(() => {
     const params = new URLSearchParams(window.location.hash.split('?')[1]);
     const mode = params.get('mode');
-    return mode === 'sleep' ? BusinessMode.SLEEP : BusinessMode.ACCOUNTING;
+    if (mode === 'sleep') return BusinessMode.SLEEP;
+    if (mode === 'daily') return BusinessMode.DAILY;
+    if (mode === 'software') return BusinessMode.SOFTWARE;
+    if (mode === 'study') return BusinessMode.STUDY;
+    // 如果没有mode参数，设置默认值并更新URL
+    if (!window.location.hash || window.location.hash === '#/') {
+      window.location.hash = '#/?mode=accounting';
+    }
+    return BusinessMode.ACCOUNTING;
   });
   
   // 记账相关状态
@@ -111,6 +119,23 @@ const Home: React.FC = () => {
   useEffect(() => {
     loadData();
     loadMenus();
+    
+    // 监听URL hash变化，同步业务模式
+    const handleHashChange = () => {
+      const params = new URLSearchParams(window.location.hash.split('?')[1]);
+      const mode = params.get('mode');
+      if (mode === 'sleep') setBusinessMode(BusinessMode.SLEEP);
+      else if (mode === 'daily') setBusinessMode(BusinessMode.DAILY);
+      else if (mode === 'software') setBusinessMode(BusinessMode.SOFTWARE);
+      else if (mode === 'study') setBusinessMode(BusinessMode.STUDY);
+      else if (mode === 'accounting' || !mode) setBusinessMode(BusinessMode.ACCOUNTING);
+    };
+    
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -171,6 +196,11 @@ const Home: React.FC = () => {
   // 跳转到睡眠数据面板页面
   const goToSleepDashboard = () => {
     window.location.hash = '#/sleep-records';
+  };
+
+  // 跳转到日常数据面板页面
+  const goToDailyDashboard = () => {
+    window.location.hash = '#/daily-records';
   };
 
   // === 支出相关操作 ===
@@ -406,6 +436,8 @@ const Home: React.FC = () => {
   // 切换业务模式
   const handleBusinessModeChange = (mode: BusinessMode) => {
     setBusinessMode(mode);
+    // 更新URL，所有模式都带上mode参数
+    window.location.hash = `#/?mode=${mode}`;
   };
 
   // === 清除数据功能 ===
@@ -1039,6 +1071,7 @@ const Home: React.FC = () => {
                       records={dailyRecords} 
                       onDeleteRecord={handleDeleteDaily}
                       onEditRecord={handleEditDaily}
+                      onViewDashboard={goToDailyDashboard}
                       onExport={handleExportDaily}
                       onImport={triggerDailyFileSelect}
                       onClear={handleClearDailyData}
