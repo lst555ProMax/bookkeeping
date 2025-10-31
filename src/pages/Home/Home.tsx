@@ -787,14 +787,6 @@ const Home: React.FC = () => {
               🌙 {BUSINESS_MODE_LABELS[BusinessMode.SLEEP]}
             </button>
           )}
-          {enabledMenus.includes(BusinessMode.SOFTWARE) && (
-            <button 
-              className={`mode-btn ${businessMode === BusinessMode.SOFTWARE ? 'mode-btn--active' : ''}`}
-              onClick={() => handleBusinessModeChange(BusinessMode.SOFTWARE)}
-            >
-              💻 {BUSINESS_MODE_LABELS[BusinessMode.SOFTWARE]}
-            </button>
-          )}
           {enabledMenus.includes(BusinessMode.DAILY) && (
             <button 
               className={`mode-btn ${businessMode === BusinessMode.DAILY ? 'mode-btn--active' : ''}`}
@@ -809,6 +801,14 @@ const Home: React.FC = () => {
               onClick={() => handleBusinessModeChange(BusinessMode.STUDY)}
             >
               📚 {BUSINESS_MODE_LABELS[BusinessMode.STUDY]}
+            </button>
+          )}
+          {enabledMenus.includes(BusinessMode.SOFTWARE) && (
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.SOFTWARE ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.SOFTWARE)}
+            >
+              💻 {BUSINESS_MODE_LABELS[BusinessMode.SOFTWARE]}
             </button>
           )}
         </div>

@@ -1,7 +1,7 @@
 [
   {
     "id": "daily_sample_1",
-    "date": "2024-10-15",
+    "date": "2025-10-15",
     "meals": {
       "breakfast": "eaten_regular",
       "lunch": "eaten_regular",
@@ -24,11 +24,11 @@
     "checkOutTime": "18:00",
     "leaveTime": "18:30",
     "notes": "工作日常态",
-    "createdAt": "2024-10-15T20:00:00.000Z"
+    "createdAt": "2025-10-15T20:00:00.000Z"
   },
   {
     "id": "daily_sample_2",
-    "date": "2024-10-16",
+    "date": "2025-10-16",
     "meals": {
       "breakfast": "eaten_irregular",
       "lunch": "eaten_regular",
@@ -51,11 +51,11 @@
     "checkOutTime": "18:10",
     "leaveTime": "18:45",
     "notes": "早起赶时间，早餐随便吃了点",
-    "createdAt": "2024-10-16T20:00:00.000Z"
+    "createdAt": "2025-10-16T20:00:00.000Z"
   },
   {
     "id": "daily_sample_3",
-    "date": "2024-10-17",
+    "date": "2025-10-17",
     "meals": {
       "breakfast": "eaten_regular",
       "lunch": "eaten_regular",
@@ -78,11 +78,11 @@
     "checkOutTime": "19:30",
     "leaveTime": "20:00",
     "notes": "加班到较晚，晚餐时间不规律",
-    "createdAt": "2024-10-17T21:00:00.000Z"
+    "createdAt": "2025-10-17T21:00:00.000Z"
   },
   {
     "id": "daily_sample_4",
-    "date": "2024-10-18",
+    "date": "2025-10-18",
     "meals": {
       "breakfast": "eaten_regular",
       "lunch": "eaten_regular",
@@ -105,11 +105,11 @@
     "checkOutTime": "18:05",
     "leaveTime": "18:30",
     "notes": "周末打扫卫生",
-    "createdAt": "2024-10-18T20:00:00.000Z"
+    "createdAt": "2025-10-18T20:00:00.000Z"
   },
   {
     "id": "daily_sample_5",
-    "date": "2024-10-19",
+    "date": "2025-10-19",
     "meals": {
       "breakfast": "eaten_irregular",
       "lunch": "eaten_regular",
@@ -129,11 +129,11 @@
     "cleaning": false,
     "wechatSteps": 15000,
     "notes": "周末出去逛街，步数很多",
-    "createdAt": "2024-10-19T20:00:00.000Z"
+    "createdAt": "2025-10-19T20:00:00.000Z"
   },
   {
     "id": "daily_sample_6",
-    "date": "2024-10-20",
+    "date": "2025-10-20",
     "meals": {
       "breakfast": "not_eaten",
       "lunch": "eaten_regular",
@@ -153,11 +153,11 @@
     "cleaning": false,
     "wechatSteps": 5000,
     "notes": "周日休息，睡过头没吃早餐",
-    "createdAt": "2024-10-20T20:00:00.000Z"
+    "createdAt": "2025-10-20T20:00:00.000Z"
   },
   {
     "id": "daily_sample_7",
-    "date": "2024-10-21",
+    "date": "2025-10-21",
     "meals": {
       "breakfast": "eaten_regular",
       "lunch": "eaten_regular",
@@ -180,11 +180,11 @@
     "checkOutTime": "18:00",
     "leaveTime": "18:25",
     "notes": "工作日正常",
-    "createdAt": "2024-10-21T20:00:00.000Z"
+    "createdAt": "2025-10-21T20:00:00.000Z"
   },
   {
     "id": "daily_sample_8",
-    "date": "2024-10-22",
+    "date": "2025-10-22",
     "meals": {
       "breakfast": "eaten_regular",
       "lunch": "eaten_regular",
@@ -207,6 +207,6 @@
     "checkOutTime": "18:00",
     "leaveTime": "18:20",
     "notes": "生活规律，状态良好",
-    "createdAt": "2024-10-22T20:00:00.000Z"
+    "createdAt": "2025-10-22T20:00:00.000Z"
   }
 ]

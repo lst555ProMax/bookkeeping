@@ -113,7 +113,14 @@ const MenuSettings: React.FC<MenuSettingsProps> = ({ onClose, onConfigChange }) 
         const successCount = results.filter(r => r).length;
         
         if (successCount > 0) {
-          alert(`✅ 成功导入 ${successCount} 个模块的示例数据！`);
+          // 保存菜单配置
+          saveMenuConfig(selectedMenus);
+          
+          alert(`✅ 成功导入 ${successCount} 个模块的示例数据！\n\n页面即将刷新以显示数据...`);
+          
+          // 刷新页面以重新加载数据
+          window.location.reload();
+          return;
         }
       }
 

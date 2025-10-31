@@ -18,11 +18,31 @@ export enum DataType {
  */
 export const loadSampleData = async (type: DataType): Promise<unknown> => {
   try {
-    const response = await fetch(`/sample-data/${type}.json`);
-    if (!response.ok) {
-      throw new Error(`Failed to load sample data: ${type}`);
+    // 尝试不同的路径
+    const paths = [
+      `/sample-data/${type}.json`,
+      `${import.meta.env.BASE_URL}sample-data/${type}.json`,
+      `/bookkeeping/sample-data/${type}.json`
+    ];
+    
+    let data = null;
+    let lastError = null;
+    
+    for (const path of paths) {
+      try {
+        const response = await fetch(path);
+        if (response.ok) {
+          data = await response.json();
+          break;
+        }
+      } catch (error) {
+        lastError = error;
+      }
     }
-    const data = await response.json();
+    
+    if (!data) {
+      throw new Error(`Failed to load sample data: ${type}. Last error: ${lastError}`);
+    }
     
     // 转换日期字符串为 Date 对象
     return convertDates(data, type);
@@ -86,39 +106,37 @@ const convertDates = (data: any, type: DataType): unknown => {
  * @param storageKey localStorage 的 key
  * @returns boolean
  */
-export const hasLocalData = (storageKey: string): boolean => {
-  const data = localStorage.getItem(storageKey);
-  if (!data) return false;
+export const hasLocalData = (storageKey: string | string[]): boolean => {
+  const keys = Array.isArray(storageKey) ? storageKey : [storageKey];
   
-  try {
-    const parsed = JSON.parse(data);
-    // 检查是否为数组且有数据，或者是对象且有属性
-    if (Array.isArray(parsed)) {
-      return parsed.length > 0;
-    }
-    if (typeof parsed === 'object' && parsed !== null) {
-      // 对于 accounting 数据，检查 expenses 或 incomes 是否有数据
-      if ('expenses' in parsed || 'incomes' in parsed) {
-        return (parsed.expenses?.length > 0) || (parsed.incomes?.length > 0);
+  for (const key of keys) {
+    const data = localStorage.getItem(key);
+    if (!data) continue;
+    
+    try {
+      const parsed = JSON.parse(data);
+      // 检查是否为数组且有数据
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return true;
       }
-      return Object.keys(parsed).length > 0;
+    } catch {
+      // 忽略解析错误
     }
-    return false;
-  } catch {
-    return false;
   }
+  
+  return false;
 };
 
 /**
  * 导入示例数据到 localStorage
  * @param type 数据类型
- * @param storageKey localStorage 的 key
+ * @param storageKey localStorage 的 key（可以是数组）
  * @param forceOverwrite 是否强制覆盖
  * @returns Promise<boolean> 是否成功导入
  */
 export const importSampleData = async (
   type: DataType,
-  storageKey: string,
+  storageKey: string | string[],
   forceOverwrite: boolean = false
 ): Promise<boolean> => {
   try {
@@ -134,7 +152,19 @@ export const importSampleData = async (
     const sampleData = await loadSampleData(type);
     
     // 保存到 localStorage
-    localStorage.setItem(storageKey, JSON.stringify(sampleData));
+    if (type === DataType.ACCOUNTING) {
+      // 特殊处理 accounting 数据（分为 expenses 和 incomes）
+      const keys = Array.isArray(storageKey) ? storageKey : [storageKey];
+      const data = sampleData as { expenses: unknown[]; incomes: unknown[] };
+      if (keys.length >= 2) {
+        localStorage.setItem(keys[0], JSON.stringify(data.expenses));
+        localStorage.setItem(keys[1], JSON.stringify(data.incomes));
+      }
+    } else {
+      // 其他类型直接保存
+      const key = Array.isArray(storageKey) ? storageKey[0] : storageKey;
+      localStorage.setItem(key, JSON.stringify(sampleData));
+    }
     
     return true;
   } catch (error) {
@@ -146,10 +176,10 @@ export const importSampleData = async (
 /**
  * 获取存储键名映射
  */
-export const getStorageKey = (type: DataType): string => {
+export const getStorageKey = (type: DataType): string | string[] => {
   switch (type) {
     case DataType.ACCOUNTING:
-      return 'bookkeeping_records';
+      return ['bookkeeping_expenses', 'bookkeeping_incomes'];
     case DataType.SLEEP:
       return 'sleep_records';
     case DataType.DAILY:
@@ -157,7 +187,7 @@ export const getStorageKey = (type: DataType): string => {
     case DataType.STUDY:
       return 'study_records';
     case DataType.BROWSER:
-      return 'browser_usage_records';
+      return 'browserUsageRecords';
     default:
       return '';
   }
