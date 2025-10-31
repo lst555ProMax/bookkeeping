@@ -1,5 +1,10 @@
 // 导出所有组件（按模块分类）
 
+// 通用组件
+export {
+  MenuSettings
+} from './common';
+
 // 账单记录相关组件
 export {
   RecordForm,
@@ -31,6 +36,12 @@ export {
   DailyRecordForm,
   DailyRecordList
 } from './daily';
+
+// 学习记录相关组件
+export {
+  StudyRecordForm,
+  StudyRecordList
+} from './study';
 
 // 抽卡游戏组件
 export {

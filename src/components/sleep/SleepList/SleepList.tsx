@@ -69,7 +69,7 @@ const SleepList: React.FC<SleepListProps> = ({
       <div className="sleep-list">
         {/* 标题和操作按钮区域 */}
         <div className="sleep-list__header">
-          <h3 className="sleep-list__title">睡眠记录</h3>
+          <h3 className="sleep-list__title">🌙 睡眠记录 (0)</h3>
           {(onViewDashboard || onExport || onImport || onClear) && (
             <div className="sleep-list__actions">
               {onViewDashboard && (
@@ -125,7 +125,7 @@ const SleepList: React.FC<SleepListProps> = ({
     <div className="sleep-list">
       {/* 标题和操作按钮区域 */}
       <div className="sleep-list__header">
-        <h3 className="sleep-list__title">睡眠记录</h3>
+        <h3 className="sleep-list__title">🌙 睡眠记录 ({sleeps.length})</h3>
         {(onViewDashboard || onExport || onImport || onClear) && (
           <div className="sleep-list__actions">
             {onViewDashboard && (
@@ -168,91 +168,97 @@ const SleepList: React.FC<SleepListProps> = ({
           </div>
         )}
       </div>
-      {sortedSleeps.map((sleep) => (
-        <div key={sleep.id} className="sleep-item">
-          <div className="sleep-item__header">
-            <div className="sleep-item__date">
-              📅 {new Date(sleep.date).toLocaleDateString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                weekday: 'short'
-              })}
-            </div>
-            <div className="sleep-item__actions">
-              <button
-                className="action-btn action-btn--edit"
-                onClick={() => onEditSleep(sleep)}
-                title="编辑"
-              >
-                ✏️
-              </button>
-              <button
-                className="action-btn action-btn--delete"
-                onClick={() => onDeleteSleep(sleep.id)}
-                title="删除"
-              >
-                🗑️
-              </button>
-            </div>
-          </div>
-
-          <div className="sleep-item__body">
-            {/* 第一行：入睡、醒来、时长、质量 */}
-            <div className="sleep-detail-row">
-              <div className="sleep-detail">
-                <span className="detail-label">🌙 入睡时间:</span>
-                <span className="detail-value">{sleep.sleepTime}</span>
-              </div>
-
-              <div className="sleep-detail">
-                <span className="detail-label">☀️ 醒来时间:</span>
-                <span className="detail-value">{sleep.wakeTime}</span>
-              </div>
-
-              {sleep.duration !== undefined && (
-                <div className="sleep-detail">
-                  <span className="detail-label">⏱️ 睡眠时长:</span>
-                  <span className="detail-value detail-value--highlight">
-                    {formatSleepDuration(sleep.duration)}
-                  </span>
+      
+      <div className="sleep-list__content">
+        <div className="sleep-list__grid">
+          {sortedSleeps.map((sleep) => (
+            <div key={sleep.id} className="sleep-item">
+              <div className="sleep-item__header">
+                <div className="sleep-item__date">
+                  📅 {new Date(sleep.date).toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'short'
+                  })}
                 </div>
-              )}
+                <div className="sleep-item__actions">
+                  <button
+                    className="action-btn action-btn--edit"
+                    onClick={() => onEditSleep(sleep)}
+                    title="编辑"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    className="action-btn action-btn--delete"
+                    onClick={() => onDeleteSleep(sleep.id)}
+                    title="删除"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
 
-              <div className="sleep-detail">
-                <span className="detail-label">睡眠质量:</span>
-                <span className={`sleep-quality ${getQualityClass(sleep.quality)}`}>
-                  {getQualityEmoji(sleep.quality)} {sleep.quality}分 ({SLEEP_QUALITY_LABELS[getSleepQualityLevel(sleep.quality)]})
-                </span>
+              <div className="sleep-item__body">
+                {/* 第一行：入睡时间和醒来时间 */}
+                <div className="time-info-row">
+                  <div className="time-info">
+                    <span className="info-label">🌙 入睡时间</span>
+                    <span className="info-value">{sleep.sleepTime}</span>
+                  </div>
+                  <div className="time-info">
+                    <span className="info-label">☀️ 醒来时间</span>
+                    <span className="info-value">{sleep.wakeTime}</span>
+                  </div>
+                </div>
+
+                {/* 第二行：睡眠时长和睡眠质量 */}
+                <div className="duration-quality-row">
+                  {sleep.duration !== undefined && (
+                    <div className="duration-info">
+                      <span className="info-label">⏱️ 睡眠时长</span>
+                      <span className="info-value">
+                        {formatSleepDuration(sleep.duration)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="quality-info">
+                    <span className="info-label">睡眠质量</span>
+                    <span className={`sleep-quality ${getQualityClass(sleep.quality)}`}>
+                      {getQualityEmoji(sleep.quality)} {sleep.quality}分 ({SLEEP_QUALITY_LABELS[getSleepQualityLevel(sleep.quality)]})
+                    </span>
+                  </div>
+                </div>
+
+                {/* 第三行：小睡和备注 */}
+                {((sleep.naps && (sleep.naps.morning || sleep.naps.noon || sleep.naps.afternoon || sleep.naps.evening)) || sleep.notes) && (
+                  <div className="naps-notes-row">
+                    {sleep.naps && (sleep.naps.morning || sleep.naps.noon || sleep.naps.afternoon || sleep.naps.evening) && (
+                      <div className="sleep-naps">
+                        <span className="naps-label">💤 小睡</span>
+                        <div className="naps-tags">
+                          {sleep.naps.morning && <span className="nap-tag">上午</span>}
+                          {sleep.naps.noon && <span className="nap-tag">中午</span>}
+                          {sleep.naps.afternoon && <span className="nap-tag">下午</span>}
+                          {sleep.naps.evening && <span className="nap-tag">晚上</span>}
+                        </div>
+                      </div>
+                    )}
+
+                    {sleep.notes && (
+                      <div className="sleep-notes">
+                        <span className="notes-label">📝 备注</span>
+                        <span className="notes-content">{sleep.notes}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
-
-            {/* 第二行：小睡和备注 */}
-            {((sleep.naps && (sleep.naps.morning || sleep.naps.noon || sleep.naps.afternoon || sleep.naps.evening)) || sleep.notes) && (
-              <div className="sleep-detail-row sleep-detail-row--secondary">
-                {sleep.naps && (sleep.naps.morning || sleep.naps.noon || sleep.naps.afternoon || sleep.naps.evening) && (
-                  <div className="sleep-detail sleep-naps">
-                    <span className="detail-label">💤 小睡:</span>
-                    <div className="naps-tags">
-                      {sleep.naps.morning && <span className="nap-tag">上午</span>}
-                      {sleep.naps.noon && <span className="nap-tag">中午</span>}
-                      {sleep.naps.afternoon && <span className="nap-tag">下午</span>}
-                      {sleep.naps.evening && <span className="nap-tag">晚上</span>}
-                    </div>
-                  </div>
-                )}
-
-                {sleep.notes && (
-                  <div className="sleep-notes">
-                    <span className="notes-label">📝 备注:</span>
-                    <span className="notes-content">{sleep.notes}</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 };

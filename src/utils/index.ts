@@ -1,5 +1,6 @@
 // ==================== 通用工具函数 ====================
 export * from './helpers';
+export * from './common/menuConfig';
 
 // ==================== 记账模块 ====================
 export * from './accounting/storage';
@@ -17,6 +18,10 @@ export * from './browser/dataImportExport';
 // ==================== 日常记录模块 ====================
 export * from './daily/storage';
 export * from './daily/dataImportExport';
+
+// ==================== 学习记录模块 ====================
+export * from './study/storage';
+export * from './study/dataImportExport';
 
 // ==================== 抽卡游戏模块 ====================
 export * from './cardDraw/storage';

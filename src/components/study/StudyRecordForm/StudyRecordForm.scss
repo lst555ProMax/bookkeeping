@@ -1,4 +1,4 @@
-.sleep-form {
+.study-form {
   padding: 1.5rem;
   height: 100%;
   display: flex;
@@ -63,18 +63,12 @@
       color: #e74c3c;
       margin-left: 0.2rem;
     }
-
-    .quality-hint {
-      color: #999;
-      font-weight: 400;
-      font-size: 0.85rem;
-      margin-left: 0.5rem;
-    }
   }
 
   input[type="date"],
   input[type="time"],
   input[type="number"],
+  input[type="text"],
   select,
   textarea {
     padding: 0.6rem;
@@ -84,103 +78,143 @@
     transition: all 0.3s ease;
     font-family: inherit;
     background-color: #F4F5F7;
-    color:#000000;
+    color: #000000;
 
     &:focus {
       outline: none;
       border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
+
+    &::placeholder {
+      color: #999;
+    }
   }
 
   textarea {
     resize: vertical;
-    min-height: 60px;
+    min-height: 80px;
   }
 }
 
-.checkbox-group {
+// 观看集数和时间在一行
+.episode-time-row {
   display: flex;
+  align-items: flex-end;
   gap: 1rem;
-  flex-wrap: wrap;
 }
 
-.checkbox-label {
+.episode-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+
+    .required {
+      color: #e74c3c;
+      margin-left: 0.2rem;
+    }
+  }
+}
+
+.time-section {
+  flex: 0 0 auto;
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+
+    .required {
+      color: #e74c3c;
+      margin-left: 0.2rem;
+    }
+  }
+}
+
+// 观看集数输入
+.episode-inputs {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  cursor: pointer;
-  font-weight: 500;
-  color: #555;
-  
-  input[type="checkbox"] {
-    width: 1.1rem;
-    height: 1.1rem;
-    cursor: pointer;
-    flex-shrink: 0;
-    
-    appearance: none;
-    -webkit-appearance: none;
-    border: 2px solid #999;
-    border-radius: 3px;
-    background-color: white;
-    position: relative;
-    transition: all 0.2s ease;
-    
-    &:checked {
-      background-color: #667eea;
-      border-color: #667eea;
-    }
-    
-    &:hover {
-      border-color: #667eea;
-    }
 
-    &:checked::after {
-      content: '✓';
-      position: absolute;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+  input[type="number"] {
+    flex: 0 1 auto;
+    min-width: 0;
+    width: 80px;
+    text-align: center;
   }
 
-  span {
-    user-select: none;
+  .episode-separator {
+    font-weight: 600;
+    color: #666;
     font-size: 0.9rem;
+    flex-shrink: 0;
   }
 
-  &:hover {
-    color: #667eea;
+  .episode-unit {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9rem;
+    flex-shrink: 0;
   }
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+// 观看时间输入
+.time-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  input[type="number"] {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .time-unit {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
 }
 
+// 表单操作按钮
 .form-actions {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #e9ecef;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
   flex-shrink: 0;
 
   .btn {
     flex: 1;
-    padding: 0.7rem 1.2rem;
+    padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+
+    &--cancel {
+      background: #f5f5f5;
+      color: #666;
+
+      &:hover {
+        background: #e0e0e0;
+        transform: translateY(-2px);
+      }
+    }
 
     &--submit {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -196,34 +230,33 @@
         transform: translateY(0);
       }
     }
-
-    &--cancel {
-      background: #f5f5f5;
-      color: #666;
-
-      &:hover {
-        background: #e0e0e0;
-      }
-    }
   }
 }
 
-/* 响应式设计 */
-@media (max-width: 480px) {
-  .sleep-form {
-    padding: 1.5rem;
+// 响应式设计
+@media (max-width: 768px) {
+  .study-form {
+    padding: 1rem;
 
     &__header h2 {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
     }
   }
 
-  .form-row {
-    grid-template-columns: 1fr;
+  .form-group {
+    input,
+    select,
+    textarea {
+      font-size: 0.9rem;
+    }
+  }
+
+  .episode-inputs {
+    gap: 0.5rem;
   }
 
   .form-actions {
-    flex-direction: column-reverse;
+    flex-direction: column;
 
     .btn {
       width: 100%;

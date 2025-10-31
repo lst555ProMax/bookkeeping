@@ -61,7 +61,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
       <div className="daily-list">
         {/* 标题和操作按钮区域 */}
         <div className="daily-list__header">
-          <h3 className="daily-list__title">日常记录</h3>
+          <h3 className="daily-list__title">📝 日常记录 (0)</h3>
           {(onViewDashboard || onExport || onImport || onClear) && (
             <div className="daily-list__actions">
               {onViewDashboard && (
@@ -117,7 +117,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     <div className="daily-list">
       {/* 标题和操作按钮区域 */}
       <div className="daily-list__header">
-        <h3 className="daily-list__title">日常记录</h3>
+        <h3 className="daily-list__title">📝 日常记录 ({records.length})</h3>
         {(onViewDashboard || onExport || onImport || onClear) && (
           <div className="daily-list__actions">
             {onViewDashboard && (

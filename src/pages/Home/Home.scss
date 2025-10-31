@@ -64,12 +64,38 @@ body {
     padding: 0.5rem;
     border-radius: 12px;
     backdrop-filter: blur(10px);
+    align-items: center;
+
+    .settings-btn {
+      background: rgba(255, 255, 255, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.35);
+        transform: translateY(-2px) rotate(90deg);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0) rotate(90deg);
+      }
+    }
 
     .mode-btn {
       background: transparent;
       border: 2px solid rgba(255, 255, 255, 0.3);
       color: white;
-      padding: 0.75rem 1.5rem;
+      padding: 0.75rem 1rem;
       border-radius: 8px;
       font-size: 1rem;
       font-weight: 600;
@@ -266,6 +292,24 @@ body {
 
     /* 日常记录容器样式 */
     .daily-records-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      min-height: 0;
+      flex: 1;
+      width: 100%;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+    }
+
+    /* 学习记录容器样式 */
+    .study-records-container {
       background: white;
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);

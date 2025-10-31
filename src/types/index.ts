@@ -11,6 +11,9 @@ export * from './sleep';
 // 日常记录相关
 export * from './daily';
 
+// 学习记录相关
+export * from './study';
+
 // 浏览器使用相关
 export * from './browser';
 

@@ -43,7 +43,6 @@
     display: flex;
     flex-direction: column;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-    animation: slideUp 0.3s ease;
   }
 
   &__header {
@@ -214,16 +213,20 @@
     gap: 0.5rem;
 
     button {
-      background: transparent;
-      border: 1px solid #e0e0e0;
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
+      background: none;
+      border: none;
+      padding: 0;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 1.2rem;
       transition: all 0.2s ease;
+      line-height: 1;
 
       &:hover {
-        background: #f0f0f0;
+        transform: scale(1.2);
+        filter: brightness(1.2);
+      }
+
+      &:active {
         transform: scale(1.1);
       }
     }
@@ -483,16 +486,20 @@
     gap: 0.5rem;
 
     button {
-      background: transparent;
-      border: 1px solid #e0e0e0;
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
+      background: none;
+      border: none;
+      padding: 0;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 1.2rem;
       transition: all 0.2s ease;
+      line-height: 1;
 
       &:hover {
-        background: #f0f0f0;
+        transform: scale(1.2);
+        filter: brightness(1.2);
+      }
+
+      &:active {
         transform: scale(1.1);
       }
     }
@@ -634,17 +641,6 @@
     opacity: 0;
   }
   to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
     opacity: 1;
   }
 }

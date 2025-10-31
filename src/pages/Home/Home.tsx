@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw } from '@/components';
+import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw, MenuSettings, StudyRecordForm, StudyRecordList } from '@/components';
 import { Fortune } from '@/components/fortune';
-import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
+import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
   loadIncomes, addIncome, deleteIncome, updateIncome,
@@ -14,12 +14,19 @@ import {
   validateBrowserUsageImportFile, clearAllBrowserUsageRecords,
   loadDailyRecords, addDailyRecord, deleteDailyRecord, updateDailyRecord,
   exportDailyRecords, importDailyRecords, validateDailyImportFile, clearAllDailyRecords,
+  loadStudyRecords, addStudyRecord, deleteStudyRecord, updateStudyRecord,
+  exportStudyRecords, importStudyRecords, validateStudyImportFile, clearAllStudyRecords,
   getCategories, getIncomeCategories,
-  clearExpensesOnly, clearIncomesOnly, clearAllSleepRecords
+  clearExpensesOnly, clearIncomesOnly, clearAllSleepRecords,
+  loadMenuConfig
 } from '@/utils';
 import './Home.scss';
 
 const Home: React.FC = () => {
+  // 菜单配置状态
+  const [enabledMenus, setEnabledMenus] = useState<BusinessMode[]>([]);
+  const [showMenuSettings, setShowMenuSettings] = useState(false);
+  
   // 业务模式状态（从 URL 参数读取）
   const [businessMode, setBusinessMode] = useState<BusinessMode>(() => {
     const params = new URLSearchParams(window.location.hash.split('?')[1]);
@@ -57,6 +64,12 @@ const Home: React.FC = () => {
   const [isImportingDaily, setIsImportingDaily] = useState(false);
   const dailyFileInputRef = useRef<HTMLInputElement>(null);
 
+  // 学习记录相关状态
+  const [studyRecords, setStudyRecords] = useState<StudyRecord[]>([]);
+  const [editingStudy, setEditingStudy] = useState<StudyRecord | null>(null);
+  const [isImportingStudy, setIsImportingStudy] = useState(false);
+  const studyFileInputRef = useRef<HTMLInputElement>(null);
+
   // 分类筛选状态
   const [selectedExpenseCategories, setSelectedExpenseCategories] = useState<string[]>([]);
   const [selectedIncomeCategories, setSelectedIncomeCategories] = useState<string[]>([]);
@@ -76,15 +89,29 @@ const Home: React.FC = () => {
     const savedSleeps = loadSleepRecords();
     const savedBrowserRecords = loadBrowserUsageRecords();
     const savedDailyRecords = loadDailyRecords();
+    const savedStudyRecords = loadStudyRecords();
     setExpenses(savedExpenses);
     setIncomes(savedIncomes);
     setSleepRecords(savedSleeps);
     setBrowserRecords(savedBrowserRecords);
     setDailyRecords(savedDailyRecords);
+    setStudyRecords(savedStudyRecords);
+  };
+
+  // 加载菜单配置
+  const loadMenus = () => {
+    const config = loadMenuConfig();
+    setEnabledMenus(config);
+    // 如果当前业务模式不在启用的菜单中，切换到第一个启用的菜单
+    if (config.length > 0 && !config.includes(businessMode)) {
+      setBusinessMode(config[0]);
+    }
   };
 
   useEffect(() => {
     loadData();
+    loadMenus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 添加新收入
@@ -615,35 +642,175 @@ const Home: React.FC = () => {
     }
   };
 
+  // === 学习记录处理函数 ===
+
+  // 添加学习记录
+  const handleAddStudy = (record: StudyRecord) => {
+    addStudyRecord(record);
+    const updatedRecords = loadStudyRecords();
+    setStudyRecords(updatedRecords);
+  };
+
+  // 删除学习记录
+  const handleDeleteStudy = (id: string) => {
+    if (window.confirm('确定要删除这条学习记录吗？')) {
+      deleteStudyRecord(id);
+      const updatedRecords = loadStudyRecords();
+      setStudyRecords(updatedRecords);
+    }
+  };
+
+  // 编辑学习记录
+  const handleEditStudy = (record: StudyRecord) => {
+    setEditingStudy(record);
+  };
+
+  // 更新学习记录
+  const handleUpdateStudy = (updatedRecord: StudyRecord) => {
+    updateStudyRecord(updatedRecord);
+    const updatedRecords = loadStudyRecords();
+    setStudyRecords(updatedRecords);
+    setEditingStudy(null);
+  };
+
+  // 取消编辑学习记录
+  const handleCancelStudyEdit = () => {
+    setEditingStudy(null);
+  };
+
+  // 导出学习记录
+  const handleExportStudy = () => {
+    try {
+      const message = `确定导出学习记录吗？\n\n总共 ${studyRecords.length} 条记录`;
+
+      if (window.confirm(message)) {
+        exportStudyRecords(studyRecords);
+        alert('学习记录导出成功！');
+      }
+    } catch (error) {
+      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+    }
+  };
+
+  // 导入学习记录
+  const handleImportStudy = async (file: File) => {
+    setIsImportingStudy(true);
+    try {
+      const result = await importStudyRecords(file);
+      loadData(); // 重新加载数据
+
+      const message = `导入完成！\n新增 ${result.imported} 条记录，跳过 ${result.skipped} 条重复记录\n总计 ${result.total} 条记录`;
+      alert(message);
+    } catch (error) {
+      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+    } finally {
+      setIsImportingStudy(false);
+      if (studyFileInputRef.current) {
+        studyFileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // 处理学习记录文件选择
+  const handleStudyFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const validationError = validateStudyImportFile(file);
+    if (validationError) {
+      alert(validationError);
+      return;
+    }
+
+    handleImportStudy(file);
+  };
+
+  // 触发学习记录文件选择
+  const triggerStudyFileSelect = () => {
+    studyFileInputRef.current?.click();
+  };
+
+  // 清空学习记录
+  const handleClearStudyData = () => {
+    const message = `⚠️ 警告：此操作将清空所有学习记录！\n\n当前记录：${studyRecords.length} 条\n\n此操作不可恢复，确定要清空吗？`;
+
+    if (window.confirm(message)) {
+      const count = clearAllStudyRecords();
+      loadData();
+      alert(`已清空 ${count} 条学习记录！`);
+    }
+  };
+
+  // 打开菜单设置
+  const handleOpenMenuSettings = () => {
+    setShowMenuSettings(true);
+  };
+
+  // 关闭菜单设置
+  const handleCloseMenuSettings = () => {
+    setShowMenuSettings(false);
+  };
+
+  // 菜单配置改变后重新加载
+  const handleMenuConfigChange = () => {
+    loadMenus();
+  };
+
   return (
     <div className="home">
       <header className="home__header">
         {/* 业务模式切换按钮 */}
         <div className="home__mode-switcher">
+          {/* 设置按钮 */}
           <button 
-            className={`mode-btn ${businessMode === BusinessMode.ACCOUNTING ? 'mode-btn--active' : ''}`}
-            onClick={() => handleBusinessModeChange(BusinessMode.ACCOUNTING)}
+            className="settings-btn"
+            onClick={handleOpenMenuSettings}
+            title="菜单设置"
           >
-            💰 {BUSINESS_MODE_LABELS[BusinessMode.ACCOUNTING]}
+            ⚙️
           </button>
-          <button 
-            className={`mode-btn ${businessMode === BusinessMode.SLEEP ? 'mode-btn--active' : ''}`}
-            onClick={() => handleBusinessModeChange(BusinessMode.SLEEP)}
-          >
-            🌙 {BUSINESS_MODE_LABELS[BusinessMode.SLEEP]}
-          </button>
-          <button 
-            className={`mode-btn ${businessMode === BusinessMode.SOFTWARE ? 'mode-btn--active' : ''}`}
-            onClick={() => handleBusinessModeChange(BusinessMode.SOFTWARE)}
-          >
-            💻 {BUSINESS_MODE_LABELS[BusinessMode.SOFTWARE]}
-          </button>
-          <button 
-            className={`mode-btn ${businessMode === BusinessMode.DAILY ? 'mode-btn--active' : ''}`}
-            onClick={() => handleBusinessModeChange(BusinessMode.DAILY)}
-          >
-            📝 {BUSINESS_MODE_LABELS[BusinessMode.DAILY]}
-          </button>
+          
+          {/* 根据配置显示菜单按钮 */}
+          {enabledMenus.includes(BusinessMode.ACCOUNTING) && (
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.ACCOUNTING ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.ACCOUNTING)}
+            >
+              💰 {BUSINESS_MODE_LABELS[BusinessMode.ACCOUNTING]}
+            </button>
+          )}
+          {enabledMenus.includes(BusinessMode.SLEEP) && (
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.SLEEP ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.SLEEP)}
+            >
+              🌙 {BUSINESS_MODE_LABELS[BusinessMode.SLEEP]}
+            </button>
+          )}
+          {enabledMenus.includes(BusinessMode.SOFTWARE) && (
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.SOFTWARE ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.SOFTWARE)}
+            >
+              💻 {BUSINESS_MODE_LABELS[BusinessMode.SOFTWARE]}
+            </button>
+          )}
+          {enabledMenus.includes(BusinessMode.DAILY) && (
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.DAILY ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.DAILY)}
+            >
+              📝 {BUSINESS_MODE_LABELS[BusinessMode.DAILY]}
+            </button>
+          )}
+          {enabledMenus.includes(BusinessMode.STUDY) && (
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.STUDY ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.STUDY)}
+            >
+              📚 {BUSINESS_MODE_LABELS[BusinessMode.STUDY]}
+            </button>
+          )}
         </div>
 
         {/* 根据业务模式显示不同的标题 */}
@@ -662,10 +829,15 @@ const Home: React.FC = () => {
             <h1>💻 软件使用</h1>
             <p>记录和分析你的软件使用情况</p>
           </>
-        ) : (
+        ) : businessMode === BusinessMode.DAILY ? (
           <>
             <h1>📝 日常记录</h1>
             <p>记录你的日常生活习惯</p>
+          </>
+        ) : (
+          <>
+            <h1>📚 学习记录</h1>
+            <p>记录你的学习历程</p>
           </>
         )}
 
@@ -837,7 +1009,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </>
-          ) : (
+          ) : businessMode === BusinessMode.DAILY ? (
             <>
               {/* 日常记录模式 */}
               {/* 隐藏的文件输入 */}
@@ -876,6 +1048,45 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </>
+          ) : (
+            <>
+              {/* 学习记录模式 */}
+              {/* 隐藏的文件输入 */}
+              <input
+                ref={studyFileInputRef}
+                type="file"
+                accept=".json,application/json"
+                onChange={handleStudyFileSelect}
+                style={{ display: 'none' }}
+              />
+
+              <div className="home__section-group">
+                {/* 添加学习记录表单 */}
+                <div className="home__form-section home__form-section--daily">
+                  <StudyRecordForm
+                    onAddRecord={handleAddStudy}
+                    onUpdateRecord={handleUpdateStudy}
+                    onCancelEdit={handleCancelStudyEdit}
+                    editingRecord={editingStudy}
+                  />
+                </div>
+
+                {/* 学习记录列表 */}
+                <div className="home__list-section">
+                  <div className="study-records-container">
+                    <StudyRecordList 
+                      records={studyRecords} 
+                      onDeleteRecord={handleDeleteStudy}
+                      onEditRecord={handleEditStudy}
+                      onExport={handleExportStudy}
+                      onImport={triggerStudyFileSelect}
+                      onClear={handleClearStudyData}
+                      isImporting={isImportingStudy}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </main>
@@ -886,6 +1097,14 @@ const Home: React.FC = () => {
           recordType={categoryManagerType}
           onClose={handleCloseCategoryManager}
           onCategoriesChange={handleCategoriesChange}
+        />
+      )}
+
+      {/* 菜单设置模态框 */}
+      {showMenuSettings && (
+        <MenuSettings
+          onClose={handleCloseMenuSettings}
+          onConfigChange={handleMenuConfigChange}
         />
       )}
     </div>
