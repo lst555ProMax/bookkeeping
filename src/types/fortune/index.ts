@@ -13,9 +13,9 @@ export enum FortuneLevel {
 export const FORTUNE_LEVEL_LABELS: Record<FortuneLevel, string> = {
   [FortuneLevel.EXCELLENT]: '大吉',
   [FortuneLevel.GOOD]: '吉',
-  [FortuneLevel.FAIR]: '中吉',
-  [FortuneLevel.POOR]: '小吉',
-  [FortuneLevel.BAD]: '凶'
+  [FortuneLevel.FAIR]: '小吉',
+  [FortuneLevel.POOR]: '小凶',
+  [FortuneLevel.BAD]: '大凶'
 };
 
 // 运势等级颜色映射

@@ -73,11 +73,15 @@ const WARNING_TEMPLATES = [
 
 /**
  * 根据日期生成随机但稳定的种子
+ * @param date 日期字符串
+ * @param useMicroseconds 是否使用微秒时间戳（用于重置后生成新结果）
  */
-const getDateSeed = (date: string): number => {
+const getDateSeed = (date: string, useMicroseconds: boolean = false): number => {
   let hash = 0;
-  for (let i = 0; i < date.length; i++) {
-    hash = ((hash << 5) - hash) + date.charCodeAt(i);
+  const seedString = useMicroseconds ? `${date}_${Date.now()}` : date;
+  
+  for (let i = 0; i < seedString.length; i++) {
+    hash = ((hash << 5) - hash) + seedString.charCodeAt(i);
     hash = hash & hash; // Convert to 32bit integer
   }
   return Math.abs(hash);
@@ -122,7 +126,8 @@ const getFortuneLevel = (score: number): FortuneLevel => {
  * 生成单个方面的运势
  */
 const generateAspectFortune = (aspect: FortuneAspect, random: SeededRandom): AspectFortune => {
-  const score = random.nextInt(30, 100);
+  // 分数范围 0-100，完整覆盖所有运势等级
+  const score = random.nextInt(0, 100);
   const level = getFortuneLevel(score);
   const descriptions = FORTUNE_DESCRIPTIONS[level][aspect];
   const description = random.choice(descriptions);
@@ -137,10 +142,11 @@ const generateAspectFortune = (aspect: FortuneAspect, random: SeededRandom): Asp
 
 /**
  * 生成今日运势
+ * @param forceNew 是否强制生成新的运势（用于重置后重新生成）
  */
-export const generateTodayFortune = (): FortuneRecord => {
+export const generateTodayFortune = (forceNew: boolean = false): FortuneRecord => {
   const today = new Date().toISOString().split('T')[0];
-  const seed = getDateSeed(today);
+  const seed = getDateSeed(today, forceNew);
   const random = new SeededRandom(seed);
 
   // 生成各方面运势

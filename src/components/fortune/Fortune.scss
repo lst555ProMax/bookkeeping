@@ -1,198 +1,209 @@
 .fortune {
   position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 
   &__content {
-    width: 100%;
     display: flex;
-    justify-content: center;
+    align-items: center;
   }
 
+  // 按钮样式 - 完全对齐抽卡按钮
   &__button {
-    padding: 1rem 2rem;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    white-space: nowrap;
 
     &:hover {
+      background: rgba(255, 255, 255, 0.3);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    }
-
-    &:active {
-      transform: translateY(0);
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
     }
   }
 
+  // 结果展示 - 对齐抽卡结果样式
   &__result {
-    width: 100%;
-    max-width: 400px;
-  }
-
-  &__result-title {
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #495057;
-    margin-bottom: 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
   }
 
   &__result-card {
-    background: #fff;
-    border: 3px solid;
-    border-radius: 16px;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.02);
+    }
   }
 
   &__result-level {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
   }
 
   &__result-score {
-    font-size: 1rem;
-    color: #495057;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
   }
 
   &__result-extras {
     display: flex;
-    justify-content: center;
-    gap: 1rem;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 0.25rem;
   }
 
-  &__lucky-item {
-    font-size: 1rem;
-    color: #6c757d;
-  }
-
+  // 重置按钮 - 对齐抽卡重置按钮
   &__reset {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem;
-    font-size: 1.2rem;
-    background: transparent;
-    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1rem;
     cursor: pointer;
-    opacity: 0.3;
-    transition: opacity 0.2s;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
-      opacity: 1;
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(180deg);
     }
   }
 
-  // 模态框样式
+  // 模态框样式 - 对齐抽卡模态框
   &__modal {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.7);
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 1000;
+    justify-content: center;
+    z-index: 9999;
     animation: fadeIn 0.3s ease;
+    padding: 20px;
+    overflow-y: auto;
   }
 
   &__modal-content {
-    background: #fff;
-    border-radius: 20px;
+    background: white;
+    border-radius: 24px;
     padding: 2.5rem;
-    max-width: 600px;
+    width: 100%;
+    max-width: 650px;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
-    animation: slideUp 0.3s ease;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   &__modal-close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: transparent;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
     border: none;
     font-size: 2rem;
-    cursor: pointer;
-    color: #adb5bd;
-    transition: color 0.2s;
     line-height: 1;
+    color: #adb5bd;
+    cursor: pointer;
+    transition: all 0.2s;
     padding: 0;
     width: 2rem;
     height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
       color: #495057;
+      transform: rotate(90deg);
     }
   }
 
   &__modal-title {
     text-align: center;
     font-size: 2rem;
+    font-weight: 700;
     margin-bottom: 2rem;
     color: #495057;
   }
 
+  // 生成区域
   &__generate-area {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 3rem 0;
+    gap: 2rem;
   }
 
   &__generating {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
 
     p {
       font-size: 1.2rem;
       color: #6c757d;
+      font-weight: 500;
     }
   }
 
   &__crystal-ball {
-    font-size: 5rem;
+    font-size: 6rem;
     animation: float 2s ease-in-out infinite;
   }
 
   &__generate-button {
-    padding: 1.5rem 3rem;
+    padding: 1.5rem 3.5rem;
     font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
+    font-weight: 700;
+    color: white;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
     }
 
     &:active {
-      transform: translateY(0);
+      transform: translateY(-1px);
     }
   }
 
+  // 结果区域
   &__result-area {
     display: flex;
     flex-direction: column;
@@ -204,23 +215,25 @@
     padding: 2rem;
     border: 3px solid;
     border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   }
 
   &__main-level {
-    font-size: 3rem;
-    font-weight: bold;
+    font-size: 2.5rem;
+    font-weight: 800;
     margin-bottom: 0.5rem;
   }
 
   &__main-score {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #495057;
+    font-weight: 600;
   }
 
+  // 各方面运势 - 两列布局
   &__aspects {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
 
@@ -232,7 +245,8 @@
 
     &:hover {
       background: #e9ecef;
-      transform: translateX(5px);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
   }
 
@@ -241,32 +255,42 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5rem;
+    gap: 0.5rem;
   }
 
   &__aspect-name {
-    font-weight: bold;
+    font-weight: 700;
     color: #495057;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    white-space: nowrap;
   }
 
   &__aspect-level {
-    font-weight: bold;
-    font-size: 0.95rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
 
   &__aspect-desc {
     color: #6c757d;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     line-height: 1.5;
   }
 
+  // 额外信息
   &__extras {
     background: linear-gradient(135deg, #667eea15, #764ba215);
     border-radius: 12px;
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 1rem;
+  }
+
+  &__extra-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
   &__extra-item {
@@ -276,17 +300,19 @@
   }
 
   &__extra-label {
-    font-weight: bold;
+    font-weight: 700;
     color: #495057;
     white-space: nowrap;
+    font-size: 0.95rem;
   }
 
   &__extra-value {
     color: #6c757d;
     line-height: 1.6;
+    font-size: 0.95rem;
   }
 
-  // 彩带动画
+  // 彩带特效
   &__confetti {
     position: fixed;
     top: 0;
@@ -294,7 +320,7 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 99999;
     overflow: hidden;
   }
 
@@ -307,6 +333,7 @@
   }
 }
 
+// 动画
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -318,7 +345,7 @@
 
 @keyframes slideUp {
   from {
-    transform: translateY(50px);
+    transform: translateY(30px);
     opacity: 0;
   }
   to {
@@ -328,7 +355,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) rotate(0deg);
   }
   50% {
