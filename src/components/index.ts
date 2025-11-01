@@ -2,7 +2,9 @@
 
 // 通用组件
 export {
-  MenuSettings
+  MenuSettings,
+  CardDraw,
+  Fortune
 } from './common';
 
 // 账单记录相关组件
@@ -40,10 +42,6 @@ export {
 // 学习记录相关组件
 export {
   StudyRecordForm,
-  StudyRecordList
+  StudyRecordList,
+  StudyCategoryManager
 } from './study';
-
-// 抽卡游戏组件
-export {
-  CardDraw
-} from './cardDraw';

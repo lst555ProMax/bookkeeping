@@ -15,6 +15,7 @@
     border-radius: 8px;
     font-size: 1rem;
     background: white;
+    color: #333;
     cursor: pointer;
     transition: border-color 0.3s ease;
 
@@ -25,6 +26,12 @@
 
     &:hover {
       border-color: #c5c9d0;
+    }
+
+    // 确保所有选项文字颜色都是深色
+    option {
+      color: #333;
+      background: white;
     }
   }
 }

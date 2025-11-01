@@ -124,6 +124,21 @@
   }
 }
 
+// 分类徽章样式
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  align-self: flex-start;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
 // 详情区块样式 - 左右布局
 .detail-section {
   display: flex;

@@ -163,6 +163,11 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
               </div>
 
               <div className="study-item__body">
+                {/* 分类 */}
+                <div className="category-badge">
+                  🏷️ {record.category}
+                </div>
+
                 {/* 视频标题 */}
                 <div className="detail-section">
                   <h4 className="section-title">🎬 视频标题</h4>

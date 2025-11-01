@@ -97,6 +97,39 @@
   }
 }
 
+// 分类选择器包装器
+.category-select-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  select {
+    flex: 1;
+  }
+}
+
+// 分类管理按钮 - 无边框样式
+.category-btn {
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.3rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 // 观看集数和时间在一行
 .episode-time-row {
   display: flex;

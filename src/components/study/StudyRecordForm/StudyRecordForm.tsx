@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { StudyRecord } from '@/types';
+import { StudyRecord, StudyCategory } from '@/types';
+import { getStudyCategories } from '@/utils';
 import './StudyRecordForm.scss';
 
 interface StudyRecordFormProps {
   onAddRecord: (record: StudyRecord) => void;
   onUpdateRecord: (record: StudyRecord) => void;
   onCancelEdit: () => void;
+  onOpenCategoryManager: () => void;
   editingRecord: StudyRecord | null;
+  categoriesKey?: number; // 用于强制重新渲染
 }
 
 const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
   onAddRecord,
   onUpdateRecord,
   onCancelEdit,
-  editingRecord
+  onOpenCategoryManager,
+  editingRecord,
+  categoriesKey
 }) => {
   // 获取默认日期（今天）
   const getDefaultDate = () => {
@@ -26,14 +31,17 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
 
   // 表单状态
   const [date, setDate] = useState(getDefaultDate());
+  const [category, setCategory] = useState(getStudyCategories()[0]);
   const [videoTitle, setVideoTitle] = useState('');
   const [episodeStart, setEpisodeStart] = useState('');
   const [episodeEnd, setEpisodeEnd] = useState('');
   const [totalTime, setTotalTime] = useState('');
   const [remark, setRemark] = useState('');
+  const [categories, setCategories] = useState<StudyCategory[]>([]);
 
   const resetForm = () => {
     setDate(getDefaultDate());
+    setCategory(getStudyCategories()[0]);
     setVideoTitle('');
     setEpisodeStart('');
     setEpisodeEnd('');
@@ -41,10 +49,22 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     setRemark('');
   };
 
+  // 加载分类列表
+  useEffect(() => {
+    const loadedCategories = getStudyCategories();
+    setCategories(loadedCategories);
+    
+    // 如果当前分类不在列表中，重置为第一个分类
+    if (loadedCategories.length > 0 && !loadedCategories.includes(category)) {
+      setCategory(loadedCategories[0]);
+    }
+  }, [categoriesKey, category]);
+
   // 当编辑记录时，填充表单
   useEffect(() => {
     if (editingRecord) {
       setDate(editingRecord.date);
+      setCategory(editingRecord.category);
       setVideoTitle(editingRecord.videoTitle);
       setEpisodeStart(editingRecord.episodeStart.toString());
       setEpisodeEnd(editingRecord.episodeEnd.toString());
@@ -116,6 +136,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     const studyRecord: StudyRecord = {
       id: editingRecord?.id || `study_${Date.now()}`,
       date,
+      category,
       videoTitle: videoTitle.trim(),
       episodeStart: startEp,
       episodeEnd: endEp,
@@ -160,6 +181,35 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
             min="2024-10-01"
             required
           />
+        </div>
+
+        {/* 分类 */}
+        <div className="form-group">
+          <label htmlFor="category">
+            分类 <span className="required">*</span>
+          </label>
+          <div className="category-select-wrapper">
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value as StudyCategory)}
+              required
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="category-btn"
+              onClick={onOpenCategoryManager}
+              title="管理学习分类"
+            >
+              ⚙️
+            </button>
+          </div>
         </div>
 
         {/* 视频标题 */}
