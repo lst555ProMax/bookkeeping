@@ -11,7 +11,22 @@ export const loadStudyRecords = (): StudyRecord[] => {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
     if (data) {
-      const records = JSON.parse(data);
+      let records = JSON.parse(data);
+      
+      // 数据迁移：为旧记录添加 category 字段
+      records = records.map((record: StudyRecord | Partial<StudyRecord>) => {
+        if (!record.category) {
+          return {
+            ...record,
+            category: '其它' // 默认分类为"其它"
+          };
+        }
+        return record;
+      });
+      
+      // 保存迁移后的数据
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      
       // 按日期降序排序（最新的在前）
       return records.sort((a: StudyRecord, b: StudyRecord) => 
         new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -26,7 +41,7 @@ export const loadStudyRecords = (): StudyRecord[] => {
 /**
  * 保存学习记录到 localStorage
  */
-const saveStudyRecords = (records: StudyRecord[]): void => {
+export const saveStudyRecords = (records: StudyRecord[]): void => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
   } catch (error) {

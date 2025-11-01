@@ -24,6 +24,7 @@ export * from './daily/statistics';
 // ==================== 学习记录模块 ====================
 export * from './study/storage';
 export * from './study/dataImportExport';
+export * from './study/category';
 
 // ==================== 抽卡游戏模块 ====================
 export * from './cardDraw/storage';

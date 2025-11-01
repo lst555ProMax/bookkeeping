@@ -60,6 +60,7 @@ const validateStudyRecord = (record: unknown): record is StudyRecord => {
   return (
     typeof r.id === 'string' &&
     typeof r.date === 'string' &&
+    typeof r.category === 'string' &&
     typeof r.videoTitle === 'string' &&
     typeof r.episodeStart === 'number' &&
     typeof r.episodeEnd === 'number' &&
@@ -115,6 +116,7 @@ export const importStudyRecords = (file: File): Promise<{
           try {
             addStudyRecord({
               date: record.date,
+              category: record.category,
               videoTitle: record.videoTitle,
               episodeStart: record.episodeStart,
               episodeEnd: record.episodeEnd,

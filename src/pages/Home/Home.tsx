@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw, MenuSettings, StudyRecordForm, StudyRecordList } from '@/components';
-import { Fortune } from '@/components/fortune';
+import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw, MenuSettings, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
@@ -77,6 +76,8 @@ const Home: React.FC = () => {
   const [editingStudy, setEditingStudy] = useState<StudyRecord | null>(null);
   const [isImportingStudy, setIsImportingStudy] = useState(false);
   const studyFileInputRef = useRef<HTMLInputElement>(null);
+  const [showStudyCategoryManager, setShowStudyCategoryManager] = useState(false);
+  const [studyCategoriesKey, setStudyCategoriesKey] = useState(0);
 
   // 分类筛选状态
   const [selectedExpenseCategories, setSelectedExpenseCategories] = useState<string[]>([]);
@@ -348,6 +349,32 @@ const Home: React.FC = () => {
   // 关闭分类管理器
   const handleCloseCategoryManager = () => {
     setShowCategoryManager(false);
+  };
+
+  // 打开学习分类管理器
+  const handleOpenStudyCategoryManager = () => {
+    setShowStudyCategoryManager(true);
+  };
+
+  // 关闭学习分类管理器
+  const handleCloseStudyCategoryManager = () => {
+    setShowStudyCategoryManager(false);
+  };
+
+  // 学习分类变化时刷新
+  const handleStudyCategoriesChange = () => {
+    setStudyCategoriesKey(prev => prev + 1);
+    // 重新加载学习记录
+    const updatedStudyRecords = loadStudyRecords();
+    setStudyRecords(updatedStudyRecords);
+    
+    // 如果正在编辑记录，需要同步更新编辑状态中的数据
+    if (editingStudy) {
+      const updatedRecord = updatedStudyRecords.find(r => r.id === editingStudy.id);
+      if (updatedRecord) {
+        setEditingStudy(updatedRecord);
+      }
+    }
   };
 
   // 分类变化时刷新
@@ -1100,7 +1127,9 @@ const Home: React.FC = () => {
                     onAddRecord={handleAddStudy}
                     onUpdateRecord={handleUpdateStudy}
                     onCancelEdit={handleCancelStudyEdit}
+                    onOpenCategoryManager={handleOpenStudyCategoryManager}
                     editingRecord={editingStudy}
+                    categoriesKey={studyCategoriesKey}
                   />
                 </div>
 
@@ -1130,6 +1159,14 @@ const Home: React.FC = () => {
           recordType={categoryManagerType}
           onClose={handleCloseCategoryManager}
           onCategoriesChange={handleCategoriesChange}
+        />
+      )}
+
+      {/* 学习分类管理器模态框 */}
+      {showStudyCategoryManager && (
+        <StudyCategoryManager
+          onClose={handleCloseStudyCategoryManager}
+          onCategoriesChange={handleStudyCategoriesChange}
         />
       )}
 

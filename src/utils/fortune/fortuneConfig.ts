@@ -126,8 +126,8 @@ const getFortuneLevel = (score: number): FortuneLevel => {
  * 生成单个方面的运势
  */
 const generateAspectFortune = (aspect: FortuneAspect, random: SeededRandom): AspectFortune => {
-  // 分数范围 0-100，完整覆盖所有运势等级
-  const score = random.nextInt(0, 100);
+  // 分数范围 20-100，完整覆盖所有运势等级
+  const score = random.nextInt(20, 100);
   const level = getFortuneLevel(score);
   const descriptions = FORTUNE_DESCRIPTIONS[level][aspect];
   const description = random.choice(descriptions);
