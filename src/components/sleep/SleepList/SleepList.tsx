@@ -73,6 +73,43 @@ const SleepList: React.FC<SleepListProps> = ({
     return Math.round(total / monthSleeps.length);
   };
 
+  // 计算某个月的平均入睡时间
+  const calculateMonthAvgSleepTime = (monthSleeps: SleepRecord[]): string => {
+    // 将时间字符串转换为分钟数
+    const timeToMinutes = (time: string): number => {
+      const [hours, minutes] = time.split(':').map(Number);
+      let totalMinutes = hours * 60 + minutes;
+      // 如果时间小于12点，认为是凌晨，加上24小时
+      if (hours < 12) {
+        totalMinutes += 24 * 60;
+      }
+      return totalMinutes;
+    };
+
+    // 将分钟数转换回时间字符串
+    const minutesToTime = (minutes: number): string => {
+      const adjustedMinutes = minutes % (24 * 60);
+      const hours = Math.floor(adjustedMinutes / 60);
+      const mins = Math.round(adjustedMinutes % 60);
+      return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+    };
+
+    const totalMinutes = monthSleeps.reduce((sum, sleep) => sum + timeToMinutes(sleep.sleepTime), 0);
+    const avgMinutes = totalMinutes / monthSleeps.length;
+    return minutesToTime(avgMinutes);
+  };
+
+  // 计算某个月的平均睡眠时长
+  const calculateMonthAvgDuration = (monthSleeps: SleepRecord[]): string => {
+    const validSleeps = monthSleeps.filter(sleep => sleep.duration !== undefined);
+    if (validSleeps.length === 0) return '--';
+    
+    const totalDuration = validSleeps.reduce((sum, sleep) => sum + (sleep.duration || 0), 0);
+    const avgDuration = Math.round(totalDuration / validSleeps.length); // 对平均值取整
+    
+    return formatSleepDuration(avgDuration);
+  };
+
   // 获取睡眠质量对应的emoji
   const getQualityEmoji = (score: number) => {
     const level = getSleepQualityLevel(score);
@@ -218,6 +255,8 @@ const SleepList: React.FC<SleepListProps> = ({
           const monthSleeps = groupedByMonth[monthKey];
           const isExpanded = expandedMonths[monthKey];
           const avgQuality = calculateMonthAvgQuality(monthSleeps);
+          const avgSleepTime = calculateMonthAvgSleepTime(monthSleeps);
+          const avgDuration = calculateMonthAvgDuration(monthSleeps);
           const sortedMonthSleeps = [...monthSleeps].sort((a, b) => 
             new Date(b.date).getTime() - new Date(a.date).getTime()
           );
@@ -236,9 +275,17 @@ const SleepList: React.FC<SleepListProps> = ({
                   <span className="sleep-list__month-title">{formatMonthDisplay(monthKey)}</span>
                   <span className="sleep-list__month-count">({monthSleeps.length}条)</span>
                 </div>
-                <span className="sleep-list__month-avg">
-                  {getQualityEmoji(avgQuality)} 平均 {avgQuality}分
-                </span>
+                <div className="sleep-list__month-stats">
+                  <span className="sleep-list__month-stat">
+                    {getQualityEmoji(avgQuality)} {avgQuality}分
+                  </span>
+                  <span className="sleep-list__month-stat">
+                    🌙 {avgSleepTime}
+                  </span>
+                  <span className="sleep-list__month-stat">
+                    ⏱️ {avgDuration}
+                  </span>
+                </div>
               </div>
 
               {/* 月份内容 */}

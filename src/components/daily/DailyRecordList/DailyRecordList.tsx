@@ -65,6 +65,16 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     return `${year}年${parseInt(month)}月`;
   };
 
+  // 计算某个月早餐未吃的次数
+  const calculateBreakfastNotEaten = (monthRecords: DailyRecord[]): number => {
+    return monthRecords.filter(record => record.meals.breakfast === MealStatus.NOT_EATEN).length;
+  };
+
+  // 计算某个月午餐不规律的次数
+  const calculateLunchIrregular = (monthRecords: DailyRecord[]): number => {
+    return monthRecords.filter(record => record.meals.lunch === MealStatus.EATEN_IRREGULAR).length;
+  };
+
   // 获取三餐状态的emoji
   const getMealEmoji = (status: MealStatus) => {
     switch (status) {
@@ -203,6 +213,8 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
         {sortedMonths.map(monthKey => {
           const monthRecords = groupedByMonth[monthKey];
           const isExpanded = expandedMonths[monthKey];
+          const breakfastNotEaten = calculateBreakfastNotEaten(monthRecords);
+          const lunchIrregular = calculateLunchIrregular(monthRecords);
           const sortedMonthRecords = [...monthRecords].sort((a, b) => 
             new Date(b.date).getTime() - new Date(a.date).getTime()
           );
@@ -220,6 +232,14 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
                   </span>
                   <span className="daily-list__month-title">{formatMonthDisplay(monthKey)}</span>
                   <span className="daily-list__month-count">({monthRecords.length}条)</span>
+                </div>
+                <div className="daily-list__month-stats">
+                  <span className="daily-list__month-stat">
+                    ❌ 早餐未吃 {breakfastNotEaten}次
+                  </span>
+                  <span className="daily-list__month-stat">
+                    ⚠️ 午餐不规律 {lunchIrregular}次
+                  </span>
                 </div>
               </div>
 

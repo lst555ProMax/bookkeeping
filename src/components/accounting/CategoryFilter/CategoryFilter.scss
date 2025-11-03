@@ -34,6 +34,16 @@
     color: #333;
   }
 
+  &__monthly {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--theme-color-start);
+    background: linear-gradient(135deg, var(--theme-color-start) 0%, var(--theme-color-end) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
   &__total {
     font-size: 1rem;
     font-weight: 700;

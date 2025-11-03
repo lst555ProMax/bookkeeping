@@ -113,6 +113,18 @@
     color: #6c757d;
   }
 
+  &__month-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__month-stat {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #495057;
+  }
+
   &__month-total {
     font-weight: 700;
     font-size: 1.1rem;

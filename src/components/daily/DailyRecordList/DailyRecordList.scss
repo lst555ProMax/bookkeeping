@@ -140,6 +140,18 @@
     color: #6c757d;
   }
 
+  &__month-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__month-stat {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #495057;
+  }
+
   &__month-content {
     background: transparent;
     padding-top: 0.5rem;

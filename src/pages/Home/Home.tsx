@@ -91,6 +91,28 @@ const Home: React.FC = () => {
     setSelectedIncomeCategories(incomeCategories);
   }, [categoriesKey]); // 当分类变化时重新初始化
 
+  // 获取当前月份字符串 (YYYY-MM)
+  const getCurrentMonth = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+  };
+
+  // 计算本月支出
+  const getMonthlyExpenses = () => {
+    const currentMonth = getCurrentMonth();
+    return expenses
+      .filter(e => selectedExpenseCategories.includes(e.category) && e.date.startsWith(currentMonth))
+      .reduce((sum, e) => sum + e.amount, 0);
+  };
+
+  // 计算本月收入
+  const getMonthlyIncomes = () => {
+    const currentMonth = getCurrentMonth();
+    return incomes
+      .filter(i => selectedIncomeCategories.includes(i.category) && i.date.startsWith(currentMonth))
+      .reduce((sum, i) => sum + i.amount, 0);
+  };
+
   // 加载存储的支出和收入记录
   const loadData = () => {
     const savedExpenses = loadExpenses();
@@ -939,6 +961,7 @@ const Home: React.FC = () => {
                         categories={getCategories()}
                         selectedCategories={selectedExpenseCategories}
                         onCategoryChange={setSelectedExpenseCategories}
+                        monthlyAmount={getMonthlyExpenses()}
                         totalAmount={expenses
                           .filter(e => selectedExpenseCategories.includes(e.category))
                           .reduce((sum, e) => sum + e.amount, 0)}
@@ -980,6 +1003,7 @@ const Home: React.FC = () => {
                         categories={getIncomeCategories()}
                         selectedCategories={selectedIncomeCategories}
                         onCategoryChange={setSelectedIncomeCategories}
+                        monthlyAmount={getMonthlyIncomes()}
                         totalAmount={incomes
                           .filter(i => selectedIncomeCategories.includes(i.category))
                           .reduce((sum, i) => sum + i.amount, 0)}

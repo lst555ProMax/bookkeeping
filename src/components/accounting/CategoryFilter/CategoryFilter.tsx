@@ -8,6 +8,7 @@ interface CategoryFilterProps {
   title?: string; // 可选标题
   totalAmount?: number; // 当前筛选的金额
   allTotalAmount?: number; // 所有记录的总金额（用于计算百分比）
+  monthlyAmount?: number; // 本月金额
   theme?: 'expense' | 'income'; // 主题：支出（紫色）或收入（绿色）
   // 操作按钮相关
   onViewDashboard?: () => void;
@@ -24,6 +25,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   title,
   totalAmount,
   allTotalAmount,
+  monthlyAmount,
   theme = 'expense',
   onViewDashboard,
   onExport,
@@ -31,10 +33,16 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onClear,
   isImporting = false
 }) => {
-  // 计算百分比
+  // 计算总金额百分比
   const percentage = allTotalAmount && allTotalAmount > 0 && totalAmount !== undefined
     ? ((totalAmount / allTotalAmount) * 100).toFixed(1)
     : null;
+  
+  // 计算月份金额百分比
+  const monthlyPercentage = allTotalAmount && allTotalAmount > 0 && monthlyAmount !== undefined
+    ? ((monthlyAmount / allTotalAmount) * 100).toFixed(1)
+    : null;
+  
   // 全选
   const handleSelectAll = () => {
     onCategoryChange([...categories]);
@@ -63,6 +71,14 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         {title && (
           <div className="category-filter__title-group">
             <div className="category-filter__title">{title}</div>
+            {monthlyAmount !== undefined && (
+              <span className="category-filter__monthly">
+                ¥{monthlyAmount.toFixed(2)}
+                {monthlyPercentage !== null && (
+                  <span className="category-filter__percentage"> ({monthlyPercentage}%)</span>
+                )}
+              </span>
+            )}
             {totalAmount !== undefined && (
               <span className="category-filter__total">
                 ¥{totalAmount.toFixed(2)}
