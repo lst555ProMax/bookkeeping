@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StudyRecord } from '@/utils';
 import './StudyRecordList.scss';
 
@@ -21,10 +21,52 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
   onClear,
   isImporting = false
 }) => {
-  // 按日期排序（最新的在前）
-  const sortedRecords = [...records].sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
+  // 跟踪每个月份的展开/收起状态
+  const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
+
+  // 按月份分组
+  const groupedByMonth = records.reduce((groups, record) => {
+    const monthKey = record.date.substring(0, 7); // YYYY-MM
+    if (!groups[monthKey]) {
+      groups[monthKey] = [];
+    }
+    groups[monthKey].push(record);
+    return groups;
+  }, {} as Record<string, StudyRecord[]>);
+
+  // 按月份排序（最新的在前）
+  const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => b.localeCompare(a));
+
+  // 初始化展开状态（默认展开最近的月份）
+  React.useEffect(() => {
+    if (sortedMonths.length > 0 && Object.keys(expandedMonths).length === 0) {
+      const initialState: Record<string, boolean> = {};
+      sortedMonths.forEach((month, index) => {
+        initialState[month] = index === 0;
+      });
+      setExpandedMonths(initialState);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortedMonths.length]);
+
+  // 切换月份的展开/收起状态
+  const toggleMonth = (monthKey: string) => {
+    setExpandedMonths(prev => ({
+      ...prev,
+      [monthKey]: !prev[monthKey]
+    }));
+  };
+
+  // 格式化月份显示
+  const formatMonthDisplay = (monthKey: string): string => {
+    const [year, month] = monthKey.split('-');
+    return `${year}年${parseInt(month)}月`;
+  };
+
+  // 计算某个月的总学习时长
+  const calculateMonthTotal = (monthRecords: StudyRecord[]): number => {
+    return monthRecords.reduce((sum, record) => sum + record.totalTime, 0);
+  };
 
   // 格式化观看时长
   const formatDuration = (minutes: number): string => {
@@ -132,9 +174,40 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
       </div>
       
       <div className="study-list__content">
-        <div className="study-list__grid">
-          {sortedRecords.map((record) => (
-            <div key={record.id} className="study-item">
+        {/* 按月份分组显示 */}
+        {sortedMonths.map(monthKey => {
+          const monthRecords = groupedByMonth[monthKey];
+          const isExpanded = expandedMonths[monthKey];
+          const monthTotal = calculateMonthTotal(monthRecords);
+          const sortedMonthRecords = [...monthRecords].sort((a, b) => 
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+          );
+
+          return (
+            <div key={monthKey} className="study-list__month-group">
+              {/* 月份头部 */}
+              <div 
+                className="study-list__month-header" 
+                onClick={() => toggleMonth(monthKey)}
+              >
+                <div className="study-list__month-header-left">
+                  <span className={`study-list__month-arrow ${isExpanded ? 'expanded' : ''}`}>
+                    ▶
+                  </span>
+                  <span className="study-list__month-title">{formatMonthDisplay(monthKey)}</span>
+                  <span className="study-list__month-count">({monthRecords.length}条)</span>
+                </div>
+                <span className="study-list__month-total">
+                  ⏱️ {formatDuration(monthTotal)}
+                </span>
+              </div>
+
+              {/* 月份内容 */}
+              {isExpanded && (
+                <div className="study-list__month-content">
+                  <div className="study-list__grid">
+                    {sortedMonthRecords.map((record) => (
+                      <div key={record.id} className="study-item">
               <div className="study-item__header">
                 <div className="study-item__date">
                   📅 {new Date(record.date).toLocaleDateString('zh-CN', {
@@ -199,8 +272,13 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
                 )}
               </div>
             </div>
-          ))}
-        </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

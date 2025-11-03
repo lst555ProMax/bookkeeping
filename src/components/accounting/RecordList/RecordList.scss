@@ -56,6 +56,71 @@
     }
   }
 
+  // 月份分组样式
+  &__month-group {
+    margin-bottom: 0rem;
+  }
+
+  &__month-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #e1e5e9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: sticky;
+    top: 0;
+    z-index: 11;
+
+    &:hover {
+      background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    }
+
+    &:active {
+      background: linear-gradient(135deg, #dee2e6 0%, #ced4da 100%);
+    }
+  }
+
+  &__month-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__month-arrow {
+    color: #495057;
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+    display: inline-block;
+
+    &.expanded {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__month-title {
+    font-weight: 700;
+    color: #495057;
+    font-size: 1.15rem;
+  }
+
+  &__month-count {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+
+  &__month-total {
+    font-weight: 800;
+    font-size: 1.25rem;
+  }
+
+  &__month-content {
+    background: transparent;
+  }
+
   &__day-group {
     border-bottom: 1px solid #f0f0f0;
 
@@ -68,7 +133,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 2rem;
+    padding: 0.3rem 2rem;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-bottom: 2px solid #e1e5e9;
     position: sticky;
@@ -95,7 +160,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 2rem;
+    padding: 0.3rem 2rem;
     border-bottom: 1px solid #f0f0f0;
     transition: all 0.3s ease;
     background: white;
@@ -179,6 +244,13 @@
       background-clip: text;
     }
 
+    .record-list__month-total {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
     .record-list__day-total {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       -webkit-background-clip: text;
@@ -205,6 +277,13 @@
   // 收入样式（绿色）
   &--income {
     .record-list__title {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .record-list__month-total {
       background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -242,8 +321,32 @@
       font-size: 1.3rem;
     }
 
+    &__month-header {
+      padding: 0.625rem 1.5rem;
+    }
+
+    &__month-title {
+      font-size: 1.05rem;
+    }
+
+    &__month-count {
+      font-size: 0.85rem;
+    }
+
+    &__month-total {
+      font-size: 1.15rem;
+    }
+
     &__day-header {
-      padding: 0.75rem 1.5rem;
+      padding: 0.5rem 1.5rem;
+    }
+
+    &__day-date {
+      font-size: 1rem;
+    }
+
+    &__day-total {
+      font-size: 1.1rem;
     }
 
     &__empty {

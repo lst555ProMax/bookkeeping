@@ -56,6 +56,74 @@
     }
   }
 
+  // 月份分组样式
+  &__month-group {
+    margin-bottom: 0.5rem;
+  }
+
+  &__month-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 2px solid #e1e5e9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: sticky;
+    top: 0;
+    z-index: 9;
+    border-radius: 8px 8px 0 0;
+
+    &:hover {
+      background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    }
+
+    &:active {
+      background: linear-gradient(135deg, #dee2e6 0%, #ced4da 100%);
+    }
+  }
+
+  &__month-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__month-arrow {
+    color: #495057;
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+    display: inline-block;
+
+    &.expanded {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__month-title {
+    font-weight: 700;
+    color: #495057;
+    font-size: 1.15rem;
+  }
+
+  &__month-count {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+
+  &__month-total {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #495057;
+  }
+
+  &__month-content {
+    background: transparent;
+    padding-top: 0.5rem;
+  }
+
   &__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
