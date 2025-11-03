@@ -1,5 +1,5 @@
 // ==================== 通用工具函数 ====================
-export * from './helpers';
+export * from './common/helpers';
 export * from './common/menuConfig';
 export * from './common/sampleData';
 
@@ -27,7 +27,23 @@ export * from './study/dataImportExport';
 export * from './study/category';
 
 // ==================== 抽卡游戏模块 ====================
-export * from './cardDraw/storage';
+export * from './common/cardDraw/storage';
+export {
+  loadActivityConfig,
+  saveActivityConfig,
+  resetActivityConfig,
+  addCategory as addActivityCategory,
+  deleteCategory as deleteActivityCategory,
+  addActivityItem,
+  updateActivityItem,
+  deleteActivityItem,
+  validateProbabilities,
+  drawCardByConfig
+} from './common/cardDraw/activityConfig';
+
+// ==================== 运势模块 ====================
+export * from './common/fortune/storage';
+export * from './common/fortune/fortuneConfig';
 
 // ==================== 向后兼容的别名导出 ====================
 // 为了不破坏现有代码，保留一些常用的别名

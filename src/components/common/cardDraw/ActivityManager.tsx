@@ -5,13 +5,13 @@ import {
   loadActivityConfig,
   saveActivityConfig,
   resetActivityConfig,
-  addCategory,
-  deleteCategory,
+  addActivityCategory,
+  deleteActivityCategory,
   addActivityItem,
   updateActivityItem,
   deleteActivityItem,
   validateProbabilities
-} from '@/utils/cardDraw/activityConfig';
+} from '@/utils';
 import './ActivityManager.scss';
 
 interface ActivityManagerProps {
@@ -88,7 +88,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     }
 
     const categoryEnum = CardCategory.CUSTOM; // 新建的都是自定义类型
-    const newConfig = addCategory(categoryName, categoryEnum);
+    const newConfig = addActivityCategory(categoryName, categoryEnum);
     setError('');
     loadConfig();
     onConfigChange();
@@ -127,7 +127,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
       : `确定要删除"${category.name}"分类吗？`;
 
     if (confirm(message)) {
-      deleteCategory(id);
+      deleteActivityCategory(id);
       loadConfig();
       onConfigChange();
       if (selectedCategoryId === id) {

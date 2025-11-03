@@ -10,9 +10,9 @@ import {
   getTodayFortune, 
   hasTodayFortune, 
   addFortuneRecord, 
-  clearTodayFortuneRecord 
-} from '@/utils/fortune/storage';
-import { generateTodayFortune } from '@/utils/fortune/fortuneConfig';
+  clearTodayFortuneRecord,
+  generateTodayFortune
+} from '@/utils';
 import './Fortune.scss';
 
 const Fortune: React.FC = () => {

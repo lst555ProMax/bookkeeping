@@ -5,9 +5,10 @@ import {
   getTodayCardDraw, 
   hasTodayDrawn, 
   addCardDrawRecord, 
-  clearTodayCardDrawRecord 
-} from '@/utils/cardDraw/storage';
-import { loadActivityConfig, drawCardByConfig } from '@/utils/cardDraw/activityConfig';
+  clearTodayCardDrawRecord,
+  loadActivityConfig,
+  drawCardByConfig
+} from '@/utils';
 import ActivityManager from './ActivityManager';
 import './CardDraw.scss';
 

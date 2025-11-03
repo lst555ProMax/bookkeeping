@@ -69,7 +69,7 @@ export const loadActivityConfig = (): ActivityCategoryConfig[] => {
   try {
     const data = localStorage.getItem(ACTIVITY_CONFIG_STORAGE_KEY);
     if (!data) {
-      // 如果没有配置，保存并返回默认配置
+      // 如果没有配置,保存并返回默认配置
       saveActivityConfig(DEFAULT_ACTIVITY_CONFIG);
       return DEFAULT_ACTIVITY_CONFIG;
     }
