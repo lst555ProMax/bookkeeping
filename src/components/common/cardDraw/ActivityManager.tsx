@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { ActivityCategoryConfig, ActivityItem, CardType, CardCategory } from '@/types';
+import { ActivityCategoryConfig, ActivityItem, CardType, CardCategory } from '@/utils';
 import {
   loadActivityConfig,
   saveActivityConfig,

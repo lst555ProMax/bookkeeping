@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
+import { BusinessMode, BUSINESS_MODE_LABELS } from '@/utils';
 import { loadMenuConfig, saveMenuConfig, getAllMenuOptions } from '@/utils';
 import { DataType, importSampleData, hasLocalData, getStorageKey } from '@/utils';
 import './MenuSettings.scss';

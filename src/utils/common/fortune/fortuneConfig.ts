@@ -1,4 +1,4 @@
-import { FortuneRecord, FortuneLevel, FortuneAspect, AspectFortune } from '@/types';
+import { FortuneRecord, FortuneLevel, FortuneAspect, AspectFortune } from './types';
 
 // 幸运颜色列表
 const LUCKY_COLORS = ['红色', '橙色', '黄色', '绿色', '蓝色', '紫色', '粉色', '白色', '金色', '银色'];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { DailyRecord, MealStatus, MEAL_STATUS_LABELS } from '@/types';
+import { DailyRecord, MealStatus, MEAL_STATUS_LABELS } from '@/utils';
 import './DailyRecordList.scss';
 
 interface DailyRecordListProps {

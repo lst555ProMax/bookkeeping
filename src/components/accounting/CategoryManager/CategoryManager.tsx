@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ExpenseCategory, IncomeCategory, RecordType } from '@/types';
+import { ExpenseCategory, IncomeCategory, RecordType } from '@/utils';
 import { 
   getManageableCategories, 
   addCategory, 

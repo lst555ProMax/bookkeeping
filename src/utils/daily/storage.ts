@@ -1,4 +1,4 @@
-import { DailyRecord } from '@/types';
+import { DailyRecord } from './types';
 
 const STORAGE_KEY = 'daily_records';
 

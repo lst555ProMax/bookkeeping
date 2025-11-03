@@ -1,4 +1,4 @@
-import { ExpenseRecord, IncomeRecord } from '@/types';
+import { ExpenseRecord, IncomeRecord } from './types';
 import { loadExpenses, addExpense, loadIncomes, addIncome } from './storage';
 import { getCategories, getIncomeCategories, addCategory, addIncomeCategory } from './category';
 

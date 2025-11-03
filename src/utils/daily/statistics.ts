@@ -1,4 +1,4 @@
-import { DailyRecord, MealStatus } from '@/types';
+import { DailyRecord, MealStatus } from './types';
 import { loadDailyRecords, getDailyRecordsByMonth } from './storage';
 
 /**

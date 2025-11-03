@@ -1,6 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
+import { ExpenseRecord, IncomeRecord, RecordType } from '@/utils';
 import { formatCurrency } from '@/utils';
 import './RecordDaysChart.scss';
 

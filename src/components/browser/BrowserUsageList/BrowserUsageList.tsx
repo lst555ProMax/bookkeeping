@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { BrowserUsageRecord } from '@/types';
+import { BrowserUsageRecord } from '@/utils';
 import './BrowserUsageList.scss';
 
 interface BrowserUsageListProps {

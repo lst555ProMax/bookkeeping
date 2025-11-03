@@ -1,4 +1,4 @@
-import { StudyCategory, DEFAULT_STUDY_CATEGORIES } from '@/types';
+import { StudyCategory, DEFAULT_STUDY_CATEGORIES } from './types';
 import { loadStudyRecords, saveStudyRecords } from './storage';
 
 // ==================== 存储键 ====================

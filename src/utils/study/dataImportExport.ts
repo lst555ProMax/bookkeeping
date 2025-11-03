@@ -1,5 +1,5 @@
 // 学习记录导入导出功能
-import { StudyRecord } from '@/types';
+import { StudyRecord } from './types';
 import { loadStudyRecords, addStudyRecord } from './storage';
 
 /**

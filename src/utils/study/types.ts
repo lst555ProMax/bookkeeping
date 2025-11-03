@@ -44,4 +44,3 @@ export interface StudyRecordFormData {
   totalTime: number;
   remark?: string;
 }
-

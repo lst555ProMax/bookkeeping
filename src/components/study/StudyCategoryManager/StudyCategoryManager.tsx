@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StudyCategory } from '@/types';
+import { StudyCategory } from '@/utils';
 import { 
   getManageableStudyCategories, 
   addStudyCategory, 

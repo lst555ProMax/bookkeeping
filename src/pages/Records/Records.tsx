@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MonthSelector, RecordDaysChart, RecordTrendChart, RecordPieChart } from '@/components';
-import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
+import { ExpenseRecord, IncomeRecord, RecordType } from '@/utils';
 import { loadExpenses, loadIncomes, formatCurrency } from '@/utils';
 import './Records.scss';
 

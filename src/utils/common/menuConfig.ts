@@ -1,5 +1,5 @@
 // 菜单配置管理
-import { BusinessMode } from '@/types';
+import { BusinessMode } from './types';
 
 const MENU_CONFIG_KEY = 'menu_config';
 

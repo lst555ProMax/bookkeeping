@@ -1,6 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { ExpenseRecord, IncomeRecord, RecordType } from '@/types';
+import { ExpenseRecord, IncomeRecord, RecordType } from '@/utils';
 import { formatCurrency, getCategories, getIncomeCategories } from '@/utils';
 import './RecordPieChart.scss';
 

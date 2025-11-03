@@ -1,4 +1,4 @@
-import { CardDrawRecord } from '@/types';
+import { CardDrawRecord } from './types';
 
 const CARD_DRAW_STORAGE_KEY = 'bookkeeping_card_draws';
 

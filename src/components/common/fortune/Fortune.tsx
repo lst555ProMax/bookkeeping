@@ -5,7 +5,7 @@ import {
   FORTUNE_LEVEL_LABELS, 
   FORTUNE_LEVEL_COLORS,
   FORTUNE_ASPECT_LABELS 
-} from '@/types';
+} from '@/utils';
 import { 
   getTodayFortune, 
   hasTodayFortune, 

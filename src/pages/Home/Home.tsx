@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw, MenuSettings, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune } from '@/components';
-import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/types';
+import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS } from '@/utils';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
   loadIncomes, addIncome, deleteIncome, updateIncome,

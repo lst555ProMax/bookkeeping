@@ -1,4 +1,4 @@
-import { SleepRecord } from '@/types';
+import { SleepRecord } from './types';
 import { loadSleepRecords, addSleepRecord } from './storage';
 
 /**

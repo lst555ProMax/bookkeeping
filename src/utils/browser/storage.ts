@@ -2,7 +2,7 @@
  * 浏览器使用记录存储管理
  */
 
-import { BrowserUsageRecord } from '@/types';
+import { BrowserUsageRecord } from './types';
 
 const BROWSER_USAGE_STORAGE_KEY = 'browserUsageRecords';
 

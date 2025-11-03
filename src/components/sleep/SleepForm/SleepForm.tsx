@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SleepRecord } from '@/types';
+import { SleepRecord } from '@/utils';
 import { calculateSleepDuration } from '@/utils';
 import './SleepForm.scss';
 

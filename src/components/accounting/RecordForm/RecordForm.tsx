@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ExpenseCategory, ExpenseRecord, IncomeCategory, IncomeRecord, RecordType } from '@/types';
+import { ExpenseCategory, ExpenseRecord, IncomeCategory, IncomeRecord, RecordType } from '@/utils';
 import { generateId, formatDate, getCategories, getIncomeCategories } from '@/utils';
 import './RecordForm.scss';
 

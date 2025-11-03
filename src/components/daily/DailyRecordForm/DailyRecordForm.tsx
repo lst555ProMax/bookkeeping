@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DailyRecord, MealStatus } from '@/types';
+import { DailyRecord, MealStatus } from '@/utils';
 import './DailyRecordForm.scss';
 
 interface DailyRecordFormProps {

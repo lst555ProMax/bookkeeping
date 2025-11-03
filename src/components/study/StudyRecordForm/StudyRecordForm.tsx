@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StudyRecord, StudyCategory } from '@/types';
+import { StudyRecord, StudyCategory } from '@/utils';
 import { getStudyCategories } from '@/utils';
 import './StudyRecordForm.scss';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StudyRecord } from '@/types';
+import { StudyRecord } from '@/utils';
 import './StudyRecordList.scss';
 
 interface StudyRecordListProps {

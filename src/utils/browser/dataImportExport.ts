@@ -2,7 +2,7 @@
  * 浏览器使用记录数据导入导出功能
  */
 
-import { BrowserUsageRecord } from '@/types';
+import { BrowserUsageRecord } from './types';
 import { loadBrowserUsageRecords, addBrowserUsageRecords, clearAllBrowserUsageRecords } from './storage';
 
 /**

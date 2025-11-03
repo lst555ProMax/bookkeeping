@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExpenseRecord, IncomeRecord } from '@/types';
+import { ExpenseRecord, IncomeRecord } from '@/utils';
 import { formatCurrency, formatDisplayDate } from '@/utils';
 import './RecordList.scss';
 

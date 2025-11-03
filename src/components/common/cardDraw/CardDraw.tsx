@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { CardDrawRecord, CardType, CARD_TYPE_LABELS, CARD_CATEGORY_LABELS } from '@/types';
+import { CardDrawRecord, CardType, CARD_TYPE_LABELS, CARD_CATEGORY_LABELS } from '@/utils';
 import { 
   getTodayCardDraw, 
   hasTodayDrawn, 

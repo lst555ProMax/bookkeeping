@@ -1,4 +1,4 @@
-import { ActivityCategoryConfig, ActivityItem, CardType, CardCategory } from '@/types';
+import { ActivityCategoryConfig, ActivityItem, CardType, CardCategory } from './types';
 
 const ACTIVITY_CONFIG_STORAGE_KEY = 'bookkeeping_activity_config';
 

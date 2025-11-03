@@ -1,4 +1,4 @@
-import { ExpenseCategory, IncomeCategory, DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } from '@/types';
+import { ExpenseCategory, IncomeCategory, DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } from './types';
 import { loadExpenses, saveExpenses, loadIncomes, saveIncomes } from './storage';
 
 // ==================== 存储键 ====================

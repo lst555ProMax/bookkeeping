@@ -1,5 +1,5 @@
 import React from 'react';
-import { SleepRecord, getSleepQualityLevel, SLEEP_QUALITY_LABELS } from '@/types';
+import { SleepRecord, getSleepQualityLevel, SLEEP_QUALITY_LABELS } from '@/utils';
 import { formatSleepDuration } from '@/utils';
 import './SleepList.scss';
 

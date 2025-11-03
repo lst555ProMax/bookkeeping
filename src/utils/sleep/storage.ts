@@ -1,4 +1,4 @@
-import { SleepRecord } from '@/types';
+import { SleepRecord } from './types';
 
 const STORAGE_KEY = 'sleep_records';
 

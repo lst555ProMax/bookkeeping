@@ -1,6 +1,6 @@
 // 学习记录存储管理
-import { StudyRecord, StudyRecordFormData } from '@/types';
-import { generateId } from '../helpers';
+import { StudyRecord, StudyRecordFormData } from './types';
+import { generateId } from '../common/helpers';
 
 const STORAGE_KEY = 'study_records';
 

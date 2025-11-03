@@ -1,4 +1,4 @@
-import { FortuneRecord } from '@/types';
+import { FortuneRecord } from './types';
 
 const FORTUNE_STORAGE_KEY = 'bookkeeping_fortune_records';
 

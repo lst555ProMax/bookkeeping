@@ -1,4 +1,4 @@
-import { ExpenseRecord, IncomeRecord } from '@/types';
+import { ExpenseRecord, IncomeRecord } from './types';
 
 // ==================== 存储键 ====================
 const EXPENSE_STORAGE_KEY = 'bookkeeping_expenses';
