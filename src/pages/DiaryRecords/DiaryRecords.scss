@@ -1,0 +1,52 @@
+.coming-soon-page {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+
+  &__content {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    max-width: 500px;
+
+    .icon {
+      font-size: 5rem;
+      margin-bottom: 1.5rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      color: #667eea;
+      margin: 0 0 1rem 0;
+      font-weight: 700;
+    }
+
+    .description {
+      font-size: 1.2rem;
+      color: #666;
+      margin: 0 0 2rem 0;
+      line-height: 1.6;
+    }
+
+    .status {
+      font-size: 1.5rem;
+      color: #999;
+      font-weight: 500;
+      letter-spacing: 2px;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}

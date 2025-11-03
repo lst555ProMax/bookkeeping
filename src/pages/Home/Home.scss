@@ -53,11 +53,18 @@ body {
     align-items: center;
   }
 
-  &__mode-switcher {
+  /* 统一的tab切换器容器 */
+  &__tabs-container {
     position: absolute;
     left: 2rem;
     top: 50%;
     transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__mode-switcher {
     display: flex;
     gap: 0.5rem;
     background: rgba(255, 255, 255, 0.15);
@@ -125,6 +132,59 @@ body {
         }
       }
     }
+  }
+
+  &__health-switcher {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    align-items: center;
+
+    .health-btn {
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      &--active {
+        background: rgba(255, 255, 255, 0.9);
+        color: #667eea;
+        border-color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+
+  &__content-section {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__content-section {
+    flex: 1;
+    min-height: 0;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   &__main {

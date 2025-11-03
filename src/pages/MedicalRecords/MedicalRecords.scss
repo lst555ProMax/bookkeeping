@@ -1,0 +1,708 @@
+.medical-record {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+
+  /* 自定义滚动条 */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+
+  &__header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    margin-bottom: 2rem;
+
+    h2 {
+      font-size: 2rem;
+      margin: 0 0 0.5rem 0;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      font-style: italic;
+      margin: 0;
+    }
+  }
+
+  &__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 3rem 2rem;
+  }
+}
+
+.medical-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #667eea;
+
+    .icon {
+      font-size: 1.8rem;
+    }
+  }
+
+  .section-content {
+    p {
+      line-height: 1.8;
+      color: #555;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    strong {
+      color: #333;
+      font-weight: 600;
+    }
+  }
+}
+
+// 高亮框
+.highlight-box {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%);
+  border-left: 4px solid #667eea;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+
+  h4 {
+    color: #667eea;
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      color: #555;
+
+      &:before {
+        content: "▸";
+        position: absolute;
+        left: 0;
+        color: #667eea;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+// 病因网格
+.cause-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.cause-card {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  border: 2px solid #e0e7ff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+    transform: translateY(-4px);
+  }
+
+  h4 {
+    color: #667eea;
+    font-size: 1.1rem;
+    margin: 0 0 0.75rem 0;
+    font-weight: 600;
+  }
+
+  p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+// 症状网格
+.symptoms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.symptom-category {
+  background: #fafbff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid #e8eeff;
+
+  .symptom-title {
+    color: #667eea;
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e8eeff;
+  }
+
+  .symptom-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      color: #555;
+      font-size: 0.95rem;
+
+      &:before {
+        content: "●";
+        position: absolute;
+        left: 0;
+        color: #667eea;
+      }
+    }
+  }
+}
+
+// 治疗部分
+.treatment-section {
+  margin-bottom: 2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .treatment-subtitle {
+    color: #667eea;
+    font-size: 1.2rem;
+    margin: 0 0 1.5rem 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  ul {
+    padding-left: 2rem;
+    color: #555;
+
+    li {
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+    }
+  }
+}
+
+.medication-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.medication-card {
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+  border: 2px solid #ffd0d0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #ff9999;
+    box-shadow: 0 4px 16px rgba(255, 153, 153, 0.2);
+  }
+
+  h5 {
+    color: #d63447;
+    font-size: 1.1rem;
+    margin: 0 0 0.75rem 0;
+    font-weight: 600;
+  }
+
+  .drug-examples {
+    color: #888;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin: 0.5rem 0;
+  }
+
+  .drug-desc {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0.75rem 0;
+  }
+
+  .drug-note {
+    background: rgba(214, 52, 71, 0.1);
+    border-left: 3px solid #d63447;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+
+    strong {
+      color: #d63447;
+    }
+  }
+}
+
+// 饮食网格
+.diet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.diet-card {
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid;
+
+  h4 {
+    font-size: 1.2rem;
+    margin: 0 0 1.5rem 0;
+    font-weight: 600;
+    text-align: center;
+    padding-bottom: 1rem;
+  }
+
+  .food-category {
+    margin-bottom: 1.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    h5 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem 0;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 0.4rem 0 0.4rem 1.5rem;
+        position: relative;
+        font-size: 0.95rem;
+        line-height: 1.5;
+
+        &:before {
+          position: absolute;
+          left: 0;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  &.diet-avoid {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+    border-color: #ffcccc;
+
+    h4 {
+      color: #d63447;
+      border-bottom: 2px solid #ffcccc;
+    }
+
+    .food-category h5 {
+      background: rgba(214, 52, 71, 0.1);
+      color: #d63447;
+    }
+
+    .food-category ul li {
+      color: #666;
+
+      &:before {
+        content: "✗";
+        color: #d63447;
+      }
+    }
+  }
+
+  &.diet-recommend {
+    background: linear-gradient(135deg, #f0fff4 0%, #e8ffe8 100%);
+    border-color: #ccffcc;
+
+    h4 {
+      color: #28a745;
+      border-bottom: 2px solid #ccffcc;
+    }
+
+    .food-category h5 {
+      background: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+    }
+
+    .food-category ul li {
+      color: #666;
+
+      &:before {
+        content: "✓";
+        color: #28a745;
+      }
+    }
+  }
+}
+
+.diet-tips {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%);
+  border: 2px solid #ffe699;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+
+  h4 {
+    color: #f39c12;
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+  }
+
+  .tips-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.6rem 0 0.6rem 1.5rem;
+      position: relative;
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.6;
+
+      &:before {
+        content: "💡";
+        position: absolute;
+        left: 0;
+      }
+
+      strong {
+        color: #f39c12;
+      }
+    }
+  }
+}
+
+// 生活方式网格
+.lifestyle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.lifestyle-card {
+  background: linear-gradient(135deg, #f0fff4 0%, #e0ffe0 100%);
+  border: 2px solid #b3ffb3;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #28a745;
+    box-shadow: 0 4px 16px rgba(40, 167, 69, 0.2);
+    transform: translateY(-4px);
+  }
+
+  h4 {
+    color: #28a745;
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.4rem 0 0.4rem 1.5rem;
+      position: relative;
+      color: #666;
+      font-size: 0.95rem;
+
+      &:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #28a745;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+// 研究项目
+.research-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.research-item {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2ff 100%);
+  border: 2px solid #b3e0ff;
+  border-left: 5px solid #3498db;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-left-color: #2980b9;
+    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.2);
+    transform: translateX(5px);
+  }
+
+  h4 {
+    color: #3498db;
+    font-size: 1.1rem;
+    margin: 0 0 0.75rem 0;
+    font-weight: 600;
+  }
+
+  p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+// 预后盒子
+.prognosis-box,
+.followup-schedule,
+.warning-signs {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  h4 {
+    color: #667eea;
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+  }
+
+  p {
+    color: #666;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+
+    li {
+      padding: 0.6rem 0 0.6rem 1.5rem;
+      position: relative;
+      color: #666;
+      line-height: 1.6;
+
+      &:before {
+        content: "▸";
+        position: absolute;
+        left: 0;
+        color: #667eea;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.warning-signs {
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+  border: 2px solid #ffcccc;
+
+  h4 {
+    color: #d63447;
+  }
+
+  .warning-list li {
+    color: #d63447;
+    font-weight: 500;
+
+    &:before {
+      content: "⚠️";
+    }
+  }
+
+  .warning-note {
+    background: rgba(214, 52, 71, 0.1);
+    border-left: 3px solid #d63447;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: #666;
+  }
+}
+
+// 康复建议
+.recovery-tips {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.tip-box {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%);
+  border: 2px solid #ffe699;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #f39c12;
+    box-shadow: 0 4px 16px rgba(243, 156, 18, 0.2);
+    transform: scale(1.02);
+  }
+
+  h4 {
+    color: #f39c12;
+    font-size: 1.1rem;
+    margin: 0 0 0.75rem 0;
+    font-weight: 600;
+  }
+
+  p {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+// 免责声明
+.disclaimer {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+
+  h4 {
+    color: #6c757d;
+    font-size: 1rem;
+    margin: 0 0 0.75rem 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  p {
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .medical-record {
+    &__header {
+      padding: 1.5rem 1rem;
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .subtitle {
+        font-size: 0.9rem;
+      }
+    }
+
+    &__content {
+      padding: 0 1rem 2rem 1rem;
+    }
+  }
+
+  .medical-section {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    .section-title {
+      font-size: 1.2rem;
+    }
+  }
+
+  .cause-grid,
+  .symptoms-grid,
+  .medication-grid,
+  .lifestyle-grid,
+  .research-items,
+  .recovery-tips {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .diet-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
