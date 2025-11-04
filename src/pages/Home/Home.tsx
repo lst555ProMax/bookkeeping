@@ -856,9 +856,9 @@ const Home: React.FC = () => {
       <header className="home__header">
         {/* 统一的tab切换容器 */}
         <div className="home__tabs-container">
-          {/* 业务模式切换按钮 */}
+          {/* 业务和健康模式切换按钮（两行布局） */}
           <div className="home__mode-switcher">
-            {/* 设置按钮 */}
+            {/* 第一行：设置按钮 + 业务模式按钮 */}
             <button 
               className="settings-btn"
               onClick={handleOpenMenuSettings}
@@ -908,30 +908,29 @@ const Home: React.FC = () => {
                 💻 {BUSINESS_MODE_LABELS[BusinessMode.SOFTWARE]}
               </button>
             )}
-          </div>
 
-          {/* 健康管理切换器 */}
-          <div className="home__health-switcher">
+            {/* 第二行：占位空格 + 健康管理按钮 */}
+            <div className="settings-btn-placeholder"></div>
             <button 
-              className={`health-btn ${healthMode === PageMode.DIARY && activeTab === 'health' ? 'health-btn--active' : ''}`}
+              className={`mode-btn health-btn ${healthMode === PageMode.DIARY && activeTab === 'health' ? 'mode-btn--active' : ''}`}
               onClick={() => handleHealthModeChange(PageMode.DIARY)}
             >
               {PAGE_MODE_ICONS[PageMode.DIARY]} {PAGE_MODE_LABELS[PageMode.DIARY]}
             </button>
             <button 
-              className={`health-btn ${healthMode === PageMode.MUSIC && activeTab === 'health' ? 'health-btn--active' : ''}`}
+              className={`mode-btn health-btn ${healthMode === PageMode.MUSIC && activeTab === 'health' ? 'mode-btn--active' : ''}`}
               onClick={() => handleHealthModeChange(PageMode.MUSIC)}
             >
               {PAGE_MODE_ICONS[PageMode.MUSIC]} {PAGE_MODE_LABELS[PageMode.MUSIC]}
             </button>
             <button 
-              className={`health-btn ${healthMode === PageMode.READING && activeTab === 'health' ? 'health-btn--active' : ''}`}
+              className={`mode-btn health-btn ${healthMode === PageMode.READING && activeTab === 'health' ? 'mode-btn--active' : ''}`}
               onClick={() => handleHealthModeChange(PageMode.READING)}
             >
               {PAGE_MODE_ICONS[PageMode.READING]} {PAGE_MODE_LABELS[PageMode.READING]}
             </button>
             <button 
-              className={`health-btn ${healthMode === PageMode.MEDICAL && activeTab === 'health' ? 'health-btn--active' : ''}`}
+              className={`mode-btn health-btn ${healthMode === PageMode.MEDICAL && activeTab === 'health' ? 'mode-btn--active' : ''}`}
               onClick={() => handleHealthModeChange(PageMode.MEDICAL)}
             >
               {PAGE_MODE_ICONS[PageMode.MEDICAL]} {PAGE_MODE_LABELS[PageMode.MEDICAL]}

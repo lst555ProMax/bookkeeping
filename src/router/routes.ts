@@ -36,6 +36,12 @@ export const routes: RouteConfig[] = [
     name: 'dailyRecords',
     component: 'DailyRecords',
     description: '日常记录 - 日常数据面板'
+  },
+  {
+    path: '/study-records',
+    name: 'studyRecords',
+    component: 'StudyRecords',
+    description: '学习记录 - 学习数据面板'
   }
 ];
 

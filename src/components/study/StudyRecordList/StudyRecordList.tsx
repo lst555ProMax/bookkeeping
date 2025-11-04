@@ -109,6 +109,11 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
     return `第${start}-${end}集`;
   };
 
+  // 跳转到学习数据面板
+  const goToStudyDashboard = () => {
+    window.location.hash = '#/study-records';
+  };
+
   if (records.length === 0) {
     return (
       <div className="study-list">
@@ -117,6 +122,13 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
           <h3 className="study-list__title">📚 学习记录</h3>
           {(onExport || onImport || onClear) && (
             <div className="study-list__actions">
+              <button 
+                className="action-icon-btn action-icon-btn--dashboard" 
+                onClick={goToStudyDashboard}
+                title="查看数据面板"
+              >
+                📊
+              </button>
               {onExport && (
                 <button 
                   className="action-icon-btn action-icon-btn--export" 
@@ -164,6 +176,13 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
         <h3 className="study-list__title">📚 学习记录 ({records.length})</h3>
         {(onExport || onImport || onClear) && (
           <div className="study-list__actions">
+            <button 
+              className="action-icon-btn action-icon-btn--dashboard" 
+              onClick={goToStudyDashboard}
+              title="查看数据面板"
+            >
+              📊
+            </button>
             {onExport && (
               <button 
                 className="action-icon-btn action-icon-btn--export" 

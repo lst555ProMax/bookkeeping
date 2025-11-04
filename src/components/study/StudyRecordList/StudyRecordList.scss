@@ -380,6 +380,14 @@
     opacity: 0.4;
     cursor: not-allowed;
   }
+
+  &--dashboard {
+    font-size: 1.5rem;
+    
+    &:hover:not(:disabled) {
+      filter: drop-shadow(0 2px 6px rgba(102, 126, 234, 0.5));
+    }
+  }
 }
 
 /* 响应式设计 */

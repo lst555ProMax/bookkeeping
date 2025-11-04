@@ -1,17 +1,78 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import './MedicalRecords.scss';
 
 const MedicalRecords: React.FC = () => {
+  // 创建各section的引用
+  const overviewRef = useRef<HTMLElement>(null);
+  const causeRef = useRef<HTMLElement>(null);
+  const symptomsRef = useRef<HTMLElement>(null);
+  const treatmentRef = useRef<HTMLElement>(null);
+  const dietRef = useRef<HTMLElement>(null);
+  const lifestyleRef = useRef<HTMLElement>(null);
+  const researchRef = useRef<HTMLElement>(null);
+  const prognosisRef = useRef<HTMLElement>(null);
+  const recoveryRef = useRef<HTMLElement>(null);
+
+  // 滚动到指定section
+  const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <div className="medical-record">
-      <div className="medical-record__header">
-        <h2>💊 病记 - 胃食管反流导致的慢性咽炎</h2>
-        <p className="subtitle">Gastroesophageal Reflux-Induced Chronic Pharyngitis</p>
-      </div>
+      {/* 左侧导航菜单 */}
+      <nav className="medical-record__nav">
+        <h3 className="nav-title">目录</h3>
+        <ul className="nav-list">
+          <li onClick={() => scrollToSection(overviewRef)}>
+            <span className="nav-icon">📋</span>
+            <span>疾病概述</span>
+          </li>
+          <li onClick={() => scrollToSection(causeRef)}>
+            <span className="nav-icon">🔬</span>
+            <span>病因分析</span>
+          </li>
+          <li onClick={() => scrollToSection(symptomsRef)}>
+            <span className="nav-icon">🩺</span>
+            <span>症状表现</span>
+          </li>
+          <li onClick={() => scrollToSection(treatmentRef)}>
+            <span className="nav-icon">💊</span>
+            <span>治疗方法</span>
+          </li>
+          <li onClick={() => scrollToSection(dietRef)}>
+            <span className="nav-icon">🍽️</span>
+            <span>饮食注意</span>
+          </li>
+          <li onClick={() => scrollToSection(lifestyleRef)}>
+            <span className="nav-icon">🏃</span>
+            <span>生活方式</span>
+          </li>
+          <li onClick={() => scrollToSection(researchRef)}>
+            <span className="nav-icon">🔬</span>
+            <span>前沿研究</span>
+          </li>
+          <li onClick={() => scrollToSection(prognosisRef)}>
+            <span className="nav-icon">📈</span>
+            <span>预后随访</span>
+          </li>
+          <li onClick={() => scrollToSection(recoveryRef)}>
+            <span className="nav-icon">💪</span>
+            <span>康复管理</span>
+          </li>
+        </ul>
+      </nav>
 
-      <div className="medical-record__content">
-        {/* 疾病概述 */}
-        <section className="medical-section">
+      {/* 主内容区域 */}
+      <div className="medical-record__main">
+        <div className="medical-record__header">
+          <h2>💊 病记 - 胃食管反流导致的慢性咽炎</h2>
+          <p className="subtitle">Gastroesophageal Reflux-Induced Chronic Pharyngitis</p>
+        </div>
+
+        <div className="medical-record__content">
+          {/* 疾病概述 */}
+          <section className="medical-section" ref={overviewRef}>
           <h3 className="section-title">
             <span className="icon">📋</span>
             疾病概述
@@ -34,7 +95,7 @@ const MedicalRecords: React.FC = () => {
         </section>
 
         {/* 病因分析 */}
-        <section className="medical-section">
+        <section className="medical-section" ref={causeRef}>
           <h3 className="section-title">
             <span className="icon">🔬</span>
             病因分析
@@ -70,7 +131,7 @@ const MedicalRecords: React.FC = () => {
         </section>
 
         {/* 症状表现 */}
-        <section className="medical-section">
+        <section className="medical-section" ref={symptomsRef}>
           <h3 className="section-title">
             <span className="icon">🩺</span>
             症状表现
@@ -112,7 +173,7 @@ const MedicalRecords: React.FC = () => {
         </section>
 
         {/* 治疗方法 */}
-        <section className="medical-section">
+        <section className="medical-section" ref={treatmentRef}>
           <h3 className="section-title">
             <span className="icon">💊</span>
             治疗方法
@@ -164,7 +225,7 @@ const MedicalRecords: React.FC = () => {
         </section>
 
         {/* 饮食建议 */}
-        <section className="medical-section">
+        <section className="medical-section" ref={dietRef}>
           <h3 className="section-title">
             <span className="icon">🍽️</span>
             饮食注意事项
@@ -264,7 +325,7 @@ const MedicalRecords: React.FC = () => {
         </section>
 
         {/* 生活方式调整 */}
-        <section className="medical-section">
+        <section className="medical-section" ref={lifestyleRef}>
           <h3 className="section-title">
             <span className="icon">🏃</span>
             生活方式调整
@@ -330,7 +391,7 @@ const MedicalRecords: React.FC = () => {
         </section>
 
         {/* 前沿研究 */}
-        <section className="medical-section">
+        <section className="medical-section" ref={researchRef}>
           <h3 className="section-title">
             <span className="icon">🔬</span>
             前沿研究与新进展
@@ -384,7 +445,7 @@ const MedicalRecords: React.FC = () => {
         </section>
 
         {/* 预后与随访 */}
-        <section className="medical-section">
+        <section className="medical-section" ref={prognosisRef}>
           <h3 className="section-title">
             <span className="icon">📈</span>
             预后与随访
@@ -423,7 +484,7 @@ const MedicalRecords: React.FC = () => {
         </section>
 
         {/* 康复建议 */}
-        <section className="medical-section">
+        <section className="medical-section" ref={recoveryRef}>
           <h3 className="section-title">
             <span className="icon">💪</span>
             康复与自我管理
@@ -466,6 +527,7 @@ const MedicalRecords: React.FC = () => {
             任何健康问题都应咨询合格的医疗专业人员。请勿仅根据本页面信息自行诊断或治疗。
             如有疑问或症状加重，请及时就医。
           </p>
+        </div>
         </div>
       </div>
     </div>

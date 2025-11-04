@@ -1,25 +1,103 @@
 .medical-record {
   height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+  display: flex;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
 
-  /* 自定义滚动条 */
-  &::-webkit-scrollbar {
-    width: 8px;
+  /* 左侧导航菜单 */
+  &__nav {
+    width: 220px;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    padding: 2rem 1rem;
+    flex-shrink: 0;
+    overflow-y: auto;
+
+    .nav-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #667eea;
+      margin: 0 0 1.5rem 0;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid #667eea;
+    }
+
+    .nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #555;
+        font-size: 0.95rem;
+
+        .nav-icon {
+          font-size: 1.2rem;
+          flex-shrink: 0;
+        }
+
+        &:hover {
+          background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%);
+          color: #667eea;
+          transform: translateX(5px);
+        }
+
+        &:active {
+          transform: translateX(3px);
+        }
+      }
+    }
+
+    /* 自定义滚动条 */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
   }
 
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
+  /* 主内容区域 */
+  &__main {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-width: 0;
 
-  &::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
-  }
+    /* 自定义滚动条 */
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
 
-  &::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
   }
 
   &__header {
