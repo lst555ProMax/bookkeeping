@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw, MenuSettings, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune } from '@/components';
-import { DiaryRecords, MusicRecords, ReadingRecords, MedicalRecords } from '@/pages';
+import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw, MenuSettings, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, Diary, Music, Reading, Medical } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS } from '@/utils';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
@@ -81,10 +80,26 @@ const Home: React.FC = () => {
   const [studyCategoriesKey, setStudyCategoriesKey] = useState(0);
 
   // 健康管理相关状态
-  const [healthMode, setHealthMode] = useState<PageMode>(PageMode.MEDICAL);
+  const [healthMode, setHealthMode] = useState<PageMode>(() => {
+    const params = new URLSearchParams(window.location.hash.split('?')[1]);
+    const page = params.get('page');
+    if (page === 'diary') return PageMode.DIARY;
+    if (page === 'music') return PageMode.MUSIC;
+    if (page === 'reading') return PageMode.READING;
+    if (page === 'medical') return PageMode.MEDICAL;
+    return PageMode.MEDICAL;
+  });
   
   // 当前激活的模式（business 或 health）
-  const [activeTab, setActiveTab] = useState<'business' | 'health'>('business');
+  const [activeTab, setActiveTab] = useState<'business' | 'health'>(() => {
+    const params = new URLSearchParams(window.location.hash.split('?')[1]);
+    const page = params.get('page');
+    // 如果有page参数(diary/music/reading/medical),则激活health tab
+    if (page && ['diary', 'music', 'reading', 'medical'].includes(page)) {
+      return 'health';
+    }
+    return 'business';
+  });
 
   // 分类筛选状态
   const [selectedExpenseCategories, setSelectedExpenseCategories] = useState<string[]>([]);
@@ -150,15 +165,50 @@ const Home: React.FC = () => {
     loadData();
     loadMenus();
     
-    // 监听URL hash变化，同步业务模式
+    // 监听URL hash变化，同步业务模式和健康模式
     const handleHashChange = () => {
       const params = new URLSearchParams(window.location.hash.split('?')[1]);
       const mode = params.get('mode');
-      if (mode === 'sleep') setBusinessMode(BusinessMode.SLEEP);
-      else if (mode === 'daily') setBusinessMode(BusinessMode.DAILY);
-      else if (mode === 'software') setBusinessMode(BusinessMode.SOFTWARE);
-      else if (mode === 'study') setBusinessMode(BusinessMode.STUDY);
-      else if (mode === 'accounting' || !mode) setBusinessMode(BusinessMode.ACCOUNTING);
+      const page = params.get('page');
+      
+      // 如果有mode参数,处理业务模式
+      if (mode === 'sleep') {
+        setBusinessMode(BusinessMode.SLEEP);
+        setActiveTab('business');
+      } else if (mode === 'daily') {
+        setBusinessMode(BusinessMode.DAILY);
+        setActiveTab('business');
+      } else if (mode === 'software') {
+        setBusinessMode(BusinessMode.SOFTWARE);
+        setActiveTab('business');
+      } else if (mode === 'study') {
+        setBusinessMode(BusinessMode.STUDY);
+        setActiveTab('business');
+      } else if (mode === 'accounting') {
+        setBusinessMode(BusinessMode.ACCOUNTING);
+        setActiveTab('business');
+      }
+      
+      // 如果有page参数,处理健康模式
+      if (page === 'diary') {
+        setHealthMode(PageMode.DIARY);
+        setActiveTab('health');
+      } else if (page === 'music') {
+        setHealthMode(PageMode.MUSIC);
+        setActiveTab('health');
+      } else if (page === 'reading') {
+        setHealthMode(PageMode.READING);
+        setActiveTab('health');
+      } else if (page === 'medical') {
+        setHealthMode(PageMode.MEDICAL);
+        setActiveTab('health');
+      }
+      
+      // 如果既没有mode也没有page,默认显示记账
+      if (!mode && !page) {
+        setBusinessMode(BusinessMode.ACCOUNTING);
+        setActiveTab('business');
+      }
     };
     
     window.addEventListener('hashchange', handleHashChange);
@@ -501,6 +551,12 @@ const Home: React.FC = () => {
   const handleHealthModeChange = (mode: PageMode) => {
     setHealthMode(mode);
     setActiveTab('health'); // 切换到健康tab
+    // 更新URL,根据不同的健康模式设置不同的page参数
+    const pageParam = mode === PageMode.DIARY ? 'diary' 
+                    : mode === PageMode.MUSIC ? 'music'
+                    : mode === PageMode.READING ? 'reading'
+                    : 'medical';
+    window.location.hash = `#/?page=${pageParam}`;
   };
 
   // === 清除数据功能 ===
@@ -1252,13 +1308,13 @@ const Home: React.FC = () => {
             // 健康模式内容
             <div className="home__content-section">
               {healthMode === PageMode.DIARY ? (
-                <DiaryRecords />
+                <Diary />
               ) : healthMode === PageMode.MUSIC ? (
-                <MusicRecords />
+                <Music />
               ) : healthMode === PageMode.READING ? (
-                <ReadingRecords />
+                <Reading />
               ) : (
-                <MedicalRecords />
+                <Medical />
               )}
             </div>
           )}
