@@ -12,7 +12,43 @@ interface DiaryEntry {
   date: string;
   content: string;
   mood?: string;
+  weather?: string;
+  theme?: string; // 主题颜色
 }
+
+// 预设主题颜色
+const PRESET_THEMES = [
+  { name: '默认', color: '#fffef9' },
+  { name: '温馨', color: '#fff5e1' },
+  { name: '清新', color: '#e8f5e9' },
+  { name: '宁静', color: '#e3f2fd' },
+  { name: '浪漫', color: '#fce4ec' },
+  { name: '优雅', color: '#f3e5f5' },
+];
+
+// 预设天气
+const WEATHER_OPTIONS = [
+  { label: '晴天', icon: '☀️' },
+  { label: '多云', icon: '⛅' },
+  { label: '阴天', icon: '☁️' },
+  { label: '小雨', icon: '🌦️' },
+  { label: '大雨', icon: '🌧️' },
+  { label: '雷雨', icon: '⛈️' },
+  { label: '下雪', icon: '❄️' },
+  { label: '雾霾', icon: '🌫️' },
+];
+
+// 预设心情
+const MOOD_OPTIONS = [
+  { label: '开心', icon: '😊' },
+  { label: '快乐', icon: '😄' },
+  { label: '平静', icon: '😌' },
+  { label: '难过', icon: '😢' },
+  { label: '生气', icon: '😠' },
+  { label: '焦虑', icon: '😰' },
+  { label: '疲惫', icon: '😴' },
+  { label: '兴奋', icon: '🤗' },
+];
 
 const DiaryRecords: React.FC = () => {
   const [quickNotes, setQuickNotes] = useState<QuickNote[]>([]);
@@ -20,7 +56,30 @@ const DiaryRecords: React.FC = () => {
   const [diaryContent, setDiaryContent] = useState('');
   const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [currentWeather, setCurrentWeather] = useState<string>('');
+  const [currentMood, setCurrentMood] = useState<string>('');
+  const [currentTheme, setCurrentTheme] = useState<string>('#fffef9');
+  const [showThemePicker, setShowThemePicker] = useState(false);
+  const [showWeatherPicker, setShowWeatherPicker] = useState(false);
+  const [showMoodPicker, setShowMoodPicker] = useState(false);
+  const [customThemeColor, setCustomThemeColor] = useState('#fffef9');
+  
+  // 保存原始加载的日记数据，用于检测是否有修改
+  const [originalEntry, setOriginalEntry] = useState<DiaryEntry | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // 检查当前日记是否有修改
+  const hasChanges = () => {
+    if (!originalEntry) {
+      // 新日记：检查是否有任何内容
+      return diaryContent.trim() !== '' || currentWeather !== '' || currentMood !== '';
+    }
+    // 已有日记：检查是否有修改
+    return originalEntry.content !== diaryContent ||
+           originalEntry.weather !== currentWeather ||
+           originalEntry.mood !== currentMood ||
+           originalEntry.date !== selectedDate;
+  };
 
   // 加载数据
   useEffect(() => {
@@ -73,14 +132,20 @@ const DiaryRecords: React.FC = () => {
       updatedEntries = [...diaryEntries];
       updatedEntries[existingIndex] = {
         ...updatedEntries[existingIndex],
-        content: diaryContent
+        content: diaryContent,
+        weather: currentWeather,
+        mood: currentMood,
+        theme: currentTheme
       };
     } else {
       // 创建新日记
       const newEntry: DiaryEntry = {
         id: Date.now().toString(),
         date: selectedDate,
-        content: diaryContent
+        content: diaryContent,
+        weather: currentWeather,
+        mood: currentMood,
+        theme: currentTheme
       };
       updatedEntries = [newEntry, ...diaryEntries].sort((a, b) => 
         new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -89,6 +154,11 @@ const DiaryRecords: React.FC = () => {
 
     setDiaryEntries(updatedEntries);
     localStorage.setItem('diaryEntries', JSON.stringify(updatedEntries));
+    
+    // 更新原始数据
+    const savedEntry = updatedEntries.find(entry => entry.date === selectedDate);
+    setOriginalEntry(savedEntry || null);
+    
     alert('日记保存成功！');
   };
 
@@ -96,6 +166,10 @@ const DiaryRecords: React.FC = () => {
   const handleLoadDiary = (entry: DiaryEntry) => {
     setSelectedDate(entry.date);
     setDiaryContent(entry.content);
+    setCurrentWeather(entry.weather || '');
+    setCurrentMood(entry.mood || '');
+    setCurrentTheme(entry.theme || '#fffef9');
+    setOriginalEntry(entry); // 保存原始数据
   };
 
   // 删除日记
@@ -107,16 +181,30 @@ const DiaryRecords: React.FC = () => {
     localStorage.setItem('diaryEntries', JSON.stringify(updatedEntries));
     
     // 如果删除的是当前选中的日记，清空内容
-    const deletedEntry = diaryEntries.find(entry => entry.id === id);
+    const deletedEntry = diaryEntries.find(entry => entry.id !== id);
     if (deletedEntry?.date === selectedDate) {
       setDiaryContent('');
+      setCurrentWeather('');
+      setCurrentMood('');
+      setOriginalEntry(null);
     }
   };
 
   // 新建日记
   const handleNewDiary = () => {
+    // 检查是否有未保存的修改
+    if (hasChanges()) {
+      if (!window.confirm('当前日记有未保存的修改，确定要新建日记吗？')) {
+        return;
+      }
+    }
+    
     setSelectedDate(new Date().toISOString().split('T')[0]);
     setDiaryContent('');
+    setCurrentWeather('');
+    setCurrentMood('');
+    setCurrentTheme('#fffef9');
+    setOriginalEntry(null);
   };
 
   return (
@@ -156,20 +244,148 @@ const DiaryRecords: React.FC = () => {
       {/* 中间：日记本 */}
       <div className="diary-records__notebook">
         <div className="notebook__spine"></div>
-        <div className="notebook__page">
+        <div className="notebook__page" style={{ backgroundColor: currentTheme }}>
           <div className="notebook__header">
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="date-input"
-            />
+            <div className="notebook__header-left">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="date-input"
+              />
+              
+              {/* 主题颜色选择器 */}
+              <div 
+                className="action-dropdown"
+                onMouseEnter={() => {
+                  setShowThemePicker(true);
+                  setShowWeatherPicker(false);
+                  setShowMoodPicker(false);
+                }}
+                onMouseLeave={() => setShowThemePicker(false)}
+              >
+                <button 
+                  className="action-icon-btn" 
+                  title="主题颜色"
+                >
+                  🎨
+                </button>
+                {showThemePicker && (
+                  <div className="dropdown-menu theme-picker">
+                    <div className="theme-presets">
+                      {PRESET_THEMES.map(theme => (
+                        <button
+                          key={theme.name}
+                          className="theme-option"
+                          style={{ backgroundColor: theme.color }}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setCurrentTheme(theme.color);
+                          }}
+                          title={theme.name}
+                        >
+                          {theme.name}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="custom-theme">
+                      <label>自定义颜色</label>
+                      <div className="color-input-wrapper">
+                        <input
+                          type="color"
+                          value={customThemeColor}
+                          onChange={(e) => setCustomThemeColor(e.target.value)}
+                        />
+                        <button
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setCurrentTheme(customThemeColor);
+                          }}
+                        >
+                          应用自定义颜色
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 天气选择器 */}
+              <div 
+                className="action-dropdown"
+                onMouseEnter={() => {
+                  setShowWeatherPicker(true);
+                  setShowThemePicker(false);
+                  setShowMoodPicker(false);
+                }}
+                onMouseLeave={() => setShowWeatherPicker(false)}
+              >
+                <button 
+                  className="action-icon-btn" 
+                  title="天气"
+                >
+                  {currentWeather ? WEATHER_OPTIONS.find(w => w.label === currentWeather)?.icon || '🌤️' : '🌤️'}
+                </button>
+                {showWeatherPicker && (
+                  <div className="dropdown-menu weather-picker">
+                    {WEATHER_OPTIONS.map(weather => (
+                      <button
+                        key={weather.label}
+                        className="picker-option"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setCurrentWeather(weather.label);
+                        }}
+                      >
+                        <span className="option-icon">{weather.icon}</span>
+                        <span className="option-label">{weather.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* 心情选择器 */}
+              <div 
+                className="action-dropdown"
+                onMouseEnter={() => {
+                  setShowMoodPicker(true);
+                  setShowThemePicker(false);
+                  setShowWeatherPicker(false);
+                }}
+                onMouseLeave={() => setShowMoodPicker(false)}
+              >
+                <button 
+                  className="action-icon-btn" 
+                  title="心情"
+                >
+                  {currentMood ? MOOD_OPTIONS.find(m => m.label === currentMood)?.icon || '😊' : '😊'}
+                </button>
+                {showMoodPicker && (
+                  <div className="dropdown-menu mood-picker">
+                    {MOOD_OPTIONS.map(mood => (
+                      <button
+                        key={mood.label}
+                        className="picker-option"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          setCurrentMood(mood.label);
+                        }}
+                      >
+                        <span className="option-icon">{mood.icon}</span>
+                        <span className="option-label">{mood.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="notebook__actions">
-              <button className="action-btn" onClick={handleNewDiary} title="新建">
+              <button className="action-icon-btn" onClick={handleNewDiary} title="新建">
                 📄
               </button>
-              <button className="action-btn save-btn" onClick={handleSaveDiary} title="保存">
-                �
+              <button className="action-icon-btn" onClick={handleSaveDiary} title="保存">
+                💾
               </button>
             </div>
           </div>
@@ -213,16 +429,28 @@ const DiaryRecords: React.FC = () => {
                     day: 'numeric'
                   })}
                 </span>
-                <button 
-                  className="diary-item__delete"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteDiary(entry.id);
-                  }}
-                  title="删除"
-                >
-                  ✕
-                </button>
+                <div className="diary-item__meta">
+                  {entry.weather && (
+                    <span className="diary-item__weather">
+                      {WEATHER_OPTIONS.find(w => w.label === entry.weather)?.icon}
+                    </span>
+                  )}
+                  {entry.mood && (
+                    <span className="diary-item__mood">
+                      {MOOD_OPTIONS.find(m => m.label === entry.mood)?.icon}
+                    </span>
+                  )}
+                  <button 
+                    className="diary-item__delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteDiary(entry.id);
+                    }}
+                    title="删除记录"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
               <div className="diary-item__preview">
                 {entry.content.substring(0, 100)}

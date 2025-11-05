@@ -9,6 +9,7 @@ interface CategoryFilterProps {
   totalAmount?: number; // 当前筛选的金额
   allTotalAmount?: number; // 所有记录的总金额（用于计算百分比）
   monthlyAmount?: number; // 本月金额
+  monthlyTotalAmount?: number; // 本月总金额（用于计算月度百分比）
   theme?: 'expense' | 'income'; // 主题：支出（紫色）或收入（绿色）
   // 操作按钮相关
   onViewDashboard?: () => void;
@@ -26,6 +27,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   totalAmount,
   allTotalAmount,
   monthlyAmount,
+  monthlyTotalAmount,
   theme = 'expense',
   onViewDashboard,
   onExport,
@@ -38,9 +40,9 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     ? ((totalAmount / allTotalAmount) * 100).toFixed(1)
     : null;
   
-  // 计算月份金额百分比
-  const monthlyPercentage = allTotalAmount && allTotalAmount > 0 && monthlyAmount !== undefined
-    ? ((monthlyAmount / allTotalAmount) * 100).toFixed(1)
+  // 计算月份金额百分比(相对于当月总金额)
+  const monthlyPercentage = monthlyTotalAmount && monthlyTotalAmount > 0 && monthlyAmount !== undefined
+    ? ((monthlyAmount / monthlyTotalAmount) * 100).toFixed(1)
     : null;
   
   // 全选

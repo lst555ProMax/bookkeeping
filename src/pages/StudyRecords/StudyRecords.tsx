@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { MonthSelector } from '@/components';
 import { StudyRecord } from '@/utils';
 import { loadStudyRecords } from '@/utils';
@@ -42,6 +43,28 @@ const StudyRecords: React.FC = () => {
   // 计算总学习次数
   const totalRecordCount = monthlyRecords.length;
 
+  // 计算当月已过天数
+  const getDaysPassedInMonth = () => {
+    const [year, month] = selectedMonth.split('-').map(Number);
+    const today = new Date();
+    const selectedDate = new Date(year, month - 1, 1);
+    
+    // 如果选择的月份是当前月份,返回今天是几号
+    if (today.getFullYear() === year && today.getMonth() === month - 1) {
+      return today.getDate();
+    }
+    
+    // 如果选择的月份在过去,返回该月的总天数
+    if (selectedDate < new Date(today.getFullYear(), today.getMonth(), 1)) {
+      return new Date(year, month, 0).getDate();
+    }
+    
+    // 如果选择的月份在未来,返回0
+    return 0;
+  };
+
+  const daysPassedInMonth = getDaysPassedInMonth();
+
   // 按分类统计
   const categoryStats: CategoryStats[] = (() => {
     const statsMap = new Map<string, { totalMinutes: number; recordCount: number }>();
@@ -63,6 +86,34 @@ const StudyRecords: React.FC = () => {
       }))
       .sort((a, b) => b.totalMinutes - a.totalMinutes);
   })();
+
+  // 准备饼图数据
+  interface PieData {
+    name: string;
+    value: number;
+    color: string;
+    [key: string]: string | number; // 添加索引签名
+  }
+
+    // 获取分类颜色
+  const getCategoryColor = (index: number) => {
+    const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#feca57'];
+    return colors[index % colors.length];
+  };
+
+
+  const pieChartData: PieData[] = categoryStats.map((stat, index) => ({
+    name: stat.category,
+    value: stat.totalMinutes,
+    color: getCategoryColor(index)
+  }));
+
+    // 格式化日期
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+  };
+
 
   // 按日期统计（最近7天）
   const recentDaysStats: DateStats[] = (() => {
@@ -99,6 +150,19 @@ const StudyRecords: React.FC = () => {
     }));
   })();
 
+  // 准备折线图数据
+  interface LineData {
+    date: string;
+    minutes: number;
+    displayDate: string;
+  }
+
+  const lineChartData: LineData[] = recentDaysStats.map(stat => ({
+    date: stat.date,
+    minutes: stat.totalMinutes,
+    displayDate: formatDate(stat.date)
+  }));
+
   // 计算学习最多的一天
   const maxStudyDay = monthlyRecords.reduce((acc, record) => {
     const existing = acc.get(record.date) || 0;
@@ -119,16 +183,38 @@ const StudyRecords: React.FC = () => {
     return `${mins}m`;
   };
 
-  // 格式化日期
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+  // 自定义饼图 Tooltip
+  const CustomPieTooltip = ({ active, payload }: {
+    active?: boolean;
+    payload?: Array<{ payload: PieData }>;
+  }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="study-chart__tooltip">
+          <p className="tooltip__label">{data.name}</p>
+          <p className="tooltip__value">{formatDuration(data.value)}</p>
+        </div>
+      );
+    }
+    return null;
   };
 
-  // 获取分类颜色
-  const getCategoryColor = (index: number) => {
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#feca57'];
-    return colors[index % colors.length];
+  // 自定义折线图 Tooltip
+  const CustomLineTooltip = ({ active, payload, label }: {
+    active?: boolean;
+    payload?: Array<{ value: number }>;
+    label?: string;
+  }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="study-chart__tooltip">
+          <p className="tooltip__label">{label}</p>
+          <p className="tooltip__value">{formatDuration(payload[0].value)}</p>
+        </div>
+      );
+    }
+    return null;
   };
 
   // 返回首页
@@ -179,8 +265,8 @@ const StudyRecords: React.FC = () => {
             <div className="stat-content">
               <div className="stat-label">平均每天学习</div>
               <div className="stat-value">
-                {totalRecordCount > 0
-                  ? formatDuration(Math.round(totalMinutes / new Date(parseInt(selectedMonth.split('-')[0]), parseInt(selectedMonth.split('-')[1]), 0).getDate()))
+                {daysPassedInMonth > 0
+                  ? formatDuration(Math.round(totalMinutes / daysPassedInMonth))
                   : '0m'}
               </div>
             </div>
@@ -202,127 +288,83 @@ const StudyRecords: React.FC = () => {
 
         {/* 图表区域 */}
         <div className="study-records__charts">
-          {/* 分类统计饼图 */}
-          <div className="chart-card chart-card--full">
-            <div className="chart-header">
-              <h3>📊 学习分类统计</h3>
-            </div>
-            <div className="chart-content">
-              {categoryStats.length > 0 ? (
-                <div className="category-chart">
-                  {/* 饼图 */}
-                  <div className="pie-chart">
-                    <svg viewBox="0 0 200 200" className="pie-svg">
-                      {(() => {
-                        let currentAngle = 0;
-                        return categoryStats.map((stat, index) => {
-                          const angle = (stat.percentage / 100) * 360;
-                          const startAngle = currentAngle;
-                          const endAngle = currentAngle + angle;
-                          currentAngle = endAngle;
-
-                          // 计算路径
-                          const startRad = (startAngle - 90) * (Math.PI / 180);
-                          const endRad = (endAngle - 90) * (Math.PI / 180);
-                          const x1 = 100 + 80 * Math.cos(startRad);
-                          const y1 = 100 + 80 * Math.sin(startRad);
-                          const x2 = 100 + 80 * Math.cos(endRad);
-                          const y2 = 100 + 80 * Math.sin(endRad);
-                          const largeArc = angle > 180 ? 1 : 0;
-
-                          return (
-                            <path
-                              key={stat.category}
-                              d={`M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArc} 1 ${x2} ${y2} Z`}
-                              fill={getCategoryColor(index)}
-                              opacity="0.9"
-                            />
-                          );
-                        });
-                      })()}
-                      {/* 中心白圈 */}
-                      <circle cx="100" cy="100" r="50" fill="white" />
-                      <text
-                        x="100"
-                        y="95"
-                        textAnchor="middle"
-                        fontSize="16"
-                        fontWeight="bold"
-                        fill="#667eea"
+          {/* 分类统计和趋势图在同一行 */}
+          <div className="chart-row">
+            {/* 分类统计饼图 */}
+            <div className="chart-card chart-card--pie">
+              <h3 className="chart-card__title">📊 学习分类统计</h3>
+              <div className="chart-card__container">
+                {pieChartData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={pieChartData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
                       >
-                        总计
-                      </text>
-                      <text
-                        x="100"
-                        y="115"
-                        textAnchor="middle"
-                        fontSize="14"
-                        fill="#999"
-                      >
-                        {formatDuration(totalMinutes)}
-                      </text>
-                    </svg>
-                  </div>
-
-                  {/* 图例 */}
-                  <div className="category-legend">
-                    {categoryStats.map((stat, index) => (
-                      <div key={stat.category} className="legend-item">
-                        <div
-                          className="legend-color"
-                          style={{ backgroundColor: getCategoryColor(index) }}
-                        />
-                        <div className="legend-content">
-                          <div className="legend-name">{stat.category}</div>
-                          <div className="legend-stats">
-                            <span className="legend-time">{formatDuration(stat.totalMinutes)}</span>
-                            <span className="legend-percentage">{stat.percentage.toFixed(1)}%</span>
-                            <span className="legend-count">{stat.recordCount}次</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="empty-state">暂无数据</div>
-              )}
+                        {pieChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip content={<CustomPieTooltip />} />
+                      <Legend 
+                        verticalAlign="bottom" 
+                        height={36}
+                        formatter={(value) => value}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="empty-state">暂无数据</div>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* 最近7天趋势 */}
-          <div className="chart-card chart-card--full">
-            <div className="chart-header">
-              <h3>📈 最近7天学习趋势</h3>
-            </div>
-            <div className="chart-content">
-              {recentDaysStats.length > 0 ? (
-                <div className="trend-chart">
-                  {recentDaysStats.map((stat) => {
-                    const maxMinutes = Math.max(...recentDaysStats.map(s => s.totalMinutes), 1);
-                    const heightPercent = (stat.totalMinutes / maxMinutes) * 100;
-
-                    return (
-                      <div key={stat.date} className="trend-bar-container">
-                        <div className="trend-bar-wrapper">
-                          <div
-                            className="trend-bar"
-                            style={{ height: `${heightPercent}%` }}
-                          >
-                            <div className="trend-value">{formatDuration(stat.totalMinutes)}</div>
-                          </div>
-                        </div>
-                        <div className="trend-label">
-                          <div className="trend-date">{formatDate(stat.date)}</div>
-                          <div className="trend-count">{stat.recordCount}次</div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="empty-state">暂无数据</div>
-              )}
+            {/* 最近7天趋势 */}
+            <div className="chart-card chart-card--trend">
+              <h3 className="chart-card__title">📈 最近7天学习趋势</h3>
+              <div className="chart-card__container">
+                {lineChartData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart
+                      data={lineChartData}
+                      margin={{
+                        top: 20,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
+                      }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis 
+                        dataKey="displayDate" 
+                        tick={{ fontSize: 12 }}
+                        stroke="#666"
+                      />
+                      <YAxis 
+                        tick={{ fontSize: 12 }}
+                        stroke="#666"
+                        tickFormatter={(value) => `${value}m`}
+                      />
+                      <Tooltip content={<CustomLineTooltip />} />
+                      <Line 
+                        type="monotone" 
+                        dataKey="minutes" 
+                        stroke="#667eea"
+                        strokeWidth={3}
+                        dot={{ fill: '#667eea', strokeWidth: 2, r: 5 }}
+                        activeDot={{ r: 7, stroke: '#667eea', strokeWidth: 2 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="empty-state">暂无数据</div>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -1034,6 +1034,7 @@ const Home: React.FC = () => {
                         selectedCategories={selectedExpenseCategories}
                         onCategoryChange={setSelectedExpenseCategories}
                         monthlyAmount={getMonthlyExpenses()}
+                        monthlyTotalAmount={expenses.filter(e => e.date.startsWith(getCurrentMonth())).reduce((sum, e) => sum + e.amount, 0)}
                         totalAmount={expenses
                           .filter(e => selectedExpenseCategories.includes(e.category))
                           .reduce((sum, e) => sum + e.amount, 0)}
@@ -1076,6 +1077,7 @@ const Home: React.FC = () => {
                         selectedCategories={selectedIncomeCategories}
                         onCategoryChange={setSelectedIncomeCategories}
                         monthlyAmount={getMonthlyIncomes()}
+                        monthlyTotalAmount={incomes.filter(i => i.date.startsWith(getCurrentMonth())).reduce((sum, i) => sum + i.amount, 0)}
                         totalAmount={incomes
                           .filter(i => selectedIncomeCategories.includes(i.category))
                           .reduce((sum, i) => sum + i.amount, 0)}
