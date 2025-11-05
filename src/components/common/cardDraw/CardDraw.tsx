@@ -41,13 +41,14 @@ const CardDraw: React.FC = () => {
 
   // 打开抽卡模态框
   const handleOpenModal = () => {
-    if (hasTodayDrawn()) {
-      alert('今天已经抽过卡了，明天再来吧！');
-      return;
-    }
     setShowModal(true);
-    setDrawnCard(null);
-    setCustomContent('');
+    if (todayCard) {
+      // 如果已经抽过卡，显示抽卡结果
+      setDrawnCard(todayCard);
+    } else {
+      setDrawnCard(null);
+      setCustomContent('');
+    }
   };
 
   // 关闭模态框
@@ -159,7 +160,7 @@ const CardDraw: React.FC = () => {
     <div className="card-draw">
       <div className="card-draw__content">
         {todayCard ? (
-          <div className="card-draw__result">
+          <div className="card-draw__result" onClick={handleOpenModal} style={{ cursor: 'pointer' }}>
             <div className="card-draw__result-title">今日任务</div>
             <div className="card-draw__result-card">
               <div className="card-draw__result-category">
@@ -211,6 +212,10 @@ const CardDraw: React.FC = () => {
                     <div className="card-draw__card-flip">🎴</div>
                     <p>抽卡中...</p>
                   </div>
+                ) : hasTodayDrawn() ? (
+                  <div className="card-draw__already-drawn">
+                    <p>今天已经抽过卡了，明天再来吧！</p>
+                  </div>
                 ) : (
                   <button className="card-draw__draw-button" onClick={handleDraw}>
                     点击抽卡
@@ -224,11 +229,14 @@ const CardDraw: React.FC = () => {
                     {CARD_CATEGORY_LABELS[drawnCard.category]}
                   </div>
                   <div className="card-draw__drawn-type">
-                    {CARD_TYPE_LABELS[drawnCard.cardType]}
+                    {drawnCard.cardType === CardType.CUSTOM && drawnCard.customContent
+                      ? drawnCard.customContent
+                      : CARD_TYPE_LABELS[drawnCard.cardType]}
                   </div>
                 </div>
 
-                {drawnCard.cardType === CardType.CUSTOM && (
+                {/* 只有当卡片是自定义且还没有内容时才显示输入框 */}
+                {drawnCard.cardType === CardType.CUSTOM && !drawnCard.customContent && (
                   <>
                     <div className="card-draw__custom-input">
                       <label>请输入自定义内容：</label>

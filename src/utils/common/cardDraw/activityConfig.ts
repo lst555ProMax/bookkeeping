@@ -8,56 +8,68 @@ const DEFAULT_ACTIVITY_CONFIG: ActivityCategoryConfig[] = [
     id: 'research',
     name: '研究向',
     category: CardCategory.RESEARCH,
-    totalProbability: 0.30,
+    totalProbability: 0.35,
     items: [
       { id: 'entrepreneurial', name: '创业分析', probability: 0.05, cardType: CardType.ENTREPRENEURIAL_ANALYSIS },
       { id: 'economic', name: '经济社会', probability: 0.05, cardType: CardType.ECONOMIC_SOCIETY },
       { id: 'ai_dev', name: 'AI发展', probability: 0.05, cardType: CardType.AI_DEVELOPMENT },
       { id: 'music_history', name: '音乐发展史', probability: 0.05, cardType: CardType.MUSIC_HISTORY },
       { id: 'art_history', name: '艺术发展史', probability: 0.05, cardType: CardType.ART_HISTORY },
-      { id: 'typology', name: '类型学', probability: 0.05, cardType: CardType.TYPOLOGY }
+      { id: 'typology', name: '类型学', probability: 0.05, cardType: CardType.TYPOLOGY },
+      { id: 'health', name: '健康养生', probability: 0.05, cardType: CardType.HEALTH }
     ]
   },
   {
     id: 'appreciation',
     name: '欣赏向',
     category: CardCategory.APPRECIATION,
-    totalProbability: 0.30,
+    totalProbability: 0.20,
     items: [
-      { id: 'art_appreciation', name: '艺术欣赏', probability: 0.10, cardType: CardType.ART_APPRECIATION },
-      { id: 'music_appreciation', name: '音乐欣赏', probability: 0.10, cardType: CardType.MUSIC_APPRECIATION },
-      { id: 'reading', name: '读书', probability: 0.10, cardType: CardType.READING }
-    ]
-  },
-  {
-    id: 'entertainment',
-    name: '娱乐向',
-    category: CardCategory.ENTERTAINMENT,
-    totalProbability: 0.15,
-    items: [
-      { id: 'pubg', name: '吃鸡', probability: 0.05, cardType: CardType.PUBG },
-      { id: 'movie', name: '看电影', probability: 0.05, cardType: CardType.MOVIE },
-      { id: 'comedy', name: '看喜剧/脱口秀', probability: 0.05, cardType: CardType.COMEDY }
+      { id: 'art_appreciation', name: '艺术欣赏', probability: 0.05, cardType: CardType.ART_APPRECIATION },
+      { id: 'music_appreciation', name: '音乐欣赏', probability: 0.05, cardType: CardType.MUSIC_APPRECIATION },
+      { id: 'reading', name: '读书', probability: 0.05, cardType: CardType.READING },
+      { id: 'comedy', name: '喜剧/脱口秀', probability: 0.05, cardType: CardType.COMEDY }
     ]
   },
   {
     id: 'learning',
     name: '学习向',
     category: CardCategory.LEARNING,
-    totalProbability: 0.15,
+    totalProbability: 0.20,
     items: [
-      { id: 'english', name: '英语听力', probability: 0.05, cardType: CardType.ENGLISH_LISTENING },
+      { id: 'english', name: '英语学习', probability: 0.05, cardType: CardType.ENGLISH_LISTENING },
       { id: 'dev', name: '前后端开发', probability: 0.05, cardType: CardType.FRONTEND_BACKEND },
-      { id: 'ai_algo', name: 'AI/算法', probability: 0.05, cardType: CardType.AI_ALGORITHM }
+      { id: 'ai_agent', name: 'AI/Agent', probability: 0.05, cardType: CardType.AI_ALGORITHM },
+      { id: 'algorithm', name: '算法', probability: 0.05, cardType: CardType.ALGORITHM }
+    ]
+  },
+  {
+    id: 'entertainment',
+    name: '娱乐向',
+    category: CardCategory.ENTERTAINMENT,
+    totalProbability: 0.10,
+    items: [
+      { id: 'pubg', name: '吃鸡', probability: 0.05, cardType: CardType.PUBG },
+      { id: 'movie', name: '看电影', probability: 0.05, cardType: CardType.MOVIE }
+    ]
+  },
+  {
+    id: 'outdoor',
+    name: '户外向',
+    category: CardCategory.OUTDOOR,
+    totalProbability: 0.10,
+    items: [
+      { id: 'citywalk', name: 'citywalk', probability: 0.05, cardType: CardType.CITYWALK },
+      { id: 'exercise', name: '运动跑步', probability: 0.05, cardType: CardType.EXERCISE }
     ]
   },
   {
     id: 'custom',
     name: '自定义',
     category: CardCategory.CUSTOM,
-    totalProbability: 0.10,
+    totalProbability: 0.05,
     items: [
-      { id: 'custom', name: '自定义活动', probability: 0.10, cardType: CardType.CUSTOM }
+      { id: 'custom', name: '自定义活动', probability: 0.05, cardType: CardType.CUSTOM }
     ]
   }
 ];

@@ -296,6 +296,10 @@
     display: flex;
     align-items: baseline;
     gap: 0.5rem;
+    
+    &--full {
+      grid-column: 1 / -1; // 占满整行
+    }
   }
 
   &__extra-label {

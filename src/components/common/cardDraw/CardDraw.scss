@@ -34,6 +34,14 @@
     border-radius: 12px;
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    }
   }
 
   &__result-title {
@@ -178,6 +186,17 @@
     align-items: center;
     justify-content: center;
     min-height: 200px;
+  }
+
+  &__already-drawn {
+    text-align: center;
+    padding: 2rem;
+    
+    p {
+      font-size: 1.2rem;
+      color: #999;
+      margin: 0;
+    }
   }
 
   &__draw-button {

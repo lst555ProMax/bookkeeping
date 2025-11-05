@@ -236,13 +236,19 @@ const Fortune: React.FC = () => {
                       <span className="fortune__extra-value">{generatedFortune.luckyNumber}</span>
                     </div>
                   </div>
-                  <div className="fortune__extra-item">
-                    <span className="fortune__extra-label">💡 今日建议：</span>
-                    <span className="fortune__extra-value">{generatedFortune.advice}</span>
+                  <div className="fortune__extra-row">
+                    <div className="fortune__extra-item">
+                      <span className="fortune__extra-label">⚠️ 今日禁忌：</span>
+                      <span className="fortune__extra-value">{generatedFortune.warning}</span>
+                    </div>
+                    <div className="fortune__extra-item">
+                      <span className="fortune__extra-label">💡 今日建议：</span>
+                      <span className="fortune__extra-value">{generatedFortune.advice}</span>
+                    </div>
                   </div>
-                  <div className="fortune__extra-item">
-                    <span className="fortune__extra-label">⚠️ 今日禁忌：</span>
-                    <span className="fortune__extra-value">{generatedFortune.warning}</span>
+                  <div className="fortune__extra-item fortune__extra-item--full">
+                    <span className="fortune__extra-label">✨ 今日良言：</span>
+                    <span className="fortune__extra-value">{generatedFortune.blessing || '保持微笑，好运常伴！'}</span>
                   </div>
                 </div>
               </div>
@@ -332,13 +338,19 @@ const Fortune: React.FC = () => {
                     <span className="fortune__extra-value">{todayFortune.luckyNumber}</span>
                   </div>
                 </div>
-                <div className="fortune__extra-item">
-                  <span className="fortune__extra-label">💡 今日建议：</span>
-                  <span className="fortune__extra-value">{todayFortune.advice}</span>
+                <div className="fortune__extra-row">
+                  <div className="fortune__extra-item">
+                    <span className="fortune__extra-label">⚠️ 今日禁忌：</span>
+                    <span className="fortune__extra-value">{todayFortune.warning}</span>
+                  </div>
+                  <div className="fortune__extra-item">
+                    <span className="fortune__extra-label">💡 今日建议：</span>
+                    <span className="fortune__extra-value">{todayFortune.advice}</span>
+                  </div>
                 </div>
-                <div className="fortune__extra-item">
-                  <span className="fortune__extra-label">⚠️ 今日禁忌：</span>
-                  <span className="fortune__extra-value">{todayFortune.warning}</span>
+                <div className="fortune__extra-item fortune__extra-item--full">
+                  <span className="fortune__extra-label">✨ 今日良言：</span>
+                  <span className="fortune__extra-value">{todayFortune.blessing || '保持微笑，好运常伴！'}</span>
                 </div>
               </div>
             </div>

@@ -71,6 +71,20 @@ const WARNING_TEMPLATES = [
   '不宜长途旅行'
 ];
 
+// 今日良言/祝福模板
+const BLESSING_TEMPLATES = [
+  '保持微笑，好运常伴！',
+  '每一天都是新的开始，加油！',
+  '相信自己，你会越来越好！',
+  '心怀感恩，幸福常在！',
+  '努力生活，认真爱自己！',
+  '保持热爱，奔赴山海！',
+  '愿你所想，皆能如愿！',
+  '做最好的自己，遇见更好的明天！',
+  '慢慢来，一切都会好起来的！',
+  '愿你眼里有光，心中有梦！'
+];
+
 /**
  * 根据日期生成随机但稳定的种子
  * @param date 日期字符串
@@ -181,6 +195,7 @@ export const generateTodayFortune = (forceNew: boolean = false): FortuneRecord =
   const luckyNumber = random.nextInt(1, 99);
   const advice = random.choice(ADVICE_TEMPLATES);
   const warning = random.choice(WARNING_TEMPLATES);
+  const blessing = random.choice(BLESSING_TEMPLATES);
 
   return {
     id: `fortune_${Date.now()}`,
@@ -192,6 +207,7 @@ export const generateTodayFortune = (forceNew: boolean = false): FortuneRecord =
     luckyNumber,
     advice,
     warning,
+    blessing,
     createdAt: new Date()
   };
 };

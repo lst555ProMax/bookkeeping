@@ -66,5 +66,6 @@ export interface FortuneRecord {
   luckyNumber?: number; // 幸运数字
   advice?: string; // 今日建议
   warning?: string; // 今日禁忌
+  blessing?: string; // 今日良言/祝福
   createdAt: Date;
 }
