@@ -1,11 +1,17 @@
 .diary {
   height: 100%;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   gap: 1.5rem;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
   overflow: hidden;
+
+  // 确保所有子元素都显示
+  > * {
+    min-width: 0;
+    min-height: 0;
+  }
 }
 
 /* 响应式设计 */

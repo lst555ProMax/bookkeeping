@@ -11,11 +11,23 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     
     h3 {
       margin: 0;
       font-size: 1.2rem;
       font-weight: 600;
+    }
+
+    .editing-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
     }
   }
 
@@ -36,6 +48,11 @@
       color: #333;
       background-color: #fff;
 
+      &.editing {
+        border-color: #667eea;
+        background-color: #f0f4ff;
+      }
+
       &:focus {
         outline: none;
         border-color: #667eea;
@@ -44,6 +61,44 @@
 
       &::placeholder {
         color: #999;
+      }
+    }
+
+    .edit-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+
+      button {
+        flex: 1;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.save-btn {
+          background: #667eea;
+          color: white;
+
+          &:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+          }
+        }
+
+        &.cancel-btn {
+          background: #f0f0f0;
+          color: #666;
+
+          &:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
+          }
+        }
       }
     }
   }
@@ -84,10 +139,26 @@
       border-radius: 12px;
       padding: 1rem;
       margin-bottom: 2rem;
-      margin-left: 2rem;
+      margin-left: 0rem;
       position: relative;
       transition: all 0.3s ease;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      max-height: 200px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+
+      &.editing {
+        background: #e8eef5;
+        border: 2px solid #667eea;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+
+        &::before {
+          background: #764ba2;
+          transform: scale(1.3);
+        }
+      }
 
       &::before {
         content: '';
@@ -130,6 +201,22 @@
         line-height: 1.6;
         margin-bottom: 0.75rem;
         word-break: break-word;
+        flex: 1;
+        overflow-y: auto;
+        
+        /* 自定义滚动条 */
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 2px;
+        }
       }
 
       &__footer {

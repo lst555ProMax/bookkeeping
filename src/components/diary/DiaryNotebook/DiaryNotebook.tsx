@@ -1,16 +1,17 @@
-import React, { useRef } from 'react';
-import { PRESET_THEMES, WEATHER_OPTIONS, MOOD_OPTIONS } from '../types';
+import React, { useRef, useCallback } from 'react';
+import { PRESET_THEMES, WEATHER_OPTIONS, MOOD_OPTIONS, FONT_OPTIONS } from '@/utils';
 import './DiaryNotebook.scss';
 
 interface DiaryNotebookProps {
   selectedDate: string;
-  onDateChange: (date: string) => void;
   currentTheme: string;
   onThemeChange: (theme: string) => void;
   currentWeather: string;
   onWeatherChange: (weather: string) => void;
   currentMood: string;
   onMoodChange: (mood: string) => void;
+  currentFont: string;
+  onFontChange: (font: string) => void;
   diaryContent: string;
   onContentChange: (content: string) => void;
   onSave: () => void;
@@ -21,19 +22,22 @@ interface DiaryNotebookProps {
   onShowWeatherPickerChange: (show: boolean) => void;
   showMoodPicker: boolean;
   onShowMoodPickerChange: (show: boolean) => void;
+  showFontPicker: boolean;
+  onShowFontPickerChange: (show: boolean) => void;
   customThemeColor: string;
   onCustomThemeColorChange: (color: string) => void;
 }
 
 const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
   selectedDate,
-  onDateChange,
   currentTheme,
   onThemeChange,
   currentWeather,
   onWeatherChange,
   currentMood,
   onMoodChange,
+  currentFont,
+  onFontChange,
   diaryContent,
   onContentChange,
   onSave,
@@ -44,10 +48,58 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
   onShowWeatherPickerChange,
   showMoodPicker,
   onShowMoodPickerChange,
+  showFontPicker,
+  onShowFontPickerChange,
   customThemeColor,
   onCustomThemeColorChange,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // 延迟关闭的定时器引用
+  const themeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const weatherTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const moodTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const fontTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 处理鼠标离开事件，添加延迟
+  const handleMouseLeave = useCallback((
+    timerRef: React.MutableRefObject<NodeJS.Timeout | null>,
+    onClose: (show: boolean) => void
+  ) => {
+    timerRef.current = setTimeout(() => {
+      onClose(false);
+    }, 350); // 350ms 延迟
+  }, []);
+
+  // 处理鼠标进入事件，清除延迟
+  const handleMouseEnter = useCallback((
+    timerRef: React.MutableRefObject<NodeJS.Timeout | null>
+  ) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+  
+  // 格式化日期显示
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long'
+    });
+  };
+  
+  // 处理键盘快捷键
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Ctrl+Enter 保存
+    if (e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      onSave();
+    }
+  };
 
   return (
     <div className="diary-notebook">
@@ -55,22 +107,21 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
       <div className="notebook__page" style={{ backgroundColor: currentTheme }}>
         <div className="notebook__header">
           <div className="notebook__header-left">
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => onDateChange(e.target.value)}
-              className="date-input"
-            />
+            <div className="date-display">
+              📅 {formatDate(selectedDate)}
+            </div>
             
             {/* 主题颜色选择器 */}
             <div 
               className="action-dropdown"
               onMouseEnter={() => {
+                handleMouseEnter(themeTimerRef);
                 onShowThemePickerChange(true);
                 onShowWeatherPickerChange(false);
                 onShowMoodPickerChange(false);
+                onShowFontPickerChange(false);
               }}
-              onMouseLeave={() => onShowThemePickerChange(false)}
+              onMouseLeave={() => handleMouseLeave(themeTimerRef, onShowThemePickerChange)}
             >
               <button 
                 className="action-icon-btn" 
@@ -118,15 +169,54 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
               )}
             </div>
 
+            {/* 字体选择器 */}
+            <div 
+              className="action-dropdown"
+              onMouseEnter={() => {
+                handleMouseEnter(fontTimerRef);
+                onShowFontPickerChange(true);
+                onShowThemePickerChange(false);
+                onShowWeatherPickerChange(false);
+                onShowMoodPickerChange(false);
+              }}
+              onMouseLeave={() => handleMouseLeave(fontTimerRef, onShowFontPickerChange)}
+            >
+              <button 
+                className="action-icon-btn" 
+                title="字体"
+              >
+                🖋️
+              </button>
+              {showFontPicker && (
+                <div className="dropdown-menu font-picker">
+                  {FONT_OPTIONS.map(font => (
+                    <button
+                      key={font.label}
+                      className="font-option"
+                      style={{ fontFamily: font.value }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        onFontChange(font.value);
+                      }}
+                    >
+                      {font.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* 天气选择器 */}
             <div 
               className="action-dropdown"
               onMouseEnter={() => {
+                handleMouseEnter(weatherTimerRef);
                 onShowWeatherPickerChange(true);
                 onShowThemePickerChange(false);
                 onShowMoodPickerChange(false);
+                onShowFontPickerChange(false);
               }}
-              onMouseLeave={() => onShowWeatherPickerChange(false)}
+              onMouseLeave={() => handleMouseLeave(weatherTimerRef, onShowWeatherPickerChange)}
             >
               <button 
                 className="action-icon-btn" 
@@ -157,11 +247,13 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
             <div 
               className="action-dropdown"
               onMouseEnter={() => {
+                handleMouseEnter(moodTimerRef);
                 onShowMoodPickerChange(true);
                 onShowThemePickerChange(false);
                 onShowWeatherPickerChange(false);
+                onShowFontPickerChange(false);
               }}
-              onMouseLeave={() => onShowMoodPickerChange(false)}
+              onMouseLeave={() => handleMouseLeave(moodTimerRef, onShowMoodPickerChange)}
             >
               <button 
                 className="action-icon-btn" 
@@ -189,8 +281,8 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
             </div>
           </div>
           <div className="notebook__actions">
-            <button className="action-icon-btn" onClick={onNew} title="新建">
-              📄
+            <button className="action-icon-btn" onClick={onNew} title="新建日记">
+              ➕
             </button>
             <button className="action-icon-btn" onClick={onSave} title="保存">
               💾
@@ -204,7 +296,9 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
             placeholder="记录你的灵感（按Ctrl+Enter保存）"
             value={diaryContent}
             onChange={(e) => onContentChange(e.target.value)}
+            onKeyDown={handleKeyDown}
             className="diary-textarea"
+            style={{ fontFamily: currentFont }}
           />
         </div>
 

@@ -34,6 +34,11 @@ export * from './study/storage';
 export * from './study/dataImportExport';
 export * from './study/category';
 
+// ==================== 日记模块 ====================
+export * from './diary/types';
+export * from './diary/storage';
+export * from './diary/dataImportExport';
+
 // ==================== 抽卡游戏模块 ====================
 export * from './common/cardDraw/types';
 export * from './common/cardDraw/storage';

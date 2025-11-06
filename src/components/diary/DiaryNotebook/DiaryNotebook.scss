@@ -76,7 +76,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
       position: relative;
       z-index: 100;
 
@@ -88,24 +88,18 @@
         z-index: 100;
       }
 
-      .date-input {
+      .date-display {
         font-size: 1.2rem;
         font-weight: 600;
         color: #667eea;
-        border: none;
         background: rgba(255, 255, 255, 0.8);
         padding: 0.5rem 1rem;
         border-radius: 8px;
-        cursor: pointer;
+        user-select: none;
         transition: all 0.3s ease;
 
         &:hover {
           background: rgba(102, 126, 234, 0.1);
-        }
-
-        &:focus {
-          outline: none;
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
       }
 
@@ -242,7 +236,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
-            max-height: 320px;
+            max-height: 360px;
             overflow-y: auto;
             min-width: 240px;
 
@@ -301,6 +295,60 @@
                 color: #444;
                 font-weight: 500;
                 pointer-events: none;
+              }
+            }
+          }
+
+          &.font-picker {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 140px;
+            max-height: 380px;
+            overflow-y: auto;
+
+            &::-webkit-scrollbar {
+              width: 6px;
+            }
+
+            &::-webkit-scrollbar-track {
+              background: #f5f5f5;
+              border-radius: 3px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+              background: #d0d0d0;
+              border-radius: 3px;
+
+              &:hover {
+                background: #b0b0b0;
+              }
+            }
+
+            .font-option {
+              padding: 0.75rem 1rem;
+              border: 2px solid #e0e0e0;
+              color:#000;
+              border-radius: 8px;
+              background: white;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              user-select: none;
+              pointer-events: auto;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+              text-align: center;
+              font-size: 1rem;
+
+              &:hover {
+                border-color: #667eea;
+                background: linear-gradient(135deg, #f8f9ff 0%, #f0f3ff 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.15);
+              }
+
+              &:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
               }
             }
           }

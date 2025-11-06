@@ -1,20 +1,29 @@
 import React from 'react';
-import { DiaryEntry, WEATHER_OPTIONS, MOOD_OPTIONS } from '../types';
+import { DiaryEntry, WEATHER_OPTIONS, MOOD_OPTIONS } from '@/utils';
 import './DiaryList.scss';
 
 interface DiaryListProps {
   diaryEntries: DiaryEntry[];
-  selectedDate: string;
+  currentDiaryId: string | null;
   onLoadDiary: (entry: DiaryEntry) => void;
   onDeleteDiary: (id: string) => void;
 }
 
 const DiaryList: React.FC<DiaryListProps> = ({
   diaryEntries,
-  selectedDate,
+  currentDiaryId,
   onLoadDiary,
   onDeleteDiary,
 }) => {
+  // 格式化创建时间
+  const formatTime = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('zh-CN', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div className="diary-list">
       <div className="diary-list__header">
@@ -25,8 +34,11 @@ const DiaryList: React.FC<DiaryListProps> = ({
         {diaryEntries.map(entry => (
           <div 
             key={entry.id} 
-            className={`diary-item ${entry.date === selectedDate ? 'diary-item--active' : ''}`}
+            className={`diary-item ${entry.id === currentDiaryId ? 'diary-item--active' : ''}`}
             onClick={() => onLoadDiary(entry)}
+            style={{ 
+              backgroundColor: entry.theme || '#f8f9fa',
+            }}
           >
             <div className="diary-item__header">
               <span className="diary-item__date">
@@ -34,7 +46,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
-                })}
+                })} {formatTime(entry.createdAt)}
               </span>
               <div className="diary-item__meta">
                 {entry.weather && (
@@ -59,7 +71,12 @@ const DiaryList: React.FC<DiaryListProps> = ({
                 </button>
               </div>
             </div>
-            <div className="diary-item__preview">
+            <div 
+              className="diary-item__preview"
+              style={{ 
+                fontFamily: entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif"
+              }}
+            >
               {entry.content.substring(0, 100)}
               {entry.content.length > 100 && '...'}
             </div>

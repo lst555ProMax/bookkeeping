@@ -48,7 +48,6 @@
     }
 
     .diary-item {
-      background: #f8f9fa;
       border-radius: 12px;
       padding: 1rem;
       margin-bottom: 0.75rem;
@@ -57,15 +56,18 @@
       border: 2px solid transparent;
 
       &:hover {
-        background: #e8eef5;
+        filter: brightness(0.95);
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
       }
 
       &--active {
         border-color: #667eea;
-        background: #e8eef5;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+        
+        &:hover {
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+        }
       }
 
       &__header {
@@ -99,7 +101,7 @@
         cursor: pointer;
         font-size: 1.3rem;
         padding: 0.25rem;
-        opacity: 0;
+        opacity: 0.6;
         transition: all 0.3s ease;
         line-height: 1;
         display: flex;
