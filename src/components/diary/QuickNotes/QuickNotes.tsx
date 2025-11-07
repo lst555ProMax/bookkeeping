@@ -176,7 +176,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
       <div className="quick-notes__header">
         <h3>💭 速记</h3>
         {editingNoteId && (
-          <span className="editing-badge">编辑中</span>
+          <span className="editing-badge">编辑中，点击组件外部退出</span>
         )}
       </div>
       <div className="quick-notes__input">
