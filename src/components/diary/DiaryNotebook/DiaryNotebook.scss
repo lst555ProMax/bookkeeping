@@ -54,24 +54,6 @@
       pointer-events: none;
     }
 
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: 
-        repeating-linear-gradient(
-          transparent,
-          transparent 29px,
-          #e8e4d8 29px,
-          #e8e4d8 30px
-        );
-      pointer-events: none;
-      z-index: 1;
-    }
-
     .notebook__header {
       display: flex;
       justify-content: space-between;
@@ -394,12 +376,24 @@
       flex: 1;
       position: relative;
       z-index: 2;
+      overflow-y: hidden;
+      overflow-x: hidden;
+      
+
 
       .diary-textarea {
         width: 100%;
-        height: 100%;
+        min-height: 100%;
         border: none;
-        background: transparent;
+        /* 行线背景 - 会随文字内容滚动 */
+        background: 
+          repeating-linear-gradient(
+            transparent,
+            transparent 29px,
+            #e8e4d8 29px,
+            #e8e4d8 30px
+          );
+        background-attachment: local;
         font-size: 1rem;
         font-family: 'Courier New', 'STKaiti', 'KaiTi', serif;
         line-height: 30px;
@@ -414,17 +408,31 @@
         &::placeholder {
           color: #bbb;
         }
+        
+      /* 自定义滚动条 */
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(102, 126, 234, 0.3);
+        border-radius: 4px;
+        
+        &:hover {
+          background: rgba(102, 126, 234, 0.5);
+        }
+      }
       }
     }
 
     .notebook__lines {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-      z-index: 0;
+      /* 不再需要 */
+      display: none;
     }
   }
 }

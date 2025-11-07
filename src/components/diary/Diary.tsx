@@ -12,7 +12,9 @@ import {
   deleteQuickNote as deleteQuickNoteFromStorage,
   loadDiaryEntries,
   saveDiaryEntry as saveDiaryToStorage,
-  deleteDiaryEntry as deleteDiaryFromStorage
+  deleteDiaryEntry as deleteDiaryFromStorage,
+  saveDiaryEntries,
+  clearAllDiaryEntries
 } from '@/utils';
 import './Diary.scss';
 
@@ -244,6 +246,70 @@ const Diary: React.FC = () => {
     createNewDiary();
   };
 
+  // 导入所有日记
+  const handleImportAll = (entries: DiaryEntry[]) => {
+    try {
+      // 合并新导入的日记和现有日记
+      const existingEntries = loadDiaryEntries();
+      const mergedEntries = [...existingEntries];
+
+      entries.forEach(newEntry => {
+        // 检查是否已存在相同ID的日记
+        const existingIndex = mergedEntries.findIndex(e => e.id === newEntry.id);
+        if (existingIndex >= 0) {
+          // 更新现有日记
+          mergedEntries[existingIndex] = newEntry;
+        } else {
+          // 添加新日记
+          mergedEntries.push(newEntry);
+        }
+      });
+
+      // 排序并保存
+      mergedEntries.sort((a, b) => {
+        const dateCompare = b.date.localeCompare(a.date);
+        if (dateCompare !== 0) return dateCompare;
+        return b.createdAt - a.createdAt;
+      });
+
+      saveDiaryEntries(mergedEntries);
+      setDiaryEntries(mergedEntries);
+      toast.success(`成功导入 ${entries.length} 篇日记`);
+    } catch (error) {
+      console.error('导入日记失败:', error);
+      toast.error('导入失败，请重试');
+    }
+  };
+
+  // 删除所有日记
+  const handleDeleteAll = () => {
+    try {
+      const count = clearAllDiaryEntries();
+      setDiaryEntries([]);
+      
+      // 重置为新建状态
+      setCurrentDiary(null);
+      setDiaryContent('');
+      setCurrentTheme('#fff');
+      setCurrentWeather('晴天');
+      setCurrentMood('开心');
+      setCurrentFont("'Courier New', 'STKaiti', 'KaiTi', serif");
+      
+      setInitialDiaryState({
+        content: '',
+        theme: '#fff',
+        weather: '晴天',
+        mood: '开心',
+        font: "'Courier New', 'STKaiti', 'KaiTi', serif"
+      });
+
+      toast.success(`已删除 ${count} 篇日记`);
+    } catch (error) {
+      console.error('删除所有日记失败:', error);
+      toast.error('删除失败，请重试');
+    }
+  };
+
   // 加载指定日记
   const handleLoadDiary = (entry: DiaryEntry) => {
     // 检查是否有未保存的更改
@@ -337,6 +403,8 @@ const Diary: React.FC = () => {
         currentDiaryId={currentDiary?.id || null}
         onLoadDiary={handleLoadDiary}
         onDeleteDiary={handleDeleteDiary}
+        onImportAll={handleImportAll}
+        onDeleteAll={handleDeleteAll}
       />
     </div>
   );
