@@ -201,11 +201,13 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
                 </option>
               ))}
             </select>
-            <div className="category-btn-wrapper">
+            <div 
+            className="category-btn-wrapper"
+            onClick={onOpenCategoryManager}
+            >
               <button
                 type="button"
                 className="category-btn"
-                onClick={onOpenCategoryManager}
                 title="管理学习分类"
               >
                 ⚙️

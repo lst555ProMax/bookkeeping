@@ -32,13 +32,13 @@
   }
 
   &__input {
-    padding: 1rem;
+    padding: 1rem 1rem 0.5rem 1rem;
     border-bottom: 2px solid #f0f0f0;
 
     textarea {
       width: 100%;
-      min-height: 100px;
-      padding: 0.75rem;
+      min-height: 140px;
+      padding: 0.5rem;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
       font-size: 0.95rem;
@@ -61,6 +61,19 @@
 
       &::placeholder {
         color: #999;
+      }
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 0.85rem;
+      color: #666;
+
+      span {
+        &.warning {
+          color: #ff4d4f;
+          font-weight: 600;
+        }
       }
     }
 
@@ -108,17 +121,26 @@
     overflow-y: auto;
     padding: 2rem 1rem 1rem 2rem;
     position: relative;
+    min-height: 100px;
+    --timeline-height: 0px;
 
-    /* 时间轴主线 */
+    /* 时间轴主线 - 根据内容自适应高度 */
     &::before {
       content: '';
       position: absolute;
       left: 1rem;
       top: 0;
-      bottom: 0;
+      height: var(--timeline-height);
       width: 3px;
       background: linear-gradient(to bottom, #667eea, #764ba2);
       border-radius: 2px;
+      pointer-events: none;
+      transition: height 0.3s ease;
+    }
+    
+    /* 当没有内容时隐藏时间轴 */
+    &:empty::before {
+      display: none;
     }
 
     &::-webkit-scrollbar {
@@ -137,15 +159,13 @@
     .quick-note-item {
       background: #f8f9fa;
       border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 2rem;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
       margin-left: 0rem;
       position: relative;
       transition: all 0.3s ease;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       cursor: pointer;
-      max-height: 200px;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
 
@@ -199,10 +219,11 @@
         font-size: 0.95rem;
         color: #333;
         line-height: 1.6;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.25rem;
         word-break: break-word;
-        flex: 1;
+        max-height: 100px;
         overflow-y: auto;
+        padding-right: 0.5rem;
         
         /* 自定义滚动条 */
         &::-webkit-scrollbar {
@@ -216,6 +237,10 @@
         &::-webkit-scrollbar-thumb {
           background: #c1c1c1;
           border-radius: 2px;
+          
+          &:hover {
+            background: #a0a0a0;
+          }
         }
       }
 

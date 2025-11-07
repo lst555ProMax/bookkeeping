@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import QuickNotes from './QuickNotes/QuickNotes';
 import DiaryNotebook from './DiaryNotebook/DiaryNotebook';
 import DiaryList from './DiaryList/DiaryList';
-import { Toast } from '@/components/common';
 import {
   QuickNote,
   DiaryEntry,
@@ -36,10 +36,6 @@ const Diary: React.FC = () => {
   const [showMoodPicker, setShowMoodPicker] = useState<boolean>(false);
   const [showFontPicker, setShowFontPicker] = useState<boolean>(false);
   const [customThemeColor, setCustomThemeColor] = useState<string>('#ffffff');
-  
-  // Toast 提示状态
-  const [showToast, setShowToast] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>('');
   
   // 记录初始状态，用于检测是否有未保存的更改
   const [initialDiaryState, setInitialDiaryState] = useState<{
@@ -106,12 +102,6 @@ const Diary: React.FC = () => {
     );
   };
 
-  // 显示 Toast 提示
-  const showToastMessage = (message: string) => {
-    setToastMessage(message);
-    setShowToast(true);
-  };
-
   // 保存日记
   const handleSaveDiary = () => {
     // 如果内容为空，不保存并恢复原内容
@@ -164,7 +154,10 @@ const Diary: React.FC = () => {
     });
     
     // 显示保存成功提示
-    showToastMessage('保存成功');
+    toast.success('保存成功', {
+      duration: 2000,
+      position: 'top-center',
+    });
   };
 
   // 删除日记
@@ -304,14 +297,6 @@ const Diary: React.FC = () => {
 
   return (
     <div className="diary">
-      {showToast && (
-        <Toast 
-          message={toastMessage} 
-          type="success" 
-          onClose={() => setShowToast(false)}
-        />
-      )}
-      
       <QuickNotes
         quickNotes={quickNotes}
         quickNoteInput={quickNoteInput}
