@@ -16,6 +16,8 @@
     top: 0;
     background: white;
     z-index: 10;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 
   &__title {
@@ -23,12 +25,90 @@
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0;
+    flex-shrink: 0;
+  }
+
+  &__search {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1;
+
+    .search-group {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .search-label {
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .search-separator {
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .search-select {
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      outline: none;
+      background: white;
+      color: #333;
+      height: 32px;
+      box-sizing: border-box;
+      cursor: pointer;
+
+      &:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+      }
+    }
+
+    .search-input {
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      outline: none;
+      background: white;
+      color: #333;
+      height: 32px;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+      }
+
+      &--number {
+        width: 80px;
+      }
+
+      &--text {
+        width: 120px;
+      }
+
+      &::placeholder {
+        color: #999;
+        font-size: 0.85rem;
+      }
+    }
   }
 
   &__actions {
     display: flex;
     gap: 0.75rem;
     align-items: center;
+    flex-shrink: 0;
 
     .action-icon-btn {
       padding: 0;
@@ -489,6 +569,27 @@
     gap: 0.5rem;
     flex-wrap: wrap;
     flex: 1;
+  }
+
+  // 打卡不正常时的警告样式
+  &--abnormal {
+    .checkin-label {
+      color: #dc3545;
+    }
+
+    .time-item {
+      border-color: #f5c6cb;
+      background: #f8d7da;
+
+      .time-label {
+        color: #721c24;
+      }
+
+      .time-value {
+        color: #721c24;
+        font-weight: 700;
+      }
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw, MenuSettings, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, Diary, Music, Reading, Medical } from '@/components';
-import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS } from '@/utils';
+import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS, MealStatus } from '@/utils';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
   loadIncomes, addIncome, deleteIncome, updateIncome,
@@ -105,6 +105,32 @@ const Home: React.FC = () => {
   const [selectedExpenseCategories, setSelectedExpenseCategories] = useState<string[]>([]);
   const [selectedIncomeCategories, setSelectedIncomeCategories] = useState<string[]>([]);
 
+  // 查询筛选状态 - 支出
+  const [expenseMinAmount, setExpenseMinAmount] = useState<number | undefined>(undefined);
+  const [expenseMaxAmount, setExpenseMaxAmount] = useState<number | undefined>(undefined);
+  const [expenseSearchDescription, setExpenseSearchDescription] = useState<string>('');
+
+  // 查询筛选状态 - 收入
+  const [incomeMinAmount, setIncomeMinAmount] = useState<number | undefined>(undefined);
+  const [incomeMaxAmount, setIncomeMaxAmount] = useState<number | undefined>(undefined);
+  const [incomeSearchDescription, setIncomeSearchDescription] = useState<string>('');
+
+  // 查询筛选状态 - 睡眠记录
+  const [sleepMinHour, setSleepMinHour] = useState<number | undefined>(undefined);
+  const [sleepMaxHour, setSleepMaxHour] = useState<number | undefined>(undefined);
+  const [sleepMinDurationHour, setSleepMinDurationHour] = useState<number | undefined>(undefined);
+  const [sleepMaxDurationHour, setSleepMaxDurationHour] = useState<number | undefined>(undefined);
+  const [sleepMinQuality, setSleepMinQuality] = useState<number | undefined>(undefined);
+  const [sleepMaxQuality, setSleepMaxQuality] = useState<number | undefined>(undefined);
+  const [sleepSearchNotes, setSleepSearchNotes] = useState<string>('');
+
+  // 查询筛选状态 - 日常记录
+  const [dailyMealFilter, setDailyMealFilter] = useState<'all' | 'regular' | 'irregular'>('all');
+  const [dailyCheckinFilter, setDailyCheckinFilter] = useState<'all' | 'normal' | 'abnormal'>('all');
+  const [dailyMinSteps, setDailyMinSteps] = useState<number | undefined>(undefined);
+  const [dailyMaxSteps, setDailyMaxSteps] = useState<number | undefined>(undefined);
+  const [dailySearchNotes, setDailySearchNotes] = useState<string>('');
+
   // 初始化分类筛选（默认全选）
   useEffect(() => {
     const expenseCategories = getCategories();
@@ -119,19 +145,178 @@ const Home: React.FC = () => {
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
   };
 
+  // 筛选支出记录（应用分类、金额和备注过滤）
+  const filterExpenses = (records: ExpenseRecord[]) => {
+    return records.filter(e => {
+      // 分类筛选
+      if (!selectedExpenseCategories.includes(e.category)) return false;
+      
+      // 金额筛选
+      if (expenseMinAmount !== undefined && e.amount < expenseMinAmount) return false;
+      if (expenseMaxAmount !== undefined && e.amount > expenseMaxAmount) return false;
+      
+      // 备注筛选
+      if (expenseSearchDescription && expenseSearchDescription.trim() !== '') {
+        const description = e.description || '';
+        if (!description.toLowerCase().includes(expenseSearchDescription.toLowerCase().trim())) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  };
+
+  // 筛选收入记录（应用分类、金额和备注过滤）
+  const filterIncomes = (records: IncomeRecord[]) => {
+    return records.filter(i => {
+      // 分类筛选
+      if (!selectedIncomeCategories.includes(i.category)) return false;
+      
+      // 金额筛选
+      if (incomeMinAmount !== undefined && i.amount < incomeMinAmount) return false;
+      if (incomeMaxAmount !== undefined && i.amount > incomeMaxAmount) return false;
+      
+      // 备注筛选
+      if (incomeSearchDescription && incomeSearchDescription.trim() !== '') {
+        const description = i.description || '';
+        if (!description.toLowerCase().includes(incomeSearchDescription.toLowerCase().trim())) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  };
+
+  // 筛选睡眠记录（应用睡眠区间、时长、质量和备注过滤）
+  const filterSleepRecords = (records: SleepRecord[]) => {
+    return records.filter(s => {
+      // 睡眠区间筛选（入睡时间的小时数）
+      if (sleepMinHour !== undefined || sleepMaxHour !== undefined) {
+        const sleepHour = parseInt(s.sleepTime.split(':')[0]);
+        if (sleepMinHour !== undefined && sleepHour < sleepMinHour) return false;
+        if (sleepMaxHour !== undefined && sleepHour > sleepMaxHour) return false;
+      }
+      
+      // 睡眠时长筛选（以小时为单位）
+      if (sleepMinDurationHour !== undefined || sleepMaxDurationHour !== undefined) {
+        if (s.duration === undefined) return false;
+        const durationHours = s.duration / 60; // 将分钟转换为小时
+        if (sleepMinDurationHour !== undefined && durationHours < sleepMinDurationHour) return false;
+        if (sleepMaxDurationHour !== undefined && durationHours > sleepMaxDurationHour) return false;
+      }
+      
+      // 睡眠质量筛选
+      if (sleepMinQuality !== undefined && s.quality < sleepMinQuality) return false;
+      if (sleepMaxQuality !== undefined && s.quality > sleepMaxQuality) return false;
+      
+      // 备注筛选
+      if (sleepSearchNotes && sleepSearchNotes.trim() !== '') {
+        const notes = s.notes || '';
+        if (!notes.toLowerCase().includes(sleepSearchNotes.toLowerCase().trim())) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  };
+
+  // 筛选日常记录（应用三餐、打卡、步数和备注过滤）
+  const filterDailyRecords = (records: DailyRecord[]) => {
+    return records.filter(d => {
+      // 三餐筛选（只有三个都规律才算规律）
+      if (dailyMealFilter !== 'all') {
+        const isRegular = 
+          d.meals.breakfast === MealStatus.EATEN_REGULAR &&
+          d.meals.lunch === MealStatus.EATEN_REGULAR &&
+          d.meals.dinner === MealStatus.EATEN_REGULAR;
+        
+        if (dailyMealFilter === 'regular' && !isRegular) return false;
+        if (dailyMealFilter === 'irregular' && isRegular) return false;
+      }
+      
+      // 打卡筛选
+      if (dailyCheckinFilter !== 'all') {
+        // 判断打卡是否正常
+        const isNormal = (() => {
+          // 如果都没填，说明不工作，算正常
+          if (!d.checkInTime && !d.checkOutTime && !d.leaveTime) {
+            return true;
+          }
+          
+          let normal = true;
+          
+          // 签到时间检查：9点前算正常
+          if (d.checkInTime) {
+            const checkInHour = parseInt(d.checkInTime.split(':')[0]);
+            const checkInMinute = parseInt(d.checkInTime.split(':')[1]);
+            const checkInTotalMinutes = checkInHour * 60 + checkInMinute;
+            if (checkInTotalMinutes >= 9 * 60) {
+              normal = false;
+            }
+          }
+          
+          // 签退时间检查：6点后算正常
+          if (d.checkOutTime) {
+            const checkOutHour = parseInt(d.checkOutTime.split(':')[0]);
+            const checkOutMinute = parseInt(d.checkOutTime.split(':')[1]);
+            const checkOutTotalMinutes = checkOutHour * 60 + checkOutMinute;
+            if (checkOutTotalMinutes < 18 * 60) {
+              normal = false;
+            }
+          }
+          
+          // 离开时间检查：10点后算正常
+          if (d.leaveTime) {
+            const leaveHour = parseInt(d.leaveTime.split(':')[0]);
+            const leaveMinute = parseInt(d.leaveTime.split(':')[1]);
+            const leaveTotalMinutes = leaveHour * 60 + leaveMinute;
+            if (leaveTotalMinutes < 22 * 60) {
+              normal = false;
+            }
+          }
+          
+          return normal;
+        })();
+        
+        if (dailyCheckinFilter === 'normal' && !isNormal) return false;
+        if (dailyCheckinFilter === 'abnormal' && isNormal) return false;
+      }
+      
+      // 步数筛选
+      if (dailyMinSteps !== undefined || dailyMaxSteps !== undefined) {
+        if (d.wechatSteps === undefined) return false;
+        if (dailyMinSteps !== undefined && d.wechatSteps < dailyMinSteps) return false;
+        if (dailyMaxSteps !== undefined && d.wechatSteps > dailyMaxSteps) return false;
+      }
+      
+      // 备注筛选
+      if (dailySearchNotes && dailySearchNotes.trim() !== '') {
+        const notes = d.notes || '';
+        if (!notes.toLowerCase().includes(dailySearchNotes.toLowerCase().trim())) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  };
+
   // 计算本月支出
   const getMonthlyExpenses = () => {
     const currentMonth = getCurrentMonth();
-    return expenses
-      .filter(e => selectedExpenseCategories.includes(e.category) && e.date.startsWith(currentMonth))
+    return filterExpenses(expenses)
+      .filter(e => e.date.startsWith(currentMonth))
       .reduce((sum, e) => sum + e.amount, 0);
   };
 
   // 计算本月收入
   const getMonthlyIncomes = () => {
     const currentMonth = getCurrentMonth();
-    return incomes
-      .filter(i => selectedIncomeCategories.includes(i.category) && i.date.startsWith(currentMonth))
+    return filterIncomes(incomes)
+      .filter(i => i.date.startsWith(currentMonth))
       .reduce((sum, i) => sum + i.amount, 0);
   };
 
@@ -288,7 +473,7 @@ const Home: React.FC = () => {
   // 处理支出导出
   const handleExportExpenses = () => {
     try {
-      const filteredExpenses = expenses.filter(e => selectedExpenseCategories.includes(e.category));
+      const filteredExpenses = filterExpenses(expenses);
       
       const message = `确定导出支出记录吗？\n\n支出记录：${filteredExpenses.length} 条`;
       
@@ -356,7 +541,7 @@ const Home: React.FC = () => {
   // 处理收入导出
   const handleExportIncomes = () => {
     try {
-      const filteredIncomes = incomes.filter(i => selectedIncomeCategories.includes(i.category));
+      const filteredIncomes = filterIncomes(incomes);
       
       const message = `确定导出收入记录吗？\n\n收入记录：${filteredIncomes.length} 条`;
       
@@ -579,10 +764,11 @@ const Home: React.FC = () => {
   // 导出睡眠记录
   const handleExportSleep = () => {
     try {
-      const message = `确定导出睡眠记录吗？\n\n总共 ${sleepRecords.length} 条记录`;
+      const filteredRecords = filterSleepRecords(sleepRecords);
+      const message = `确定导出睡眠记录吗？\n\n筛选后的记录：${filteredRecords.length} 条`;
       
       if (window.confirm(message)) {
-        exportSleepRecords();
+        exportSleepRecords(filteredRecords);
         alert('睡眠记录导出成功！');
       }
     } catch (error) {
@@ -733,10 +919,11 @@ const Home: React.FC = () => {
   // 导出日常记录
   const handleExportDaily = () => {
     try {
-      const message = `确定导出日常记录吗？\n\n总共 ${dailyRecords.length} 条记录`;
+      const filteredRecords = filterDailyRecords(dailyRecords);
+      const message = `确定导出日常记录吗？\n\n筛选后的记录：${filteredRecords.length} 条`;
 
       if (window.confirm(message)) {
-        exportDailyRecords(dailyRecords);
+        exportDailyRecords(filteredRecords);
         alert('日常记录导出成功！');
       }
     } catch (error) {
@@ -1091,18 +1278,22 @@ const Home: React.FC = () => {
                         onCategoryChange={setSelectedExpenseCategories}
                         monthlyAmount={getMonthlyExpenses()}
                         monthlyTotalAmount={expenses.filter(e => e.date.startsWith(getCurrentMonth())).reduce((sum, e) => sum + e.amount, 0)}
-                        totalAmount={expenses
-                          .filter(e => selectedExpenseCategories.includes(e.category))
-                          .reduce((sum, e) => sum + e.amount, 0)}
+                        totalAmount={filterExpenses(expenses).reduce((sum, e) => sum + e.amount, 0)}
                         allTotalAmount={expenses.reduce((sum, e) => sum + e.amount, 0)}
                         onViewDashboard={goToExpenseDashboard}
                         onExport={handleExportExpenses}
                         onImport={triggerExpenseFileSelect}
                         onClear={handleClearExpenses}
                         isImporting={isImportingExpense}
+                        minAmount={expenseMinAmount}
+                        maxAmount={expenseMaxAmount}
+                        searchDescription={expenseSearchDescription}
+                        onMinAmountChange={setExpenseMinAmount}
+                        onMaxAmountChange={setExpenseMaxAmount}
+                        onSearchDescriptionChange={setExpenseSearchDescription}
                       />
                       <RecordList 
-                        records={expenses.filter(e => selectedExpenseCategories.includes(e.category))} 
+                        records={filterExpenses(expenses)} 
                         onDeleteRecord={handleDeleteExpense}
                         onEditRecord={handleEditExpense}
                         type="expense"
@@ -1134,18 +1325,22 @@ const Home: React.FC = () => {
                         onCategoryChange={setSelectedIncomeCategories}
                         monthlyAmount={getMonthlyIncomes()}
                         monthlyTotalAmount={incomes.filter(i => i.date.startsWith(getCurrentMonth())).reduce((sum, i) => sum + i.amount, 0)}
-                        totalAmount={incomes
-                          .filter(i => selectedIncomeCategories.includes(i.category))
-                          .reduce((sum, i) => sum + i.amount, 0)}
+                        totalAmount={filterIncomes(incomes).reduce((sum, i) => sum + i.amount, 0)}
                         allTotalAmount={incomes.reduce((sum, i) => sum + i.amount, 0)}
                         onViewDashboard={goToIncomeDashboard}
                         onExport={handleExportIncomes}
                         onImport={triggerIncomeFileSelect}
                         onClear={handleClearIncomes}
                         isImporting={isImportingIncome}
+                        minAmount={incomeMinAmount}
+                        maxAmount={incomeMaxAmount}
+                        searchDescription={incomeSearchDescription}
+                        onMinAmountChange={setIncomeMinAmount}
+                        onMaxAmountChange={setIncomeMaxAmount}
+                        onSearchDescriptionChange={setIncomeSearchDescription}
                       />
                       <RecordList 
-                        records={incomes.filter(i => selectedIncomeCategories.includes(i.category))} 
+                        records={filterIncomes(incomes)} 
                         onDeleteRecord={handleDeleteIncome}
                         onEditRecord={handleEditIncome}
                         type="income"
@@ -1182,7 +1377,7 @@ const Home: React.FC = () => {
                 <div className="home__list-section">
                   <div className="sleep-records-container">
                     <SleepList 
-                      sleeps={sleepRecords} 
+                      sleeps={filterSleepRecords(sleepRecords)} 
                       onDeleteSleep={handleDeleteSleep}
                       onEditSleep={handleEditSleep}
                       onViewDashboard={goToSleepDashboard}
@@ -1190,6 +1385,20 @@ const Home: React.FC = () => {
                       onImport={triggerSleepFileSelect}
                       onClear={handleClearSleepData}
                       isImporting={isImportingSleep}
+                      minSleepHour={sleepMinHour}
+                      maxSleepHour={sleepMaxHour}
+                      minDurationHour={sleepMinDurationHour}
+                      maxDurationHour={sleepMaxDurationHour}
+                      minQuality={sleepMinQuality}
+                      maxQuality={sleepMaxQuality}
+                      searchNotes={sleepSearchNotes}
+                      onMinSleepHourChange={setSleepMinHour}
+                      onMaxSleepHourChange={setSleepMaxHour}
+                      onMinDurationHourChange={setSleepMinDurationHour}
+                      onMaxDurationHourChange={setSleepMaxDurationHour}
+                      onMinQualityChange={setSleepMinQuality}
+                      onMaxQualityChange={setSleepMaxQuality}
+                      onSearchNotesChange={setSleepSearchNotes}
                     />
                   </div>
                 </div>
@@ -1249,7 +1458,7 @@ const Home: React.FC = () => {
                 <div className="home__list-section">
                   <div className="daily-records-container">
                     <DailyRecordList 
-                      records={dailyRecords} 
+                      records={filterDailyRecords(dailyRecords)} 
                       onDeleteRecord={handleDeleteDaily}
                       onEditRecord={handleEditDaily}
                       onViewDashboard={goToDailyDashboard}
@@ -1257,6 +1466,16 @@ const Home: React.FC = () => {
                       onImport={triggerDailyFileSelect}
                       onClear={handleClearDailyData}
                       isImporting={isImportingDaily}
+                      mealFilter={dailyMealFilter}
+                      checkinFilter={dailyCheckinFilter}
+                      minSteps={dailyMinSteps}
+                      maxSteps={dailyMaxSteps}
+                      searchNotes={dailySearchNotes}
+                      onMealFilterChange={setDailyMealFilter}
+                      onCheckinFilterChange={setDailyCheckinFilter}
+                      onMinStepsChange={setDailyMinSteps}
+                      onMaxStepsChange={setDailyMaxSteps}
+                      onSearchNotesChange={setDailySearchNotes}
                     />
                   </div>
                 </div>

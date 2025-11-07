@@ -17,6 +17,13 @@ interface CategoryFilterProps {
   onImport?: () => void;
   onClear?: () => void;
   isImporting?: boolean;
+  // 查询功能相关
+  minAmount?: number | undefined;
+  maxAmount?: number | undefined;
+  searchDescription?: string;
+  onMinAmountChange?: (value: number | undefined) => void;
+  onMaxAmountChange?: (value: number | undefined) => void;
+  onSearchDescriptionChange?: (value: string) => void;
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
@@ -33,7 +40,13 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onExport,
   onImport,
   onClear,
-  isImporting = false
+  isImporting = false,
+  minAmount,
+  maxAmount,
+  searchDescription,
+  onMinAmountChange,
+  onMaxAmountChange,
+  onSearchDescriptionChange
 }) => {
   // 计算总金额百分比
   const percentage = allTotalAmount && allTotalAmount > 0 && totalAmount !== undefined
@@ -148,18 +161,63 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
       </div>
       {/* 全选按钮移到下面 */}
       <div className="category-filter__controls">
-        <button 
-          className={`control-btn ${isAllSelected ? 'control-btn--active' : ''}`}
-          onClick={handleSelectAll}
-        >
-          全选
-        </button>
-        <button 
-          className={`control-btn ${isNoneSelected ? 'control-btn--active' : ''}`}
-          onClick={handleDeselectAll}
-        >
-          全不选
-        </button>
+        <div className="category-filter__controls-left">
+          <button 
+            className={`control-btn ${isAllSelected ? 'control-btn--active' : ''}`}
+            onClick={handleSelectAll}
+          >
+            全选
+          </button>
+          <button 
+            className={`control-btn ${isNoneSelected ? 'control-btn--active' : ''}`}
+            onClick={handleDeselectAll}
+          >
+            全不选
+          </button>
+        </div>
+        {/* 查询组件 */}
+        {(onMinAmountChange || onMaxAmountChange || onSearchDescriptionChange) && (
+          <div className="category-filter__search">
+            {(onMinAmountChange || onMaxAmountChange) && (
+              <div className="search-amount">
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="最小金额"
+                  value={minAmount ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMinAmountChange?.(val === '' ? undefined : parseFloat(val));
+                  }}
+                  min="0"
+                  step="1"
+                />
+                <span className="search-separator">-</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="最大金额"
+                  value={maxAmount ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMaxAmountChange?.(val === '' ? undefined : parseFloat(val));
+                  }}
+                  min="0"
+                  step="1"
+                />
+              </div>
+            )}
+            {onSearchDescriptionChange && (
+              <input
+                type="text"
+                className="search-input search-input--text"
+                placeholder="备注关键词"
+                value={searchDescription ?? ''}
+                onChange={(e) => onSearchDescriptionChange?.(e.target.value)}
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -13,6 +13,21 @@ interface SleepListProps {
   onImport?: () => void;
   onClear?: () => void;
   isImporting?: boolean;
+  // 查询功能相关
+  minSleepHour?: number | undefined;
+  maxSleepHour?: number | undefined;
+  minDurationHour?: number | undefined;
+  maxDurationHour?: number | undefined;
+  minQuality?: number | undefined;
+  maxQuality?: number | undefined;
+  searchNotes?: string;
+  onMinSleepHourChange?: (value: number | undefined) => void;
+  onMaxSleepHourChange?: (value: number | undefined) => void;
+  onMinDurationHourChange?: (value: number | undefined) => void;
+  onMaxDurationHourChange?: (value: number | undefined) => void;
+  onMinQualityChange?: (value: number | undefined) => void;
+  onMaxQualityChange?: (value: number | undefined) => void;
+  onSearchNotesChange?: (value: string) => void;
 }
 
 const SleepList: React.FC<SleepListProps> = ({ 
@@ -23,7 +38,21 @@ const SleepList: React.FC<SleepListProps> = ({
   onExport,
   onImport,
   onClear,
-  isImporting = false
+  isImporting = false,
+  minSleepHour,
+  maxSleepHour,
+  minDurationHour,
+  maxDurationHour,
+  minQuality,
+  maxQuality,
+  searchNotes,
+  onMinSleepHourChange,
+  onMaxSleepHourChange,
+  onMinDurationHourChange,
+  onMaxDurationHourChange,
+  onMinQualityChange,
+  onMaxQualityChange,
+  onSearchNotesChange
 }) => {
   // 跟踪每个月份的展开/收起状态
   const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
@@ -150,6 +179,120 @@ const SleepList: React.FC<SleepListProps> = ({
         {/* 标题和操作按钮区域 */}
         <div className="sleep-list__header">
           <h3 className="sleep-list__title">🌙 睡眠记录 (0)</h3>
+          {/* 查询组件 */}
+          {(onMinSleepHourChange || onMinDurationHourChange || onMinQualityChange || onSearchNotesChange) && (
+            <div className="sleep-list__search">
+              {/* 睡眠区间 */}
+              {(onMinSleepHourChange || onMaxSleepHourChange) && (
+                <div className="search-group">
+                  <span className="search-label">睡眠区间</span>
+                  <input
+                    type="number"
+                    className="search-input search-input--number"
+                    placeholder="0"
+                    value={minSleepHour ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onMinSleepHourChange?.(val === '' ? undefined : parseInt(val));
+                    }}
+                    min="0"
+                    max="24"
+                    step="1"
+                  />
+                  <span className="search-separator">-</span>
+                  <input
+                    type="number"
+                    className="search-input search-input--number"
+                    placeholder="24"
+                    value={maxSleepHour ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onMaxSleepHourChange?.(val === '' ? undefined : parseInt(val));
+                    }}
+                    min="0"
+                    max="24"
+                    step="1"
+                  />
+                </div>
+              )}
+              {/* 睡眠时长 */}
+              {(onMinDurationHourChange || onMaxDurationHourChange) && (
+                <div className="search-group">
+                  <span className="search-label">时长(小时)</span>
+                  <input
+                    type="number"
+                    className="search-input search-input--number"
+                    placeholder="0"
+                    value={minDurationHour ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onMinDurationHourChange?.(val === '' ? undefined : parseInt(val));
+                    }}
+                    min="0"
+                    max="24"
+                    step="1"
+                  />
+                  <span className="search-separator">-</span>
+                  <input
+                    type="number"
+                    className="search-input search-input--number"
+                    placeholder="24"
+                    value={maxDurationHour ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onMaxDurationHourChange?.(val === '' ? undefined : parseInt(val));
+                    }}
+                    min="0"
+                    max="24"
+                    step="1"
+                  />
+                </div>
+              )}
+              {/* 睡眠质量 */}
+              {(onMinQualityChange || onMaxQualityChange) && (
+                <div className="search-group">
+                  <span className="search-label">质量</span>
+                  <input
+                    type="number"
+                    className="search-input search-input--number"
+                    placeholder="0"
+                    value={minQuality ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onMinQualityChange?.(val === '' ? undefined : parseInt(val));
+                    }}
+                    min="0"
+                    max="100"
+                    step="1"
+                  />
+                  <span className="search-separator">-</span>
+                  <input
+                    type="number"
+                    className="search-input search-input--number"
+                    placeholder="100"
+                    value={maxQuality ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onMaxQualityChange?.(val === '' ? undefined : parseInt(val));
+                    }}
+                    min="0"
+                    max="100"
+                    step="1"
+                  />
+                </div>
+              )}
+              {/* 备注搜索 */}
+              {onSearchNotesChange && (
+                <input
+                  type="text"
+                  className="search-input search-input--text"
+                  placeholder="备注关键词"
+                  value={searchNotes ?? ''}
+                  onChange={(e) => onSearchNotesChange?.(e.target.value)}
+                />
+              )}
+            </div>
+          )}
           {(onViewDashboard || onExport || onImport || onClear) && (
             <div className="sleep-list__actions">
               {onViewDashboard && (
@@ -206,6 +349,120 @@ const SleepList: React.FC<SleepListProps> = ({
       {/* 标题和操作按钮区域 */}
       <div className="sleep-list__header">
         <h3 className="sleep-list__title">🌙 睡眠记录 ({sleeps.length})</h3>
+        {/* 查询组件 */}
+        {(onMinSleepHourChange || onMinDurationHourChange || onMinQualityChange || onSearchNotesChange) && (
+          <div className="sleep-list__search">
+            {/* 睡眠区间 */}
+            {(onMinSleepHourChange || onMaxSleepHourChange) && (
+              <div className="search-group">
+                <span className="search-label">入睡区间</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="0"
+                  value={minSleepHour ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMinSleepHourChange?.(val === '' ? undefined : parseInt(val));
+                  }}
+                  min="0"
+                  max="24"
+                  step="1"
+                />
+                <span className="search-separator">-</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="24"
+                  value={maxSleepHour ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMaxSleepHourChange?.(val === '' ? undefined : parseInt(val));
+                  }}
+                  min="0"
+                  max="24"
+                  step="1"
+                />
+              </div>
+            )}
+            {/* 睡眠时长 */}
+            {(onMinDurationHourChange || onMaxDurationHourChange) && (
+              <div className="search-group">
+                <span className="search-label">时长(小时)</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="0"
+                  value={minDurationHour ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMinDurationHourChange?.(val === '' ? undefined : parseInt(val));
+                  }}
+                  min="0"
+                  max="24"
+                  step="1"
+                />
+                <span className="search-separator">-</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="24"
+                  value={maxDurationHour ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMaxDurationHourChange?.(val === '' ? undefined : parseInt(val));
+                  }}
+                  min="0"
+                  max="24"
+                  step="1"
+                />
+              </div>
+            )}
+            {/* 睡眠质量 */}
+            {(onMinQualityChange || onMaxQualityChange) && (
+              <div className="search-group">
+                <span className="search-label">质量</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="0"
+                  value={minQuality ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMinQualityChange?.(val === '' ? undefined : parseInt(val));
+                  }}
+                  min="0"
+                  max="100"
+                  step="1"
+                />
+                <span className="search-separator">-</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="100"
+                  value={maxQuality ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMaxQualityChange?.(val === '' ? undefined : parseInt(val));
+                  }}
+                  min="0"
+                  max="100"
+                  step="1"
+                />
+              </div>
+            )}
+            {/* 备注搜索 */}
+            {onSearchNotesChange && (
+              <input
+                type="text"
+                className="search-input search-input--text"
+                placeholder="备注关键词"
+                value={searchNotes ?? ''}
+                onChange={(e) => onSearchNotesChange?.(e.target.value)}
+              />
+            )}
+          </div>
+        )}
         {(onViewDashboard || onExport || onImport || onClear) && (
           <div className="sleep-list__actions">
             {onViewDashboard && (

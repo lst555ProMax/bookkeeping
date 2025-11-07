@@ -14,9 +14,9 @@ export interface SleepExportData {
 /**
  * 导出睡眠记录到JSON文件
  */
-export const exportSleepRecords = (): void => {
+export const exportSleepRecords = (records?: SleepRecord[]): void => {
   try {
-    const sleepRecords = loadSleepRecords();
+    const sleepRecords = records || loadSleepRecords();
     
     const exportData: SleepExportData = {
       version: '1.0.0',

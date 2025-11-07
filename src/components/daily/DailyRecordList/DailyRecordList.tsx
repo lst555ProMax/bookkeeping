@@ -11,6 +11,17 @@ interface DailyRecordListProps {
   onImport?: () => void;
   onClear?: () => void;
   isImporting?: boolean;
+  // 查询功能相关
+  mealFilter?: 'all' | 'regular' | 'irregular';
+  checkinFilter?: 'all' | 'normal' | 'abnormal';
+  minSteps?: number | undefined;
+  maxSteps?: number | undefined;
+  searchNotes?: string;
+  onMealFilterChange?: (value: 'all' | 'regular' | 'irregular') => void;
+  onCheckinFilterChange?: (value: 'all' | 'normal' | 'abnormal') => void;
+  onMinStepsChange?: (value: number | undefined) => void;
+  onMaxStepsChange?: (value: number | undefined) => void;
+  onSearchNotesChange?: (value: string) => void;
 }
 
 const DailyRecordList: React.FC<DailyRecordListProps> = ({ 
@@ -21,7 +32,17 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
   onExport,
   onImport,
   onClear,
-  isImporting = false
+  isImporting = false,
+  mealFilter = 'all',
+  checkinFilter = 'all',
+  minSteps,
+  maxSteps,
+  searchNotes,
+  onMealFilterChange,
+  onCheckinFilterChange,
+  onMinStepsChange,
+  onMaxStepsChange,
+  onSearchNotesChange
 }) => {
   // 跟踪每个月份的展开/收起状态
   const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
@@ -103,12 +124,135 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     }
   };
 
+  // 判断打卡是否正常
+  // 签到在9点前、签退在6点后、离开在10点后算正常
+  // 没填打卡时间（不工作的日子）也算正常
+  const isCheckinNormal = (record: DailyRecord): boolean => {
+    // 如果都没填，说明不工作，算正常
+    if (!record.checkInTime && !record.checkOutTime && !record.leaveTime) {
+      return true;
+    }
+    
+    // 有任何一项填了就按工作日标准检查
+    let normal = true;
+    
+    // 签到时间检查：9点前算正常
+    if (record.checkInTime) {
+      const checkInHour = parseInt(record.checkInTime.split(':')[0]);
+      const checkInMinute = parseInt(record.checkInTime.split(':')[1]);
+      const checkInTotalMinutes = checkInHour * 60 + checkInMinute;
+      if (checkInTotalMinutes >= 9 * 60) { // 9:00及以后算不正常
+        normal = false;
+      }
+    }
+    
+    // 签退时间检查：6点后算正常
+    if (record.checkOutTime) {
+      const checkOutHour = parseInt(record.checkOutTime.split(':')[0]);
+      const checkOutMinute = parseInt(record.checkOutTime.split(':')[1]);
+      const checkOutTotalMinutes = checkOutHour * 60 + checkOutMinute;
+      if (checkOutTotalMinutes < 18 * 60) { // 18:00之前算不正常
+        normal = false;
+      }
+    }
+    
+    // 离开时间检查：10点后算正常
+    if (record.leaveTime) {
+      const leaveHour = parseInt(record.leaveTime.split(':')[0]);
+      const leaveMinute = parseInt(record.leaveTime.split(':')[1]);
+      const leaveTotalMinutes = leaveHour * 60 + leaveMinute;
+      if (leaveTotalMinutes < 22 * 60) { // 22:00之前算不正常
+        normal = false;
+      }
+    }
+    
+    return normal;
+  };
+
   if (records.length === 0) {
     return (
       <div className="daily-list">
         {/* 标题和操作按钮区域 */}
         <div className="daily-list__header">
           <h3 className="daily-list__title">📝 日常记录 (0)</h3>
+          {/* 查询组件 */}
+          {(onMealFilterChange || onCheckinFilterChange || onMinStepsChange || onSearchNotesChange) && (
+            <div className="daily-list__search">
+              {/* 三餐筛选 */}
+              {onMealFilterChange && (
+                <div className="search-group">
+                  <span className="search-label">三餐</span>
+                  <select 
+                    className="search-select"
+                    value={mealFilter}
+                    onChange={(e) => onMealFilterChange(e.target.value as 'all' | 'regular' | 'irregular')}
+                  >
+                    <option value="all">全部</option>
+                    <option value="regular">规律</option>
+                    <option value="irregular">不规律</option>
+                  </select>
+                </div>
+              )}
+              {/* 打卡筛选 */}
+              {onCheckinFilterChange && (
+                <div className="search-group">
+                  <span className="search-label">打卡</span>
+                  <select 
+                    className="search-select"
+                    value={checkinFilter}
+                    onChange={(e) => onCheckinFilterChange(e.target.value as 'all' | 'normal' | 'abnormal')}
+                  >
+                    <option value="all">全部</option>
+                    <option value="normal">正常</option>
+                    <option value="abnormal">不正常</option>
+                  </select>
+                </div>
+              )}
+              {/* 步数区间 */}
+              {(onMinStepsChange || onMaxStepsChange) && (
+                <div className="search-group">
+                  <span className="search-label">步数</span>
+                  <input
+                    type="number"
+                    className="search-input search-input--number"
+                    placeholder="0"
+                    value={minSteps ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onMinStepsChange?.(val === '' ? undefined : parseInt(val));
+                    }}
+                    min="0"
+                    max="50000"
+                    step="1000"
+                  />
+                  <span className="search-separator">-</span>
+                  <input
+                    type="number"
+                    className="search-input search-input--number"
+                    placeholder="50000"
+                    value={maxSteps ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onMaxStepsChange?.(val === '' ? undefined : parseInt(val));
+                    }}
+                    min="0"
+                    max="50000"
+                    step="1000"
+                  />
+                </div>
+              )}
+              {/* 备注搜索 */}
+              {onSearchNotesChange && (
+                <input
+                  type="text"
+                  className="search-input search-input--text"
+                  placeholder="备注关键词"
+                  value={searchNotes ?? ''}
+                  onChange={(e) => onSearchNotesChange?.(e.target.value)}
+                />
+              )}
+            </div>
+          )}
           {(onViewDashboard || onExport || onImport || onClear) && (
             <div className="daily-list__actions">
               {onViewDashboard && (
@@ -165,6 +309,84 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
       {/* 标题和操作按钮区域 */}
       <div className="daily-list__header">
         <h3 className="daily-list__title">📝 日常记录 ({records.length})</h3>
+        {/* 查询组件 */}
+        {(onMealFilterChange || onCheckinFilterChange || onMinStepsChange || onSearchNotesChange) && (
+          <div className="daily-list__search">
+            {/* 三餐筛选 */}
+            {onMealFilterChange && (
+              <div className="search-group">
+                <span className="search-label">三餐</span>
+                <select 
+                  className="search-select"
+                  value={mealFilter}
+                  onChange={(e) => onMealFilterChange(e.target.value as 'all' | 'regular' | 'irregular')}
+                >
+                  <option value="all">全部</option>
+                  <option value="regular">规律</option>
+                  <option value="irregular">不规律</option>
+                </select>
+              </div>
+            )}
+            {/* 打卡筛选 */}
+            {onCheckinFilterChange && (
+              <div className="search-group">
+                <span className="search-label">打卡</span>
+                <select 
+                  className="search-select"
+                  value={checkinFilter}
+                  onChange={(e) => onCheckinFilterChange(e.target.value as 'all' | 'normal' | 'abnormal')}
+                >
+                  <option value="all">全部</option>
+                  <option value="normal">正常</option>
+                  <option value="abnormal">不正常</option>
+                </select>
+              </div>
+            )}
+            {/* 步数区间 */}
+            {(onMinStepsChange || onMaxStepsChange) && (
+              <div className="search-group">
+                <span className="search-label">步数</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="0"
+                  value={minSteps ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMinStepsChange?.(val === '' ? undefined : parseInt(val));
+                  }}
+                  min="0"
+                  max="50000"
+                  step="1000"
+                />
+                <span className="search-separator">-</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="50000"
+                  value={maxSteps ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMaxStepsChange?.(val === '' ? undefined : parseInt(val));
+                  }}
+                  min="0"
+                  max="50000"
+                  step="1000"
+                />
+              </div>
+            )}
+            {/* 备注搜索 */}
+            {onSearchNotesChange && (
+              <input
+                type="text"
+                className="search-input search-input--text"
+                placeholder="备注关键词"
+                value={searchNotes ?? ''}
+                onChange={(e) => onSearchNotesChange?.(e.target.value)}
+              />
+            )}
+          </div>
+        )}
         {(onViewDashboard || onExport || onImport || onClear) && (
           <div className="daily-list__actions">
             {onViewDashboard && (
@@ -344,7 +566,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
 
                 {/* 工作日打卡 */}
                 {(record.checkInTime || record.checkOutTime || record.leaveTime) && (
-                  <div className="checkin-info">
+                  <div className={`checkin-info ${!isCheckinNormal(record) ? 'checkin-info--abnormal' : ''}`}>
                     <span className="checkin-label">💼 打卡:</span>
                     <div className="time-grid">
                       {record.checkInTime && (

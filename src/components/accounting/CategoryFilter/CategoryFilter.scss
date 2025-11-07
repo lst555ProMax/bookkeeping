@@ -102,10 +102,16 @@
 
   &__controls {
     display: flex;
-    gap: 0.5rem;
-    justify-content: flex-start;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
     padding-top: 0.5rem;
     border-top: 1px solid #f0f0f0;
+
+    &-left {
+      display: flex;
+      gap: 0.5rem;
+    }
 
     .control-btn {
       padding: 0.4rem 1rem;
@@ -116,6 +122,10 @@
       cursor: pointer;
       transition: all 0.2s ease;
       color: #666;
+      height: 32px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
 
       &:hover {
         background: #f5f5f5;
@@ -126,6 +136,62 @@
         background: var(--theme-color-start);
         color: white;
         border-color: var(--theme-color-start);
+      }
+    }
+  }
+
+  &__search {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .search-amount {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .search-separator {
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .search-input {
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      outline: none;
+      background: white;
+      color: #333;
+      height: 32px;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: var(--theme-color-start);
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+      }
+
+      .category-filter--income & {
+        &:focus {
+          border-color: var(--theme-color-start);
+          box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
+        }
+      }
+
+      &--number {
+        width: 100px;
+      }
+
+      &--text {
+        width: 140px;
+      }
+
+      &::placeholder {
+        color: #999;
+        font-size: 0.85rem;
       }
     }
   }
