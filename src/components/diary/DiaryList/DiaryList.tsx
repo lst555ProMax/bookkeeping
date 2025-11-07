@@ -7,7 +7,6 @@ interface DiaryListProps {
   currentDiaryId: string | null;
   onLoadDiary: (entry: DiaryEntry) => void;
   onDeleteDiary: (id: string) => void;
-  onExportAll?: () => void;
   onImportAll?: (entries: DiaryEntry[]) => void;
   onDeleteAll?: () => void;
 }
@@ -17,7 +16,6 @@ const DiaryList: React.FC<DiaryListProps> = ({
   currentDiaryId,
   onLoadDiary,
   onDeleteDiary,
-  onExportAll,
   onImportAll,
   onDeleteAll,
 }) => {
