@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { ExpenseCategory, ExpenseRecord, IncomeCategory, IncomeRecord, RecordType } from '@/utils';
 import { generateId, formatDate, getCategories, getIncomeCategories } from '@/utils';
 import './RecordForm.scss';
@@ -124,7 +125,7 @@ const RecordForm: React.FC<RecordFormProps> = ({
     e.preventDefault();
     
     if (!amount || parseFloat(amount) <= 0) {
-      alert('请输入有效的金额');
+      toast.error('请输入有效的金额');
       return;
     }
 

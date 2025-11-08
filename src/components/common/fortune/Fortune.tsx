@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import toast from 'react-hot-toast';
 import { 
   FortuneRecord, 
   FORTUNE_LEVEL_LABELS, 
@@ -39,7 +40,7 @@ const Fortune: React.FC = () => {
   // 打开算命模态框
   const handleOpenModal = () => {
     if (hasTodayFortune()) {
-      alert('今天已经算过命了，明天再来吧！');
+      toast('今天已经算过命了，明天再来吧！', { icon: '⚠️' });
       return;
     }
     setShowModal(true);
@@ -70,7 +71,7 @@ const Fortune: React.FC = () => {
   // 执行算命
   const handleGenerate = () => {
     if (!hasResetToday && hasTodayFortune()) {
-      alert('今天已经算过命了！');
+      toast('今天已经算过命了！', { icon: '⚠️' });
       return;
     }
 
@@ -93,7 +94,7 @@ const Fortune: React.FC = () => {
         // 不自动关闭，让用户手动关闭
       } catch (error) {
         console.error('算命失败:', error);
-        alert('算命失败，请重试');
+        toast.error('算命失败，请重试');
         setIsGenerating(false);
       }
     }, 2000);
@@ -106,11 +107,12 @@ const Fortune: React.FC = () => {
       if (deleted) {
         setTodayFortune(null);
         setHasResetToday(true); // 标记已重置
+        toast.success('已重置运势记录');
         // 关闭可能打开的详情模态框
         setShowDetailModal(false);
         setGeneratedFortune(null);
       } else {
-        alert('今天还没有运势记录');
+        toast('今天还没有运势记录', { icon: '⚠️' });
       }
     }
   };

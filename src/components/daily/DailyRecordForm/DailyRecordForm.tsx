@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { DailyRecord, MealStatus } from '@/utils';
 import './DailyRecordForm.scss';
 
@@ -106,7 +107,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
 
     // 验证必填字段
     if (!date) {
-      alert('请选择日期');
+      toast.error('请选择日期');
       return;
     }
 
@@ -114,7 +115,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     const recordDate = new Date(date);
     const minDate = new Date('2024-10-01');
     if (recordDate < minDate) {
-      alert('日期必须从2024年10月开始');
+      toast.error('日期必须从2024年10月开始');
       return;
     }
 
@@ -146,12 +147,10 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       createdAt: editingRecord?.createdAt || new Date()
     };
 
-    if (window.confirm('确定添加这条日常记录吗？')) {
-      if (editingRecord) {
-        onUpdateRecord(dailyRecord);
-      } else {
-        onAddRecord(dailyRecord);
-      }
+    if (editingRecord) {
+      onUpdateRecord(dailyRecord);
+    } else {
+      onAddRecord(dailyRecord);
     }
 
     resetForm();

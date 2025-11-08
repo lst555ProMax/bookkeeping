@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import toast from 'react-hot-toast';
 import { BusinessMode, BUSINESS_MODE_LABELS } from '@/utils';
 import { loadMenuConfig, saveMenuConfig, getAllMenuOptions } from '@/utils';
 import { DataType, importSampleData, hasLocalData, getStorageKey } from '@/utils';
@@ -82,7 +83,7 @@ const MenuSettings: React.FC<MenuSettingsProps> = ({ onClose, onConfigChange }) 
       return true;
     } catch (error) {
       console.error(`Failed to import sample data for ${mode}:`, error);
-      alert(`导入 ${BUSINESS_MODE_LABELS[mode]} 示例数据失败，请稍后重试。`);
+      toast.error(`导入 ${BUSINESS_MODE_LABELS[mode]} 示例数据失败，请稍后重试。`);
       return false;
     }
   };
@@ -90,7 +91,7 @@ const MenuSettings: React.FC<MenuSettingsProps> = ({ onClose, onConfigChange }) 
   // 保存配置
   const handleSave = async () => {
     if (selectedMenus.length === 0) {
-      alert('⚠️ 至少需要选择一个菜单！');
+      toast('⚠️ 至少需要选择一个菜单！', { icon: '⚠️' });
       return;
     }
 
@@ -116,10 +117,10 @@ const MenuSettings: React.FC<MenuSettingsProps> = ({ onClose, onConfigChange }) 
           // 保存菜单配置
           saveMenuConfig(selectedMenus);
           
-          alert(`✅ 成功导入 ${successCount} 个模块的示例数据！\n\n页面即将刷新以显示数据...`);
+          toast.success(`✅ 成功导入 ${successCount} 个模块的示例数据！\n\n页面即将刷新以显示数据...`, { duration: 3000 });
           
           // 刷新页面以重新加载数据
-          window.location.reload();
+          setTimeout(() => window.location.reload(), 3000);
           return;
         }
       }
@@ -130,7 +131,7 @@ const MenuSettings: React.FC<MenuSettingsProps> = ({ onClose, onConfigChange }) 
       onClose();
     } catch (error) {
       console.error('Error during save:', error);
-      alert('保存配置时出现错误，请稍后重试。');
+      toast.error('保存配置时出现错误，请稍后重试。');
     } finally {
       setImporting(false);
     }

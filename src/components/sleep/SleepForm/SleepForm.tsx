@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { SleepRecord } from '@/utils';
 import { calculateSleepDuration } from '@/utils';
 import './SleepForm.scss';
@@ -76,7 +77,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
 
     // 验证必填字段
     if (!date || !sleepTime || !wakeTime) {
-      alert('请填写所有必填字段');
+      toast.error('请填写所有必填字段');
       return;
     }
 
@@ -84,14 +85,14 @@ const SleepForm: React.FC<SleepFormProps> = ({
     const recordDate = new Date(date);
     const minDate = new Date('2024-10-01');
     if (recordDate < minDate) {
-      alert('日期必须从2024年10月开始');
+      toast.error('日期必须从2024年10月开始');
       return;
     }
 
     // 验证质量分数范围
     const qualityNum = Number(quality);
     if (!quality || isNaN(qualityNum) || qualityNum < 0 || qualityNum > 100) {
-      alert('睡眠质量分数必须在0-100之间');
+      toast.error('睡眠质量分数必须在0-100之间');
       return;
     }
 
@@ -114,12 +115,10 @@ const SleepForm: React.FC<SleepFormProps> = ({
       notes: notes.trim() || undefined,
       createdAt: editingSleep?.createdAt || new Date()
     };
-    if(window.confirm('确定添加这条睡眠记录吗？')){
-        if (editingSleep) {
-        onUpdateSleep(sleepRecord);
-        } else {
-        onAddSleep(sleepRecord);
-        }
+    if (editingSleep) {
+    onUpdateSleep(sleepRecord);
+    } else {
+    onAddSleep(sleepRecord);
     }
 
     resetForm();

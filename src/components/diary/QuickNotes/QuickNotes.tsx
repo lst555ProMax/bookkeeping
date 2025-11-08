@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { QuickNote } from '@/utils';
 import './QuickNotes.scss';
 
@@ -82,7 +83,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
     
     // 验证内容不能为空
     if (!trimmedContent) {
-      window.alert('速记内容不能为空！');
+      toast.error('速记内容不能为空！');
       // 恢复原内容
       onQuickNoteInputChange(originalContent);
       return;
@@ -195,7 +196,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
         const data = JSON.parse(text);
         
         if (!Array.isArray(data)) {
-          alert('导入文件格式错误');
+          toast.error('导入文件格式错误');
           return;
         }
 
@@ -205,17 +206,17 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
         );
 
         if (!isValid) {
-          alert('导入文件数据格式不正确');
+          toast.error('导入文件数据格式不正确');
           return;
         }
 
         if (onImportAll) {
           onImportAll(data);
-          alert(`成功导入 ${data.length} 条速记`);
+          toast.success(`成功导入 ${data.length} 条速记`);
         }
       } catch (error) {
         console.error('导入失败:', error);
-        alert('导入失败，请检查文件格式');
+        toast.error('导入失败，请检查文件格式');
       }
     };
     input.click();
@@ -224,7 +225,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
   // 删除所有速记
   const handleDeleteAll = () => {
     if (quickNotes.length === 0) {
-      alert('没有速记可以删除');
+      toast('没有速记可以删除', { icon: '⚠️' });
       return;
     }
 
@@ -232,14 +233,8 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
       `确定要删除所有 ${quickNotes.length} 条速记吗？\n\n此操作无法撤销！建议先导出备份。`
     );
 
-    if (confirmed) {
-      const doubleConfirm = window.confirm(
-        '请再次确认：真的要删除所有速记吗？'
-      );
-
-      if (doubleConfirm && onDeleteAll) {
+    if (confirmed && onDeleteAll) {
         onDeleteAll();
-      }
     }
   };
 

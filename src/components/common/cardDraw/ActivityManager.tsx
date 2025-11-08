@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import toast from 'react-hot-toast';
 import { ActivityCategoryConfig, ActivityItem, CardType, CardCategory } from '@/utils';
 import {
   loadActivityConfig,
@@ -176,7 +177,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     if (!category) return;
     
     if (category.items.length === 0) {
-      alert('当前分类没有活动项，请先添加活动');
+      toast('当前分类没有活动项，请先添加活动', { icon: '⚠️' });
       return;
     }
 
@@ -266,7 +267,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
   const handleSave = () => {
     // 1. 检查自定义分类概率是否为负
     if (!isConfigValid()) {
-      alert('⚠️ 概率总和超过100%，自定义分类概率为负！请调整其他分类的概率。');
+      toast.error('⚠️ 概率总和超过100%，自定义分类概率为负！请调整其他分类的概率。');
       return;
     }
 
@@ -281,14 +282,14 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
         const itemsSum = calculateItemsProbabilitySum(cat.id);
         return `"${cat.name}": 二级分类概率总和 ${formatProbability(itemsSum)}% ≠ 一级分类概率 ${formatProbability(cat.totalProbability)}%`;
       });
-      alert(`⚠️ 以下分类的概率不匹配：\n\n${messages.join('\n')}\n\n请先调整概率或使用自动平衡功能。`);
+      toast.error(`⚠️ 以下分类的概率不匹配：\n\n${messages.join('\n')}\n\n请先调整概率或使用自动平衡功能。`, { duration: 5000 });
       return;
     }
 
     // 3. 使用完整的概率验证
     const validation = validateProbabilities(config);
     if (!validation.valid) {
-      alert(`⚠️ ${validation.message}`);
+      toast.error(`⚠️ ${validation.message}`);
       return;
     }
 
@@ -304,7 +305,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     // 保存配置
     saveActivityConfig(config);
     setError('');
-    alert('✅ 保存成功！');
+    toast.success('✅ 保存成功！');
     onClose();
   };
 

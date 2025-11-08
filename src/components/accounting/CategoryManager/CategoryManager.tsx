@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { ExpenseCategory, IncomeCategory, RecordType } from '@/utils';
 import { 
   getManageableCategories, 
@@ -44,7 +45,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
   const handleAddCategory = () => {
     setError('');
     if (!newCategoryName.trim()) {
-      window.alert('分类名称不能为空');
+      toast.error('分类名称不能为空');
       return;
     }
 
@@ -57,15 +58,16 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
           setNewCategoryName('');
           loadCategories();
           onCategoriesChange();
+          toast.success('分类添加成功');
         } else {
-          window.alert('分类名称已存在');
+          toast.error('分类名称已存在');
         }
     }
   };
 
   const handleDeleteCategory = (category: ExpenseCategory | IncomeCategory) => {
     if (category === '其他') {
-      window.alert('不能删除"其他"分类');
+      toast('不能删除"其他"分类', { icon: '⚠️' });
       return;
     }
 
@@ -87,8 +89,9 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
         loadCategories();
         onCategoriesChange();
         setError('');
+        toast.success('分类删除成功');
       } else {
-        window.alert('删除分类失败');
+        toast.error('删除分类失败');
       }
     }
   };
@@ -108,7 +111,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
   const handleSaveEdit = () => {
     setError('');
     if (!editingName.trim()) {
-      window.alert('分类名称不能为空');
+      toast.error('分类名称不能为空');
       return;
     }
 
@@ -122,8 +125,9 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
         setEditingName('');
         loadCategories();
         onCategoriesChange();
+        toast.success('分类更新成功');
       } else {
-        window.alert('分类名称已存在');
+        toast.error('分类名称已存在');
       }
     }
   };

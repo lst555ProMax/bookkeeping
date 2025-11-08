@@ -47,3 +47,4 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedMonth, onMonthCha
 };
 
 export default MonthSelector;
+

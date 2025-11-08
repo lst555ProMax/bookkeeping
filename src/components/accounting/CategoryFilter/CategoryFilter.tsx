@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './CategoryFilter.scss';
 
 interface CategoryFilterProps {
@@ -48,6 +48,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onMaxAmountChange,
   onSearchDescriptionChange
 }) => {
+  // 控制展开/收起状态，默认展开
+  const [isExpanded, setIsExpanded] = useState(true);
   // 计算总金额百分比
   const percentage = allTotalAmount && allTotalAmount > 0 && totalAmount !== undefined
     ? ((totalAmount / allTotalAmount) * 100).toFixed(1)
@@ -81,7 +83,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const isNoneSelected = selectedCategories.length === 0;
 
   return (
-    <div className={`category-filter category-filter--${theme}`}>
+    <div className={`category-filter category-filter--${theme} ${isExpanded ? 'category-filter--expanded' : 'category-filter--collapsed'}`}>
       <div className="category-filter__header">
         {title && (
           <div className="category-filter__title-group">
@@ -147,34 +149,52 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           </div>
         )}
       </div>
-      <div className="category-filter__items">
-        {categories.map(category => (
-          <label key={category} className="category-item">
-            <input
-              type="checkbox"
-              checked={selectedCategories.includes(category)}
-              onChange={() => handleToggleCategory(category)}
-            />
-            <span className="category-name">{category}</span>
-          </label>
-        ))}
-      </div>
-      {/* 全选按钮移到下面 */}
-      <div className="category-filter__controls">
-        <div className="category-filter__controls-left">
-          <button 
-            className={`control-btn ${isAllSelected ? 'control-btn--active' : ''}`}
-            onClick={handleSelectAll}
-          >
-            全选
-          </button>
-          <button 
-            className={`control-btn ${isNoneSelected ? 'control-btn--active' : ''}`}
-            onClick={handleDeselectAll}
-          >
-            全不选
-          </button>
+      
+      {/* 分类筛选项 - 根据展开状态显示/隐藏 */}
+      {isExpanded && (
+        <div className="category-filter__items">
+          {categories.map(category => (
+            <label key={category} className="category-item">
+              <input
+                type="checkbox"
+                checked={selectedCategories.includes(category)}
+                onChange={() => handleToggleCategory(category)}
+              />
+              <span className="category-name">{category}</span>
+            </label>
+          ))}
         </div>
+      )}
+      
+      {/* 控制区域 */}
+      <div className="category-filter__controls">
+        {/* 展开/收起按钮 */}
+        <button 
+          className="toggle-btn"
+          onClick={() => setIsExpanded(!isExpanded)}
+          title={isExpanded ? '收起筛选' : '展开筛选'}
+        >
+          {isExpanded ? '🔼' : '🔽'}
+        </button>
+        
+        {/* 全选/全不选按钮 - 只在展开时显示 */}
+        {isExpanded && (
+          <div className="category-filter__controls-left">
+            <button 
+              className={`control-btn ${isAllSelected ? 'control-btn--active' : ''}`}
+              onClick={handleSelectAll}
+            >
+              全选
+            </button>
+            <button 
+              className={`control-btn ${isNoneSelected ? 'control-btn--active' : ''}`}
+              onClick={handleDeselectAll}
+            >
+              全不选
+            </button>
+          </div>
+        )}
+        
         {/* 查询组件 */}
         {(onMinAmountChange || onMaxAmountChange || onSearchDescriptionChange) && (
           <div className="category-filter__search">

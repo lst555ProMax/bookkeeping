@@ -100,7 +100,7 @@ const Diary: React.FC = () => {
   // 导出所有速记
   const handleExportQuickNotes = () => {
     if (quickNotes.length === 0) {
-      alert('没有速记可以导出');
+      toast('没有速记可以导出', { icon: '⚠️' });
       return;
     }
 
@@ -143,7 +143,6 @@ const Diary: React.FC = () => {
 
       saveQuickNotes(mergedNotes);
       setQuickNotes(mergedNotes);
-      toast.success(`成功导入 ${notes.length} 条速记`);
     } catch (error) {
       console.error('导入速记失败:', error);
       toast.error('导入失败，请重试');
@@ -179,7 +178,7 @@ const Diary: React.FC = () => {
   const handleSaveDiary = () => {
     // 如果内容为空，不保存并恢复原内容
     if (!diaryContent.trim()) {
-      window.alert('日记内容不能为空！');
+      toast('日记内容不能为空！', { icon: '⚠️' });
       // 恢复原内容
       if (initialDiaryState) {
         setDiaryContent(initialDiaryState.content);
@@ -291,7 +290,7 @@ const Diary: React.FC = () => {
     if (hasUnsavedChanges()) {
       // 如果当前内容为空，提示并恢复原内容
       if (!diaryContent.trim() && initialDiaryState && initialDiaryState.content) {
-        window.alert('日记内容不能为空！');
+        toast('日记内容不能为空！', { icon: '⚠️' });
         // 恢复原内容
         setDiaryContent(initialDiaryState.content);
         setCurrentTheme(initialDiaryState.theme);
@@ -345,7 +344,6 @@ const Diary: React.FC = () => {
 
       saveDiaryEntries(mergedEntries);
       setDiaryEntries(mergedEntries);
-      toast.success(`成功导入 ${entries.length} 篇日记`);
     } catch (error) {
       console.error('导入日记失败:', error);
       toast.error('导入失败，请重试');
@@ -387,7 +385,7 @@ const Diary: React.FC = () => {
     if (hasUnsavedChanges()) {
       // 如果当前内容为空，提示并恢复原内容
       if (!diaryContent.trim() && initialDiaryState && initialDiaryState.content) {
-        window.alert('日记内容不能为空！');
+        toast('日记内容不能为空！', { icon: '⚠️' });
         // 恢复原内容
         setDiaryContent(initialDiaryState.content);
         setCurrentTheme(initialDiaryState.theme);

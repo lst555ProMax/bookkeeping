@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { DiaryEntry, WEATHER_OPTIONS, MOOD_OPTIONS } from '@/utils';
 import './DiaryList.scss';
 
@@ -94,11 +95,11 @@ const DiaryList: React.FC<DiaryListProps> = ({
         downloadFile(blob, `日记_${formatDate(entry.date)}.doc`);
       } else if (format === 'pdf') {
         // PDF导出需要特殊处理，这里先提示用户
-        alert('PDF导出功能需要额外的库支持，当前版本建议使用浏览器的"打印-另存为PDF"功能');
+        toast('PDF导出功能需要额外的库支持，当前版本建议使用浏览器的"打印-另存为PDF"功能', { duration: 4000 });
       }
     } catch (error) {
       console.error('导出失败:', error);
-      alert('导出失败，请重试');
+      toast.error('导出失败，请重试');
     }
   };
 
@@ -117,7 +118,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
   // 导出所有日记为JSON
   const handleExportAll = () => {
     if (diaryEntries.length === 0) {
-      alert('没有日记可以导出');
+      toast('没有日记可以导出', { icon: '⚠️' });
       return;
     }
 
@@ -142,7 +143,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
         const data = JSON.parse(text);
         
         if (!Array.isArray(data)) {
-          alert('导入文件格式错误');
+          toast.error('导入文件格式错误');
           return;
         }
 
@@ -152,17 +153,17 @@ const DiaryList: React.FC<DiaryListProps> = ({
         );
 
         if (!isValid) {
-          alert('导入文件数据格式不正确');
+          toast.error('导入文件数据格式不正确');
           return;
         }
 
         if (onImportAll) {
           onImportAll(data);
-          alert(`成功导入 ${data.length} 篇日记`);
+          toast.success(`成功导入 ${data.length} 篇日记`);
         }
       } catch (error) {
         console.error('导入失败:', error);
-        alert('导入失败，请检查文件格式');
+        toast.error('导入失败，请检查文件格式');
       }
     };
     input.click();
@@ -171,7 +172,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
   // 删除所有日记
   const handleDeleteAll = () => {
     if (diaryEntries.length === 0) {
-      alert('没有日记可以删除');
+      toast('没有日记可以删除', { icon: '⚠️' });
       return;
     }
 
@@ -179,14 +180,8 @@ const DiaryList: React.FC<DiaryListProps> = ({
       `确定要删除所有 ${diaryEntries.length} 篇日记吗？\n\n此操作无法撤销！建议先导出备份。`
     );
 
-    if (confirmed) {
-      const doubleConfirm = window.confirm(
-        '请再次确认：真的要删除所有日记吗？'
-      );
-
-      if (doubleConfirm && onDeleteAll) {
-        onDeleteAll();
-      }
+    if (confirmed && onDeleteAll) {
+      onDeleteAll();
     }
   };
 

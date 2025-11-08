@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import toast from 'react-hot-toast';
 import { CardDrawRecord, CardType, CARD_TYPE_LABELS, CARD_CATEGORY_LABELS } from '@/utils';
 import { 
   getTodayCardDraw, 
@@ -62,7 +63,7 @@ const CardDraw: React.FC = () => {
   // 执行抽卡
   const handleDraw = () => {
     if (hasTodayDrawn()) {
-      alert('今天已经抽过卡了！');
+      toast('今天已经抽过卡了！', { icon: '⚠️' });
       return;
     }
 
@@ -102,7 +103,7 @@ const CardDraw: React.FC = () => {
         }
       } catch (error) {
         console.error('抽卡失败:', error);
-        alert('抽卡失败，请重试');
+        toast.error('抽卡失败，请重试');
         setIsDrawing(false);
       }
     }, 2000);
@@ -116,12 +117,12 @@ const CardDraw: React.FC = () => {
     if (drawnCard.cardType === CardType.CUSTOM) {
       const trimmedContent = customContent.trim();
       if (!trimmedContent) {
-        alert('请输入自定义内容！');
+        toast.error('请输入自定义内容！');
         return;
       }
       
       if (trimmedContent.length > 20) {
-        alert('自定义内容不能超过20个字符');
+        toast.error('自定义内容不能超过20个字符');
         return;
       }
       
@@ -140,7 +141,7 @@ const CardDraw: React.FC = () => {
       }, 2000);
     } catch (error) {
       console.error('保存抽卡记录失败:', error);
-      alert('保存失败，请重试');
+      toast.error('保存失败，请重试');
     }
   };
 
@@ -150,8 +151,9 @@ const CardDraw: React.FC = () => {
       const deleted = clearTodayCardDrawRecord();
       if (deleted) {
         setTodayCard(null);
+        toast.success('已重置抽卡记录');
       } else {
-        alert('今天还没有抽卡记录');
+        toast('今天还没有抽卡记录', { icon: '⚠️' });
       }
     }
   };

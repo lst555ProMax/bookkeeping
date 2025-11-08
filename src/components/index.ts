@@ -4,14 +4,14 @@
 export {
   MenuSettings,
   CardDraw,
-  Fortune
+  Fortune,
+  MonthSelector
 } from './common';
 
 // 账单记录相关组件
 export {
   RecordForm,
   RecordList,
-  MonthSelector,
   RecordPieChart,
   RecordDaysChart,
   RecordTrendChart,
@@ -36,14 +36,21 @@ export {
 // 日常记录相关组件
 export {
   DailyRecordForm,
-  DailyRecordList
+  DailyRecordList,
+  MealRegularityChart,
+  HabitStatsChart,
+  AttendanceComplianceChart,
+  StepsTrendChart,
+  WorkTimeChart
 } from './daily';
 
 // 学习记录相关组件
 export {
   StudyRecordForm,
   StudyRecordList,
-  StudyCategoryManager
+  StudyCategoryManager,
+  StudyCategoryPieChart,
+  StudyTrendChart
 } from './study';
 
 // 日记组件

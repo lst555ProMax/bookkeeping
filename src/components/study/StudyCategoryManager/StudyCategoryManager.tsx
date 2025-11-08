@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { StudyCategory } from '@/utils';
 import { 
   getManageableStudyCategories, 
@@ -35,7 +36,7 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
   const handleAddCategory = () => {
     setError('');
     if (!newCategoryName.trim()) {
-      window.alert('分类名称不能为空');
+      toast.error('分类名称不能为空');
       return;
     }
 
@@ -46,15 +47,16 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
         setNewCategoryName('');
         loadCategories();
         onCategoriesChange();
+        toast.success('分类添加成功');
       } else {
-        window.alert('分类名称已存在');
+        toast.error('分类名称已存在');
       }
     }
   };
 
   const handleDeleteCategory = (category: StudyCategory) => {
     if (category === '其它') {
-      window.alert('不能删除"其它"分类');
+      toast('不能删除"其它"分类', { icon: '⚠️' });
       return;
     }
 
@@ -71,8 +73,9 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
         loadCategories();
         onCategoriesChange();
         setError('');
+        toast.success('分类删除成功');
       } else {
-        window.alert('删除分类失败');
+        toast.error('删除分类失败');
       }
     }
   };
@@ -92,7 +95,7 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
   const handleSaveEdit = () => {
     setError('');
     if (!editingName.trim()) {
-      window.alert('分类名称不能为空');
+      toast.error('分类名称不能为空');
       return;
     }
 
@@ -104,8 +107,9 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
         setEditingName('');
         loadCategories();
         onCategoriesChange();
+        toast.success('分类更新成功');
       } else {
-        window.alert('分类名称已存在');
+        toast.error('分类名称已存在');
       }
     }
   };

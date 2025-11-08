@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { StudyRecord, StudyCategory } from '@/utils';
 import { getStudyCategories } from '@/utils';
 import './StudyRecordForm.scss';
@@ -81,17 +82,17 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
 
     // 验证必填字段
     if (!date) {
-      alert('请选择日期');
+      toast.error('请选择日期');
       return;
     }
 
     if (!videoTitle.trim()) {
-      alert('请输入视频标题');
+      toast.error('请输入视频标题');
       return;
     }
 
     if (!episodeStart || !episodeEnd) {
-      alert('请输入观看集数');
+      toast.error('请输入观看集数');
       return;
     }
 
@@ -99,28 +100,28 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     const endEp = parseInt(episodeEnd);
 
     if (isNaN(startEp) || isNaN(endEp)) {
-      alert('集数必须是有效的数字');
+      toast.error('集数必须是有效的数字');
       return;
     }
 
     if (startEp < 0 || endEp < 0) {
-      alert('集数不能为负数');
+      toast.error('集数不能为负数');
       return;
     }
 
     if (startEp > endEp) {
-      alert('结束集数必须大于或等于起始集数');
+      toast.error('结束集数必须大于或等于起始集数');
       return;
     }
 
     if (!totalTime) {
-      alert('请输入观看总时间');
+      toast.error('请输入观看总时间');
       return;
     }
 
     const time = parseInt(totalTime);
     if (isNaN(time) || time <= 0) {
-      alert('观看总时间必须是大于0的数字');
+      toast.error('观看总时间必须是大于0的数字');
       return;
     }
 
@@ -128,7 +129,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     const recordDate = new Date(date);
     const minDate = new Date('2024-10-01');
     if (recordDate < minDate) {
-      alert('日期必须从2024年10月开始');
+      toast.error('日期必须从2024年10月开始');
       return;
     }
 
@@ -146,14 +147,13 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
       updatedAt: now
     };
 
-    if (window.confirm(editingRecord ? '确定更新这条学习记录吗？' : '确定添加这条学习记录吗？')) {
-      if (editingRecord) {
-        onUpdateRecord(studyRecord);
-      } else {
-        onAddRecord(studyRecord);
-      }
-      resetForm();
+    if (editingRecord) {
+      onUpdateRecord(studyRecord);
+    } else {
+      onAddRecord(studyRecord);
     }
+    resetForm();
+
   };
 
   const handleCancel = () => {

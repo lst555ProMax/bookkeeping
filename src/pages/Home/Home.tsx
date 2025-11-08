@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw, MenuSettings, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, Diary, Music, Reading, Medical } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS, MealStatus } from '@/utils';
 import { 
@@ -442,6 +443,7 @@ const Home: React.FC = () => {
     addIncome(income);
     const updatedIncomes = loadIncomes();
     setIncomes(updatedIncomes);
+    toast.success('收入记录添加成功！');
   };
 
   // 删除收入
@@ -450,6 +452,7 @@ const Home: React.FC = () => {
       deleteIncome(id);
       const updatedIncomes = loadIncomes();
       setIncomes(updatedIncomes);
+      toast.success('收入记录删除成功！');
     }
   };
 
@@ -465,12 +468,14 @@ const Home: React.FC = () => {
     const updatedIncomes = loadIncomes();
     setIncomes(updatedIncomes);
     setEditingIncome(null);
+    toast.success('收入记录更新成功！');
   };
 
   // 添加新支出
   const handleAddExpense = (expense: ExpenseRecord) => {
     addExpense(expense);
     setExpenses(prev => [...prev, expense]);
+    toast.success('支出记录添加成功！');
   };
 
   // 删除支出记录
@@ -478,6 +483,7 @@ const Home: React.FC = () => {
     if (window.confirm('确定要删除这条记录吗？')) {
       deleteExpense(id);
       setExpenses(prev => prev.filter(expense => expense.id !== id));
+      toast.success('支出记录删除成功！');
     }
   };
 
@@ -512,10 +518,10 @@ const Home: React.FC = () => {
       
       if (window.confirm(message)) {
         exportExpensesOnly(filteredExpenses);
-        alert('支出数据导出成功！');
+        toast.success('支出数据导出成功！');
       }
     } catch (error) {
-      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
   };
 
@@ -528,9 +534,9 @@ const Home: React.FC = () => {
       setCategoriesKey(prev => prev + 1); // 触发分类重新加载
       
       const message = `导入完成！\n新增 ${result.imported} 条支出记录，跳过 ${result.skipped} 条重复记录`;
-      alert(message);
+      toast.success(message);
     } catch (error) {
-      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
     } finally {
       setIsImportingExpense(false);
       if (expenseFileInputRef.current) {
@@ -546,7 +552,7 @@ const Home: React.FC = () => {
 
     const validationError = validateImportFile(file);
     if (validationError) {
-      alert(validationError);
+      toast.error(validationError);
       return;
     }
 
@@ -565,7 +571,7 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearExpensesOnly();
       loadData();
-      alert(`已清空 ${count} 条支出记录！`);
+      toast.success(`已清空 ${count} 条支出记录！`);
     }
   };
 
@@ -580,10 +586,10 @@ const Home: React.FC = () => {
       
       if (window.confirm(message)) {
         exportIncomesOnly(filteredIncomes);
-        alert('收入数据导出成功！');
+        toast.success('收入数据导出成功！');
       }
     } catch (error) {
-      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
   };
 
@@ -596,9 +602,9 @@ const Home: React.FC = () => {
       setCategoriesKey(prev => prev + 1); // 触发分类重新加载
       
       const message = `导入完成！\n新增 ${result.imported} 条收入记录，跳过 ${result.skipped} 条重复记录`;
-      alert(message);
+      toast.success(message);
     } catch (error) {
-      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
     } finally {
       setIsImportingIncome(false);
       if (incomeFileInputRef.current) {
@@ -614,7 +620,7 @@ const Home: React.FC = () => {
 
     const validationError = validateImportFile(file);
     if (validationError) {
-      alert(validationError);
+      toast.error(validationError);
       return;
     }
 
@@ -633,7 +639,7 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearIncomesOnly();
       loadData();
-      alert(`已清空 ${count} 条收入记录！`);
+      toast.success(`已清空 ${count} 条收入记录！`);
     }
   };
 
@@ -719,6 +725,7 @@ const Home: React.FC = () => {
       expense.id === updatedExpense.id ? updatedExpense : expense
     ));
     setEditingExpense(null);
+    toast.success('支出记录更新成功！');
   };
 
   // === 睡眠记录相关处理函数 ===
@@ -728,6 +735,7 @@ const Home: React.FC = () => {
     addSleepRecord(sleep);
     const updatedSleeps = loadSleepRecords();
     setSleepRecords(updatedSleeps);
+    toast.success('睡眠记录添加成功！');
   };
 
   // 删除睡眠记录
@@ -736,6 +744,7 @@ const Home: React.FC = () => {
       deleteSleepRecord(id);
       const updatedSleeps = loadSleepRecords();
       setSleepRecords(updatedSleeps);
+      toast.success('睡眠记录删除成功！');
     }
   };
 
@@ -750,6 +759,7 @@ const Home: React.FC = () => {
     const updatedSleeps = loadSleepRecords();
     setSleepRecords(updatedSleeps);
     setEditingSleep(null);
+    toast.success('睡眠记录更新成功！');
   };
 
   // 取消编辑睡眠记录
@@ -788,7 +798,7 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearAllSleepRecords();
       loadData(); // 重新加载数据
-      alert(`已清空 ${count} 条睡眠记录！`);
+      toast.success(`已清空 ${count} 条睡眠记录！`);
     }
   };
 
@@ -802,10 +812,10 @@ const Home: React.FC = () => {
       
       if (window.confirm(message)) {
         exportSleepRecords(filteredRecords);
-        alert('睡眠记录导出成功！');
+        toast.success('睡眠记录导出成功！');
       }
     } catch (error) {
-      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
   };
 
@@ -815,11 +825,11 @@ const Home: React.FC = () => {
     try {
       const result = await importSleepRecords(file);
       loadData(); // 重新加载数据
-      
+
       const message = `导入完成！\n新增 ${result.imported} 条记录，跳过 ${result.skipped} 条重复记录\n总计 ${result.total} 条记录`;
-      alert(message);
+      toast.success(message);
     } catch (error) {
-      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
     } finally {
       setIsImportingSleep(false);
       // 清空文件输入
@@ -836,7 +846,7 @@ const Home: React.FC = () => {
 
     const validationError = validateSleepImportFile(file);
     if (validationError) {
-      alert(validationError);
+      toast.error(validationError);
       return;
     }
 
@@ -857,10 +867,10 @@ const Home: React.FC = () => {
 
       if (window.confirm(message)) {
         exportBrowserUsageRecords(browserRecords);
-        alert('浏览器使用记录导出成功！');
+        toast.success('浏览器使用记录导出成功！');
       }
     } catch (error) {
-      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
   };
 
@@ -872,9 +882,9 @@ const Home: React.FC = () => {
       loadData(); // 重新加载数据
 
       const message = `导入完成！\n新增 ${result.imported} 条记录，更新 ${result.skipped} 条记录\n总计 ${result.total} 条记录`;
-      alert(message);
+      toast.success(message);
     } catch (error) {
-      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
     } finally {
       setIsImportingBrowser(false);
       if (browserFileInputRef.current) {
@@ -890,7 +900,7 @@ const Home: React.FC = () => {
 
     const validationError = validateBrowserUsageImportFile(file);
     if (validationError) {
-      alert(validationError);
+      toast.error(validationError);
       return;
     }
 
@@ -909,7 +919,7 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearAllBrowserUsageRecords();
       loadData();
-      alert(`已清空 ${count} 条浏览器使用记录！`);
+      toast.success(`已清空 ${count} 条浏览器使用记录！`);
     }
   };
 
@@ -920,6 +930,7 @@ const Home: React.FC = () => {
     addDailyRecord(record);
     const updatedRecords = loadDailyRecords();
     setDailyRecords(updatedRecords);
+    toast.success('日常记录添加成功！');
   };
 
   // 删除日常记录
@@ -928,6 +939,7 @@ const Home: React.FC = () => {
       deleteDailyRecord(id);
       const updatedRecords = loadDailyRecords();
       setDailyRecords(updatedRecords);
+      toast.success('日常记录删除成功！');
     }
   };
 
@@ -942,6 +954,7 @@ const Home: React.FC = () => {
     const updatedRecords = loadDailyRecords();
     setDailyRecords(updatedRecords);
     setEditingDaily(null);
+    toast.success('日常记录更新成功！');
   };
 
   // 取消编辑日常记录
@@ -957,10 +970,10 @@ const Home: React.FC = () => {
 
       if (window.confirm(message)) {
         exportDailyRecords(filteredRecords);
-        alert('日常记录导出成功！');
+        toast.success('日常记录导出成功！');
       }
     } catch (error) {
-      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
   };
 
@@ -972,9 +985,9 @@ const Home: React.FC = () => {
       loadData(); // 重新加载数据
 
       const message = `导入完成！\n新增 ${result.imported} 条记录，跳过 ${result.skipped} 条重复记录\n总计 ${result.total} 条记录`;
-      alert(message);
+      toast.success(message);
     } catch (error) {
-      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
     } finally {
       setIsImportingDaily(false);
       if (dailyFileInputRef.current) {
@@ -990,7 +1003,7 @@ const Home: React.FC = () => {
 
     const validationError = validateDailyImportFile(file);
     if (validationError) {
-      alert(validationError);
+      toast.error(validationError);
       return;
     }
 
@@ -1009,7 +1022,7 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearAllDailyRecords();
       loadData();
-      alert(`已清空 ${count} 条日常记录！`);
+      toast.success(`已清空 ${count} 条日常记录！`);
     }
   };
 
@@ -1020,6 +1033,7 @@ const Home: React.FC = () => {
     addStudyRecord(record);
     const updatedRecords = loadStudyRecords();
     setStudyRecords(updatedRecords);
+    toast.success('学习记录添加成功！');
   };
 
   // 删除学习记录
@@ -1028,6 +1042,7 @@ const Home: React.FC = () => {
       deleteStudyRecord(id);
       const updatedRecords = loadStudyRecords();
       setStudyRecords(updatedRecords);
+      toast.success('学习记录删除成功！');
     }
   };
 
@@ -1042,6 +1057,7 @@ const Home: React.FC = () => {
     const updatedRecords = loadStudyRecords();
     setStudyRecords(updatedRecords);
     setEditingStudy(null);
+    toast.success('学习记录更新成功！');
   };
 
   // 取消编辑学习记录
@@ -1057,10 +1073,10 @@ const Home: React.FC = () => {
 
       if (window.confirm(message)) {
         exportStudyRecords(filteredRecords);
-        alert('学习记录导出成功！');
+        toast.success('学习记录导出成功！');
       }
     } catch (error) {
-      alert('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
   };
 
@@ -1072,9 +1088,9 @@ const Home: React.FC = () => {
       loadData(); // 重新加载数据
 
       const message = `导入完成！\n新增 ${result.imported} 条记录，跳过 ${result.skipped} 条重复记录\n总计 ${result.total} 条记录`;
-      alert(message);
+      toast.success(message);
     } catch (error) {
-      alert('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
     } finally {
       setIsImportingStudy(false);
       if (studyFileInputRef.current) {
@@ -1090,7 +1106,7 @@ const Home: React.FC = () => {
 
     const validationError = validateStudyImportFile(file);
     if (validationError) {
-      alert(validationError);
+      toast.error(validationError);
       return;
     }
 
@@ -1109,7 +1125,7 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearAllStudyRecords();
       loadData();
-      alert(`已清空 ${count} 条学习记录！`);
+      toast.success(`已清空 ${count} 条学习记录！`);
     }
   };
 
