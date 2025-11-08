@@ -18,10 +18,9 @@ interface PieData {
 
 interface StudyCategoryPieChartProps {
   categoryStats: CategoryStats[];
-  totalMinutes: number;
 }
 
-const StudyCategoryPieChart: React.FC<StudyCategoryPieChartProps> = ({ categoryStats, totalMinutes }) => {
+const StudyCategoryPieChart: React.FC<StudyCategoryPieChartProps> = ({ categoryStats }) => {
   // 获取分类颜色
   const getCategoryColor = (index: number) => {
     const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#feca57'];
