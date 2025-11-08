@@ -8,57 +8,94 @@
   height: 100%;
 
   &__header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    flex-wrap: wrap;
+  }
 
-    h3 {
-      margin: 0;
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
+  &__title {
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    flex-shrink: 0;
+  }
 
-    .diary-count {
-      background: rgba(255, 255, 255, 0.3);
-      padding: 0.25rem 0.75rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
+  &__search {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex: 1;
+    width: 140px;
+
+    .search-input {
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      outline: none;
+      background: white;
+      color: #333;
+      height: 32px;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+      }
+
+      &--text {
+        width: 140px;
+      }
+
+      &::placeholder {
+        color: #999;
+        font-size: 0.85rem;
+      }
     }
   }
 
   &__actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
     align-items: center;
+    flex-shrink: 0;
 
-    .action-btn {
-      background: rgba(255, 255, 255, 0.2);
+    .action-icon-btn {
+      padding: 0;
       border: none;
-      color: white;
-      font-size: 1.3rem;
-      padding: 0.5rem;
-      border-radius: 8px;
+      background: transparent;
+      font-size: 1.4rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
+      line-height: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(10px);
 
-      &:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-2px);
+      &:hover:not(:disabled) {
+        transform: scale(1.2);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
       }
 
-      &:active {
-        transform: translateY(0);
+      &:active:not(:disabled) {
+        transform: scale(1.1);
       }
 
-      &--delete:hover {
-        background: rgba(255, 77, 79, 0.8);
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
       }
     }
   }
@@ -66,7 +103,7 @@
   &__items {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 0 1rem 1rem 1rem;
 
     &::-webkit-scrollbar {
       width: 6px;

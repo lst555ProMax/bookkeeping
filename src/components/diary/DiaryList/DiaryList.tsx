@@ -9,6 +9,8 @@ interface DiaryListProps {
   onDeleteDiary: (id: string) => void;
   onImportAll?: (entries: DiaryEntry[]) => void;
   onDeleteAll?: () => void;
+  searchContent?: string;
+  onSearchContentChange?: (value: string) => void;
 }
 
 const DiaryList: React.FC<DiaryListProps> = ({
@@ -18,6 +20,8 @@ const DiaryList: React.FC<DiaryListProps> = ({
   onDeleteDiary,
   onImportAll,
   onDeleteAll,
+  searchContent = '',
+  onSearchContentChange,
 }) => {
   const [exportMenuOpenId, setExportMenuOpenId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -189,24 +193,35 @@ const DiaryList: React.FC<DiaryListProps> = ({
   return (
     <div className="diary-list">
       <div className="diary-list__header">
-        <h3>📚 日记列表({diaryEntries.length})</h3>
+        <h3 className="diary-list__title">📚 日记 ({diaryEntries.length})</h3>
+        {onSearchContentChange && (
+          <div className="diary-list__search">
+            <input
+              type="text"
+              className="search-input search-input--text"
+              placeholder="搜索内容..."
+              value={searchContent}
+              onChange={(e) => onSearchContentChange(e.target.value)}
+            />
+          </div>
+        )}
         <div className="diary-list__actions">
           <button 
-            className="action-btn action-btn--export"
+            className="action-icon-btn"
             onClick={handleExportAll}
             title="导出所有日记为JSON"
           >
             📤
           </button>
           <button 
-            className="action-btn action-btn--import"
+            className="action-icon-btn"
             onClick={handleImportAll}
             title="从JSON导入日记"
           >
             📥
           </button>
           <button 
-            className="action-btn action-btn--delete"
+            className="action-icon-btn"
             onClick={handleDeleteAll}
             title="删除所有日记"
           >

@@ -9,6 +9,11 @@ interface QuickNotesProps {
   onAddQuickNote: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onDeleteQuickNote: (id: string) => void;
   onUpdateQuickNote: (id: string, content: string) => void;
+  searchContent?: string;
+  onSearchContentChange?: (value: string) => void;
+  onExportAll?: () => void;
+  onImportAll?: (notes: QuickNote[]) => void;
+  onDeleteAll?: () => void;
 }
 
 const MAX_QUICK_NOTE_LENGTH = 100;
@@ -20,6 +25,11 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
   onAddQuickNote,
   onDeleteQuickNote,
   onUpdateQuickNote,
+  searchContent = '',
+  onSearchContentChange,
+  onExportAll,
+  onImportAll,
+  onDeleteAll,
 }) => {
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [originalContent, setOriginalContent] = useState<string>('');
@@ -171,13 +181,106 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
     }
   };
 
+  // 导入速记
+  const handleImportAll = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        
+        if (!Array.isArray(data)) {
+          alert('导入文件格式错误');
+          return;
+        }
+
+        // 验证数据格式
+        const isValid = data.every(note => 
+          note.id && note.content && note.timestamp
+        );
+
+        if (!isValid) {
+          alert('导入文件数据格式不正确');
+          return;
+        }
+
+        if (onImportAll) {
+          onImportAll(data);
+          alert(`成功导入 ${data.length} 条速记`);
+        }
+      } catch (error) {
+        console.error('导入失败:', error);
+        alert('导入失败，请检查文件格式');
+      }
+    };
+    input.click();
+  };
+
+  // 删除所有速记
+  const handleDeleteAll = () => {
+    if (quickNotes.length === 0) {
+      alert('没有速记可以删除');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `确定要删除所有 ${quickNotes.length} 条速记吗？\n\n此操作无法撤销！建议先导出备份。`
+    );
+
+    if (confirmed) {
+      const doubleConfirm = window.confirm(
+        '请再次确认：真的要删除所有速记吗？'
+      );
+
+      if (doubleConfirm && onDeleteAll) {
+        onDeleteAll();
+      }
+    }
+  };
+
   return (
     <div className="quick-notes" ref={quickNotesRef}>
       <div className="quick-notes__header">
-        <h3>💭 速记</h3>
-        {editingNoteId && (
-          <span className="editing-badge">编辑中，点击组件外部退出</span>
+        <h3 className="quick-notes__title">💭 速记 ({quickNotes.length})</h3>
+        {onSearchContentChange && (
+          <div className="quick-notes__search">
+            <input
+              type="text"
+              className="search-input search-input--text"
+              placeholder="搜索内容..."
+              value={searchContent}
+              onChange={(e) => onSearchContentChange(e.target.value)}
+            />
+          </div>
         )}
+        <div className="quick-notes__actions">
+          <button 
+            className="action-icon-btn"
+            onClick={onExportAll}
+            title="导出所有速记为JSON"
+          >
+            📤
+          </button>
+          <button 
+            className="action-icon-btn"
+            onClick={handleImportAll}
+            title="从JSON导入速记"
+          >
+            📥
+          </button>
+          <button 
+            className="action-icon-btn"
+            onClick={handleDeleteAll}
+            title="删除所有速记"
+          >
+            🗑️
+          </button>
+        </div>
       </div>
       <div className="quick-notes__input">
         <textarea

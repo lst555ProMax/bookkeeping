@@ -8,31 +8,99 @@
   height: 100%;
 
   &__header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
-    h3 {
-      margin: 0;
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    gap: 0rem;
+    flex-wrap: wrap;
+  }
 
-    .editing-badge {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 0.25rem 0.75rem;
-      border-radius: 12px;
+  &__title {
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  &__search {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 140px;
+
+    .search-input {
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
       font-size: 0.85rem;
-      font-weight: 500;
-      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+      outline: none;
+      background: white;
+      color: #333;
+      height: 32px;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+      }
+
+      &--text {
+        width: 140px;
+      }
+
+      &::placeholder {
+        color: #999;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    flex-shrink: 0;
+
+    .action-icon-btn {
+      padding: 0;
+      border: none;
+      background: transparent;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover:not(:disabled) {
+        transform: scale(1.2);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      }
+
+      &:active:not(:disabled) {
+        transform: scale(1.1);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
     }
   }
 
   &__input {
-    padding: 1rem 1rem 0.5rem 1rem;
+    padding: 0 1rem;
     border-bottom: 2px solid #f0f0f0;
 
     textarea {
@@ -73,44 +141,6 @@
         &.warning {
           color: #ff4d4f;
           font-weight: 600;
-        }
-      }
-    }
-
-    .edit-actions {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-
-      button {
-        flex: 1;
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &.save-btn {
-          background: #667eea;
-          color: white;
-
-          &:hover {
-            background: #5568d3;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-          }
-        }
-
-        &.cancel-btn {
-          background: #f0f0f0;
-          color: #666;
-
-          &:hover {
-            background: #e0e0e0;
-            transform: translateY(-1px);
-          }
         }
       }
     }

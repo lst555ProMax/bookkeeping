@@ -10,6 +10,8 @@ import {
   addQuickNote as addQuickNoteToStorage,
   updateQuickNote as updateQuickNoteInStorage,
   deleteQuickNote as deleteQuickNoteFromStorage,
+  saveQuickNotes,
+  clearAllQuickNotes,
   loadDiaryEntries,
   saveDiaryEntry as saveDiaryToStorage,
   deleteDiaryEntry as deleteDiaryFromStorage,
@@ -38,6 +40,10 @@ const Diary: React.FC = () => {
   const [showMoodPicker, setShowMoodPicker] = useState<boolean>(false);
   const [showFontPicker, setShowFontPicker] = useState<boolean>(false);
   const [customThemeColor, setCustomThemeColor] = useState<string>('#ffffff');
+  
+  // 搜索状态
+  const [quickNotesSearch, setQuickNotesSearch] = useState<string>('');
+  const [diaryEntriesSearch, setDiaryEntriesSearch] = useState<string>('');
   
   // 记录初始状态，用于检测是否有未保存的更改
   const [initialDiaryState, setInitialDiaryState] = useState<{
@@ -89,6 +95,71 @@ const Diary: React.FC = () => {
   const handleDeleteQuickNote = (id: string) => {
     deleteQuickNoteFromStorage(id);
     setQuickNotes(prev => prev.filter(note => note.id !== id));
+  };
+
+  // 导出所有速记
+  const handleExportQuickNotes = () => {
+    if (quickNotes.length === 0) {
+      alert('没有速记可以导出');
+      return;
+    }
+
+    const jsonData = JSON.stringify(quickNotes, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json;charset=utf-8' });
+    const date = new Date();
+    const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+    
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `速记导出_${dateStr}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // 导入速记
+  const handleImportQuickNotes = (notes: QuickNote[]) => {
+    try {
+      // 合并新导入的速记和现有速记
+      const existingNotes = loadQuickNotes();
+      const mergedNotes = [...existingNotes];
+
+      notes.forEach(newNote => {
+        // 检查是否已存在相同ID的速记
+        const existingIndex = mergedNotes.findIndex(n => n.id === newNote.id);
+        if (existingIndex >= 0) {
+          // 更新现有速记
+          mergedNotes[existingIndex] = newNote;
+        } else {
+          // 添加新速记
+          mergedNotes.push(newNote);
+        }
+      });
+
+      // 按时间戳降序排序
+      mergedNotes.sort((a, b) => b.timestamp - a.timestamp);
+
+      saveQuickNotes(mergedNotes);
+      setQuickNotes(mergedNotes);
+      toast.success(`成功导入 ${notes.length} 条速记`);
+    } catch (error) {
+      console.error('导入速记失败:', error);
+      toast.error('导入失败，请重试');
+    }
+  };
+
+  // 删除所有速记
+  const handleDeleteAllQuickNotes = () => {
+    try {
+      const count = clearAllQuickNotes();
+      setQuickNotes([]);
+      toast.success(`已删除 ${count} 条速记`);
+    } catch (error) {
+      console.error('删除所有速记失败:', error);
+      toast.error('删除失败，请重试');
+    }
   };
 
   // 检查是否有未保存的更改
@@ -361,15 +432,32 @@ const Diary: React.FC = () => {
     });
   };
 
+  // 筛选速记
+  const filteredQuickNotes = quickNotes.filter(note => {
+    if (!quickNotesSearch.trim()) return true;
+    return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
+  });
+
+  // 筛选日记
+  const filteredDiaryEntries = diaryEntries.filter(entry => {
+    if (!diaryEntriesSearch.trim()) return true;
+    return entry.content.toLowerCase().includes(diaryEntriesSearch.toLowerCase());
+  });
+
   return (
     <div className="diary">
       <QuickNotes
-        quickNotes={quickNotes}
+        quickNotes={filteredQuickNotes}
         quickNoteInput={quickNoteInput}
         onQuickNoteInputChange={setQuickNoteInput}
         onAddQuickNote={handleAddQuickNote}
         onUpdateQuickNote={handleUpdateQuickNote}
         onDeleteQuickNote={handleDeleteQuickNote}
+        searchContent={quickNotesSearch}
+        onSearchContentChange={setQuickNotesSearch}
+        onExportAll={handleExportQuickNotes}
+        onImportAll={handleImportQuickNotes}
+        onDeleteAll={handleDeleteAllQuickNotes}
       />
       
       <DiaryNotebook
@@ -399,12 +487,14 @@ const Diary: React.FC = () => {
       />
       
       <DiaryList
-        diaryEntries={diaryEntries}
+        diaryEntries={filteredDiaryEntries}
         currentDiaryId={currentDiary?.id || null}
         onLoadDiary={handleLoadDiary}
         onDeleteDiary={handleDeleteDiary}
         onImportAll={handleImportAll}
         onDeleteAll={handleDeleteAll}
+        searchContent={diaryEntriesSearch}
+        onSearchContentChange={setDiaryEntriesSearch}
       />
     </div>
   );

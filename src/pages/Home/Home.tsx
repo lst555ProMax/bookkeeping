@@ -15,7 +15,7 @@ import {
   exportDailyRecords, importDailyRecords, validateDailyImportFile, clearAllDailyRecords,
   loadStudyRecords, addStudyRecord, deleteStudyRecord, updateStudyRecord,
   exportStudyRecords, importStudyRecords, validateStudyImportFile, clearAllStudyRecords,
-  getCategories, getIncomeCategories,
+  getCategories, getIncomeCategories, getStudyCategories,
   clearExpensesOnly, clearIncomesOnly, clearAllSleepRecords,
   loadMenuConfig
 } from '@/utils';
@@ -130,6 +130,11 @@ const Home: React.FC = () => {
   const [dailyMinSteps, setDailyMinSteps] = useState<number | undefined>(undefined);
   const [dailyMaxSteps, setDailyMaxSteps] = useState<number | undefined>(undefined);
   const [dailySearchNotes, setDailySearchNotes] = useState<string>('');
+
+  // 查询筛选状态 - 学习记录
+  const [studySelectedCategory, setStudySelectedCategory] = useState<string>('全部');
+  const [studySearchTitle, setStudySearchTitle] = useState<string>('');
+  const [studyMinDurationHours, setStudyMinDurationHours] = useState<number>(0);
 
   // 初始化分类筛选（默认全选）
   useEffect(() => {
@@ -296,6 +301,34 @@ const Home: React.FC = () => {
       if (dailySearchNotes && dailySearchNotes.trim() !== '') {
         const notes = d.notes || '';
         if (!notes.toLowerCase().includes(dailySearchNotes.toLowerCase().trim())) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  };
+
+  // 筛选学习记录（应用分类、标题和时长过滤）
+  const filterStudyRecords = (records: StudyRecord[]) => {
+    return records.filter(s => {
+      // 分类筛选
+      if (studySelectedCategory !== '全部' && s.category !== studySelectedCategory) {
+        return false;
+      }
+      
+      // 标题搜索
+      if (studySearchTitle && studySearchTitle.trim() !== '') {
+        const title = s.videoTitle || '';
+        if (!title.toLowerCase().includes(studySearchTitle.toLowerCase().trim())) {
+          return false;
+        }
+      }
+      
+      // 时长筛选（大于等于指定小时数）
+      if (studyMinDurationHours > 0) {
+        const durationHours = s.totalTime / 60; // 将分钟转换为小时
+        if (durationHours < studyMinDurationHours) {
           return false;
         }
       }
@@ -1019,10 +1052,11 @@ const Home: React.FC = () => {
   // 导出学习记录
   const handleExportStudy = () => {
     try {
-      const message = `确定导出学习记录吗？\n\n总共 ${studyRecords.length} 条记录`;
+      const filteredRecords = filterStudyRecords(studyRecords);
+      const message = `确定导出学习记录吗？\n\n筛选后的记录：${filteredRecords.length} 条`;
 
       if (window.confirm(message)) {
-        exportStudyRecords(studyRecords);
+        exportStudyRecords(filteredRecords);
         alert('学习记录导出成功！');
       }
     } catch (error) {
@@ -1510,13 +1544,20 @@ const Home: React.FC = () => {
                 <div className="home__list-section">
                   <div className="study-records-container">
                     <StudyRecordList 
-                      records={studyRecords} 
+                      records={filterStudyRecords(studyRecords)} 
                       onDeleteRecord={handleDeleteStudy}
                       onEditRecord={handleEditStudy}
                       onExport={handleExportStudy}
                       onImport={triggerStudyFileSelect}
                       onClear={handleClearStudyData}
                       isImporting={isImportingStudy}
+                      categories={getStudyCategories()}
+                      selectedCategory={studySelectedCategory}
+                      searchTitle={studySearchTitle}
+                      minDurationHours={studyMinDurationHours}
+                      onCategoryChange={setStudySelectedCategory}
+                      onSearchTitleChange={setStudySearchTitle}
+                      onMinDurationHoursChange={setStudyMinDurationHours}
                     />
                   </div>
                 </div>

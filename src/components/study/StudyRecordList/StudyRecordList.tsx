@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StudyRecord } from '@/utils';
+import { StudyRecord, StudyCategory } from '@/utils';
 import './StudyRecordList.scss';
 
 interface StudyRecordListProps {
@@ -10,6 +10,14 @@ interface StudyRecordListProps {
   onImport?: () => void;
   onClear?: () => void;
   isImporting?: boolean;
+  // 查询功能相关
+  categories?: StudyCategory[];
+  selectedCategory?: string;
+  searchTitle?: string;
+  minDurationHours?: number;
+  onCategoryChange?: (category: string) => void;
+  onSearchTitleChange?: (title: string) => void;
+  onMinDurationHoursChange?: (hours: number) => void;
 }
 
 const StudyRecordList: React.FC<StudyRecordListProps> = ({ 
@@ -19,7 +27,14 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
   onExport,
   onImport,
   onClear,
-  isImporting = false
+  isImporting = false,
+  categories = [],
+  selectedCategory = '全部',
+  searchTitle = '',
+  minDurationHours = 0,
+  onCategoryChange,
+  onSearchTitleChange,
+  onMinDurationHoursChange
 }) => {
   // 跟踪每个月份的展开/收起状态
   const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
@@ -120,6 +135,57 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
         {/* 标题和操作按钮区域 */}
         <div className="study-list__header">
           <h3 className="study-list__title">📚 学习记录</h3>
+          {/* 查询组件 */}
+          {(onCategoryChange || onSearchTitleChange || onMinDurationHoursChange) && (
+            <div className="study-list__search">
+              {/* 分类筛选 */}
+              {onCategoryChange && categories.length > 0 && (
+                <div className="search-group">
+                  <span className="search-label">分类</span>
+                  <select 
+                    className="search-select"
+                    value={selectedCategory}
+                    onChange={(e) => onCategoryChange(e.target.value)}
+                  >
+                    <option value="全部">全部</option>
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              {/* 标题搜索 */}
+              {onSearchTitleChange && (
+                <input
+                  type="text"
+                  className="search-input search-input--text"
+                  placeholder="搜索标题"
+                  value={searchTitle}
+                  onChange={(e) => onSearchTitleChange(e.target.value)}
+                />
+              )}
+              {/* 最小时长 */}
+              {onMinDurationHoursChange !== undefined && (
+                <div className="search-group">
+                  <span className="search-label">时长≥</span>
+                  <input
+                    type="number"
+                    className="search-input search-input--number"
+                    placeholder="0"
+                    value={minDurationHours}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onMinDurationHoursChange(val === '' ? 0 : parseInt(val));
+                    }}
+                    min="0"
+                    max="24"
+                    step="1"
+                  />
+                  <span className="search-unit">小时</span>
+                </div>
+              )}
+            </div>
+          )}
           {(onExport || onImport || onClear) && (
             <div className="study-list__actions">
               <button 
@@ -174,6 +240,57 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
       {/* 标题和操作按钮区域 */}
       <div className="study-list__header">
         <h3 className="study-list__title">📚 学习记录 ({records.length})</h3>
+        {/* 查询组件 */}
+        {(onCategoryChange || onSearchTitleChange || onMinDurationHoursChange) && (
+          <div className="study-list__search">
+            {/* 分类筛选 */}
+            {onCategoryChange && categories.length > 0 && (
+              <div className="search-group">
+                <span className="search-label">分类</span>
+                <select 
+                  className="search-select"
+                  value={selectedCategory}
+                  onChange={(e) => onCategoryChange(e.target.value)}
+                >
+                  <option value="全部">全部</option>
+                  {categories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {/* 标题搜索 */}
+            {onSearchTitleChange && (
+              <input
+                type="text"
+                className="search-input search-input--text"
+                placeholder="搜索标题"
+                value={searchTitle}
+                onChange={(e) => onSearchTitleChange(e.target.value)}
+              />
+            )}
+            {/* 最小时长 */}
+            {onMinDurationHoursChange !== undefined && (
+              <div className="search-group">
+                <span className="search-label">时长≥</span>
+                <input
+                  type="number"
+                  className="search-input search-input--number"
+                  placeholder="0"
+                  value={minDurationHours}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onMinDurationHoursChange(val === '' ? 0 : parseInt(val));
+                  }}
+                  min="0"
+                  max="24"
+                  step="1"
+                />
+                <span className="search-unit">小时</span>
+              </div>
+            )}
+          </div>
+        )}
         {(onExport || onImport || onClear) && (
           <div className="study-list__actions">
             <button 
