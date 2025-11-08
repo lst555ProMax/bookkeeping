@@ -222,7 +222,6 @@ const StudyRecords: React.FC = () => {
           <div className="chart-row">
             <StudyCategoryPieChart 
               categoryStats={categoryStats} 
-              totalMinutes={totalMinutes} 
             />
             <StudyTrendChart dateStats={recentDaysStats} />
           </div>
