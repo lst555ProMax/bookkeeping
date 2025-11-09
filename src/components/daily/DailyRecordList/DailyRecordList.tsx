@@ -142,19 +142,6 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     }
   };
 
-  // 判断打卡是否正常（整体判断，用于列表筛选）
-  const isCheckinNormal = (record: DailyRecord): boolean => {
-    // 如果都没填，说明不工作，算正常
-    if (!record.checkInTime && !record.checkOutTime && !record.leaveTime) {
-      return true;
-    }
-    
-    // 有任何一项填了就按工作日标准检查
-    return isCheckInTimeNormal(record.checkInTime) && 
-           isCheckOutTimeNormal(record.checkOutTime) && 
-           isLeaveTimeNormal(record.leaveTime);
-  };
-
   // 判断签到时间是否正常（9点前算正常）
   const isCheckInTimeNormal = (checkInTime: string | undefined): boolean => {
     if (!checkInTime) return true; // 没填算正常
