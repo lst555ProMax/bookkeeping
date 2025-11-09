@@ -8,8 +8,10 @@ interface WorkTimeChartProps {
 }
 
 const WorkTimeChart: React.FC<WorkTimeChartProps> = ({ data }) => {
+  // 筛选最近10天有工作时长的数据
   const chartData = data
     .filter(item => item.workHours > 0 || item.companyHours > 0)
+    .slice(-10) // 只取最近10天
     .map(item => ({
       日期: item.date.slice(5), // MM-DD
       工作时长: item.workHours,
@@ -20,7 +22,7 @@ const WorkTimeChart: React.FC<WorkTimeChartProps> = ({ data }) => {
   return (
     <div className="work-time-chart">
       <div className="chart-header">
-        <h3>⏰ 工作时长分析</h3>
+        <h3>⏰ 工作时长分析（最近10天）</h3>
       </div>
       {chartData.length > 0 ? (
         <ResponsiveContainer width="100%" height={350}>
@@ -50,15 +52,16 @@ const WorkTimeChart: React.FC<WorkTimeChartProps> = ({ data }) => {
               formatter={(value: number, name: string) => [`${value}小时`, name]}
             />
             <Legend />
+            {/* 使用堆叠柱状图 - stackId 相同的Bar会堆叠在一起 */}
             <Bar
               dataKey="工作时长"
+              stackId="a"
               fill="#667eea"
-              radius={[8, 8, 0, 0]}
             />
             <Bar
               dataKey="在公司时长"
+              stackId="a"
               fill="#52c41a"
-              radius={[8, 8, 0, 0]}
             />
           </BarChart>
         </ResponsiveContainer>

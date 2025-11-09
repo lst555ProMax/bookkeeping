@@ -49,6 +49,24 @@
   }
 }
 
+// 表单行布局（用于多个字段在一行）
+.form-row {
+  display: flex;
+  gap: 1rem;
+  
+  .form-group {
+    flex: 1;
+    
+    &--date {
+      flex: 1.2;
+    }
+    
+    &--steps {
+      flex: 1.5;
+    }
+  }
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -135,8 +153,14 @@
   }
 
   &--not-eaten {
-    border-color: #dee2e6;
-    background: #f8f9fa;
+    border-color: #f5c6cb;
+    background: #f8d7da;
+    
+    &:hover {
+      border-color: #f5c6cb;
+      background: #f8d7da;
+      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+    }
   }
 
   &--irregular {

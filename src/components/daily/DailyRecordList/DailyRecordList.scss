@@ -413,11 +413,12 @@
   }
 
   &.meal--not-eaten {
-    border-color: #dee2e6;
-    background: #f8f9fa;
+    border-color: #f5c6cb;
+    background: #f8d7da;
 
     .meal-value {
-      color: #6c757d;
+      color: #dc3545;
+      font-weight: 700;
     }
   }
 
@@ -519,6 +520,21 @@
     font-weight: 600;
     color: #495057;
   }
+
+  // 单个时间项异常样式
+  &.time-item--abnormal {
+    border-color: #f5c6cb;
+    background: #f8d7da;
+
+    .time-label {
+      color: #721c24;
+    }
+
+    .time-value {
+      color: #721c24;
+      font-weight: 700;
+    }
+  }
 }
 
 // 步数和打卡合并行
@@ -548,6 +564,31 @@
     font-size: 1rem;
     font-weight: 600;
     color: #667eea;
+
+    &.steps--gold {
+      color: #ffd700;
+      font-weight: 700;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+
+    &.steps--green {
+      color: #28a745;
+      font-weight: 700;
+    }
+
+    &.steps--normal {
+      color: #667eea;
+    }
+
+    &.steps--orange {
+      color: #ff8c00;
+      font-weight: 700;
+    }
+
+    &.steps--red {
+      color: #dc3545;
+      font-weight: 700;
+    }
   }
 }
 
@@ -570,27 +611,6 @@
     gap: 0.5rem;
     flex-wrap: wrap;
     flex: 1;
-  }
-
-  // 打卡不正常时的警告样式
-  &--abnormal {
-    .checkin-label {
-      color: #dc3545;
-    }
-
-    .time-item {
-      border-color: #f5c6cb;
-      background: #f8d7da;
-
-      .time-label {
-        color: #721c24;
-      }
-
-      .time-value {
-        color: #721c24;
-        font-weight: 700;
-      }
-    }
   }
 }
 

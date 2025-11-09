@@ -96,6 +96,24 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     return monthRecords.filter(record => record.meals.lunch === MealStatus.EATEN_IRREGULAR).length;
   };
 
+  // 计算某个月的平均步数
+  const calculateAverageSteps = (monthRecords: DailyRecord[]): number => {
+    const recordsWithSteps = monthRecords.filter(record => record.wechatSteps && record.wechatSteps > 0);
+    if (recordsWithSteps.length === 0) return 0;
+    const totalSteps = recordsWithSteps.reduce((sum, record) => sum + (record.wechatSteps || 0), 0);
+    return Math.round(totalSteps / recordsWithSteps.length);
+  };
+
+  // 获取步数对应的颜色类
+  const getStepsColorClass = (steps: number | undefined): string => {
+    if (!steps) return '';
+    if (steps >= 25000) return 'steps--gold';
+    if (steps >= 10000) return 'steps--green';
+    if (steps >= 5000) return 'steps--normal';
+    if (steps >= 2000) return 'steps--orange';
+    return 'steps--red';
+  };
+
   // 获取三餐状态的emoji
   const getMealEmoji = (status: MealStatus) => {
     switch (status) {
@@ -124,9 +142,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     }
   };
 
-  // 判断打卡是否正常
-  // 签到在9点前、签退在6点后、离开在10点后算正常
-  // 没填打卡时间（不工作的日子）也算正常
+  // 判断打卡是否正常（整体判断，用于列表筛选）
   const isCheckinNormal = (record: DailyRecord): boolean => {
     // 如果都没填，说明不工作，算正常
     if (!record.checkInTime && !record.checkOutTime && !record.leaveTime) {
@@ -134,39 +150,33 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     }
     
     // 有任何一项填了就按工作日标准检查
-    let normal = true;
-    
-    // 签到时间检查：9点前算正常
-    if (record.checkInTime) {
-      const checkInHour = parseInt(record.checkInTime.split(':')[0]);
-      const checkInMinute = parseInt(record.checkInTime.split(':')[1]);
-      const checkInTotalMinutes = checkInHour * 60 + checkInMinute;
-      if (checkInTotalMinutes >= 9 * 60) { // 9:00及以后算不正常
-        normal = false;
-      }
-    }
-    
-    // 签退时间检查：6点后算正常
-    if (record.checkOutTime) {
-      const checkOutHour = parseInt(record.checkOutTime.split(':')[0]);
-      const checkOutMinute = parseInt(record.checkOutTime.split(':')[1]);
-      const checkOutTotalMinutes = checkOutHour * 60 + checkOutMinute;
-      if (checkOutTotalMinutes < 18 * 60) { // 18:00之前算不正常
-        normal = false;
-      }
-    }
-    
-    // 离开时间检查：10点后算正常
-    if (record.leaveTime) {
-      const leaveHour = parseInt(record.leaveTime.split(':')[0]);
-      const leaveMinute = parseInt(record.leaveTime.split(':')[1]);
-      const leaveTotalMinutes = leaveHour * 60 + leaveMinute;
-      if (leaveTotalMinutes < 22 * 60) { // 22:00之前算不正常
-        normal = false;
-      }
-    }
-    
-    return normal;
+    return isCheckInTimeNormal(record.checkInTime) && 
+           isCheckOutTimeNormal(record.checkOutTime) && 
+           isLeaveTimeNormal(record.leaveTime);
+  };
+
+  // 判断签到时间是否正常（9点前算正常）
+  const isCheckInTimeNormal = (checkInTime: string | undefined): boolean => {
+    if (!checkInTime) return true; // 没填算正常
+    const [hour, minute] = checkInTime.split(':').map(Number);
+    const totalMinutes = hour * 60 + minute;
+    return totalMinutes < 9 * 60; // 9:00之前算正常
+  };
+
+  // 判断签退时间是否正常（6点后算正常）
+  const isCheckOutTimeNormal = (checkOutTime: string | undefined): boolean => {
+    if (!checkOutTime) return true; // 没填算正常
+    const [hour, minute] = checkOutTime.split(':').map(Number);
+    const totalMinutes = hour * 60 + minute;
+    return totalMinutes >= 18 * 60; // 18:00及以后算正常
+  };
+
+  // 判断离开时间是否正常（10点后算正常）
+  const isLeaveTimeNormal = (leaveTime: string | undefined): boolean => {
+    if (!leaveTime) return true; // 没填算正常
+    const [hour, minute] = leaveTime.split(':').map(Number);
+    const totalMinutes = hour * 60 + minute;
+    return totalMinutes >= 22 * 60; // 22:00及以后算正常
   };
 
   if (records.length === 0) {
@@ -437,6 +447,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
           const isExpanded = expandedMonths[monthKey];
           const breakfastNotEaten = calculateBreakfastNotEaten(monthRecords);
           const lunchIrregular = calculateLunchIrregular(monthRecords);
+          const averageSteps = calculateAverageSteps(monthRecords);
           const sortedMonthRecords = [...monthRecords].sort((a, b) => 
             new Date(b.date).getTime() - new Date(a.date).getTime()
           );
@@ -462,6 +473,11 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
                   <span className="daily-list__month-stat">
                     ⚠️ 午餐不规律 {lunchIrregular}次
                   </span>
+                  {averageSteps > 0 && (
+                    <span className="daily-list__month-stat">
+                      👣 平均步数 {averageSteps.toLocaleString()}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -560,29 +576,31 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
                 {record.wechatSteps && (
                   <div className="steps-info">
                     <span className="steps-label">👣 步数:</span>
-                    <span className="steps-value">{record.wechatSteps.toLocaleString()} 步</span>
+                    <span className={`steps-value ${getStepsColorClass(record.wechatSteps)}`}>
+                      {record.wechatSteps.toLocaleString()} 步
+                    </span>
                   </div>
                 )}
 
                 {/* 工作日打卡 */}
                 {(record.checkInTime || record.checkOutTime || record.leaveTime) && (
-                  <div className={`checkin-info ${!isCheckinNormal(record) ? 'checkin-info--abnormal' : ''}`}>
+                  <div className="checkin-info">
                     <span className="checkin-label">💼 打卡:</span>
                     <div className="time-grid">
                       {record.checkInTime && (
-                        <div className="time-item">
+                        <div className={`time-item ${!isCheckInTimeNormal(record.checkInTime) ? 'time-item--abnormal' : ''}`}>
                           <span className="time-label">签到:</span>
                           <span className="time-value">{record.checkInTime}</span>
                         </div>
                       )}
                       {record.checkOutTime && (
-                        <div className="time-item">
+                        <div className={`time-item ${!isCheckOutTimeNormal(record.checkOutTime) ? 'time-item--abnormal' : ''}`}>
                           <span className="time-label">签退:</span>
                           <span className="time-value">{record.checkOutTime}</span>
                         </div>
                       )}
                       {record.leaveTime && (
-                        <div className="time-item">
+                        <div className={`time-item ${!isLeaveTimeNormal(record.leaveTime) ? 'time-item--abnormal' : ''}`}>
                           <span className="time-label">离开:</span>
                           <span className="time-value">{record.leaveTime}</span>
                         </div>
