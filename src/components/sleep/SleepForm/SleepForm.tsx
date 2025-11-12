@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { SleepRecord } from '@/utils';
 import { calculateSleepDuration } from '@/utils';
+import { DatePicker } from '@/components/common';
 import './SleepForm.scss';
 
 interface SleepFormProps {
@@ -140,13 +141,10 @@ const SleepForm: React.FC<SleepFormProps> = ({
           <label htmlFor="date">
             日期 <span className="required">*</span>
           </label>
-          <input
-            type="date"
-            id="date"
+          <DatePicker
             value={date}
-            onChange={(e) => setDate(e.target.value)}
-            min="2024-10-01"
-            required
+            onChange={setDate}
+            minDate="2024-10-01"
           />
         </div>
 

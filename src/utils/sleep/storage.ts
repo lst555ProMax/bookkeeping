@@ -135,6 +135,24 @@ export const timeToMinutes = (time: string): number => {
 };
 
 /**
+ * 将入睡时间转换为图表显示用的分钟数
+ * 21:00-23:59 视为前一天晚上，转换为负值
+ * @param time HH:mm格式
+ * @returns 分钟数（21:00-23:59会返回负值）
+ */
+export const sleepTimeToMinutes = (time: string): number => {
+  const [hours, minutes] = time.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes;
+  
+  // 如果是21:00-23:59，视为前一天晚上
+  if (hours >= 21) {
+    return totalMinutes - 24 * 60; // 转换为负值
+  }
+  
+  return totalMinutes;
+};
+
+/**
  * 将分钟数转换为时间字符串
  * @param minutes 分钟数
  * @returns HH:mm格式
@@ -178,8 +196,8 @@ export const getMonthSleepStats = (year: number, month: number) => {
     };
   }
 
-  // 计算入睡时间平均值（分钟）
-  const sleepTimeMinutes = records.map(r => timeToMinutes(r.sleepTime));
+  // 计算入睡时间平均值（分钟）- 使用sleepTimeToMinutes处理21:00-23:59的情况
+  const sleepTimeMinutes = records.map(r => sleepTimeToMinutes(r.sleepTime));
   const avgSleepTime = sleepTimeMinutes.reduce((a, b) => a + b, 0) / sleepTimeMinutes.length;
 
   // 计算醒来时间平均值（分钟）
@@ -194,9 +212,15 @@ export const getMonthSleepStats = (year: number, month: number) => {
   const qualities = records.map(r => r.quality);
   const avgQuality = qualities.reduce((a, b) => a + b, 0) / qualities.length;
 
+  // 将平均入睡时间转换回正常时间格式
+  let displayAvgSleepTime = avgSleepTime;
+  if (displayAvgSleepTime < 0) {
+    displayAvgSleepTime += 24 * 60; // 转换回21:00-23:59的范围
+  }
+
   return {
     totalRecords: records.length,
-    averageSleepTime: minutesToTime(avgSleepTime),
+    averageSleepTime: minutesToTime(displayAvgSleepTime),
     averageWakeTime: minutesToTime(avgWakeTime),
     averageDuration: Math.round(avgDuration),
     averageQuality: Math.round(avgQuality)
@@ -219,7 +243,7 @@ export const getMonthSleepTrend = (year: number, month: number) => {
   return sortedRecords.map(record => ({
     date: record.date,
     day: new Date(record.date).getDate(),
-    sleepTime: timeToMinutes(record.sleepTime),
+    sleepTime: sleepTimeToMinutes(record.sleepTime), // 使用新函数处理21:00-23:59
     wakeTime: timeToMinutes(record.wakeTime),
     duration: record.duration || 0,
     quality: record.quality

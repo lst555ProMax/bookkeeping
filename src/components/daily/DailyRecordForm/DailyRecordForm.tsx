@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { DailyRecord, MealStatus } from '@/utils';
+import { DatePicker } from '@/components/common';
 import './DailyRecordForm.scss';
 
 interface DailyRecordFormProps {
@@ -196,32 +197,29 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       </div>
       
       <form onSubmit={handleSubmit} className="daily-form__form">
-        {/* 日期和微信步数 - 合并在一行 */}
-        <div className="form-row">
-          <div className="form-group form-group--date">
-            <label htmlFor="date">
-              日期 <span className="required">*</span>
-            </label>
-            <input
-              type="date"
-              id="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              min="2024-10-01"
-              required
-            />
-          </div>
-          <div className="form-group form-group--steps">
-            <label htmlFor="wechatSteps">👣 微信步数</label>
-            <input
-              type="number"
-              id="wechatSteps"
-              value={wechatSteps}
-              onChange={(e) => setWechatSteps(e.target.value)}
-              placeholder="输入今天的微信步数"
-              min="0"
-            />
-          </div>
+        {/* 日期 */}
+        <div className="form-group">
+          <label htmlFor="date">
+            日期 <span className="required">*</span>
+          </label>
+          <DatePicker
+            value={date}
+            onChange={setDate}
+            minDate="2024-10-01"
+          />
+        </div>
+
+        {/* 微信步数 */}
+        <div className="form-group">
+          <label htmlFor="wechatSteps">👣 微信步数</label>
+          <input
+            type="number"
+            id="wechatSteps"
+            value={wechatSteps}
+            onChange={(e) => setWechatSteps(e.target.value)}
+            placeholder="输入今天的微信步数"
+            min="0"
+          />
         </div>
 
         {/* 三餐 */}

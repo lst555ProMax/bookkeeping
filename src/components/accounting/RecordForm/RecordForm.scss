@@ -74,6 +74,10 @@
     display: flex;
     gap: 8px;
     align-items: center;
+
+    .custom-select {
+      flex: 1;
+    }
   }
 
   &__category-btn {
@@ -110,8 +114,7 @@
     font-size: 0.95rem;
   }
 
-  &__input,
-  &__select {
+  &__input {
     width: 100%;
     padding: 1rem;
     border: 2px solid #e1e5e9;
@@ -135,11 +138,6 @@
     }
   }
 
-  &__select {
-    .expense-form__category-group & {
-      flex: 1;
-    }
-  }
 
   &__submit {
     background: linear-gradient(135deg, var(--theme-color-start) 0%, var(--theme-color-end) 100%);

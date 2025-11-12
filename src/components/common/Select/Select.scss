@@ -1,0 +1,199 @@
+.custom-select {
+  position: relative;
+  width: 100%;
+
+  &__trigger {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #f8f9ff 0%, #f4f5f7 100%);
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+
+    &:hover {
+      border-color: var(--theme-color-start, #667eea);
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(var(--theme-color-rgb, 102, 126, 234), 0.2);
+    }
+  }
+
+  &__value {
+    flex: 1;
+    text-align: left;
+
+    &.placeholder {
+      color: #999;
+    }
+  }
+
+  &__arrow {
+    color: #999;
+    font-size: 0.7rem;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+
+    .custom-select.open & {
+      transform: rotate(180deg);
+      color: var(--theme-color-end, #764ba2);
+    }
+  }
+
+  &.open &__trigger {
+    border-color: var(--theme-color-start, #667eea);
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+    box-shadow: 0 4px 16px rgba(var(--theme-color-rgb, 102, 126, 234), 0.25);
+    transform: translateY(-2px);
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    z-index: 1000;
+    animation: slideDown 0.2s ease;
+    border: 1px solid #e8eaed;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    // 向上展开的样式
+    &.upward {
+      top: auto;
+      bottom: calc(100% + 8px);
+      animation: slideUp 0.2s ease;
+    }
+
+    // 自定义滚动条
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--theme-color-start, #667eea);
+      border-radius: 3px;
+
+      &:hover {
+        background: var(--theme-color-end, #764ba2);
+      }
+    }
+  }
+
+  &__option {
+    padding: 0.225rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #333;
+    font-weight: 500;
+    position: relative;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(var(--theme-color-rgb, 102, 126, 234), 0.08) 0%, rgba(var(--theme-color-rgb, 102, 126, 234), 0.12) 100%);
+      color: var(--theme-color-start, #667eea);
+      transform: translateX(4px);
+    }
+
+    &.selected {
+      background: linear-gradient(135deg, var(--theme-color-start, #667eea) 0%, var(--theme-color-end, #764ba2) 100%);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(var(--theme-color-rgb, 102, 126, 234), 0.3);
+
+      &:hover {
+        background: linear-gradient(135deg, var(--theme-color-end, #764ba2) 0%, var(--theme-color-start, #667eea) 100%);
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(var(--theme-color-rgb, 102, 126, 234), 0.4);
+      }
+    }
+
+    &--empty {
+      color: #999;
+      cursor: default;
+      text-align: center;
+      padding: 1rem;
+
+      &:hover {
+        background: transparent;
+        transform: none;
+      }
+    }
+  }
+
+  &__check {
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  &__native {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .custom-select {
+    &__dropdown {
+      max-height: 250px;
+    }
+
+    &__option {
+      padding: 0.75rem 0.875rem;
+      font-size: 0.95rem;
+    }
+  }
+}
+

@@ -5,8 +5,11 @@ export {
   MenuSettings,
   CardDraw,
   Fortune,
-  MonthSelector
+  MonthSelector,
+  DatePicker,
+  Select
 } from './common';
+export type { SelectOption } from './common';
 
 // 账单记录相关组件
 export {

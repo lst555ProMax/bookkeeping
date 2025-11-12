@@ -1,4 +1,6 @@
 import React from 'react';
+import { Select } from '../Select';
+import type { SelectOption } from '../Select';
 import './MonthSelector.scss';
 
 interface MonthSelectorProps {
@@ -8,10 +10,10 @@ interface MonthSelectorProps {
 
 const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedMonth, onMonthChange }) => {
   // 生成从2025年10月开始到当前月份的所有月份选项
-  const generateMonthOptions = () => {
+  const generateMonthOptions = (): SelectOption[] => {
     const startDate = new Date(2025, 9); // 2025年10月 (月份从0开始)
     const currentDate = new Date();
-    const months = [];
+    const months: SelectOption[] = [];
 
     while (startDate <= currentDate) {
       const year = startDate.getFullYear();
@@ -31,17 +33,13 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedMonth, onMonthCha
   return (
     <div className="month-selector">
       <label className="month-selector__label">选择月份</label>
-      <select
-        className="month-selector__select"
+      <Select
         value={selectedMonth}
-        onChange={(e) => onMonthChange(e.target.value)}
-      >
-        {monthOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+        onChange={onMonthChange}
+        options={monthOptions}
+        placeholder="选择月份"
+        className="month-selector__select"
+      />
     </div>
   );
 };

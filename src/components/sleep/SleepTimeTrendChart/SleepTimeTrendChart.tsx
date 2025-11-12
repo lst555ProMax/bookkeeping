@@ -9,14 +9,13 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-import { minutesToTime } from '@/utils';
 import './SleepTimeTrendChart.scss';
 
 interface SleepTimeTrendChartProps {
   data: Array<{
     date: string;
     day: number;
-    sleepTime: number; // 分钟数
+    sleepTime: number; // 分钟数（可能为负值，表示前一天晚上）
     wakeTime: number;  // 分钟数
   }>;
 }
@@ -33,6 +32,17 @@ const SleepTimeTrendChart: React.FC<SleepTimeTrendChartProps> = ({ data }) => {
     );
   }
 
+  // 格式化分钟数为时间字符串（支持负值）
+  const formatMinutesToTime = (minutes: number): string => {
+    let displayMinutes = minutes;
+    if (displayMinutes < 0) {
+      displayMinutes += 24 * 60; // 转换回21:00-23:59
+    }
+    const hours = Math.floor(displayMinutes / 60);
+    const mins = Math.round(displayMinutes % 60);
+    return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+  };
+
   // 自定义tooltip
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
@@ -41,10 +51,10 @@ const SleepTimeTrendChart: React.FC<SleepTimeTrendChartProps> = ({ data }) => {
         <div className="custom-tooltip">
           <p className="tooltip-date">{payload[0].payload.date}</p>
           <p className="tooltip-item sleep">
-            🌙 入睡: {minutesToTime(payload[0].value)}
+            🌙 入睡: {formatMinutesToTime(payload[0].value)}
           </p>
           <p className="tooltip-item wake">
-            ☀️ 醒来: {minutesToTime(payload[1].value)}
+            ☀️ 醒来: {formatMinutesToTime(payload[1].value)}
           </p>
         </div>
       );
@@ -54,7 +64,7 @@ const SleepTimeTrendChart: React.FC<SleepTimeTrendChartProps> = ({ data }) => {
 
   // Y轴刻度格式化
   const formatYAxis = (minutes: number) => {
-    return minutesToTime(minutes);
+    return formatMinutesToTime(minutes);
   };
 
   return (
@@ -70,8 +80,8 @@ const SleepTimeTrendChart: React.FC<SleepTimeTrendChartProps> = ({ data }) => {
           />
           <YAxis 
             tickFormatter={formatYAxis}
-            domain={[0, 24 * 60]}
-            ticks={[0, 6*60, 12*60, 18*60, 24*60]}
+            domain={[-3 * 60, 24 * 60]}
+            ticks={[-3*60, -2*60, -1*60, 0, 6*60, 12*60, 18*60, 24*60]}
             label={{ value: '时间', angle: -90, position: 'insideLeft' }}
             stroke="#666"
           />

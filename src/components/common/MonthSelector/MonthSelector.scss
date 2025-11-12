@@ -9,30 +9,10 @@
     font-size: 0.9rem;
   }
 
-  &__select {
-    padding: 0.75rem;
-    border: 2px solid #e1e5e9;
-    border-radius: 8px;
-    font-size: 1rem;
-    background: white;
-    color: #333;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-
-    &:focus {
-      outline: none;
-      border-color: #4f46e5;
-    }
-
-    &:hover {
-      border-color: #c5c9d0;
-    }
-
-    // 确保所有选项文字颜色都是深色
-    option {
-      color: #333;
-      background: white;
-    }
+  // Select 组件样式已由 Select.scss 提供
+  // 这里只需要确保在 month-selector 容器中正确显示
+  .custom-select {
+    width: 100%;
   }
 }
 

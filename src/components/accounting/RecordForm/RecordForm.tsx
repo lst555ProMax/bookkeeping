@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { ExpenseCategory, ExpenseRecord, IncomeCategory, IncomeRecord, RecordType } from '@/utils';
 import { generateId, formatDate, getCategories, getIncomeCategories } from '@/utils';
+import { DatePicker, Select } from '@/components/common';
+import type { SelectOption } from '@/components/common';
 import './RecordForm.scss';
 
 interface RecordFormProps {
@@ -37,6 +39,12 @@ const RecordForm: React.FC<RecordFormProps> = ({
 
   const isEditing = !!(editingExpense || editingIncome);
   const currentCategories = recordType === RecordType.EXPENSE ? expenseCategories : incomeCategories;
+  
+  // 将分类数组转换为 SelectOption 数组
+  const categoryOptions: SelectOption[] = currentCategories.map(cat => ({
+    value: cat,
+    label: cat
+  }));
 
   // 动态确定主题类
   const getThemeClass = () => {
@@ -189,6 +197,17 @@ const RecordForm: React.FC<RecordFormProps> = ({
   const handleToggleRecordType = () => {
     const newType = recordType === RecordType.EXPENSE ? RecordType.INCOME : RecordType.EXPENSE;
     setRecordType(newType);
+    
+    // 切换类型时，设置分类为第一个
+    if (newType === RecordType.EXPENSE) {
+      if (expenseCategories.length > 0) {
+        setCategory(expenseCategories[0]);
+      }
+    } else {
+      if (incomeCategories.length > 0) {
+        setCategory(incomeCategories[0]);
+      }
+    }
   };
 
   return (
@@ -214,14 +233,10 @@ const RecordForm: React.FC<RecordFormProps> = ({
       
       <div className="expense-form__group">
         <label htmlFor="date" className="expense-form__label">日期</label>
-        <input
-          type="date"
-          id="date"
-          className="expense-form__input"
+        <DatePicker
           value={date}
-          onChange={(e) => setDate(e.target.value)}
-          min="2025-10-01"
-          required
+          onChange={setDate}
+          minDate="2025-10-01"
         />
       </div>
 
@@ -243,19 +258,15 @@ const RecordForm: React.FC<RecordFormProps> = ({
       <div className="expense-form__group">
         <label htmlFor="category" className="expense-form__label">分类</label>
         <div className="expense-form__category-group">
-          <select
+          <Select
             id="category"
-            className="expense-form__select"
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={setCategory}
+            options={categoryOptions}
+            placeholder="请选择分类"
             required
-          >
-            {currentCategories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+            className="expense-form__select"
+          />
           <button
             type="button"
             className="expense-form__category-btn"

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { StudyRecord, StudyCategory } from '@/utils';
 import { getStudyCategories } from '@/utils';
+import { DatePicker, Select } from '@/components/common';
+import type { SelectOption } from '@/components/common';
 import './StudyRecordForm.scss';
 
 interface StudyRecordFormProps {
@@ -39,6 +41,12 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
   const [totalTime, setTotalTime] = useState('');
   const [remark, setRemark] = useState('');
   const [categories, setCategories] = useState<StudyCategory[]>([]);
+
+  // 将分类数组转换为 SelectOption 数组
+  const categoryOptions: SelectOption[] = categories.map(cat => ({
+    value: cat,
+    label: cat
+  }));
 
   const resetForm = () => {
     setDate(getDefaultDate());
@@ -173,13 +181,10 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
           <label htmlFor="date">
             日期 <span className="required">*</span>
           </label>
-          <input
-            type="date"
-            id="date"
+          <DatePicker
             value={date}
-            onChange={(e) => setDate(e.target.value)}
-            min="2024-10-01"
-            required
+            onChange={setDate}
+            minDate="2024-10-01"
           />
         </div>
 
@@ -189,18 +194,14 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
             分类 <span className="required">*</span>
           </label>
           <div className="category-select-wrapper">
-            <select
+            <Select
               id="category"
               value={category}
-              onChange={(e) => setCategory(e.target.value as StudyCategory)}
+              onChange={(value) => setCategory(value as StudyCategory)}
+              options={categoryOptions}
+              placeholder="请选择分类"
               required
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+            />
             <div 
             className="category-btn-wrapper"
             onClick={onOpenCategoryManager}
