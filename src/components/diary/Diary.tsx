@@ -72,6 +72,20 @@ const Diary: React.FC = () => {
     });
   }, []);
 
+  // 监听全局速记添加事件
+  useEffect(() => {
+    const handleQuickNoteAdded = () => {
+      // 重新加载速记列表
+      const notes = loadQuickNotes();
+      setQuickNotes(notes);
+    };
+
+    window.addEventListener('quickNoteAdded', handleQuickNoteAdded);
+    return () => {
+      window.removeEventListener('quickNoteAdded', handleQuickNoteAdded);
+    };
+  }, []);
+
   // 添加速记
   const handleAddQuickNote = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && e.ctrlKey && quickNoteInput.trim()) {
@@ -174,10 +188,19 @@ const Diary: React.FC = () => {
     );
   };
 
+  // 从 HTML 中提取纯文本
+  const getTextFromHTML = (html: string): string => {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
+  };
+
   // 保存日记
   const handleSaveDiary = () => {
-    // 如果内容为空，不保存并恢复原内容
-    if (!diaryContent.trim()) {
+    // 提取纯文本内容检查是否为空
+    const textContent = getTextFromHTML(diaryContent);
+    
+    if (!textContent.trim()) {
       toast('日记内容不能为空！', { icon: '⚠️' });
       // 恢复原内容
       if (initialDiaryState) {
@@ -288,8 +311,10 @@ const Diary: React.FC = () => {
   const handleNewDiary = () => {
     // 检查是否有未保存的更改
     if (hasUnsavedChanges()) {
-      // 如果当前内容为空，提示并恢复原内容
-      if (!diaryContent.trim() && initialDiaryState && initialDiaryState.content) {
+      // 提取纯文本内容检查是否为空
+      const textContent = getTextFromHTML(diaryContent);
+      
+      if (!textContent.trim() && initialDiaryState && initialDiaryState.content) {
         toast('日记内容不能为空！', { icon: '⚠️' });
         // 恢复原内容
         setDiaryContent(initialDiaryState.content);

@@ -1,0 +1,214 @@
+// 悬浮球按钮
+.floating-quick-note-button {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 48px; // 原来60px的80%
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  user-select: none;
+
+  &.dragging {
+    cursor: grabbing;
+    transform: scale(1.1);
+  }
+
+  .floating-icon {
+    font-size: 22.4px; // 原来28px的80%
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    pointer-events: none;
+  }
+
+  &:hover:not(.dragging) {
+    transform: scale(1.1);
+    box-shadow: 0 6px 28px rgba(102, 126, 234, 0.6);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  // 添加呼吸动画
+  animation: breathe 3s ease-in-out infinite;
+
+  @keyframes breathe {
+    0%, 100% {
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    }
+    50% {
+      box-shadow: 0 6px 28px rgba(102, 126, 234, 0.6);
+    }
+  }
+}
+
+// 模态框
+.floating-quick-note-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      border-bottom: 2px solid #f0f0f0;
+
+      h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .close-btn {
+        background: transparent;
+        border: none;
+        font-size: 1.5rem;
+        color: #999;
+        cursor: pointer;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+
+        &:hover {
+          background: #f5f5f5;
+          color: #333;
+        }
+
+        &:active {
+          transform: scale(0.9);
+        }
+      }
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+
+      textarea {
+        width: 100%;
+        min-height: 140px;
+        padding: 0.5rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        resize: vertical;
+        transition: all 0.3s ease;
+        color: #333;
+        background-color: #fff;
+
+        &:focus {
+          outline: none;
+          border-color: #667eea;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        &::placeholder {
+          color: #999;
+        }
+      }
+
+      .char-count {
+        text-align: right;
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.5rem;
+
+        span {
+          transition: color 0.2s;
+
+          &.warning {
+            color: #ff4d4f;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .floating-quick-note-button {
+    bottom: 20px;
+    right: 20px;
+    width: 40px; // 50px的80%
+    height: 40px;
+
+    .floating-icon {
+      font-size: 19.2px; // 24px的80%
+    }
+  }
+
+  .floating-quick-note-modal {
+    .modal-content {
+      width: 95%;
+      
+      .modal-header {
+        padding: 1rem;
+
+        h3 {
+          font-size: 1.1rem;
+        }
+      }
+
+      .modal-body {
+        padding: 1rem;
+
+        textarea {
+          min-height: 120px;
+        }
+      }
+    }
+  }
+}

@@ -66,19 +66,21 @@ const DiaryList: React.FC<DiaryListProps> = ({
   const handleExport = async (entry: DiaryEntry, format: 'txt' | 'doc' | 'pdf' | 'md') => {
     setExportMenuOpenId(null);
     
-    const content = `# ${formatDate(entry.date)} ${formatTime(entry.createdAt)}\n\n天气: ${entry.weather}\n心情: ${entry.mood}\n\n${entry.content}`;
+    // 从HTML中提取纯文本
+    const plainTextContent = getTextFromHTML(entry.content);
+    const content = `# ${formatDate(entry.date)} ${formatTime(entry.createdAt)}\n\n天气: ${entry.weather}\n心情: ${entry.mood}\n\n${plainTextContent}`;
     
     try {
       if (format === 'txt') {
         // 导出为txt
-        const blob = new Blob([entry.content], { type: 'text/plain;charset=utf-8' });
+        const blob = new Blob([plainTextContent], { type: 'text/plain;charset=utf-8' });
         downloadFile(blob, `日记_${formatDate(entry.date)}.txt`);
       } else if (format === 'md') {
         // 导出为markdown
         const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
         downloadFile(blob, `日记_${formatDate(entry.date)}.md`);
       } else if (format === 'doc') {
-        // 导出为doc（简单的html格式）
+        // 导出为doc（使用HTML内容保留格式）
         const htmlContent = `
           <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
           <head><meta charset='utf-8'><title>日记</title></head>
@@ -87,7 +89,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
             <p>天气: ${entry.weather}</p>
             <p>心情: ${entry.mood}</p>
             <hr/>
-            <p>${entry.content.replace(/\n/g, '<br/>')}</p>
+            <div>${entry.content}</div>
           </body>
           </html>
         `;
@@ -183,6 +185,13 @@ const DiaryList: React.FC<DiaryListProps> = ({
     if (confirmed && onDeleteAll) {
       onDeleteAll();
     }
+  };
+
+  // 从 HTML 中提取纯文本
+  const getTextFromHTML = (html: string): string => {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent || div.innerText || '';
   };
 
   return (
@@ -309,8 +318,8 @@ const DiaryList: React.FC<DiaryListProps> = ({
                 fontFamily: entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif"
               }}
             >
-              {entry.content.substring(0, 100)}
-              {entry.content.length > 100 && '...'}
+              {getTextFromHTML(entry.content).substring(0, 100)}
+              {getTextFromHTML(entry.content).length > 100 && '...'}
             </div>
           </div>
         ))}

@@ -2,10 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Home, Records, SleepRecords, DailyRecords, StudyRecords } from '@/pages';
 import { getCurrentPath, findRouteByPath } from '@/router';
+import { FloatingQuickNote } from '@/components/common';
+import { addQuickNote } from '@/utils/diary/storage';
 import './App.scss';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string>('home');
+
+  // 处理添加速记
+  const handleAddQuickNote = (content: string) => {
+    addQuickNote(content);
+    // 触发自定义事件通知日记页面更新
+    window.dispatchEvent(new CustomEvent('quickNoteAdded'));
+  };
 
   // 监听hash变化来实现简单路由
   useEffect(() => {
@@ -81,6 +90,8 @@ const App: React.FC = () => {
         }}
       />
       {renderPage()}
+      {/* 全局悬浮球 */}
+      <FloatingQuickNote onAddQuickNote={handleAddQuickNote} />
     </div>
   );
 };
