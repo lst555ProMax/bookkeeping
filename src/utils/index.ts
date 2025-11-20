@@ -3,7 +3,6 @@ export * from './common/types';
 
 // ==================== 通用工具函数 ====================
 export * from './common/helpers';
-export * from './common/menuConfig';
 export * from './common/sampleData';
 
 // ==================== 记账模块 ====================

@@ -315,24 +315,6 @@ body {
       }
     }
 
-    /* 浏览器使用记录容器样式 */
-    .browser-records-container {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      display: flex;
-      flex-direction: column;
-      transition: all 0.3s ease;
-      min-height: 0;
-      flex: 1;
-      width: 100%;
-      
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-      }
-    }
-
     /* 日常记录容器样式 */
     .daily-records-container {
       background: white;
@@ -414,8 +396,7 @@ body {
       .form-container,
       .expense-list-container, 
       .income-list-container, 
-      .sleep-records-container,
-      .browser-records-container {
+      .sleep-records-container{
         height: 400px;
         flex: none;
         width: 100%;
