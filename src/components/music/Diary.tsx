@@ -17,10 +17,10 @@ import {
   deleteDiaryEntry as deleteDiaryFromStorage,
   saveDiaryEntries,
   clearAllDiaryEntries
-} from '@/utils';
+} from '@/utils/music';
 import './Diary.scss';
 
-const Diary: React.FC = () => {
+const Music: React.FC = () => {
   // 状态管理
   const [quickNotes, setQuickNotes] = useState<QuickNote[]>([]);
   const [quickNoteInput, setQuickNoteInput] = useState<string>('');
@@ -115,9 +115,9 @@ const Diary: React.FC = () => {
         
         // 检查是否有未保存的修改
         if (hasUnsavedDiary && hasUnsavedQuickNote) {
-          message = '当前有未保存的日记和速记，是否继续当前操作？\n\n';
+          message = '当前有未保存的音乐日记和速记，是否继续当前操作？\n\n';
         } else if (hasUnsavedDiary) {
-          message = '当前有未保存的日记，是否继续当前操作？\n\n';
+          message = '当前有未保存的音乐日记，是否继续当前操作？\n\n';
         } else if (hasUnsavedQuickNote) {
           message = '当前有未保存的速记，是否继续当前操作？\n\n';
         }
@@ -340,7 +340,7 @@ const Diary: React.FC = () => {
   const handleDeleteDiary = (id: string, silent: boolean = false) => {
     // 如果不是静默删除，需要确认
     if (!silent) {
-      const confirmed = window.confirm('确定要删除这篇日记吗？\n\n删除后将无法恢复！');
+      const confirmed = window.confirm('确定要删除这篇音乐日记吗？\n\n删除后将无法恢复！');
       if (!confirmed) return;
     }
     
@@ -384,7 +384,7 @@ const Diary: React.FC = () => {
     // 检查是否有未保存的更改
     if (hasUnsavedChanges()) {
       const shouldContinue = window.confirm(
-        '当前有未保存的日记，是否继续当前操作？\n\n'
+        '当前有未保存的音乐日记，是否继续当前操作？\n\n'
       );
       
       if (!shouldContinue) {
@@ -437,7 +437,7 @@ const Diary: React.FC = () => {
       const count = clearAllDiaryEntries();
       setDiaryEntries([]);
       resetDiaryState();
-      toast.success(`已删除 ${count} 篇日记`);
+      toast.success(`已删除 ${count} 篇音乐日记`);
     } catch (error) {
       console.error('删除所有日记失败:', error);
       toast.error('删除失败，请重试');
@@ -454,7 +454,7 @@ const Diary: React.FC = () => {
     // 检查是否有未保存的更改
     if (hasUnsavedChanges()) {
       const shouldContinue = window.confirm(
-        '当前有未保存的日记，是否继续当前操作？\n\n'
+        '当前有未保存的音乐日记，是否继续当前操作？\n\n'
       );
       
       if (!shouldContinue) {
@@ -480,7 +480,7 @@ const Diary: React.FC = () => {
   });
 
   return (
-    <div className="diary">
+    <div className="music">
       <QuickNotes
         quickNotes={filteredQuickNotes}
         quickNoteInput={quickNoteInput}
@@ -536,4 +536,4 @@ const Diary: React.FC = () => {
   );
 };
 
-export default Diary;
+export default Music;

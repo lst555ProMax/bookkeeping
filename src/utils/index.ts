@@ -33,6 +33,16 @@ export * from './diary/types';
 export * from './diary/storage';
 export * from './diary/dataImportExport';
 
+// ==================== 音乐日记模块 ====================
+// 类型定义共享（从 diary/types 导出）
+// 函数通过各自的模块路径导入，避免命名冲突
+// 使用方式: import { loadQuickNotes, ... } from '@/utils/music';
+
+// ==================== 阅读日记模块 ====================
+// 类型定义共享（从 diary/types 导出）
+// 函数通过各自的模块路径导入，避免命名冲突
+// 使用方式: import { loadQuickNotes, ... } from '@/utils/reading';
+
 // ==================== 抽卡游戏模块 ====================
 export * from './common/cardDraw/types';
 export * from './common/cardDraw/storage';

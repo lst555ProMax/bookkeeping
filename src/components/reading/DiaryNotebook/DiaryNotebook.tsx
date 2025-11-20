@@ -95,7 +95,7 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
     Underline,
     BubbleMenuExtension,
     Placeholder.configure({
-      placeholder: '记录你的日常（按Ctrl+Enter保存）',
+      placeholder: '记录你的阅读日常（按Ctrl+Enter保存）',
     }),
   ], []);
 
@@ -517,7 +517,7 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
             </div>
           </div>
           <div className="notebook__actions">
-            <button className="action-icon-btn" onClick={onNew} title="新建日记">
+            <button className="action-icon-btn" onClick={onNew} title="新建阅读日记">
               ➕
             </button>
             <button className="action-icon-btn" onClick={onSave} title="保存">

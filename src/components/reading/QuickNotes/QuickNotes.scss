@@ -1,0 +1,312 @@
+.quick-notes {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  height: 100%;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  &__search {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex: 1;
+    width: 140px;
+
+    .search-input {
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+      outline: none;
+      background: white;
+      color: #333;
+      height: 32px;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+      }
+
+      &--text {
+        width: 140px;
+      }
+
+      &::placeholder {
+        color: #999;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    flex-shrink: 0;
+
+    .action-icon-btn {
+      padding: 0;
+      border: none;
+      background: transparent;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover:not(:disabled) {
+        transform: scale(1.2);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      }
+
+      &:active:not(:disabled) {
+        transform: scale(1.1);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  &__input {
+    padding: 0 1rem;
+    border-bottom: 2px solid #f0f0f0;
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 0.5rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: all 0.3s ease;
+      color: #333;
+      background-color: #fff;
+
+      &.editing {
+        border-color: #667eea;
+        background-color: #f0f4ff;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      &::placeholder {
+        color: #999;
+      }
+    }
+
+    .char-count {
+      text-align: right;
+      font-size: 0.85rem;
+      color: #666;
+
+      span {
+        &.warning {
+          color: #ff4d4f;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  &__list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem 1rem 1rem 2rem;
+    position: relative;
+    min-height: 100px;
+    --timeline-height: 0px;
+
+    /* 时间轴主线 - 根据内容自适应高度 */
+    &::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      top: 0;
+      height: var(--timeline-height);
+      width: 3px;
+      background: linear-gradient(to bottom, #667eea, #764ba2);
+      border-radius: 2px;
+      pointer-events: none;
+      transition: height 0.3s ease;
+    }
+    
+    /* 当没有内容时隐藏时间轴 */
+    &:empty::before {
+      display: none;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    .quick-note-item {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      margin-left: 0rem;
+      position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+
+      &.editing {
+        background: #e8eef5;
+        border: 2px solid #667eea;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+
+        &::before {
+          background: #764ba2;
+          transform: scale(1.3);
+        }
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -2.5rem;
+        top: 1rem;
+        width: 12px;
+        height: 12px;
+        background: #667eea;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        z-index: 2;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: -2rem;
+        top: 1rem;
+        width: 1.5rem;
+        height: 2px;
+        background: #e0e0e0;
+      }
+
+      &:hover {
+        background: #e8eef5;
+        transform: translateX(4px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+        &::before {
+          background: #764ba2;
+          transform: scale(1.2);
+        }
+      }
+
+      &__content {
+        font-size: 0.95rem;
+        color: #333;
+        line-height: 1.6;
+        margin-bottom: 0.25rem;
+        word-break: break-word;
+        max-height: 100px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+        
+        /* 自定义滚动条 */
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 2px;
+          
+          &:hover {
+            background: #a0a0a0;
+          }
+        }
+      }
+
+      &__footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .timestamp {
+          font-size: 0.8rem;
+          color: #999;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+
+          &::before {
+            content: '🕐';
+          }
+        }
+
+        .delete-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 1rem;
+          padding: 0.25rem;
+          opacity: 0.6;
+          transition: all 0.3s ease;
+
+          &:hover {
+            opacity: 1;
+            transform: scale(1.2);
+          }
+        }
+      }
+    }
+  }
+}

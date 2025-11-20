@@ -1,0 +1,29 @@
+.reading {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  overflow: hidden;
+
+  // 确保所有子元素都显示
+  > * {
+    min-width: 0;
+    min-height: 0;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .reading {
+    grid-template-columns: 1fr 1.5fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .reading {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+}

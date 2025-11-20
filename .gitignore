@@ -143,6 +143,7 @@ dist-ssr/
 *.njsproj
 *.sln
 *.sw?
+.VSCodeCounter/
 
 # OS generated files
 Thumbs.db
