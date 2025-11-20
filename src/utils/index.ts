@@ -17,11 +17,6 @@ export * from './sleep/types';
 export * from './sleep/storage';
 export * from './sleep/dataImportExport';
 
-// ==================== 浏览器使用记录模块 ====================
-export * from './browser/types';
-export * from './browser/storage';
-export * from './browser/dataImportExport';
-
 // ==================== 日常记录模块 ====================
 export * from './daily/types';
 export * from './daily/storage';

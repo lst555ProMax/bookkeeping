@@ -2,7 +2,7 @@
 
 // 抽卡类型枚举
 export enum CardType {
-  ENTREPRENEURIAL_ANALYSIS = 'entrepreneurial_analysis', // 创业分析
+  ENTREPRENEURIAL_ANALYSIS = 'entrepreneurial_analysis', // 商业分析
   ECONOMIC_SOCIETY = 'economic_society',                 // 经济社会
   AI_DEVELOPMENT = 'ai_development',                     // AI发展
   MUSIC_HISTORY = 'music_history',                       // 音乐发展史
@@ -26,7 +26,7 @@ export enum CardType {
 
 // 抽卡类型中文映射
 export const CARD_TYPE_LABELS: Record<CardType, string> = {
-  [CardType.ENTREPRENEURIAL_ANALYSIS]: '创业分析',
+  [CardType.ENTREPRENEURIAL_ANALYSIS]: '商业分析',
   [CardType.ECONOMIC_SOCIETY]: '经济社会',
   [CardType.AI_DEVELOPMENT]: 'AI发展',
   [CardType.MUSIC_HISTORY]: '音乐发展史',

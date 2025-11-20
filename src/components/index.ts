@@ -2,7 +2,6 @@
 
 // 通用组件
 export {
-  MenuSettings,
   CardDraw,
   Fortune,
   MonthSelector,
@@ -30,11 +29,6 @@ export {
   SleepDurationTrendChart,
   SleepQualityTrendChart
 } from './sleep';
-
-// 软件使用记录相关组件
-export {
-  BrowserUsageList
-} from './browser';
 
 // 日常记录相关组件
 export {

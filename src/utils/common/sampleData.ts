@@ -7,8 +7,7 @@ export enum DataType {
   ACCOUNTING = 'accounting',
   SLEEP = 'sleep',
   DAILY = 'daily',
-  STUDY = 'study',
-  BROWSER = 'browser'
+  STUDY = 'study'
 }
 
 /**
@@ -88,13 +87,6 @@ const convertDates = (data: any, type: DataType): unknown => {
     
     case DataType.STUDY:
       return data; // Study records keep createdAt as string
-    
-    case DataType.BROWSER:
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return data.map((record: any) => ({
-        ...record,
-        createdAt: new Date(record.createdAt)
-      }));
     
     default:
       return data;
@@ -186,8 +178,6 @@ export const getStorageKey = (type: DataType): string | string[] => {
       return 'daily_records';
     case DataType.STUDY:
       return 'study_records';
-    case DataType.BROWSER:
-      return 'browserUsageRecords';
     default:
       return '';
   }

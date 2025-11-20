@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
-import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, BrowserUsageList, DailyRecordForm, DailyRecordList, CardDraw, MenuSettings, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, Diary, Music, Reading, Medical } from '@/components';
-import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, BrowserUsageRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS, MealStatus } from '@/utils';
+import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, DailyRecordForm, DailyRecordList, CardDraw, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, Diary, Music, Reading, Medical } from '@/components';
+import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS, MealStatus } from '@/utils';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
   loadIncomes, addIncome, deleteIncome, updateIncome,
@@ -10,23 +10,16 @@ import {
   validateImportFile,
   loadSleepRecords, addSleepRecord, deleteSleepRecord, updateSleepRecord,
   exportSleepRecords, importSleepRecords, validateSleepImportFile,
-  loadBrowserUsageRecords, exportBrowserUsageRecords, importBrowserUsageRecords, 
-  validateBrowserUsageImportFile, clearAllBrowserUsageRecords,
   loadDailyRecords, addDailyRecord, deleteDailyRecord, updateDailyRecord,
   exportDailyRecords, importDailyRecords, validateDailyImportFile, clearAllDailyRecords,
   loadStudyRecords, addStudyRecord, deleteStudyRecord, updateStudyRecord,
   exportStudyRecords, importStudyRecords, validateStudyImportFile, clearAllStudyRecords,
   getCategories, getIncomeCategories, getStudyCategories,
-  clearExpensesOnly, clearIncomesOnly, clearAllSleepRecords,
-  loadMenuConfig
+  clearExpensesOnly, clearIncomesOnly, clearAllSleepRecords
 } from '@/utils';
 import './Home.scss';
 
 const Home: React.FC = () => {
-  // 菜单配置状态
-  const [enabledMenus, setEnabledMenus] = useState<BusinessMode[]>([]);
-  const [showMenuSettings, setShowMenuSettings] = useState(false);
-  
   // 业务模式状态（从 URL 参数读取）
   const [businessMode, setBusinessMode] = useState<BusinessMode>(() => {
     const params = new URLSearchParams(window.location.hash.split('?')[1]);
@@ -60,11 +53,6 @@ const Home: React.FC = () => {
   const [editingSleep, setEditingSleep] = useState<SleepRecord | null>(null);
   const [isImportingSleep, setIsImportingSleep] = useState(false);
   const sleepFileInputRef = useRef<HTMLInputElement>(null);
-
-  // 浏览器使用记录相关状态
-  const [browserRecords, setBrowserRecords] = useState<BrowserUsageRecord[]>([]);
-  const [isImportingBrowser, setIsImportingBrowser] = useState(false);
-  const browserFileInputRef = useRef<HTMLInputElement>(null);
 
   // 日常记录相关状态
   const [dailyRecords, setDailyRecords] = useState<DailyRecord[]>([]);
@@ -359,30 +347,17 @@ const Home: React.FC = () => {
     const savedExpenses = loadExpenses();
     const savedIncomes = loadIncomes();
     const savedSleeps = loadSleepRecords();
-    const savedBrowserRecords = loadBrowserUsageRecords();
     const savedDailyRecords = loadDailyRecords();
     const savedStudyRecords = loadStudyRecords();
     setExpenses(savedExpenses);
     setIncomes(savedIncomes);
     setSleepRecords(savedSleeps);
-    setBrowserRecords(savedBrowserRecords);
     setDailyRecords(savedDailyRecords);
     setStudyRecords(savedStudyRecords);
   };
 
-  // 加载菜单配置
-  const loadMenus = () => {
-    const config = loadMenuConfig();
-    setEnabledMenus(config);
-    // 如果当前业务模式不在启用的菜单中，切换到第一个启用的菜单
-    if (config.length > 0 && !config.includes(businessMode)) {
-      setBusinessMode(config[0]);
-    }
-  };
-
   useEffect(() => {
     loadData();
-    loadMenus();
     
     // 监听URL hash变化，同步业务模式和健康模式
     const handleHashChange = () => {
@@ -435,7 +410,6 @@ const Home: React.FC = () => {
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 添加新收入
@@ -858,71 +832,6 @@ const Home: React.FC = () => {
     sleepFileInputRef.current?.click();
   };
 
-  // === 浏览器使用记录处理函数 ===
-
-  // 导出浏览器使用记录
-  const handleExportBrowser = () => {
-    try {
-      const message = `确定导出浏览器使用记录吗？\n\n总共 ${browserRecords.length} 条记录`;
-
-      if (window.confirm(message)) {
-        exportBrowserUsageRecords(browserRecords);
-        toast.success('浏览器使用记录导出成功！');
-      }
-    } catch (error) {
-      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
-    }
-  };
-
-  // 导入浏览器使用记录
-  const handleImportBrowser = async (file: File) => {
-    setIsImportingBrowser(true);
-    try {
-      const result = await importBrowserUsageRecords(file);
-      loadData(); // 重新加载数据
-
-      const message = `导入完成！\n新增 ${result.imported} 条记录，更新 ${result.skipped} 条记录\n总计 ${result.total} 条记录`;
-      toast.success(message);
-    } catch (error) {
-      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
-    } finally {
-      setIsImportingBrowser(false);
-      if (browserFileInputRef.current) {
-        browserFileInputRef.current.value = '';
-      }
-    }
-  };
-
-  // 处理浏览器使用记录文件选择
-  const handleBrowserFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const validationError = validateBrowserUsageImportFile(file);
-    if (validationError) {
-      toast.error(validationError);
-      return;
-    }
-
-    handleImportBrowser(file);
-  };
-
-  // 触发浏览器使用记录文件选择
-  const triggerBrowserFileSelect = () => {
-    browserFileInputRef.current?.click();
-  };
-
-  // 清空浏览器使用记录
-  const handleClearBrowserData = () => {
-    const message = `⚠️ 警告：此操作将清空所有浏览器使用记录！\n\n当前记录：${browserRecords.length} 条\n\n此操作不可恢复，确定要清空吗？`;
-
-    if (window.confirm(message)) {
-      const count = clearAllBrowserUsageRecords();
-      loadData();
-      toast.success(`已清空 ${count} 条浏览器使用记录！`);
-    }
-  };
-
   // === 日常记录处理函数 ===
 
   // 添加日常记录
@@ -1129,21 +1038,6 @@ const Home: React.FC = () => {
     }
   };
 
-  // 打开菜单设置
-  const handleOpenMenuSettings = () => {
-    setShowMenuSettings(true);
-  };
-
-  // 关闭菜单设置
-  const handleCloseMenuSettings = () => {
-    setShowMenuSettings(false);
-  };
-
-  // 菜单配置改变后重新加载
-  const handleMenuConfigChange = () => {
-    loadMenus();
-  };
-
   return (
     <div className="home">
       <header className="home__header">
@@ -1151,56 +1045,31 @@ const Home: React.FC = () => {
         <div className="home__tabs-container">
           {/* 业务和健康模式切换按钮（两行布局） */}
           <div className="home__mode-switcher">
-            {/* 第一行：设置按钮 + 业务模式按钮 */}
+            {/* 第一行:业务模式按钮 */}
             <button 
-              className="settings-btn"
-              onClick={handleOpenMenuSettings}
-              title="菜单设置"
+              className={`mode-btn ${businessMode === BusinessMode.ACCOUNTING && activeTab === 'business' ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.ACCOUNTING)}
             >
-              ⚙️
+              💰 {BUSINESS_MODE_LABELS[BusinessMode.ACCOUNTING]}
             </button>
-            
-            {/* 根据配置显示菜单按钮 */}
-            {enabledMenus.includes(BusinessMode.ACCOUNTING) && (
-              <button 
-                className={`mode-btn ${businessMode === BusinessMode.ACCOUNTING && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-                onClick={() => handleBusinessModeChange(BusinessMode.ACCOUNTING)}
-              >
-                💰 {BUSINESS_MODE_LABELS[BusinessMode.ACCOUNTING]}
-              </button>
-            )}
-            {enabledMenus.includes(BusinessMode.SLEEP) && (
-              <button 
-                className={`mode-btn ${businessMode === BusinessMode.SLEEP && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-                onClick={() => handleBusinessModeChange(BusinessMode.SLEEP)}
-              >
-                🌙 {BUSINESS_MODE_LABELS[BusinessMode.SLEEP]}
-              </button>
-            )}
-            {enabledMenus.includes(BusinessMode.DAILY) && (
-              <button 
-                className={`mode-btn ${businessMode === BusinessMode.DAILY && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-                onClick={() => handleBusinessModeChange(BusinessMode.DAILY)}
-              >
-                📝 {BUSINESS_MODE_LABELS[BusinessMode.DAILY]}
-              </button>
-            )}
-            {enabledMenus.includes(BusinessMode.STUDY) && (
-              <button 
-                className={`mode-btn ${businessMode === BusinessMode.STUDY && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-                onClick={() => handleBusinessModeChange(BusinessMode.STUDY)}
-              >
-                📚 {BUSINESS_MODE_LABELS[BusinessMode.STUDY]}
-              </button>
-            )}
-            {enabledMenus.includes(BusinessMode.SOFTWARE) && (
-              <button 
-                className={`mode-btn ${businessMode === BusinessMode.SOFTWARE && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-                onClick={() => handleBusinessModeChange(BusinessMode.SOFTWARE)}
-              >
-                💻 {BUSINESS_MODE_LABELS[BusinessMode.SOFTWARE]}
-              </button>
-            )}
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.SLEEP && activeTab === 'business' ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.SLEEP)}
+            >
+              🌙 {BUSINESS_MODE_LABELS[BusinessMode.SLEEP]}
+            </button>
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.DAILY && activeTab === 'business' ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.DAILY)}
+            >
+              📝 {BUSINESS_MODE_LABELS[BusinessMode.DAILY]}
+            </button>
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.STUDY && activeTab === 'business' ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.STUDY)}
+            >
+              📚 {BUSINESS_MODE_LABELS[BusinessMode.STUDY]}
+            </button>
 
             {/* 第二行：占位空格 + 健康管理按钮 */}
             <div className="settings-btn-placeholder"></div>
@@ -1454,33 +1323,6 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </>
-          ) : businessMode === BusinessMode.SOFTWARE ? (
-            <>
-              {/* 软件使用记录模式 */}
-              {/* 隐藏的文件输入 */}
-              <input
-                ref={browserFileInputRef}
-                type="file"
-                accept=".json,application/json"
-                onChange={handleBrowserFileSelect}
-                style={{ display: 'none' }}
-              />
-
-              <div className="home__section-group">
-                {/* 浏览器使用记录列表 */}
-                <div className="home__list-section">
-                  <div className="browser-records-container">
-                    <BrowserUsageList
-                      records={browserRecords}
-                      onExport={handleExportBrowser}
-                      onImport={triggerBrowserFileSelect}
-                      onClear={handleClearBrowserData}
-                      isImporting={isImportingBrowser}
-                    />
-                  </div>
-                </div>
-              </div>
-            </>
           ) : businessMode === BusinessMode.DAILY ? (
             <>
               {/* 日常记录模式 */}
@@ -1611,14 +1453,6 @@ const Home: React.FC = () => {
         <StudyCategoryManager
           onClose={handleCloseStudyCategoryManager}
           onCategoriesChange={handleStudyCategoriesChange}
-        />
-      )}
-
-      {/* 菜单设置模态框 */}
-      {showMenuSettings && (
-        <MenuSettings
-          onClose={handleCloseMenuSettings}
-          onConfigChange={handleMenuConfigChange}
         />
       )}
     </div>

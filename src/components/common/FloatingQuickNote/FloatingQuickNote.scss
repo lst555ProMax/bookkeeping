@@ -12,9 +12,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  z-index: 10001;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, background 0.3s ease;
   user-select: none;
+
+  // 待办模式样式
+  &.todo-mode {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 20px rgba(245, 87, 108, 0.4);
+
+    @keyframes breathe {
+      0%, 100% {
+        box-shadow: 0 4px 20px rgba(245, 87, 108, 0.4);
+      }
+      50% {
+        box-shadow: 0 6px 28px rgba(245, 87, 108, 0.6);
+      }
+    }
+  }
 
   &.dragging {
     cursor: grabbing;
@@ -30,6 +45,10 @@
   &:hover:not(.dragging) {
     transform: scale(1.1);
     box-shadow: 0 6px 28px rgba(102, 126, 234, 0.6);
+
+    &.todo-mode {
+      box-shadow: 0 6px 28px rgba(245, 87, 108, 0.6);
+    }
   }
 
   &:active {
@@ -49,129 +68,154 @@
   }
 }
 
-// 模态框
-.floating-quick-note-modal {
+// 悬浮窗
+.floating-quick-note-window {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+  width: 500px;
   z-index: 10000;
-  animation: fadeIn 0.2s ease;
+  animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-  @keyframes fadeIn {
+  @keyframes slideIn {
     from {
       opacity: 0;
+      transform: scale(0.95);
     }
     to {
       opacity: 1;
+      transform: scale(1);
     }
   }
 
-  .modal-content {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 500px;
-    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  .window-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 2px solid #f0f0f0;
+    cursor: move;
+    user-select: none;
+    border-radius: 16px 16px 0 0;
+    transition: background 0.2s;
 
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    &:hover {
+      background: #f8f9fa;
     }
 
-    .modal-header {
+    &.dragging {
+      background: #e9ecef;
+      cursor: grabbing;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #333;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: #999;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 1rem;
-      border-bottom: 2px solid #f0f0f0;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
 
-      h3 {
-        margin: 0;
-        font-size: 1.3rem;
+      &:hover {
+        background: #f5f5f5;
         color: #333;
-        font-weight: 600;
       }
 
-      .close-btn {
-        background: transparent;
-        border: none;
-        font-size: 1.5rem;
+      &:active {
+        transform: scale(0.9);
+      }
+    }
+  }
+
+  .window-body {
+    padding: 1.5rem;
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 0.5rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: all 0.3s ease;
+      color: #333;
+      background-color: #fff;
+
+      &:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      &::placeholder {
         color: #999;
-        cursor: pointer;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s;
+      }
 
-        &:hover {
-          background: #f5f5f5;
-          color: #333;
-        }
+      // 待办模式的文本框样式
+      &.todo-textarea {
+        min-height: 400px;
+        line-height: 1.6;
 
-        &:active {
-          transform: scale(0.9);
+        &:focus {
+          border-color: #f5576c;
+          box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
         }
       }
     }
 
-    .modal-body {
-      padding: 1.5rem;
+    .char-count {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.5rem;
 
-      textarea {
-        width: 100%;
-        min-height: 140px;
-        padding: 0.5rem;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        font-family: inherit;
-        resize: vertical;
-        transition: all 0.3s ease;
-        color: #333;
-        background-color: #fff;
+      span {
+        transition: color 0.2s;
 
-        &:focus {
-          outline: none;
-          border-color: #667eea;
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        &.warning {
+          color: #ff4d4f;
+          font-weight: 600;
         }
 
-        &::placeholder {
-          color: #999;
+        &.save-hint {
+          color: #667eea;
+          font-size: 0.8rem;
+          font-weight: 500;
         }
       }
+    }
 
-      .char-count {
-        text-align: right;
-        font-size: 0.85rem;
-        color: #666;
-        margin-top: 0.5rem;
+    .auto-save-hint {
+      text-align: right;
+      font-size: 0.85rem;
+      color: #52c41a;
+      margin-top: 0.5rem;
+      font-weight: 500;
 
-        span {
-          transition: color 0.2s;
-
-          &.warning {
-            color: #ff4d4f;
-            font-weight: 600;
-          }
-        }
+      span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
       }
     }
   }
@@ -190,23 +234,26 @@
     }
   }
 
-  .floating-quick-note-modal {
-    .modal-content {
-      width: 95%;
-      
-      .modal-header {
-        padding: 1rem;
+  .floating-quick-note-window {
+    width: 90%;
+    max-width: 340px;
+    
+    .window-header {
+      padding: 1rem;
 
-        h3 {
-          font-size: 1.1rem;
-        }
+      h3 {
+        font-size: 1.1rem;
       }
+    }
 
-      .modal-body {
-        padding: 1rem;
+    .window-body {
+      padding: 1rem;
 
-        textarea {
-          min-height: 120px;
+      textarea {
+        min-height: 120px;
+
+        &.todo-textarea {
+          min-height: 160px;
         }
       }
     }

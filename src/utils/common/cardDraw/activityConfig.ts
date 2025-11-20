@@ -10,7 +10,7 @@ const DEFAULT_ACTIVITY_CONFIG: ActivityCategoryConfig[] = [
     category: CardCategory.RESEARCH,
     totalProbability: 0.35,
     items: [
-      { id: 'entrepreneurial', name: '创业分析', probability: 0.05, cardType: CardType.ENTREPRENEURIAL_ANALYSIS },
+      { id: 'entrepreneurial', name: '商业分析', probability: 0.05, cardType: CardType.ENTREPRENEURIAL_ANALYSIS },
       { id: 'economic', name: '经济社会', probability: 0.05, cardType: CardType.ECONOMIC_SOCIETY },
       { id: 'ai_dev', name: 'AI发展', probability: 0.05, cardType: CardType.AI_DEVELOPMENT },
       { id: 'music_history', name: '音乐发展史', probability: 0.05, cardType: CardType.MUSIC_HISTORY },
