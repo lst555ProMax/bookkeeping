@@ -1,6 +1,6 @@
 import React from 'react';
-import { Select } from '../Select';
-import type { SelectOption } from '../Select';
+import { FormSelect } from '../FormSelect';
+import type { FormSelectOption } from '../FormSelect';
 import './MonthSelector.scss';
 
 interface MonthSelectorProps {
@@ -10,10 +10,10 @@ interface MonthSelectorProps {
 
 const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedMonth, onMonthChange }) => {
   // 生成从2025年10月开始到当前月份的所有月份选项
-  const generateMonthOptions = (): SelectOption[] => {
+  const generateMonthOptions = (): FormSelectOption[] => {
     const startDate = new Date(2025, 9); // 2025年10月 (月份从0开始)
     const currentDate = new Date();
-    const months: SelectOption[] = [];
+    const months: FormSelectOption[] = [];
 
     while (startDate <= currentDate) {
       const year = startDate.getFullYear();
@@ -33,7 +33,7 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedMonth, onMonthCha
   return (
     <div className="month-selector">
       <label className="month-selector__label">选择月份</label>
-      <Select
+      <FormSelect
         value={selectedMonth}
         onChange={onMonthChange}
         options={monthOptions}

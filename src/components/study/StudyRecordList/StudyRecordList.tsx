@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StudyRecord, StudyCategory } from '@/utils';
+import { RecordListHeader, RecordListEmpty, ActionButtons } from '@/components/common';
+import { useMonthGroup } from '@/hooks/useMonthGroup';
+import { StudyRecordListSearchSection } from './StudyRecordListSearchSection';
 import './StudyRecordList.scss';
 
 interface StudyRecordListProps {
@@ -36,47 +39,8 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
   onSearchTitleChange,
   onMinDurationHoursChange
 }) => {
-  // 跟踪每个月份的展开/收起状态
-  const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
-
-  // 按月份分组
-  const groupedByMonth = records.reduce((groups, record) => {
-    const monthKey = record.date.substring(0, 7); // YYYY-MM
-    if (!groups[monthKey]) {
-      groups[monthKey] = [];
-    }
-    groups[monthKey].push(record);
-    return groups;
-  }, {} as Record<string, StudyRecord[]>);
-
-  // 按月份排序（最新的在前）
-  const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => b.localeCompare(a));
-
-  // 初始化展开状态（默认展开最近的月份）
-  React.useEffect(() => {
-    if (sortedMonths.length > 0 && Object.keys(expandedMonths).length === 0) {
-      const initialState: Record<string, boolean> = {};
-      sortedMonths.forEach((month, index) => {
-        initialState[month] = index === 0;
-      });
-      setExpandedMonths(initialState);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedMonths.length]);
-
-  // 切换月份的展开/收起状态
-  const toggleMonth = (monthKey: string) => {
-    setExpandedMonths(prev => ({
-      ...prev,
-      [monthKey]: !prev[monthKey]
-    }));
-  };
-
-  // 格式化月份显示
-  const formatMonthDisplay = (monthKey: string): string => {
-    const [year, month] = monthKey.split('-');
-    return `${year}年${parseInt(month)}月`;
-  };
+  // 使用通用的月份分组 Hook
+  const { groupedByMonth, sortedMonths, expandedMonths, toggleMonth, formatMonthDisplay } = useMonthGroup(records);
 
   // 计算某个月的总学习时长
   const calculateMonthTotal = (monthRecords: StudyRecord[]): number => {
@@ -129,208 +93,64 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
     window.location.hash = '#/study-records';
   };
 
+  // 渲染搜索区域
+  const renderSearchSection = () => (
+    <StudyRecordListSearchSection
+      categories={categories}
+      selectedCategory={selectedCategory}
+      searchTitle={searchTitle}
+      minDurationHours={minDurationHours}
+      onCategoryChange={onCategoryChange}
+      onSearchTitleChange={onSearchTitleChange}
+      onMinDurationHoursChange={onMinDurationHoursChange}
+    />
+  );
+
   if (records.length === 0) {
     return (
       <div className="study-list">
-        {/* 标题和操作按钮区域 */}
-        <div className="study-list__header">
-          <h3 className="study-list__title">📚 学习记录</h3>
-          {/* 查询组件 */}
-          {(onCategoryChange || onSearchTitleChange || onMinDurationHoursChange) && (
-            <div className="study-list__search">
-              {/* 分类筛选 */}
-              {onCategoryChange && categories.length > 0 && (
-                <div className="search-group">
-                  <span className="search-label">分类</span>
-                  <select 
-                    className="search-select"
-                    value={selectedCategory}
-                    onChange={(e) => onCategoryChange(e.target.value)}
-                  >
-                    <option value="全部">全部</option>
-                    {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-              {/* 标题搜索 */}
-              {onSearchTitleChange && (
-                <input
-                  type="text"
-                  className="search-input search-input--text"
-                  placeholder="搜索标题"
-                  value={searchTitle}
-                  onChange={(e) => onSearchTitleChange(e.target.value)}
-                />
-              )}
-              {/* 最小时长 */}
-              {onMinDurationHoursChange !== undefined && (
-                <div className="search-group">
-                  <span className="search-label">时长≥</span>
-                  <input
-                    type="number"
-                    className="search-input search-input--number"
-                    placeholder="0"
-                    value={minDurationHours}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      onMinDurationHoursChange(val === '' ? 0 : parseInt(val));
-                    }}
-                    min="0"
-                    max="24"
-                    step="1"
-                  />
-                  <span className="search-unit">小时</span>
-                </div>
-              )}
-            </div>
-          )}
-          {(onExport || onImport || onClear) && (
-            <div className="study-list__actions">
-              <button 
-                className="action-icon-btn action-icon-btn--dashboard" 
-                onClick={goToStudyDashboard}
-                title="查看数据面板"
-              >
-                📊
-              </button>
-              {onExport && (
-                <button 
-                  className="action-icon-btn action-icon-btn--export" 
-                  onClick={onExport}
-                  title="导出数据"
-                >
-                  📤
-                </button>
-              )}
-              {onImport && (
-                <button 
-                  className="action-icon-btn action-icon-btn--import" 
-                  onClick={onImport}
-                  disabled={isImporting}
-                  title={isImporting ? "导入中..." : "导入数据"}
-                >
-                  📥
-                </button>
-              )}
-              {onClear && (
-                <button 
-                  className="action-icon-btn action-icon-btn--danger" 
-                  onClick={onClear}
-                  title="清空数据"
-                >
-                  🗑️
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-        <div className="study-list__empty">
-          <div className="empty-icon">📚</div>
-          <p>还没有学习记录</p>
-          <p className="empty-hint">开始记录你的学习历程吧~</p>
-        </div>
+        <RecordListHeader
+          title="📚 学习记录"
+          count={0}
+          className="study-list__header"
+          searchSection={renderSearchSection()}
+          actions={
+            <ActionButtons
+              onViewDashboard={goToStudyDashboard}
+              onExport={onExport}
+              onImport={onImport}
+              onClear={onClear}
+              isImporting={isImporting}
+            />
+          }
+        />
+        <RecordListEmpty
+          icon="📚"
+          message="还没有学习记录"
+          hint="开始记录你的学习历程吧~"
+          className="study-list__empty"
+        />
       </div>
     );
   }
 
   return (
     <div className="study-list">
-      {/* 标题和操作按钮区域 */}
-      <div className="study-list__header">
-        <h3 className="study-list__title">📚 学习记录 ({records.length})</h3>
-        {/* 查询组件 */}
-        {(onCategoryChange || onSearchTitleChange || onMinDurationHoursChange) && (
-          <div className="study-list__search">
-            {/* 分类筛选 */}
-            {onCategoryChange && categories.length > 0 && (
-              <div className="search-group">
-                <span className="search-label">分类</span>
-                <select 
-                  className="search-select"
-                  value={selectedCategory}
-                  onChange={(e) => onCategoryChange(e.target.value)}
-                >
-                  <option value="全部">全部</option>
-                  {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-            )}
-            {/* 标题搜索 */}
-            {onSearchTitleChange && (
-              <input
-                type="text"
-                className="search-input search-input--text"
-                placeholder="搜索标题"
-                value={searchTitle}
-                onChange={(e) => onSearchTitleChange(e.target.value)}
-              />
-            )}
-            {/* 最小时长 */}
-            {onMinDurationHoursChange !== undefined && (
-              <div className="search-group">
-                <span className="search-label">时长≥</span>
-                <input
-                  type="number"
-                  className="search-input search-input--number"
-                  placeholder="0"
-                  value={minDurationHours}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onMinDurationHoursChange(val === '' ? 0 : parseInt(val));
-                  }}
-                  min="0"
-                  max="24"
-                  step="1"
-                />
-                <span className="search-unit">小时</span>
-              </div>
-            )}
-          </div>
-        )}
-        {(onExport || onImport || onClear) && (
-          <div className="study-list__actions">
-            <button 
-              className="action-icon-btn action-icon-btn--dashboard" 
-              onClick={goToStudyDashboard}
-              title="查看数据面板"
-            >
-              📊
-            </button>
-            {onExport && (
-              <button 
-                className="action-icon-btn action-icon-btn--export" 
-                onClick={onExport}
-                title="导出数据"
-              >
-                📤
-              </button>
-            )}
-            {onImport && (
-              <button 
-                className="action-icon-btn action-icon-btn--import" 
-                onClick={onImport}
-                disabled={isImporting}
-                title={isImporting ? "导入中..." : "导入数据"}
-              >
-                📥
-              </button>
-            )}
-            {onClear && (
-              <button 
-                className="action-icon-btn action-icon-btn--danger" 
-                onClick={onClear}
-                title="清空数据"
-              >
-                🗑️
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+      <RecordListHeader
+        title="📚 学习记录"
+        count={records.length}
+        className="study-list__header"
+        searchSection={renderSearchSection()}
+        actions={
+          <ActionButtons
+            onViewDashboard={goToStudyDashboard}
+            onExport={onExport}
+            onImport={onImport}
+            onClear={onClear}
+            isImporting={isImporting}
+          />
+        }
+      />
       
       <div className="study-list__content">
         {/* 按月份分组显示 */}

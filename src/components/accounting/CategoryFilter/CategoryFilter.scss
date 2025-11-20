@@ -184,6 +184,25 @@
       font-size: 0.9rem;
     }
 
+    .search-input-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+
+      .search-icon {
+        position: absolute;
+        left: 0.5rem;
+        font-size: 0.9rem;
+        color: #999;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .search-input {
+        padding-left: 2rem;
+      }
+    }
+
     .search-input {
       padding: 0.4rem 0.6rem;
       border: 1px solid #e0e0e0;

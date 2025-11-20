@@ -290,6 +290,16 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    
+    // 第一行：幸运色和今日禁忌
+    &:nth-child(1) {
+      grid-template-columns: 1fr 1.5fr; // 今日禁忌更宽
+    }
+    
+    // 第二行：幸运数字和今日建议
+    &:nth-child(2) {
+      grid-template-columns: 1fr 1.5fr; // 今日建议更宽
+    }
   }
 
   &__extra-item {

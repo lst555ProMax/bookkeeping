@@ -1,22 +1,22 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import './Select.scss';
+import './FormSelect.scss';
 
-export interface SelectOption {
+export interface FormSelectOption {
   value: string;
   label: string;
 }
 
-interface SelectProps {
+interface FormSelectProps {
   value: string;
   onChange: (value: string) => void;
-  options: SelectOption[];
+  options: FormSelectOption[];
   placeholder?: string;
   required?: boolean;
   id?: string;
   className?: string;
 }
 
-const Select: React.FC<SelectProps> = ({
+const FormSelect: React.FC<FormSelectProps> = ({
   value,
   onChange,
   options,
@@ -152,5 +152,5 @@ const Select: React.FC<SelectProps> = ({
   );
 };
 
-export default Select;
+export default FormSelect;
 

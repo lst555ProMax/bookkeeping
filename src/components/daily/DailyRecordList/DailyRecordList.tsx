@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DailyRecord, MealStatus, MEAL_STATUS_LABELS } from '@/utils';
+import { RecordListHeader, RecordListEmpty, ActionButtons } from '@/components/common';
+import { useMonthGroup } from '@/hooks/useMonthGroup';
+import { DailyRecordListSearchSection } from './DailyRecordListSearchSection';
 import './DailyRecordList.scss';
 
 interface DailyRecordListProps {
@@ -14,13 +17,13 @@ interface DailyRecordListProps {
   // 查询功能相关
   mealFilter?: 'all' | 'regular' | 'irregular';
   checkinFilter?: 'all' | 'normal' | 'abnormal';
-  minSteps?: number | undefined;
-  maxSteps?: number | undefined;
+  houseworkFilter?: 'all' | 'wash' | 'bath' | 'housework';
+  stepsLevel?: 'all' | 'gold' | 'green' | 'normal' | 'orange' | 'red';
   searchNotes?: string;
   onMealFilterChange?: (value: 'all' | 'regular' | 'irregular') => void;
   onCheckinFilterChange?: (value: 'all' | 'normal' | 'abnormal') => void;
-  onMinStepsChange?: (value: number | undefined) => void;
-  onMaxStepsChange?: (value: number | undefined) => void;
+  onHouseworkFilterChange?: (value: 'all' | 'wash' | 'bath' | 'housework') => void;
+  onStepsLevelChange?: (value: 'all' | 'gold' | 'green' | 'normal' | 'orange' | 'red') => void;
   onSearchNotesChange?: (value: string) => void;
 }
 
@@ -35,56 +38,17 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
   isImporting = false,
   mealFilter = 'all',
   checkinFilter = 'all',
-  minSteps,
-  maxSteps,
+  houseworkFilter = 'all',
+  stepsLevel = 'all',
   searchNotes,
   onMealFilterChange,
   onCheckinFilterChange,
-  onMinStepsChange,
-  onMaxStepsChange,
+  onHouseworkFilterChange,
+  onStepsLevelChange,
   onSearchNotesChange
 }) => {
-  // 跟踪每个月份的展开/收起状态
-  const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
-
-  // 按月份分组
-  const groupedByMonth = records.reduce((groups, record) => {
-    const monthKey = record.date.substring(0, 7); // YYYY-MM
-    if (!groups[monthKey]) {
-      groups[monthKey] = [];
-    }
-    groups[monthKey].push(record);
-    return groups;
-  }, {} as Record<string, DailyRecord[]>);
-
-  // 按月份排序（最新的在前）
-  const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => b.localeCompare(a));
-
-  // 初始化展开状态（默认展开最近的月份）
-  React.useEffect(() => {
-    if (sortedMonths.length > 0 && Object.keys(expandedMonths).length === 0) {
-      const initialState: Record<string, boolean> = {};
-      sortedMonths.forEach((month, index) => {
-        initialState[month] = index === 0;
-      });
-      setExpandedMonths(initialState);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedMonths.length]);
-
-  // 切换月份的展开/收起状态
-  const toggleMonth = (monthKey: string) => {
-    setExpandedMonths(prev => ({
-      ...prev,
-      [monthKey]: !prev[monthKey]
-    }));
-  };
-
-  // 格式化月份显示
-  const formatMonthDisplay = (monthKey: string): string => {
-    const [year, month] = monthKey.split('-');
-    return `${year}年${parseInt(month)}月`;
-  };
+  // 使用通用的月份分组 Hook
+  const { groupedByMonth, sortedMonths, expandedMonths, toggleMonth, formatMonthDisplay } = useMonthGroup(records);
 
   // 计算某个月早餐未吃的次数
   const calculateBreakfastNotEaten = (monthRecords: DailyRecord[]): number => {
@@ -166,266 +130,67 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     return totalMinutes >= 22 * 60; // 22:00及以后算正常
   };
 
+  // 渲染搜索区域
+  const renderSearchSection = () => (
+    <DailyRecordListSearchSection
+      mealFilter={mealFilter}
+      checkinFilter={checkinFilter}
+      houseworkFilter={houseworkFilter}
+      stepsLevel={stepsLevel}
+      searchNotes={searchNotes}
+      onMealFilterChange={onMealFilterChange}
+      onCheckinFilterChange={onCheckinFilterChange}
+      onHouseworkFilterChange={onHouseworkFilterChange}
+      onStepsLevelChange={onStepsLevelChange}
+      onSearchNotesChange={onSearchNotesChange}
+    />
+  );
+
   if (records.length === 0) {
     return (
       <div className="daily-list">
-        {/* 标题和操作按钮区域 */}
-        <div className="daily-list__header">
-          <h3 className="daily-list__title">📝 日常记录 (0)</h3>
-          {/* 查询组件 */}
-          {(onMealFilterChange || onCheckinFilterChange || onMinStepsChange || onSearchNotesChange) && (
-            <div className="daily-list__search">
-              {/* 三餐筛选 */}
-              {onMealFilterChange && (
-                <div className="search-group">
-                  <span className="search-label">三餐</span>
-                  <select 
-                    className="search-select"
-                    value={mealFilter}
-                    onChange={(e) => onMealFilterChange(e.target.value as 'all' | 'regular' | 'irregular')}
-                  >
-                    <option value="all">全部</option>
-                    <option value="regular">规律</option>
-                    <option value="irregular">不规律</option>
-                  </select>
-                </div>
-              )}
-              {/* 打卡筛选 */}
-              {onCheckinFilterChange && (
-                <div className="search-group">
-                  <span className="search-label">打卡</span>
-                  <select 
-                    className="search-select"
-                    value={checkinFilter}
-                    onChange={(e) => onCheckinFilterChange(e.target.value as 'all' | 'normal' | 'abnormal')}
-                  >
-                    <option value="all">全部</option>
-                    <option value="normal">正常</option>
-                    <option value="abnormal">不正常</option>
-                  </select>
-                </div>
-              )}
-              {/* 步数区间 */}
-              {(onMinStepsChange || onMaxStepsChange) && (
-                <div className="search-group">
-                  <span className="search-label">步数</span>
-                  <input
-                    type="number"
-                    className="search-input search-input--number"
-                    placeholder="0"
-                    value={minSteps ?? ''}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      onMinStepsChange?.(val === '' ? undefined : parseInt(val));
-                    }}
-                    min="0"
-                    max="50000"
-                    step="1000"
-                  />
-                  <span className="search-separator">-</span>
-                  <input
-                    type="number"
-                    className="search-input search-input--number"
-                    placeholder="50000"
-                    value={maxSteps ?? ''}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      onMaxStepsChange?.(val === '' ? undefined : parseInt(val));
-                    }}
-                    min="0"
-                    max="50000"
-                    step="1000"
-                  />
-                </div>
-              )}
-              {/* 备注搜索 */}
-              {onSearchNotesChange && (
-                <input
-                  type="text"
-                  className="search-input search-input--text"
-                  placeholder="备注关键词"
-                  value={searchNotes ?? ''}
-                  onChange={(e) => onSearchNotesChange?.(e.target.value)}
-                />
-              )}
-            </div>
-          )}
-          {(onViewDashboard || onExport || onImport || onClear) && (
-            <div className="daily-list__actions">
-              {onViewDashboard && (
-                <button 
-                  className="action-icon-btn" 
-                  onClick={onViewDashboard}
-                  title="查看数据面板"
-                >
-                  📊
-                </button>
-              )}
-              {onExport && (
-                <button 
-                  className="action-icon-btn action-icon-btn--export" 
-                  onClick={onExport}
-                  title="导出数据"
-                >
-                  📤
-                </button>
-              )}
-              {onImport && (
-                <button 
-                  className="action-icon-btn action-icon-btn--import" 
-                  onClick={onImport}
-                  disabled={isImporting}
-                  title={isImporting ? "导入中..." : "导入数据"}
-                >
-                  📥
-                </button>
-              )}
-              {onClear && (
-                <button 
-                  className="action-icon-btn action-icon-btn--danger" 
-                  onClick={onClear}
-                  title="清空数据"
-                >
-                  🗑️
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-        <div className="daily-list__empty">
-          <div className="empty-icon">📝</div>
-          <p>还没有日常记录</p>
-          <p className="empty-hint">开始记录你的日常生活吧~</p>
-        </div>
+        <RecordListHeader
+          title="📝 日常记录"
+          count={0}
+          className="daily-list__header"
+          searchSection={renderSearchSection()}
+          actions={
+            <ActionButtons
+              onViewDashboard={onViewDashboard}
+              onExport={onExport}
+              onImport={onImport}
+              onClear={onClear}
+              isImporting={isImporting}
+            />
+          }
+        />
+        <RecordListEmpty
+          icon="📝"
+          message="还没有日常记录"
+          hint="开始记录你的日常生活吧~"
+          className="daily-list__empty"
+        />
       </div>
     );
   }
 
   return (
     <div className="daily-list">
-      {/* 标题和操作按钮区域 */}
-      <div className="daily-list__header">
-        <h3 className="daily-list__title">📝 日常记录 ({records.length})</h3>
-        {/* 查询组件 */}
-        {(onMealFilterChange || onCheckinFilterChange || onMinStepsChange || onSearchNotesChange) && (
-          <div className="daily-list__search">
-            {/* 三餐筛选 */}
-            {onMealFilterChange && (
-              <div className="search-group">
-                <span className="search-label">三餐</span>
-                <select 
-                  className="search-select"
-                  value={mealFilter}
-                  onChange={(e) => onMealFilterChange(e.target.value as 'all' | 'regular' | 'irregular')}
-                >
-                  <option value="all">全部</option>
-                  <option value="regular">规律</option>
-                  <option value="irregular">不规律</option>
-                </select>
-              </div>
-            )}
-            {/* 打卡筛选 */}
-            {onCheckinFilterChange && (
-              <div className="search-group">
-                <span className="search-label">打卡</span>
-                <select 
-                  className="search-select"
-                  value={checkinFilter}
-                  onChange={(e) => onCheckinFilterChange(e.target.value as 'all' | 'normal' | 'abnormal')}
-                >
-                  <option value="all">全部</option>
-                  <option value="normal">正常</option>
-                  <option value="abnormal">不正常</option>
-                </select>
-              </div>
-            )}
-            {/* 步数区间 */}
-            {(onMinStepsChange || onMaxStepsChange) && (
-              <div className="search-group">
-                <span className="search-label">步数</span>
-                <input
-                  type="number"
-                  className="search-input search-input--number"
-                  placeholder="0"
-                  value={minSteps ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onMinStepsChange?.(val === '' ? undefined : parseInt(val));
-                  }}
-                  min="0"
-                  max="50000"
-                  step="1000"
-                />
-                <span className="search-separator">-</span>
-                <input
-                  type="number"
-                  className="search-input search-input--number"
-                  placeholder="50000"
-                  value={maxSteps ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onMaxStepsChange?.(val === '' ? undefined : parseInt(val));
-                  }}
-                  min="0"
-                  max="50000"
-                  step="1000"
-                />
-              </div>
-            )}
-            {/* 备注搜索 */}
-            {onSearchNotesChange && (
-              <input
-                type="text"
-                className="search-input search-input--text"
-                placeholder="备注关键词"
-                value={searchNotes ?? ''}
-                onChange={(e) => onSearchNotesChange?.(e.target.value)}
-              />
-            )}
-          </div>
-        )}
-        {(onViewDashboard || onExport || onImport || onClear) && (
-          <div className="daily-list__actions">
-            {onViewDashboard && (
-              <button 
-                className="action-icon-btn" 
-                onClick={onViewDashboard}
-                title="查看数据面板"
-              >
-                📊
-              </button>
-            )}
-            {onExport && (
-              <button 
-                className="action-icon-btn action-icon-btn--export" 
-                onClick={onExport}
-                title="导出数据"
-              >
-                📤
-              </button>
-            )}
-            {onImport && (
-              <button 
-                className="action-icon-btn action-icon-btn--import" 
-                onClick={onImport}
-                disabled={isImporting}
-                title={isImporting ? "导入中..." : "导入数据"}
-              >
-                📥
-              </button>
-            )}
-            {onClear && (
-              <button 
-                className="action-icon-btn action-icon-btn--danger" 
-                onClick={onClear}
-                title="清空数据"
-              >
-                🗑️
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+      <RecordListHeader
+        title="📝 日常记录"
+        count={records.length}
+        className="daily-list__header"
+        searchSection={renderSearchSection()}
+        actions={
+          <ActionButtons
+            onViewDashboard={onViewDashboard}
+            onExport={onExport}
+            onImport={onImport}
+            onClear={onClear}
+            isImporting={isImporting}
+          />
+        }
+      />
       
       <div className="daily-list__content">
         {/* 按月份分组显示 */}

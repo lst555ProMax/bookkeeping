@@ -1,0 +1,44 @@
+.filter-number-input {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  outline: none;
+  background: white;
+  color: #333;
+  height: 32px;
+  box-sizing: border-box;
+  font-family: inherit;
+
+  &:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+  }
+
+  &:hover:not(:disabled) {
+    border-color: #c0c0c0;
+  }
+
+  &::placeholder {
+    color: #999;
+    font-size: 0.85rem;
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  &:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+

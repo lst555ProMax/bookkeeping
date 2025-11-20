@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { StudyRecord, StudyCategory } from '@/utils';
 import { getStudyCategories } from '@/utils';
-import { DatePicker, Select } from '@/components/common';
-import type { SelectOption } from '@/components/common';
+import { DatePicker, FormSelect } from '@/components/common';
+import type { FormSelectOption } from '@/components/common';
 import './StudyRecordForm.scss';
 
 interface StudyRecordFormProps {
@@ -42,8 +42,8 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
   const [remark, setRemark] = useState('');
   const [categories, setCategories] = useState<StudyCategory[]>([]);
 
-  // 将分类数组转换为 SelectOption 数组
-  const categoryOptions: SelectOption[] = categories.map(cat => ({
+  // 将分类数组转换为 FormSelectOption 数组
+  const categoryOptions: FormSelectOption[] = categories.map(cat => ({
     value: cat,
     label: cat
   }));
@@ -194,7 +194,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
             分类 <span className="required">*</span>
           </label>
           <div className="category-select-wrapper">
-            <Select
+            <FormSelect
               id="category"
               value={category}
               onChange={(value) => setCategory(value as StudyCategory)}

@@ -107,17 +107,15 @@ const Home: React.FC = () => {
   // 查询筛选状态 - 睡眠记录
   const [sleepMinHour, setSleepMinHour] = useState<number | undefined>(undefined);
   const [sleepMaxHour, setSleepMaxHour] = useState<number | undefined>(undefined);
-  const [sleepMinDurationHour, setSleepMinDurationHour] = useState<number | undefined>(undefined);
-  const [sleepMaxDurationHour, setSleepMaxDurationHour] = useState<number | undefined>(undefined);
-  const [sleepMinQuality, setSleepMinQuality] = useState<number | undefined>(undefined);
-  const [sleepMaxQuality, setSleepMaxQuality] = useState<number | undefined>(undefined);
+  const [sleepMinDurationHour, setSleepMinDurationHour] = useState<number>(0);
+  const [sleepQualityLevel, setSleepQualityLevel] = useState<'all' | 'excellent' | 'good' | 'fair' | 'poor'>('all');
   const [sleepSearchNotes, setSleepSearchNotes] = useState<string>('');
 
   // 查询筛选状态 - 日常记录
   const [dailyMealFilter, setDailyMealFilter] = useState<'all' | 'regular' | 'irregular'>('all');
   const [dailyCheckinFilter, setDailyCheckinFilter] = useState<'all' | 'normal' | 'abnormal'>('all');
-  const [dailyMinSteps, setDailyMinSteps] = useState<number | undefined>(undefined);
-  const [dailyMaxSteps, setDailyMaxSteps] = useState<number | undefined>(undefined);
+  const [dailyHouseworkFilter, setDailyHouseworkFilter] = useState<'all' | 'wash' | 'bath' | 'housework'>('all');
+  const [dailyStepsLevel, setDailyStepsLevel] = useState<'all' | 'gold' | 'green' | 'normal' | 'orange' | 'red'>('all');
   const [dailySearchNotes, setDailySearchNotes] = useState<string>('');
 
   // 查询筛选状态 - 学习记录
@@ -193,17 +191,21 @@ const Home: React.FC = () => {
         if (sleepMaxHour !== undefined && sleepHour > sleepMaxHour) return false;
       }
       
-      // 睡眠时长筛选（以小时为单位）
-      if (sleepMinDurationHour !== undefined || sleepMaxDurationHour !== undefined) {
+      // 睡眠时长筛选（以小时为单位，筛选大于等于指定值的记录）
+      if (sleepMinDurationHour !== undefined && sleepMinDurationHour > 0) {
         if (s.duration === undefined) return false;
         const durationHours = s.duration / 60; // 将分钟转换为小时
-        if (sleepMinDurationHour !== undefined && durationHours < sleepMinDurationHour) return false;
-        if (sleepMaxDurationHour !== undefined && durationHours > sleepMaxDurationHour) return false;
+        if (durationHours < sleepMinDurationHour) return false;
       }
       
-      // 睡眠质量筛选
-      if (sleepMinQuality !== undefined && s.quality < sleepMinQuality) return false;
-      if (sleepMaxQuality !== undefined && s.quality > sleepMaxQuality) return false;
+      // 睡眠质量等级筛选
+      if (sleepQualityLevel !== 'all') {
+        const quality = s.quality;
+        if (sleepQualityLevel === 'excellent' && quality < 90) return false;
+        if (sleepQualityLevel === 'good' && (quality < 75 || quality >= 90)) return false;
+        if (sleepQualityLevel === 'fair' && (quality < 60 || quality >= 75)) return false;
+        if (sleepQualityLevel === 'poor' && quality >= 60) return false;
+      }
       
       // 备注筛选
       if (sleepSearchNotes && sleepSearchNotes.trim() !== '') {
@@ -217,7 +219,7 @@ const Home: React.FC = () => {
     });
   };
 
-  // 筛选日常记录（应用三餐、打卡、步数和备注过滤）
+  // 筛选日常记录（应用三餐、打卡、内务、步数和备注过滤）
   const filterDailyRecords = (records: DailyRecord[]) => {
     return records.filter(d => {
       // 三餐筛选（只有三个都规律才算规律）
@@ -279,11 +281,30 @@ const Home: React.FC = () => {
         if (dailyCheckinFilter === 'abnormal' && isNormal) return false;
       }
       
-      // 步数筛选
-      if (dailyMinSteps !== undefined || dailyMaxSteps !== undefined) {
+      // 内务筛选
+      if (dailyHouseworkFilter !== 'all') {
+        if (dailyHouseworkFilter === 'wash') {
+          // 洗漱：早洗或晚洗
+          if (!d.hygiene.morningWash && !d.hygiene.nightWash) return false;
+        } else if (dailyHouseworkFilter === 'bath') {
+          // 洗浴：洗澡、洗头、洗脚或洗脸
+          if (!d.bathing.shower && !d.bathing.hairWash && !d.bathing.footWash && !d.bathing.faceWash) return false;
+        } else if (dailyHouseworkFilter === 'housework') {
+          // 家务：洗衣或打扫
+          if (!d.laundry && !d.cleaning) return false;
+        }
+      }
+      
+      // 步数等级筛选
+      if (dailyStepsLevel !== 'all') {
         if (d.wechatSteps === undefined) return false;
-        if (dailyMinSteps !== undefined && d.wechatSteps < dailyMinSteps) return false;
-        if (dailyMaxSteps !== undefined && d.wechatSteps > dailyMaxSteps) return false;
+        const steps = d.wechatSteps;
+        
+        if (dailyStepsLevel === 'gold' && steps < 25000) return false;
+        if (dailyStepsLevel === 'green' && (steps < 10000 || steps >= 25000)) return false;
+        if (dailyStepsLevel === 'normal' && (steps < 5000 || steps >= 10000)) return false;
+        if (dailyStepsLevel === 'orange' && (steps < 2000 || steps >= 5000)) return false;
+        if (dailyStepsLevel === 'red' && steps >= 2000) return false;
       }
       
       // 备注筛选
@@ -1059,16 +1080,16 @@ const Home: React.FC = () => {
               🌙 {BUSINESS_MODE_LABELS[BusinessMode.SLEEP]}
             </button>
             <button 
-              className={`mode-btn ${businessMode === BusinessMode.DAILY && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-              onClick={() => handleBusinessModeChange(BusinessMode.DAILY)}
-            >
-              📝 {BUSINESS_MODE_LABELS[BusinessMode.DAILY]}
-            </button>
-            <button 
               className={`mode-btn ${businessMode === BusinessMode.STUDY && activeTab === 'business' ? 'mode-btn--active' : ''}`}
               onClick={() => handleBusinessModeChange(BusinessMode.STUDY)}
             >
               📚 {BUSINESS_MODE_LABELS[BusinessMode.STUDY]}
+            </button>
+            <button 
+              className={`mode-btn ${businessMode === BusinessMode.DAILY && activeTab === 'business' ? 'mode-btn--active' : ''}`}
+              onClick={() => handleBusinessModeChange(BusinessMode.DAILY)}
+            >
+              📝 {BUSINESS_MODE_LABELS[BusinessMode.DAILY]}
             </button>
 
             {/* 第二行：占位空格 + 健康管理按钮 */}
@@ -1307,16 +1328,12 @@ const Home: React.FC = () => {
                       minSleepHour={sleepMinHour}
                       maxSleepHour={sleepMaxHour}
                       minDurationHour={sleepMinDurationHour}
-                      maxDurationHour={sleepMaxDurationHour}
-                      minQuality={sleepMinQuality}
-                      maxQuality={sleepMaxQuality}
+                      qualityLevel={sleepQualityLevel}
                       searchNotes={sleepSearchNotes}
                       onMinSleepHourChange={setSleepMinHour}
                       onMaxSleepHourChange={setSleepMaxHour}
                       onMinDurationHourChange={setSleepMinDurationHour}
-                      onMaxDurationHourChange={setSleepMaxDurationHour}
-                      onMinQualityChange={setSleepMinQuality}
-                      onMaxQualityChange={setSleepMaxQuality}
+                      onQualityLevelChange={setSleepQualityLevel}
                       onSearchNotesChange={setSleepSearchNotes}
                     />
                   </div>
@@ -1360,13 +1377,13 @@ const Home: React.FC = () => {
                       isImporting={isImportingDaily}
                       mealFilter={dailyMealFilter}
                       checkinFilter={dailyCheckinFilter}
-                      minSteps={dailyMinSteps}
-                      maxSteps={dailyMaxSteps}
+                      houseworkFilter={dailyHouseworkFilter}
+                      stepsLevel={dailyStepsLevel}
                       searchNotes={dailySearchNotes}
                       onMealFilterChange={setDailyMealFilter}
                       onCheckinFilterChange={setDailyCheckinFilter}
-                      onMinStepsChange={setDailyMinSteps}
-                      onMaxStepsChange={setDailyMaxSteps}
+                      onHouseworkFilterChange={setDailyHouseworkFilter}
+                      onStepsLevelChange={setDailyStepsLevel}
                       onSearchNotesChange={setDailySearchNotes}
                     />
                   </div>

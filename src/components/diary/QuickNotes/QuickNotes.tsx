@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { QuickNote } from '@/utils';
+import { FilterSearchInput } from '@/components/common';
 import './QuickNotes.scss';
 
 interface QuickNotesProps {
@@ -244,12 +245,10 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
         <h3 className="quick-notes__title">💭 速记 ({quickNotes.length})</h3>
         {onSearchContentChange && (
           <div className="quick-notes__search">
-            <input
-              type="text"
-              className="search-input search-input--text"
-              placeholder="搜索内容..."
+            <FilterSearchInput
               value={searchContent}
-              onChange={(e) => onSearchContentChange(e.target.value)}
+              onChange={onSearchContentChange}
+              placeholder="文本"
             />
           </div>
         )}

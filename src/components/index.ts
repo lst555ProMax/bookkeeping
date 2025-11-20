@@ -6,9 +6,12 @@ export {
   Fortune,
   MonthSelector,
   DatePicker,
-  Select
+  FormSelect,
+  FilterNumberInput,
+  FilterSelect,
+  FilterSearchInput
 } from './common';
-export type { SelectOption } from './common';
+export type { FormSelectOption, FilterSelectOption } from './common';
 
 // 账单记录相关组件
 export {

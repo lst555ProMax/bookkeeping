@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { DiaryEntry, WEATHER_OPTIONS, MOOD_OPTIONS } from '@/utils';
+import { FilterSearchInput } from '@/components/common';
 import './DiaryList.scss';
 
 interface DiaryListProps {
@@ -209,12 +210,10 @@ const DiaryList: React.FC<DiaryListProps> = ({
         <h3 className="diary-list__title">📚 日记 ({diaryEntries.length})</h3>
         {onSearchContentChange && (
           <div className="diary-list__search">
-            <input
-              type="text"
-              className="search-input search-input--text"
-              placeholder="搜索内容..."
+            <FilterSearchInput
               value={searchContent}
-              onChange={(e) => onSearchContentChange(e.target.value)}
+              onChange={onSearchContentChange}
+              placeholder="文本"
             />
           </div>
         )}

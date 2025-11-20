@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FilterNumberInput, FilterSearchInput } from '@/components/common';
 import './CategoryFilter.scss';
 
 interface CategoryFilterProps {
@@ -200,40 +201,31 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           <div className="category-filter__search">
             {(onMinAmountChange || onMaxAmountChange) && (
               <div className="search-amount">
-                <input
-                  type="number"
-                  className="search-input search-input--number"
+                <FilterNumberInput
+                  value={minAmount}
+                  onChange={(val) => onMinAmountChange?.(val)}
                   placeholder="最小金额"
-                  value={minAmount ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onMinAmountChange?.(val === '' ? undefined : parseFloat(val));
-                  }}
-                  min="0"
-                  step="1"
+                  min={0}
+                  step={1}
+                  width="100px"
                 />
                 <span className="search-separator">-</span>
-                <input
-                  type="number"
-                  className="search-input search-input--number"
+                <FilterNumberInput
+                  value={maxAmount}
+                  onChange={(val) => onMaxAmountChange?.(val)}
                   placeholder="最大金额"
-                  value={maxAmount ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onMaxAmountChange?.(val === '' ? undefined : parseFloat(val));
-                  }}
-                  min="0"
-                  step="1"
+                  min={0}
+                  step={1}
+                  width="100px"
                 />
               </div>
             )}
             {onSearchDescriptionChange && (
-              <input
-                type="text"
-                className="search-input search-input--text"
-                placeholder="备注关键词"
+              <FilterSearchInput
                 value={searchDescription ?? ''}
-                onChange={(e) => onSearchDescriptionChange?.(e.target.value)}
+                onChange={(val) => onSearchDescriptionChange?.(val)}
+                placeholder="备注"
+                width="120px"
               />
             )}
           </div>

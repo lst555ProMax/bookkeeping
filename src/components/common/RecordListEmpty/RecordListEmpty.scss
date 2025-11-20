@@ -1,0 +1,22 @@
+.record-list-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #999;
+
+  &__icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  &__message {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+  }
+
+  &__hint {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #bbb;
+  }
+}
+

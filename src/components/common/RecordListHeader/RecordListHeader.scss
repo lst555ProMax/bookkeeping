@@ -1,0 +1,64 @@
+.record-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  &__title {
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    flex-shrink: 0;
+    width: 140px;
+  }
+
+  &__search {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1;
+
+    // 搜索组样式
+    .search-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .search-label {
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .search-separator {
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .search-unit {
+      font-size: 0.85rem;
+      color: #666;
+      white-space: nowrap;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-shrink: 0;
+  }
+}
+

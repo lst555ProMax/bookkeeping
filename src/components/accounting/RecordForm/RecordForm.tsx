@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { ExpenseCategory, ExpenseRecord, IncomeCategory, IncomeRecord, RecordType } from '@/utils';
 import { generateId, formatDate, getCategories, getIncomeCategories } from '@/utils';
-import { DatePicker, Select } from '@/components/common';
-import type { SelectOption } from '@/components/common';
+import { DatePicker, FormSelect } from '@/components/common';
+import type { FormSelectOption } from '@/components/common';
 import './RecordForm.scss';
 
 interface RecordFormProps {
@@ -40,8 +40,8 @@ const RecordForm: React.FC<RecordFormProps> = ({
   const isEditing = !!(editingExpense || editingIncome);
   const currentCategories = recordType === RecordType.EXPENSE ? expenseCategories : incomeCategories;
   
-  // 将分类数组转换为 SelectOption 数组
-  const categoryOptions: SelectOption[] = currentCategories.map(cat => ({
+  // 将分类数组转换为 FormSelectOption 数组
+  const categoryOptions: FormSelectOption[] = currentCategories.map(cat => ({
     value: cat,
     label: cat
   }));
@@ -258,7 +258,7 @@ const RecordForm: React.FC<RecordFormProps> = ({
       <div className="expense-form__group">
         <label htmlFor="category" className="expense-form__label">分类</label>
         <div className="expense-form__category-group">
-          <Select
+          <FormSelect
             id="category"
             value={category}
             onChange={setCategory}

@@ -5,40 +5,15 @@
   overflow: hidden;
 
   &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    flex-shrink: 0;
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 10;
-    gap: 1rem;
-    flex-wrap: wrap;
+    // 通用样式在 RecordListHeader 组件中
   }
 
-  &__title {
-    color: #333;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0;
-    flex-shrink: 0;
-    width: 140px;
-  }
-
-  &__search {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    flex-wrap: wrap;
-    flex: 1;
-
+  // 搜索区域样式（在通用组件中使用）
+  :global(.record-list-header__search) {
     .search-group {
       display: flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.5rem;
     }
 
     .search-label {
@@ -53,64 +28,10 @@
       color: #666;
       white-space: nowrap;
     }
-
-    .search-select {
-      padding: 0.4rem 0.6rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-      outline: none;
-      background: white;
-      color: #333;
-      height: 32px;
-      box-sizing: border-box;
-      cursor: pointer;
-      min-width: 100px;
-
-      &:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-      }
-    }
-
-    .search-input {
-      padding: 0.4rem 0.6rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-      outline: none;
-      background: white;
-      color: #333;
-      height: 32px;
-      box-sizing: border-box;
-
-      &:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-      }
-
-      &--number {
-        width: 60px;
-      }
-
-      &--text {
-        width: 140px;
-      }
-
-      &::placeholder {
-        color: #999;
-        font-size: 0.85rem;
-      }
-    }
   }
 
-  &__actions {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    flex-shrink: 0;
+  &__empty {
+    // 通用样式在 RecordListEmpty 组件中
   }
 
   &__content {

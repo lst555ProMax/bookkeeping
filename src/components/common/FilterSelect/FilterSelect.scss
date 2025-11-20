@@ -1,0 +1,136 @@
+.filter-select-wrapper {
+  position: relative;
+  width: 100%;
+
+  &__trigger {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    outline: none;
+    background: white;
+    color: #333;
+    height: 32px;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &:hover {
+      border-color: #c0c0c0;
+    }
+  }
+
+  &.open &__trigger {
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+  }
+
+  &__value {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__arrow {
+    color: #999;
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+
+    &.open {
+      transform: rotate(180deg);
+      color: #667eea;
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    padding: 0.25rem;
+    z-index: 10000;
+    animation: slideDown 0.2s ease;
+    border: 1px solid #e0e0e0;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    // 自定义滚动条
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #667eea;
+      border-radius: 3px;
+
+      &:hover {
+        background: #764ba2;
+      }
+    }
+  }
+
+  &__option {
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #333;
+    font-size: 0.85rem;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.08);
+      color: #667eea;
+    }
+
+    &.selected {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+      color: #667eea;
+      font-weight: 500;
+
+      &:hover {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+      }
+    }
+  }
+
+  &__check {
+    color: #667eea;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
