@@ -41,18 +41,9 @@
     flex-direction: column;
     padding: 2rem;
     background-color: #fffef9;
+    min-height: 0;
+    overflow: hidden;
     
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 40px;
-      width: 2px;
-      height: 100%;
-      background: #ffe4e1;
-      z-index: 1;
-      pointer-events: none;
-    }
 
     .notebook__header {
       display: flex;
@@ -61,6 +52,7 @@
       margin-bottom: 1.2rem;
       position: relative;
       z-index: 100;
+      flex-shrink: 0;
 
       .notebook__header-left {
         display: flex;
@@ -439,10 +431,12 @@
       flex: 1;
       position: relative;
       z-index: 2;
-      overflow: hidden;
+      overflow: hidden; // 父容器不滚动,让子元素 ProseMirror 滚动
       display: flex;
       flex-direction: column;
       min-height: 0;
+      
+      // 移除自定义滚动条样式(滚动条在 ProseMirror 上)
 
       // Tiptap Bubble Menu
       .bubble-menu {
@@ -534,35 +528,42 @@
       }
 
       // Tiptap Editor Wrapper
-      .diary-content-editor {
-        height: 100%;
+      // EditorContent 生成的容器 (inline style div)
+      > div {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        position: relative;
+        overflow: hidden; // 防止此层滚动
         
-        .ProseMirror {
-          height: 100%;
+        // EditorContent 的实际内容容器
+        .ProseMirror-focused {
           outline: none;
-          
-          // Ensure paragraphs have correct line height matching the background lines
-          p {
-            margin: 0;
-            line-height: 30px;
-          }
         }
       }
 
-      .diary-content-editable {
-        width: 100%;
+      // 竖线元素 - 在编辑器容器内，绝对定位，跟随内容滚动
+      .notebook__content-line {
+        position: absolute;
+        top: 0;
+        right: 40px;
+        width: 2px;
+        background: #ffe4e1;
+        z-index: 1;
+        pointer-events: none;
+        // 不设置默认高度，完全由JavaScript控制
+      }
+
+      // Tiptap 编辑器的核心样式
+      .ProseMirror {
+        flex: 1;
         min-height: 100%;
-        border: none;
-        color: #333;
-        font-size: 1rem;
-        line-height: 30px;
-        padding: 0;
-        resize: none;
         outline: none;
         overflow-y: auto;
-        overflow-x: hidden;
+        padding: 0;
         
-        // 行线背景
+        // 行线背景 - 使用 background-size 让横线填满容器
         background: 
           repeating-linear-gradient(
             transparent,
@@ -571,20 +572,14 @@
             #e8e4d8 30px
           );
         background-attachment: local;
-
-        &:focus {
-          outline: none;
+        
+        // 确保段落行高与横线对齐
+        p {
+          margin: 0;
+          line-height: 30px;
+          min-height: 30px;
         }
-
-        // Placeholder styling for Tiptap
-        p.is-editor-empty:first-child::before {
-          content: attr(data-placeholder);
-          color: #bbb;
-          float: left;
-          height: 0;
-          pointer-events: none;
-        }
-
+        
         // 自定义滚动条
         &::-webkit-scrollbar {
           width: 8px;
@@ -602,6 +597,19 @@
           &:hover {
             background: rgba(102, 126, 234, 0.5);
           }
+        }
+        
+        // Placeholder styling
+        &.ProseMirror-focused {
+          outline: none;
+        }
+        
+        p.is-editor-empty:first-child::before {
+          content: attr(data-placeholder);
+          color: #bbb;
+          float: left;
+          height: 0;
+          pointer-events: none;
         }
       }
 

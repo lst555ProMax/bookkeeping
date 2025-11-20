@@ -261,11 +261,12 @@
         color: #666;
         line-height: 1.6;
         overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: pre-wrap; // 保留换行符
         display: -webkit-box;
         -webkit-line-clamp: 3;
         line-clamp: 3;
         -webkit-box-orient: vertical;
+        word-break: break-word; // 允许长单词换行
       }
     }
 

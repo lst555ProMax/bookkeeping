@@ -187,10 +187,19 @@ const DiaryList: React.FC<DiaryListProps> = ({
     }
   };
 
-  // 从 HTML 中提取纯文本
+  // 从 HTML 中提取纯文本，保留换行
   const getTextFromHTML = (html: string): string => {
+    if (!html) return '';
     const div = document.createElement('div');
     div.innerHTML = html;
+    // 将 <p> 标签转换为换行符，保留文本内容
+    const paragraphs = div.querySelectorAll('p');
+    if (paragraphs.length > 0) {
+      return Array.from(paragraphs)
+        .map(p => (p.textContent || '').trim())
+        .join('\n');
+    }
+    // 如果没有 <p> 标签，直接返回文本内容
     return div.textContent || div.innerText || '';
   };
 

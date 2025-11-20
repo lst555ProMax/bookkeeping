@@ -105,26 +105,195 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
       attributes: {
         class: 'diary-content-editable',
       },
+      handleKeyDown: (_view, event) => {
+        // 处理 Ctrl+Enter 保存
+        if (event.ctrlKey && event.key === 'Enter') {
+          event.preventDefault();
+          onSave();
+          return true;
+        }
+        return false;
+      },
     },
   });
 
+  // 将纯文本转换为 HTML（保留换行）
+  const convertTextToHTML = (text: string): string => {
+    if (!text) return '';
+    // 如果已经是 HTML（包含标签），直接返回
+    if (/<[^>]+>/.test(text)) {
+      return text;
+    }
+    // 将纯文本转换为 HTML，保留换行
+    return text
+      .split('\n')
+      .map(line => line.trim() === '' ? '<p></p>' : `<p>${line}</p>`)
+      .join('');
+  };
+
   // Sync content when diaryContent changes from outside
   useEffect(() => {
-    if (editor && diaryContent !== editor.getHTML()) {
-      // Only update if the content is different to avoid cursor jumping
-      // However, getHTML() might return slightly different HTML than what was passed in
-      // A simple check might not be enough, but for now let's try this.
-      // Better approach: compare text content or use a more robust comparison if needed.
-      // For switching dates, the content will be very different.
-      editor.commands.setContent(diaryContent);
+    if (editor) {
+      const currentHTML = editor.getHTML();
+      // 如果内容是纯文本，先转换为 HTML；如果已经是 HTML，保持不变
+      const htmlContent = convertTextToHTML(diaryContent);
+      
+      // 只有当转换后的 HTML 与当前编辑器内容不同时才更新
+      if (htmlContent !== currentHTML) {
+        editor.commands.setContent(htmlContent);
+      }
     }
   }, [diaryContent, editor, selectedDate]); // Added selectedDate to ensure update on date change
+
+  // 更新竖线高度：初始填满视窗，内容增加时跟随内容增长，内容减少但不需要滚动时保持填满视窗
+  useEffect(() => {
+    let retryCount = 0;
+    const maxRetries = 10;
+    
+    const updateVerticalLineHeight = () => {
+      if (verticalLineRef.current && editor && contentRef.current) {
+        const proseMirror = editor.view.dom;
+        if (proseMirror && contentRef.current) {
+          // 获取内容的实际高度
+          const contentHeight = proseMirror.scrollHeight || proseMirror.offsetHeight;
+          // 获取滚动容器的可视高度（视窗高度）- 这是关键！
+          const containerHeight = contentRef.current.clientHeight;
+          
+          // 如果容器高度为0或太小，说明还没渲染好，需要重试
+          if (containerHeight < 100 && retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(updateVerticalLineHeight, 50);
+            return;
+          }
+          
+          // 竖线高度 = max(内容实际高度, 容器可视高度)
+          // 关键逻辑：即使内容很少，竖线也要填满整个容器可视区域
+          // 强制确保竖线高度至少等于容器高度
+          const lineHeight = Math.max(contentHeight, containerHeight);
+          
+          if (containerHeight > 0) {
+            // 确保竖线高度至少等于容器高度（这是关键！）
+            const finalHeight = Math.max(lineHeight, containerHeight);
+            verticalLineRef.current.style.height = `${finalHeight}px`;
+            verticalLineRef.current.style.minHeight = `${containerHeight}px`;
+            retryCount = 0; // 重置重试计数
+            
+            // 调试信息（可以在控制台查看）
+            // console.log('竖线高度更新:', { contentHeight, containerHeight, finalHeight });
+          }
+        }
+      }
+    };
+
+    // 使用 requestAnimationFrame 确保在浏览器完成渲染后更新
+    const scheduleUpdate = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          updateVerticalLineHeight();
+        });
+      });
+    };
+
+    // 初始设置 - 多次尝试确保获取到正确的高度
+    if (editor) {
+      scheduleUpdate();
+      // 使用多个延迟作为备用
+      setTimeout(updateVerticalLineHeight, 50);
+      setTimeout(updateVerticalLineHeight, 100);
+      setTimeout(updateVerticalLineHeight, 200);
+      setTimeout(updateVerticalLineHeight, 300);
+      setTimeout(updateVerticalLineHeight, 500);
+    }
+
+    // 监听内容变化
+    if (editor) {
+      const proseMirror = editor.view.dom;
+      
+      // 使用 ResizeObserver 监听内容高度变化
+      const resizeObserver = new ResizeObserver(() => {
+        updateVerticalLineHeight();
+      });
+      
+      if (proseMirror) {
+        resizeObserver.observe(proseMirror);
+      }
+      if (contentRef.current) {
+        resizeObserver.observe(contentRef.current);
+      }
+      
+      // 监听编辑器更新事件
+      const handleUpdate = () => {
+        setTimeout(updateVerticalLineHeight, 0);
+      };
+      
+      editor.on('update', handleUpdate);
+      
+      // 监听窗口大小变化和滚动事件（容器大小可能变化）
+      window.addEventListener('resize', updateVerticalLineHeight);
+      if (contentRef.current) {
+        contentRef.current.addEventListener('scroll', updateVerticalLineHeight);
+      }
+      
+      return () => {
+        resizeObserver.disconnect();
+        editor.off('update', handleUpdate);
+        window.removeEventListener('resize', updateVerticalLineHeight);
+        if (contentRef.current) {
+          contentRef.current.removeEventListener('scroll', updateVerticalLineHeight);
+        }
+      };
+    }
+  }, [editor]);
+
+  // 当内容同步后也更新竖线高度
+  useEffect(() => {
+    if (editor && verticalLineRef.current && contentRef.current) {
+      const updateVerticalLineHeight = () => {
+        const proseMirror = editor.view.dom;
+        if (proseMirror && contentRef.current && verticalLineRef.current) {
+          // 获取内容的实际高度
+          const contentHeight = proseMirror.scrollHeight || proseMirror.offsetHeight;
+          // 获取滚动容器的可视高度（视窗高度）
+          const containerHeight = contentRef.current.clientHeight;
+          
+          // 竖线高度 = max(内容实际高度, 容器可视高度)
+          // 关键逻辑：即使内容很少，竖线也要填满整个容器可视区域
+          // 强制确保竖线高度至少等于容器高度
+          const lineHeight = Math.max(contentHeight, containerHeight);
+          
+          if (containerHeight > 0) {
+            // 确保竖线高度至少等于容器高度（这是关键！）
+            const finalHeight = Math.max(lineHeight, containerHeight);
+            verticalLineRef.current.style.height = `${finalHeight}px`;
+            verticalLineRef.current.style.minHeight = `${containerHeight}px`;
+          }
+        }
+      };
+      
+      // 使用 requestAnimationFrame 确保在浏览器完成渲染后更新
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          updateVerticalLineHeight();
+        });
+      });
+      
+      // 也使用多个延迟作为备用
+      setTimeout(updateVerticalLineHeight, 50);
+      setTimeout(updateVerticalLineHeight, 100);
+      setTimeout(updateVerticalLineHeight, 200);
+      setTimeout(updateVerticalLineHeight, 300);
+    }
+  }, [diaryContent, editor, selectedDate]);
 
   // 延迟关闭的定时器引用
   const themeTimerRef = useRef<NodeJS.Timeout | null>(null);
   const weatherTimerRef = useRef<NodeJS.Timeout | null>(null);
   const moodTimerRef = useRef<NodeJS.Timeout | null>(null);
   const fontTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // 竖线元素引用
+  const verticalLineRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   // 处理鼠标离开事件，添加延迟
   const handleMouseLeave = useCallback((
@@ -157,24 +326,6 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
     });
   };
   
-  // 处理键盘快捷键 - Tiptap handles most keys, but we might want Ctrl+Enter for save
-  useEffect(() => {
-    if (!editor) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 'Enter') {
-        e.preventDefault();
-        onSave();
-      }
-    };
-
-    // We can add this listener to the editor's DOM element
-    const dom = editor.view.dom;
-    dom.addEventListener('keydown', handleKeyDown);
-    return () => {
-      dom.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [editor, onSave]);
 
 
   return (
@@ -370,7 +521,7 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
           </div>
         </div>
         
-        <div className="notebook__content">
+        <div className="notebook__content" ref={contentRef}>
           {editor && (
             <BubbleMenu className="bubble-menu" editor={editor}>
               <div className="bubble-menu__section">
@@ -428,10 +579,17 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
               </div>
             </BubbleMenu>
           )}
-          <EditorContent 
-            editor={editor} 
-            style={{ fontFamily: currentFont, height: '100%' }}
-          />
+          <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+            {/* 竖线元素 - 放在编辑器内容内部，跟随内容滚动 */}
+            <div 
+              ref={verticalLineRef}
+              className="notebook__content-line"
+            />
+            <EditorContent 
+              editor={editor} 
+              style={{ fontFamily: currentFont, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100%' }}
+            />
+          </div>
         </div>
 
         <div className="notebook__lines">
