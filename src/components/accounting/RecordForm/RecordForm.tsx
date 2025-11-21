@@ -283,7 +283,31 @@ const RecordForm: React.FC<RecordFormProps> = ({
           id="amount"
           className="expense-form__input"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => {
+            const inputValue = e.target.value;
+            // 如果输入为空，允许清空
+            if (inputValue === '') {
+              setAmount('');
+              return;
+            }
+            // 限制小数位数最多为两位
+            const regex = /^\d*\.?\d{0,2}$/;
+            if (regex.test(inputValue)) {
+              setAmount(inputValue);
+            }
+          }}
+          onKeyDown={(e) => {
+            // 自定义上下箭头键处理：按 10 调整
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+              e.preventDefault();
+              const currentVal = parseFloat(amount) || 0;
+              const step = 10;
+              const newVal = e.key === 'ArrowUp' 
+                ? currentVal + step 
+                : Math.max(0, currentVal - step);
+              setAmount(newVal.toFixed(2));
+            }
+          }}
           placeholder="0"
           step="10"
           min="0"
