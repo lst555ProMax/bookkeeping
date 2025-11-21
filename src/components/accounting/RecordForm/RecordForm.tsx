@@ -309,7 +309,7 @@ const RecordForm: React.FC<RecordFormProps> = ({
             }
           }}
           placeholder="0"
-          step="10"
+          step="0.01"
           min="0"
           required
         />
