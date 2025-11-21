@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, DailyRecordForm, DailyRecordList, CardDraw, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, Diary, Music, Reading, Medical } from '@/components';
-import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, DailyRecord, StudyRecord, BusinessMode, BUSINESS_MODE_LABELS, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS, MealStatus } from '@/utils';
+import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, DailyRecord, StudyRecord, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS, MealStatus } from '@/utils';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
   loadIncomes, addIncome, deleteIncome, updateIncome,
@@ -20,19 +20,25 @@ import {
 import './Home.scss';
 
 const Home: React.FC = () => {
-  // 业务模式状态（从 URL 参数读取）
-  const [businessMode, setBusinessMode] = useState<BusinessMode>(() => {
+  // 当前页面模式状态（从 URL 参数读取）
+  const [currentMode, setCurrentMode] = useState<PageMode>(() => {
     const params = new URLSearchParams(window.location.hash.split('?')[1]);
     const mode = params.get('mode');
-    if (mode === 'sleep') return BusinessMode.SLEEP;
-    if (mode === 'daily') return BusinessMode.DAILY;
-    if (mode === 'software') return BusinessMode.SOFTWARE;
-    if (mode === 'study') return BusinessMode.STUDY;
+    // 统一处理所有模式
+    if (mode === 'accounting') return PageMode.ACCOUNTING;
+    if (mode === 'sleep') return PageMode.SLEEP;
+    if (mode === 'daily') return PageMode.DAILY;
+    if (mode === 'software') return PageMode.SOFTWARE;
+    if (mode === 'study') return PageMode.STUDY;
+    if (mode === 'diary') return PageMode.DIARY;
+    if (mode === 'music') return PageMode.MUSIC;
+    if (mode === 'reading') return PageMode.READING;
+    if (mode === 'medical') return PageMode.MEDICAL;
     // 如果没有mode参数，设置默认值并更新URL
     if (!window.location.hash || window.location.hash === '#/') {
       window.location.hash = '#/?mode=accounting';
     }
-    return BusinessMode.ACCOUNTING;
+    return PageMode.ACCOUNTING;
   });
   
   // 记账相关状态
@@ -68,27 +74,6 @@ const Home: React.FC = () => {
   const [showStudyCategoryManager, setShowStudyCategoryManager] = useState(false);
   const [studyCategoriesKey, setStudyCategoriesKey] = useState(0);
 
-  // 健康管理相关状态
-  const [healthMode, setHealthMode] = useState<PageMode>(() => {
-    const params = new URLSearchParams(window.location.hash.split('?')[1]);
-    const page = params.get('page');
-    if (page === 'diary') return PageMode.DIARY;
-    if (page === 'music') return PageMode.MUSIC;
-    if (page === 'reading') return PageMode.READING;
-    if (page === 'medical') return PageMode.MEDICAL;
-    return PageMode.MEDICAL;
-  });
-  
-  // 当前激活的模式（business 或 health）
-  const [activeTab, setActiveTab] = useState<'business' | 'health'>(() => {
-    const params = new URLSearchParams(window.location.hash.split('?')[1]);
-    const page = params.get('page');
-    // 如果有page参数(diary/music/reading/medical),则激活health tab
-    if (page && ['diary', 'music', 'reading', 'medical'].includes(page)) {
-      return 'health';
-    }
-    return 'business';
-  });
 
   // 分类筛选状态
   const [selectedExpenseCategories, setSelectedExpenseCategories] = useState<string[]>([]);
@@ -380,49 +365,47 @@ const Home: React.FC = () => {
   useEffect(() => {
     loadData();
     
-    // 监听URL hash变化，同步业务模式和健康模式
+    // 监听URL hash变化，同步页面模式
     const handleHashChange = () => {
       const params = new URLSearchParams(window.location.hash.split('?')[1]);
       const mode = params.get('mode');
-      const page = params.get('page');
+      const page = params.get('page'); // 兼容旧的page参数
       
-      // 如果有mode参数,处理业务模式
-      if (mode === 'sleep') {
-        setBusinessMode(BusinessMode.SLEEP);
-        setActiveTab('business');
+      // 统一处理mode参数
+      if (mode === 'accounting') {
+        setCurrentMode(PageMode.ACCOUNTING);
+      } else if (mode === 'sleep') {
+        setCurrentMode(PageMode.SLEEP);
       } else if (mode === 'daily') {
-        setBusinessMode(BusinessMode.DAILY);
-        setActiveTab('business');
+        setCurrentMode(PageMode.DAILY);
       } else if (mode === 'software') {
-        setBusinessMode(BusinessMode.SOFTWARE);
-        setActiveTab('business');
+        setCurrentMode(PageMode.SOFTWARE);
       } else if (mode === 'study') {
-        setBusinessMode(BusinessMode.STUDY);
-        setActiveTab('business');
-      } else if (mode === 'accounting') {
-        setBusinessMode(BusinessMode.ACCOUNTING);
-        setActiveTab('business');
+        setCurrentMode(PageMode.STUDY);
+      } else if (mode === 'diary') {
+        setCurrentMode(PageMode.DIARY);
+      } else if (mode === 'music') {
+        setCurrentMode(PageMode.MUSIC);
+      } else if (mode === 'reading') {
+        setCurrentMode(PageMode.READING);
+      } else if (mode === 'medical') {
+        setCurrentMode(PageMode.MEDICAL);
       }
       
-      // 如果有page参数,处理健康模式
+      // 兼容旧的page参数
       if (page === 'diary') {
-        setHealthMode(PageMode.DIARY);
-        setActiveTab('health');
+        setCurrentMode(PageMode.DIARY);
       } else if (page === 'music') {
-        setHealthMode(PageMode.MUSIC);
-        setActiveTab('health');
+        setCurrentMode(PageMode.MUSIC);
       } else if (page === 'reading') {
-        setHealthMode(PageMode.READING);
-        setActiveTab('health');
+        setCurrentMode(PageMode.READING);
       } else if (page === 'medical') {
-        setHealthMode(PageMode.MEDICAL);
-        setActiveTab('health');
+        setCurrentMode(PageMode.MEDICAL);
       }
       
       // 如果既没有mode也没有page,默认显示记账
       if (!mode && !page) {
-        setBusinessMode(BusinessMode.ACCOUNTING);
-        setActiveTab('business');
+        setCurrentMode(PageMode.ACCOUNTING);
       }
     };
     
@@ -762,24 +745,20 @@ const Home: React.FC = () => {
     setEditingSleep(null);
   };
 
-  // 切换业务模式
-  const handleBusinessModeChange = (mode: BusinessMode) => {
-    setBusinessMode(mode);
-    setActiveTab('business'); // 切换到业务tab
-    // 更新URL，所有模式都带上mode参数
-    window.location.hash = `#/?mode=${mode}`;
-  };
-
-  // 切换健康模式
-  const handleHealthModeChange = (mode: PageMode) => {
-    setHealthMode(mode);
-    setActiveTab('health'); // 切换到健康tab
-    // 更新URL,根据不同的健康模式设置不同的page参数
-    const pageParam = mode === PageMode.DIARY ? 'diary' 
+  // 切换页面模式
+  const handleModeChange = (mode: PageMode) => {
+    setCurrentMode(mode);
+    // 更新URL，统一使用mode参数
+    const modeParam = mode === PageMode.ACCOUNTING ? 'accounting'
+                    : mode === PageMode.SLEEP ? 'sleep'
+                    : mode === PageMode.DAILY ? 'daily'
+                    : mode === PageMode.SOFTWARE ? 'software'
+                    : mode === PageMode.STUDY ? 'study'
+                    : mode === PageMode.DIARY ? 'diary'
                     : mode === PageMode.MUSIC ? 'music'
                     : mode === PageMode.READING ? 'reading'
                     : 'medical';
-    window.location.hash = `#/?page=${pageParam}`;
+    window.location.hash = `#/?mode=${modeParam}`;
   };
 
   // === 清除数据功能 ===
@@ -1064,115 +1043,109 @@ const Home: React.FC = () => {
       <header className="home__header">
         {/* 统一的tab切换容器 */}
         <div className="home__tabs-container">
-          {/* 业务和健康模式切换按钮（两行布局） */}
+          {/* 页面模式切换按钮（两行布局） */}
           <div className="home__mode-switcher">
             {/* 第一行:业务模式按钮 */}
             <button 
-              className={`mode-btn ${businessMode === BusinessMode.ACCOUNTING && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-              onClick={() => handleBusinessModeChange(BusinessMode.ACCOUNTING)}
+              className={`mode-btn ${currentMode === PageMode.ACCOUNTING ? 'mode-btn--active' : ''}`}
+              onClick={() => handleModeChange(PageMode.ACCOUNTING)}
             >
-              💰 {BUSINESS_MODE_LABELS[BusinessMode.ACCOUNTING]}
+              {PAGE_MODE_ICONS[PageMode.ACCOUNTING]} {PAGE_MODE_LABELS[PageMode.ACCOUNTING]}
             </button>
             <button 
-              className={`mode-btn ${businessMode === BusinessMode.SLEEP && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-              onClick={() => handleBusinessModeChange(BusinessMode.SLEEP)}
+              className={`mode-btn ${currentMode === PageMode.SLEEP ? 'mode-btn--active' : ''}`}
+              onClick={() => handleModeChange(PageMode.SLEEP)}
             >
-              🌙 {BUSINESS_MODE_LABELS[BusinessMode.SLEEP]}
+              {PAGE_MODE_ICONS[PageMode.SLEEP]} {PAGE_MODE_LABELS[PageMode.SLEEP]}
             </button>
             <button 
-              className={`mode-btn ${businessMode === BusinessMode.STUDY && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-              onClick={() => handleBusinessModeChange(BusinessMode.STUDY)}
+              className={`mode-btn ${currentMode === PageMode.STUDY ? 'mode-btn--active' : ''}`}
+              onClick={() => handleModeChange(PageMode.STUDY)}
             >
-              📚 {BUSINESS_MODE_LABELS[BusinessMode.STUDY]}
+              {PAGE_MODE_ICONS[PageMode.STUDY]} {PAGE_MODE_LABELS[PageMode.STUDY]}
             </button>
             <button 
-              className={`mode-btn ${businessMode === BusinessMode.DAILY && activeTab === 'business' ? 'mode-btn--active' : ''}`}
-              onClick={() => handleBusinessModeChange(BusinessMode.DAILY)}
+              className={`mode-btn ${currentMode === PageMode.DAILY ? 'mode-btn--active' : ''}`}
+              onClick={() => handleModeChange(PageMode.DAILY)}
             >
-              📝 {BUSINESS_MODE_LABELS[BusinessMode.DAILY]}
+              {PAGE_MODE_ICONS[PageMode.DAILY]} {PAGE_MODE_LABELS[PageMode.DAILY]}
             </button>
 
             {/* 第二行：占位空格 + 健康管理按钮 */}
             <div className="settings-btn-placeholder"></div>
             <button 
-              className={`mode-btn health-btn ${healthMode === PageMode.DIARY && activeTab === 'health' ? 'mode-btn--active' : ''}`}
-              onClick={() => handleHealthModeChange(PageMode.DIARY)}
+              className={`mode-btn health-btn ${currentMode === PageMode.DIARY ? 'mode-btn--active' : ''}`}
+              onClick={() => handleModeChange(PageMode.DIARY)}
             >
               {PAGE_MODE_ICONS[PageMode.DIARY]} {PAGE_MODE_LABELS[PageMode.DIARY]}
             </button>
             <button 
-              className={`mode-btn health-btn ${healthMode === PageMode.MUSIC && activeTab === 'health' ? 'mode-btn--active' : ''}`}
-              onClick={() => handleHealthModeChange(PageMode.MUSIC)}
+              className={`mode-btn health-btn ${currentMode === PageMode.MUSIC ? 'mode-btn--active' : ''}`}
+              onClick={() => handleModeChange(PageMode.MUSIC)}
             >
               {PAGE_MODE_ICONS[PageMode.MUSIC]} {PAGE_MODE_LABELS[PageMode.MUSIC]}
             </button>
             <button 
-              className={`mode-btn health-btn ${healthMode === PageMode.READING && activeTab === 'health' ? 'mode-btn--active' : ''}`}
-              onClick={() => handleHealthModeChange(PageMode.READING)}
+              className={`mode-btn health-btn ${currentMode === PageMode.READING ? 'mode-btn--active' : ''}`}
+              onClick={() => handleModeChange(PageMode.READING)}
             >
               {PAGE_MODE_ICONS[PageMode.READING]} {PAGE_MODE_LABELS[PageMode.READING]}
             </button>
             <button 
-              className={`mode-btn health-btn ${healthMode === PageMode.MEDICAL && activeTab === 'health' ? 'mode-btn--active' : ''}`}
-              onClick={() => handleHealthModeChange(PageMode.MEDICAL)}
+              className={`mode-btn health-btn ${currentMode === PageMode.MEDICAL ? 'mode-btn--active' : ''}`}
+              onClick={() => handleModeChange(PageMode.MEDICAL)}
             >
               {PAGE_MODE_ICONS[PageMode.MEDICAL]} {PAGE_MODE_LABELS[PageMode.MEDICAL]}
             </button>
           </div>
         </div>
 
-        {/* 根据激活的tab显示不同的标题 */}
-        {activeTab === 'business' ? (
-          // 业务模式标题
-          businessMode === BusinessMode.ACCOUNTING ? (
-            <>
-              <h1>💰 账单记录</h1>
-              <p>记录你的每一笔收支</p>
-            </>
-          ) : businessMode === BusinessMode.SLEEP ? (
-            <>
-              <h1>🌙 睡眠记录</h1>
-              <p>记录你的每一次睡眠</p>
-            </>
-          ) : businessMode === BusinessMode.SOFTWARE ? (
-            <>
-              <h1>💻 软件使用</h1>
-              <p>记录和分析你的软件使用情况</p>
-            </>
-          ) : businessMode === BusinessMode.DAILY ? (
-            <>
-              <h1>📝 日常记录</h1>
-              <p>记录你的日常生活习惯</p>
-            </>
-          ) : (
-            <>
-              <h1>📚 学习记录</h1>
-              <p>记录你的学习历程</p>
-            </>
-          )
+        {/* 根据当前模式显示标题 */}
+        {currentMode === PageMode.ACCOUNTING ? (
+          <>
+            <h1>{PAGE_MODE_ICONS[PageMode.ACCOUNTING]} {PAGE_MODE_LABELS[PageMode.ACCOUNTING]}</h1>
+            <p>记录你的每一笔收支</p>
+          </>
+        ) : currentMode === PageMode.SLEEP ? (
+          <>
+            <h1>{PAGE_MODE_ICONS[PageMode.SLEEP]} {PAGE_MODE_LABELS[PageMode.SLEEP]}</h1>
+            <p>记录你的每一次睡眠</p>
+          </>
+        ) : currentMode === PageMode.SOFTWARE ? (
+          <>
+            <h1>{PAGE_MODE_ICONS[PageMode.SOFTWARE]} {PAGE_MODE_LABELS[PageMode.SOFTWARE]}</h1>
+            <p>记录和分析你的软件使用情况</p>
+          </>
+        ) : currentMode === PageMode.DAILY ? (
+          <>
+            <h1>{PAGE_MODE_ICONS[PageMode.DAILY]} {PAGE_MODE_LABELS[PageMode.DAILY]}</h1>
+            <p>记录你的日常生活习惯</p>
+          </>
+        ) : currentMode === PageMode.STUDY ? (
+          <>
+            <h1>{PAGE_MODE_ICONS[PageMode.STUDY]} {PAGE_MODE_LABELS[PageMode.STUDY]}</h1>
+            <p>记录你的学习历程</p>
+          </>
+        ) : currentMode === PageMode.DIARY ? (
+          <>
+            <h1>{PAGE_MODE_ICONS[PageMode.DIARY]} {PAGE_MODE_LABELS[PageMode.DIARY]}</h1>
+            <p>记录生活点滴，留下美好回忆</p>
+          </>
+        ) : currentMode === PageMode.MUSIC ? (
+          <>
+            <h1>{PAGE_MODE_ICONS[PageMode.MUSIC]} {PAGE_MODE_LABELS[PageMode.MUSIC]}</h1>
+            <p>记录聆听时光，感受音乐魅力</p>
+          </>
+        ) : currentMode === PageMode.READING ? (
+          <>
+            <h1>{PAGE_MODE_ICONS[PageMode.READING]} {PAGE_MODE_LABELS[PageMode.READING]}</h1>
+            <p>记录阅读历程，积累知识财富</p>
+          </>
         ) : (
-          // 健康模式标题
-          healthMode === PageMode.DIARY ? (
-            <>
-              <h1>📔 日记</h1>
-              <p>记录生活点滴，留下美好回忆</p>
-            </>
-          ) : healthMode === PageMode.MUSIC ? (
-            <>
-              <h1>🎵 乐记</h1>
-              <p>记录聆听时光，感受音乐魅力</p>
-            </>
-          ) : healthMode === PageMode.READING ? (
-            <>
-              <h1>📚 读记</h1>
-              <p>记录阅读历程，积累知识财富</p>
-            </>
-          ) : (
-            <>
-              <h1>🏥 病记</h1>
-              <p>健康管理，关爱自己</p>
-            </>
-          )
+          <>
+            <h1>{PAGE_MODE_ICONS[PageMode.MEDICAL]} {PAGE_MODE_LABELS[PageMode.MEDICAL]}</h1>
+            <p>健康管理，关爱自己</p>
+          </>
         )}
 
         {/* 抽卡和算命游戏 - 在header右侧 */}
@@ -1184,10 +1157,8 @@ const Home: React.FC = () => {
 
       <main className="home__main">
         <div className="home__container">
-          {/* 根据activeTab渲染不同的内容 */}
-          {activeTab === 'business' ? (
-            // 业务模式内容
-            businessMode === BusinessMode.ACCOUNTING ? (
+          {/* 根据当前模式渲染不同的内容 */}
+          {currentMode === PageMode.ACCOUNTING ? (
             <>
               {/* 隐藏的文件输入 */}
               <input
@@ -1234,6 +1205,7 @@ const Home: React.FC = () => {
                       />
                       <RecordList 
                         records={filterExpenses(expenses)} 
+                        allRecords={expenses}
                         onDeleteRecord={handleDeleteExpense}
                         onEditRecord={handleEditExpense}
                         type="expense"
@@ -1281,6 +1253,7 @@ const Home: React.FC = () => {
                       />
                       <RecordList 
                         records={filterIncomes(incomes)} 
+                        allRecords={incomes}
                         onDeleteRecord={handleDeleteIncome}
                         onEditRecord={handleEditIncome}
                         type="income"
@@ -1290,7 +1263,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </>
-          ) : businessMode === BusinessMode.SLEEP ? (
+          ) : currentMode === PageMode.SLEEP ? (
             <>
               {/* 睡眠记录模式 */}
               {/* 隐藏的文件输入 */}
@@ -1318,6 +1291,7 @@ const Home: React.FC = () => {
                   <div className="sleep-records-container">
                     <SleepList 
                       sleeps={filterSleepRecords(sleepRecords)} 
+                      allSleeps={sleepRecords}
                       onDeleteSleep={handleDeleteSleep}
                       onEditSleep={handleEditSleep}
                       onViewDashboard={goToSleepDashboard}
@@ -1340,7 +1314,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </>
-          ) : businessMode === BusinessMode.DAILY ? (
+          ) : currentMode === PageMode.DAILY ? (
             <>
               {/* 日常记录模式 */}
               {/* 隐藏的文件输入 */}
@@ -1368,6 +1342,7 @@ const Home: React.FC = () => {
                   <div className="daily-records-container">
                     <DailyRecordList 
                       records={filterDailyRecords(dailyRecords)} 
+                      allRecords={dailyRecords}
                       onDeleteRecord={handleDeleteDaily}
                       onEditRecord={handleEditDaily}
                       onViewDashboard={goToDailyDashboard}
@@ -1390,7 +1365,7 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </>
-          ) : (
+          ) : currentMode === PageMode.STUDY ? (
             <>
               {/* 学习记录模式 */}
               {/* 隐藏的文件输入 */}
@@ -1420,6 +1395,7 @@ const Home: React.FC = () => {
                   <div className="study-records-container">
                     <StudyRecordList 
                       records={filterStudyRecords(studyRecords)} 
+                      allRecords={studyRecords}
                       onDeleteRecord={handleDeleteStudy}
                       onEditRecord={handleEditStudy}
                       onExport={handleExportStudy}
@@ -1438,19 +1414,21 @@ const Home: React.FC = () => {
                 </div>
               </div>
             </>
-          )
-          ) : (
-            // 健康模式内容
+          ) : currentMode === PageMode.DIARY ? (
             <div className="home__content-section">
-              {healthMode === PageMode.DIARY ? (
-                <Diary />
-              ) : healthMode === PageMode.MUSIC ? (
-                <Music />
-              ) : healthMode === PageMode.READING ? (
-                <Reading />
-              ) : (
-                <Medical />
-              )}
+              <Diary />
+            </div>
+          ) : currentMode === PageMode.MUSIC ? (
+            <div className="home__content-section">
+              <Music />
+            </div>
+          ) : currentMode === PageMode.READING ? (
+            <div className="home__content-section">
+              <Reading />
+            </div>
+          ) : (
+            <div className="home__content-section">
+              <Medical />
             </div>
           )}
         </div>

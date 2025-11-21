@@ -11,7 +11,7 @@ interface CategoryFilterProps {
   allTotalAmount?: number; // 所有记录的总金额（用于计算百分比）
   monthlyAmount?: number; // 本月金额
   monthlyTotalAmount?: number; // 本月总金额（用于计算月度百分比）
-  theme?: 'expense' | 'income'; // 主题：支出（紫色）或收入（绿色）
+  theme?: 'expense' | 'income'; // 主题：支出（橙色）或收入（绿色）
   // 操作按钮相关
   onViewDashboard?: () => void;
   onExport?: () => void;
@@ -175,7 +175,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           onClick={() => setIsExpanded(!isExpanded)}
           title={isExpanded ? '收起筛选' : '展开筛选'}
         >
-          {isExpanded ? '🔼' : '🔽'}
+          {isExpanded ? '📭' : '📬'}
         </button>
         
         {/* 全选/全不选按钮 - 只在展开时显示 */}
@@ -200,23 +200,26 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         {(onMinAmountChange || onMaxAmountChange || onSearchDescriptionChange) && (
           <div className="category-filter__search">
             {(onMinAmountChange || onMaxAmountChange) && (
-              <div className="search-amount">
+              <div className="search-group">
+                <span className="search-label">金额</span>
                 <FilterNumberInput
                   value={minAmount}
                   onChange={(val) => onMinAmountChange?.(val)}
-                  placeholder="最小金额"
+                  placeholder="0"
                   min={0}
-                  step={1}
-                  width="100px"
+                  step={500}
+                  width="70px"
+                  textAlign="center"
                 />
                 <span className="search-separator">-</span>
                 <FilterNumberInput
                   value={maxAmount}
                   onChange={(val) => onMaxAmountChange?.(val)}
-                  placeholder="最大金额"
+                  placeholder="0"
                   min={0}
-                  step={1}
-                  width="100px"
+                  step={500}
+                  width="70px"
+                  textAlign="center"
                 />
               </div>
             )}

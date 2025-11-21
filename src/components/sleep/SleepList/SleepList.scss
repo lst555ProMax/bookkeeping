@@ -110,6 +110,11 @@
   &__month-count {
     font-size: 0.9rem;
     color: #6c757d;
+    
+    &-current {
+      color: #667eea;
+      font-weight: 600;
+    }
   }
 
   &__month-stats {
@@ -255,6 +260,7 @@
   gap: 0.5rem;
   flex: 1;
   min-width: 0;
+  justify-content: center;
 
   .info-label {
     font-size: 0.9rem;
@@ -267,6 +273,7 @@
     font-size: 0.9rem;
     font-weight: 600;
     color: #6c757d;
+    text-align: center;
   }
 }
 
@@ -286,6 +293,7 @@
   align-items: center;
   gap: 0.5rem;
   flex-shrink: 0;
+  justify-content: center;
 
   .info-label {
     font-size: 0.9rem;
@@ -297,6 +305,7 @@
     font-size: 0.9rem;
     font-weight: 600;
     color: #667eea;
+    text-align: center;
   }
 }
 

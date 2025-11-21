@@ -25,7 +25,7 @@ const FilterSearchInput: React.FC<FilterSearchInputProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-      <span className="filter-search-icon">🔍</span>
+      <span className="filter-search-icon">👀</span>
     </div>
   );
 };

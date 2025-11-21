@@ -36,6 +36,11 @@
     border: 2px solid rgba(255, 255, 255, 0.3);
     cursor: pointer;
     transition: all 0.3s ease;
+    min-width: 140px;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
     &:hover {
       background: rgba(255, 255, 255, 0.25);

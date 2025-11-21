@@ -38,7 +38,7 @@ export const StudyRecordListSearchSection: React.FC<StudyRecordListSearchSection
               { value: '全部', label: '全部' },
               ...categories.map(cat => ({ value: cat, label: cat }))
             ]}
-            width="120px"
+            width="130px"
           />
         </div>
       )}
@@ -54,6 +54,7 @@ export const StudyRecordListSearchSection: React.FC<StudyRecordListSearchSection
             max={24}
             step={1}
             width="60px"
+            textAlign="center"
           />
           <span className="search-unit">小时</span>
         </div>

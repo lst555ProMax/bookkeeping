@@ -80,7 +80,7 @@ export const DailyRecordListSearchSection: React.FC<DailyRecordListSearchSection
               { value: 'orange', label: '一般 ≥2000' },
               { value: 'red', label: '过少 <2000' }
             ]}
-            width="120px"
+            width="135px"
           />
         </div>
       )}

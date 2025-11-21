@@ -162,6 +162,24 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     onCancelEdit();
   };
 
+  // 快捷键处理：Ctrl + Enter 保存
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        const form = document.querySelector('.daily-form__form') as HTMLFormElement;
+        if (form) {
+          form.requestSubmit();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   // 三餐状态循环切换函数
   const cycleMealStatus = (currentStatus: MealStatus): MealStatus => {
     switch (currentStatus) {
@@ -200,7 +218,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
         {/* 日期 */}
         <div className="form-group">
           <label htmlFor="date">
-            日期 <span className="required">*</span>
+            📅 日期 <span className="required">*</span>
           </label>
           <DatePicker
             value={date}
@@ -211,7 +229,9 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
 
         {/* 微信步数 */}
         <div className="form-group">
-          <label htmlFor="wechatSteps">👣 微信步数</label>
+          <label htmlFor="wechatSteps">
+            👣 微信步数 <span className="required">*</span>
+          </label>
           <input
             type="number"
             id="wechatSteps"
@@ -219,6 +239,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
             onChange={(e) => setWechatSteps(e.target.value)}
             placeholder="输入今天的微信步数"
             min="0"
+            required
           />
         </div>
 
@@ -376,12 +397,12 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
 
         {/* 备注 */}
         <div className="form-group">
-          <label htmlFor="notes">备注</label>
+          <label htmlFor="notes">📝 备注</label>
           <textarea
             id="notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="记录今天的特殊情况..."
+            placeholder="记录今天的日常生活..."
             rows={3}
           />
         </div>

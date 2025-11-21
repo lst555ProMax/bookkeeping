@@ -50,7 +50,7 @@ const RecordForm: React.FC<RecordFormProps> = ({
   const getThemeClass = () => {
     if (isEditing) return 'theme-edit'; // 编辑模式：蓝色
     if (recordType === RecordType.INCOME) return 'theme-income'; // 收入模式：绿色
-    return 'theme-expense'; // 支出模式：紫色（默认）
+    return 'theme-expense'; // 支出模式：橙色（默认）
   };
 
   useEffect(() => {
@@ -193,46 +193,80 @@ const RecordForm: React.FC<RecordFormProps> = ({
     }
   };
 
-  // 切换收入/支出类型
-  const handleToggleRecordType = () => {
-    const newType = recordType === RecordType.EXPENSE ? RecordType.INCOME : RecordType.EXPENSE;
-    setRecordType(newType);
-    
-    // 切换类型时，设置分类为第一个
-    if (newType === RecordType.EXPENSE) {
-      if (expenseCategories.length > 0) {
-        setCategory(expenseCategories[0]);
+
+  // 快捷键处理：Ctrl + Enter 保存
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        const form = document.querySelector('.expense-form__form') as HTMLFormElement;
+        if (form) {
+          form.requestSubmit();
+        }
       }
-    } else {
-      if (incomeCategories.length > 0) {
-        setCategory(incomeCategories[0]);
-      }
-    }
-  };
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
-    <form className={`expense-form ${getThemeClass()}`} onSubmit={handleSubmit}>
+    <div className={`expense-form ${getThemeClass()}`}>
       <div className="expense-form__header">
         <h2 className="expense-form__title">
           {isEditing 
-            ? (editingExpense ? '编辑支出' : '编辑收入')
-            : (recordType === RecordType.EXPENSE ? '添加支出' : '添加收入')
+            ? (editingExpense ? '✏️ 编辑支出' : '✏️ 编辑收入')
+            : '💰 添加记录'
           }
         </h2>
-        {!isEditing && (
-          <button
-            type="button"
-            className="expense-form__toggle"
-            onClick={handleToggleRecordType}
-            title={recordType === RecordType.EXPENSE ? '切换到收入' : '切换到支出'}
-          >
-            🔄
-          </button>
-        )}
       </div>
       
+      <form className="expense-form__form" onSubmit={handleSubmit}>
+      {!isEditing && (
+        <div className="expense-form__group">
+          <label className="expense-form__label">
+            🔄 模式 <span className="required">*</span>
+          </label>
+          <div className="expense-form__radio-group">
+            <label className={`expense-form__radio ${recordType === RecordType.EXPENSE ? 'active' : ''}`}>
+              <input
+                type="radio"
+                name="recordType"
+                value={RecordType.EXPENSE}
+                checked={recordType === RecordType.EXPENSE}
+                onChange={() => {
+                  setRecordType(RecordType.EXPENSE);
+                  if (expenseCategories.length > 0) {
+                    setCategory(expenseCategories[0]);
+                  }
+                }}
+              />
+              <span>支出</span>
+            </label>
+            <label className={`expense-form__radio ${recordType === RecordType.INCOME ? 'active' : ''}`}>
+              <input
+                type="radio"
+                name="recordType"
+                value={RecordType.INCOME}
+                checked={recordType === RecordType.INCOME}
+                onChange={() => {
+                  setRecordType(RecordType.INCOME);
+                  if (incomeCategories.length > 0) {
+                    setCategory(incomeCategories[0]);
+                  }
+                }}
+              />
+              <span>收入</span>
+            </label>
+          </div>
+        </div>
+      )}
       <div className="expense-form__group">
-        <label htmlFor="date" className="expense-form__label">日期</label>
+        <label htmlFor="date" className="expense-form__label">
+          📅 日期 <span className="required">*</span>
+        </label>
         <DatePicker
           value={date}
           onChange={setDate}
@@ -241,22 +275,26 @@ const RecordForm: React.FC<RecordFormProps> = ({
       </div>
 
       <div className="expense-form__group">
-        <label htmlFor="amount" className="expense-form__label">金额 (¥)</label>
+        <label htmlFor="amount" className="expense-form__label">
+          💰 金额 (¥) <span className="required">*</span>
+        </label>
         <input
           type="number"
           id="amount"
           className="expense-form__input"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          placeholder="0.00"
-          step="0.01"
-          min="0.01"
+          placeholder="0"
+          step="10"
+          min="0"
           required
         />
       </div>
 
       <div className="expense-form__group">
-        <label htmlFor="category" className="expense-form__label">分类</label>
+        <label htmlFor="category" className="expense-form__label">
+          🏷️ 分类 <span className="required">*</span>
+        </label>
         <div className="expense-form__category-group">
           <FormSelect
             id="category"
@@ -279,24 +317,21 @@ const RecordForm: React.FC<RecordFormProps> = ({
       </div>
 
       <div className="expense-form__group">
-        <label htmlFor="description" className="expense-form__label">备注（可选）</label>
-        <input
-          type="text"
+        <label htmlFor="description" className="expense-form__label">📝 备注</label>
+        <textarea
           id="description"
-          className="expense-form__input"
+          className="expense-form__textarea"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="请输入备注信息"
+          placeholder="记录今天的收支情况..."
+          rows={3}
           maxLength={100}
         />
       </div>
 
       <div className="expense-form__buttons">
         <button type="submit" className="expense-form__submit">
-          {isEditing 
-            ? (editingExpense ? '保存编辑' : '保存编辑') 
-            : (recordType === RecordType.EXPENSE ? '添加支出' : '添加收入')
-          }
+          {isEditing ? '更新记录' : '添加记录'}
         </button>
         {isEditing && onCancelEdit && (
           <button 
@@ -308,7 +343,8 @@ const RecordForm: React.FC<RecordFormProps> = ({
           </button>
         )}
       </div>
-    </form>
+      </form>
+    </div>
   );
 };
 

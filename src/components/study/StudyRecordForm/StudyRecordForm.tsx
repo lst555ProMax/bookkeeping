@@ -169,6 +169,24 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     onCancelEdit();
   };
 
+  // 快捷键处理：Ctrl + Enter 保存
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        const form = document.querySelector('.study-form__form') as HTMLFormElement;
+        if (form) {
+          form.requestSubmit();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     <div className="study-form">
       <div className="study-form__header">
@@ -179,7 +197,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
         {/* 日期 */}
         <div className="form-group">
           <label htmlFor="date">
-            日期 <span className="required">*</span>
+            📅 日期 <span className="required">*</span>
           </label>
           <DatePicker
             value={date}
@@ -191,7 +209,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
         {/* 分类 */}
         <div className="form-group">
           <label htmlFor="category">
-            分类 <span className="required">*</span>
+            🏷️ 分类 <span className="required">*</span>
           </label>
           <div className="category-select-wrapper">
             <FormSelect
@@ -220,7 +238,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
         {/* 视频标题 */}
         <div className="form-group">
           <label htmlFor="videoTitle">
-            视频标题 <span className="required">*</span>
+            🎬 视频标题 <span className="required">*</span>
           </label>
           <input
             type="text"
@@ -237,7 +255,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
           <div className="episode-time-row">
             <div className="episode-section">
               <label>
-                观看集数 <span className="required">*</span>
+                📺 观看集数 <span className="required">*</span>
               </label>
               <div className="episode-inputs">
                 <input
@@ -262,7 +280,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
             </div>
             <div className="time-section">
               <label>
-                观看总时间 <span className="required">*</span>
+                ⏱️ 观看总时间 <span className="required">*</span>
               </label>
               <div className="time-input-wrapper">
                 <input
@@ -282,7 +300,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
 
         {/* 备注 */}
         <div className="form-group">
-          <label htmlFor="remark">备注</label>
+          <label htmlFor="remark">📝 备注</label>
           <textarea
             id="remark"
             value={remark}

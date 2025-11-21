@@ -137,9 +137,14 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
     }
 
     if (buttonDragRef.current.hasMoved) {
+      const buttonWidth = 48;
+      const buttonHeight = 48;
+      const maxX = window.innerWidth - buttonWidth;
+      const maxY = window.innerHeight - buttonHeight;
+      
       setButtonPosition({
-        x: Math.max(20, buttonDragRef.current.initialX + deltaX),
-        y: Math.max(20, buttonDragRef.current.initialY + deltaY),
+        x: Math.max(0, Math.min(maxX, buttonDragRef.current.initialX + deltaX)),
+        y: Math.max(0, Math.min(maxY, buttonDragRef.current.initialY + deltaY)),
       });
     }
   }, [isButtonDragging]);
@@ -185,9 +190,14 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
     const deltaX = e.clientX - windowDragRef.current.startX;
     const deltaY = e.clientY - windowDragRef.current.startY;
 
+    const windowWidth = 500; // 悬浮窗宽度
+    const windowHeight = 300; // 估算的悬浮窗高度（可以根据实际情况调整）
+    const maxX = window.innerWidth - windowWidth;
+    const maxY = window.innerHeight - windowHeight;
+
     setWindowPosition({
-      x: Math.max(0, windowDragRef.current.initialX + deltaX),
-      y: Math.max(0, windowDragRef.current.initialY + deltaY),
+      x: Math.max(0, Math.min(maxX, windowDragRef.current.initialX + deltaX)),
+      y: Math.max(0, Math.min(maxY, windowDragRef.current.initialY + deltaY)),
     });
   }, [isWindowDragging]);
 

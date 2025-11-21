@@ -110,6 +110,10 @@
   &__month-count {
     font-size: 0.9rem;
     color: #6c757d;
+    
+    &-current {
+      font-weight: 600;
+    }
   }
 
   &__month-total {
@@ -235,24 +239,28 @@
     }
   }
 
-  // 支出样式（紫色）
+  // 支出样式（橙色）
   &--expense {
     .record-list__title {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
+    .record-list__month-count-current {
+      color: #e67e22;
+    }
+
     .record-list__month-total {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .record-list__day-total {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -262,11 +270,11 @@
       &:hover {
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%);
         transform: translateX(4px);
-        border-left: 4px solid #667eea;
+        border-left: 4px solid #e67e22;
       }
 
       &-amount {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -281,6 +289,10 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+    }
+
+    .record-list__month-count-current {
+      color: #28a745;
     }
 
     .record-list__month-total {

@@ -7,6 +7,7 @@ import './StudyRecordList.scss';
 
 interface StudyRecordListProps {
   records: StudyRecord[];
+  allRecords?: StudyRecord[]; // 所有记录（用于计算总数）
   onDeleteRecord: (id: string) => void;
   onEditRecord: (record: StudyRecord) => void;
   onExport?: () => void;
@@ -25,6 +26,7 @@ interface StudyRecordListProps {
 
 const StudyRecordList: React.FC<StudyRecordListProps> = ({ 
   records, 
+  allRecords,
   onDeleteRecord, 
   onEditRecord,
   onExport,
@@ -39,17 +41,36 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
   onSearchTitleChange,
   onMinDurationHoursChange
 }) => {
-  // 使用通用的月份分组 Hook
-  const { groupedByMonth, sortedMonths, expandedMonths, toggleMonth, formatMonthDisplay } = useMonthGroup(records);
+  // 使用通用的月份分组 Hook（用于当前筛选结果）
+  const { groupedByMonth, expandedMonths, toggleMonth, formatMonthDisplay } = useMonthGroup(records);
+  
+  // 计算所有记录按月份分组（用于显示总数和月份头）
+  const allGroupedByMonth = React.useMemo(() => {
+    const all = allRecords || records;
+    return all.reduce((groups, record) => {
+      const monthKey = record.date.substring(0, 7); // YYYY-MM
+      if (!groups[monthKey]) {
+        groups[monthKey] = [];
+      }
+      groups[monthKey].push(record);
+      return groups;
+    }, {} as Record<string, StudyRecord[]>);
+  }, [allRecords, records]);
+  
+  // 使用所有记录的月份来生成月份头列表
+  const sortedMonths = React.useMemo(() => {
+    return Object.keys(allGroupedByMonth).sort((a, b) => b.localeCompare(a));
+  }, [allGroupedByMonth]);
 
   // 计算某个月的总学习时长
-  const calculateMonthTotal = (monthRecords: StudyRecord[]): number => {
+  const calculateMonthTotal = (monthRecords: StudyRecord[] | undefined): number => {
+    if (!monthRecords || monthRecords.length === 0) return 0;
     return monthRecords.reduce((sum, record) => sum + record.totalTime, 0);
   };
 
   // 计算某个月看的最多的分类
-  const calculateTopCategory = (monthRecords: StudyRecord[]): string => {
-    if (monthRecords.length === 0) return '暂无';
+  const calculateTopCategory = (monthRecords: StudyRecord[] | undefined): string => {
+    if (!monthRecords || monthRecords.length === 0) return '暂无';
     
     // 统计每个分类的学习时长
     const categoryStats: Record<string, number> = {};
@@ -155,7 +176,7 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
       <div className="study-list__content">
         {/* 按月份分组显示 */}
         {sortedMonths.map(monthKey => {
-          const monthRecords = groupedByMonth[monthKey];
+          const monthRecords = groupedByMonth[monthKey] || [];
           const isExpanded = expandedMonths[monthKey];
           const monthTotal = calculateMonthTotal(monthRecords);
           const topCategory = calculateTopCategory(monthRecords);
@@ -175,7 +196,9 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
                     ▶
                   </span>
                   <span className="study-list__month-title">{formatMonthDisplay(monthKey)}</span>
-                  <span className="study-list__month-count">({monthRecords.length}条)</span>
+                  <span className="study-list__month-count">
+                    (<span className="study-list__month-count-current">{monthRecords.length}</span>/{allGroupedByMonth[monthKey]?.length || 0}条)
+                  </span>
                 </div>
                 <div className="study-list__month-stats">
                   <span className="study-list__month-stat">
@@ -188,7 +211,7 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
               </div>
 
               {/* 月份内容 */}
-              {isExpanded && (
+              {isExpanded && sortedMonthRecords.length > 0 && (
                 <div className="study-list__month-content">
                   <div className="study-list__grid">
                     {sortedMonthRecords.map((record) => (

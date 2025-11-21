@@ -55,7 +55,7 @@ export const PAGE_MODE_ICONS: Record<PageMode, string> = {
   [PageMode.SOFTWARE]: '💻',
   [PageMode.DIARY]: '📔',
   [PageMode.MUSIC]: '🎵',
-  [PageMode.READING]: '📚',
+  [PageMode.READING]: '📖',
   [PageMode.MEDICAL]: '🏥',
 };
 

@@ -309,4 +309,27 @@
       }
     }
   }
+
+  &__empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #999;
+
+    &-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    &-message {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+      color: #666;
+    }
+
+    &-hint {
+      font-size: 0.95rem;
+      color: #bbb;
+      margin: 0.5rem 0 0 0;
+    }
+  }
 }

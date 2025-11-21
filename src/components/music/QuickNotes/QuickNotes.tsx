@@ -323,7 +323,14 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
         </div>
       </div>
       <div className="quick-notes__list" ref={listRef}>
-        {quickNotes.map(note => (
+        {quickNotes.length === 0 ? (
+          <div className="quick-notes__empty">
+            <div className="quick-notes__empty-icon">💭</div>
+            <p className="quick-notes__empty-message">还没有速记</p>
+            <p className="quick-notes__empty-hint">开始记录你的灵感吧~</p>
+          </div>
+        ) : (
+          quickNotes.map(note => (
           <div 
             key={note.id} 
             className={`quick-note-item ${editingNoteId === note.id ? 'editing' : ''}`}
@@ -353,7 +360,8 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
               </button>
             </div>
           </div>
-        ))}
+        ))
+        )}
       </div>
     </div>
   );

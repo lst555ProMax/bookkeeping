@@ -44,6 +44,7 @@ export const SleepListSearchSection: React.FC<SleepListSearchSectionProps> = ({
             max={24}
             step={1}
             width="60px"
+            textAlign="center"
           />
           <span className="search-separator">-</span>
           <FilterNumberInput
@@ -54,6 +55,7 @@ export const SleepListSearchSection: React.FC<SleepListSearchSectionProps> = ({
             max={24}
             step={1}
             width="60px"
+            textAlign="center"
           />
         </div>
       )}
@@ -72,6 +74,7 @@ export const SleepListSearchSection: React.FC<SleepListSearchSectionProps> = ({
             max={12}
             step={1}
             width="60px"
+            textAlign="center"
           />
         </div>
       )}
@@ -85,8 +88,8 @@ export const SleepListSearchSection: React.FC<SleepListSearchSectionProps> = ({
             options={[
               { value: 'all', label: '全部' },
               { value: 'excellent', label: '优秀 ≥90分' },
-              { value: 'good', label: '良好 75-89分' },
-              { value: 'fair', label: '一般 60-74分' },
+              { value: 'good', label: '良好 ≥75分' },
+              { value: 'fair', label: '一般 ≥60分' },
               { value: 'poor', label: '较差 <60分' }
             ]}
             width="120px"

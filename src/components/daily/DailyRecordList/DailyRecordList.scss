@@ -114,6 +114,11 @@
   &__month-count {
     font-size: 0.9rem;
     color: #6c757d;
+    
+    &-current {
+      color: #667eea;
+      font-weight: 600;
+    }
   }
 
   &__month-stats {

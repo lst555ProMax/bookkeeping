@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { ExpenseRecord, IncomeRecord } from '@/utils';
 import { formatCurrency, formatDisplayDate } from '@/utils';
+import { RecordListEmpty } from '@/components/common';
 import './RecordList.scss';
 
 type RecordItem = ExpenseRecord | IncomeRecord;
 
 interface RecordListProps {
   records: RecordItem[];
+  allRecords?: RecordItem[]; // 所有记录（用于计算总数）
   onDeleteRecord: (id: string) => void;
   onEditRecord: (record: RecordItem) => void;
   type?: 'expense' | 'income'; // 用于区分显示样式
@@ -14,6 +16,7 @@ interface RecordListProps {
 
 const RecordList: React.FC<RecordListProps> = ({ 
   records, 
+  allRecords,
   onDeleteRecord, 
   onEditRecord, 
   type = 'expense' 
@@ -37,9 +40,32 @@ const RecordList: React.FC<RecordListProps> = ({
     groups[monthKey][date].push(record);
     return groups;
   }, {} as Record<string, Record<string, RecordItem[]>>);
+  
 
-  // 按月份排序（最新的在前）
-  const sortedMonths = Object.keys(groupedByMonth).sort((a, b) => b.localeCompare(a));
+  // 计算所有记录按月份分组（用于显示总数和月份头）
+  const allGroupedByMonth = React.useMemo(() => {
+    const all = allRecords || records;
+    return all.reduce((groups, record) => {
+      const date = record.date; // YYYY-MM-DD
+      const monthKey = date.substring(0, 7); // YYYY-MM
+      
+      if (!groups[monthKey]) {
+        groups[monthKey] = {};
+      }
+      
+      if (!groups[monthKey][date]) {
+        groups[monthKey][date] = [];
+      }
+      
+      groups[monthKey][date].push(record);
+      return groups;
+    }, {} as Record<string, Record<string, RecordItem[]>>);
+  }, [allRecords, records]);
+  
+  // 使用所有记录的月份来生成月份头列表
+  const sortedMonths = React.useMemo(() => {
+    return Object.keys(allGroupedByMonth).sort((a, b) => b.localeCompare(a));
+  }, [allGroupedByMonth]);
 
   // 初始化展开状态（默认展开最近的月份）
   React.useEffect(() => {
@@ -68,7 +94,8 @@ const RecordList: React.FC<RecordListProps> = ({
   };
 
   // 计算某个月的总额
-  const calculateMonthTotal = (monthRecords: Record<string, RecordItem[]>): number => {
+  const calculateMonthTotal = (monthRecords: Record<string, RecordItem[]> | undefined): number => {
+    if (!monthRecords) return 0;
     return Object.values(monthRecords).reduce((sum, dayRecords) => {
       return sum + calculateDayTotal(dayRecords);
     }, 0);
@@ -81,14 +108,16 @@ const RecordList: React.FC<RecordListProps> = ({
   };
 
   const listClass = type === 'income' ? 'record-list record-list--income' : 'record-list record-list--expense';
-  const emptyMessage = type === 'income' ? '还没有收入记录，快来添加第一笔吧！' : '还没有支出记录，快来添加第一笔吧！';
 
   if (records.length === 0) {
     return (
       <div className={listClass}>
-        <div className="record-list__empty">
-          <p>{emptyMessage}</p>
-        </div>
+        <RecordListEmpty
+          icon={type === 'income' ? '💰' : '💸'}
+          message={type === 'income' ? '还没有收入记录' : '还没有支出记录'}
+          hint={type === 'income' ? '开始记录你的收入吧~' : '开始记录你的支出吧~'}
+          className="record-list__empty"
+        />
       </div>
     );
   }
@@ -97,7 +126,7 @@ const RecordList: React.FC<RecordListProps> = ({
     <div className={listClass}>
       <div className="record-list__scroll-content">
         {sortedMonths.map(monthKey => {
-          const monthRecords = groupedByMonth[monthKey];
+          const monthRecords = groupedByMonth[monthKey] || {};
           const monthTotal = calculateMonthTotal(monthRecords);
           const isExpanded = expandedMonths[monthKey];
           const sortedDates = Object.keys(monthRecords).sort((a, b) => b.localeCompare(a));
@@ -114,13 +143,15 @@ const RecordList: React.FC<RecordListProps> = ({
                     ▶
                   </span>
                   <span className="record-list__month-title">{formatMonthDisplay(monthKey)}</span>
-                  <span className="record-list__month-count">({Object.values(monthRecords).flat().length}笔)</span>
+                  <span className="record-list__month-count">
+                    (<span className="record-list__month-count-current">{Object.values(monthRecords).flat().length}</span>/{Object.values(allGroupedByMonth[monthKey] || {}).flat().length}笔)
+                  </span>
                 </div>
                 <span className="record-list__month-total">{formatCurrency(monthTotal)}</span>
               </div>
 
               {/* 月份内容 - 可展开/收起 */}
-              {isExpanded && (
+              {isExpanded && sortedDates.length > 0 && (
                 <div className="record-list__month-content">
                   {sortedDates.map(date => {
                     const dayRecords = monthRecords[date];

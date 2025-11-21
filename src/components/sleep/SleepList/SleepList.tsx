@@ -8,6 +8,7 @@ import './SleepList.scss';
 
 interface SleepListProps {
   sleeps: SleepRecord[];
+  allSleeps?: SleepRecord[]; // 所有记录（用于计算总数）
   onDeleteSleep: (id: string) => void;
   onEditSleep: (sleep: SleepRecord) => void;
   // 操作按钮相关
@@ -31,6 +32,7 @@ interface SleepListProps {
 
 const SleepList: React.FC<SleepListProps> = ({ 
   sleeps, 
+  allSleeps,
   onDeleteSleep, 
   onEditSleep,
   onViewDashboard,
@@ -49,17 +51,37 @@ const SleepList: React.FC<SleepListProps> = ({
   onQualityLevelChange,
   onSearchNotesChange
 }) => {
-  // 使用通用的月份分组 Hook
-  const { groupedByMonth, sortedMonths, expandedMonths, toggleMonth, formatMonthDisplay } = useMonthGroup(sleeps);
+  // 使用通用的月份分组 Hook（用于当前筛选结果）
+  const { groupedByMonth, expandedMonths, toggleMonth, formatMonthDisplay } = useMonthGroup(sleeps);
+  
+  // 计算所有记录按月份分组（用于显示总数和月份头）
+  const allGroupedByMonth = React.useMemo(() => {
+    const all = allSleeps || sleeps;
+    return all.reduce((groups, record) => {
+      const monthKey = record.date.substring(0, 7); // YYYY-MM
+      if (!groups[monthKey]) {
+        groups[monthKey] = [];
+      }
+      groups[monthKey].push(record);
+      return groups;
+    }, {} as Record<string, SleepRecord[]>);
+  }, [allSleeps, sleeps]);
+  
+  // 使用所有记录的月份来生成月份头列表
+  const sortedMonths = React.useMemo(() => {
+    return Object.keys(allGroupedByMonth).sort((a, b) => b.localeCompare(a));
+  }, [allGroupedByMonth]);
 
   // 计算某个月的平均睡眠质量
-  const calculateMonthAvgQuality = (monthSleeps: SleepRecord[]): number => {
+  const calculateMonthAvgQuality = (monthSleeps: SleepRecord[] | undefined): number => {
+    if (!monthSleeps || monthSleeps.length === 0) return 0;
     const total = monthSleeps.reduce((sum, sleep) => sum + sleep.quality, 0);
     return Math.round(total / monthSleeps.length);
   };
 
   // 计算某个月的平均入睡时间
-  const calculateMonthAvgSleepTime = (monthSleeps: SleepRecord[]): string => {
+  const calculateMonthAvgSleepTime = (monthSleeps: SleepRecord[] | undefined): string => {
+    if (!monthSleeps || monthSleeps.length === 0) return '--';
     // 将时间字符串转换为分钟数
     const timeToMinutes = (time: string): number => {
       const [hours, minutes] = time.split(':').map(Number);
@@ -85,7 +107,8 @@ const SleepList: React.FC<SleepListProps> = ({
   };
 
   // 计算某个月的平均睡眠时长
-  const calculateMonthAvgDuration = (monthSleeps: SleepRecord[]): string => {
+  const calculateMonthAvgDuration = (monthSleeps: SleepRecord[] | undefined): string => {
+    if (!monthSleeps || monthSleeps.length === 0) return '--';
     const validSleeps = monthSleeps.filter(sleep => sleep.duration !== undefined);
     if (validSleeps.length === 0) return '--';
     
@@ -194,7 +217,7 @@ const SleepList: React.FC<SleepListProps> = ({
       <div className="sleep-list__content">
         {/* 按月份分组显示 */}
         {sortedMonths.map(monthKey => {
-          const monthSleeps = groupedByMonth[monthKey];
+          const monthSleeps = groupedByMonth[monthKey] || [];
           const isExpanded = expandedMonths[monthKey];
           const avgQuality = calculateMonthAvgQuality(monthSleeps);
           const avgSleepTime = calculateMonthAvgSleepTime(monthSleeps);
@@ -215,7 +238,9 @@ const SleepList: React.FC<SleepListProps> = ({
                     ▶
                   </span>
                   <span className="sleep-list__month-title">{formatMonthDisplay(monthKey)}</span>
-                  <span className="sleep-list__month-count">({monthSleeps.length}条)</span>
+                  <span className="sleep-list__month-count">
+                    (<span className="sleep-list__month-count-current">{monthSleeps.length}</span>/{allGroupedByMonth[monthKey]?.length || 0}条)
+                  </span>
                 </div>
                 <div className="sleep-list__month-stats">
                   <span className="sleep-list__month-stat">
@@ -231,7 +256,7 @@ const SleepList: React.FC<SleepListProps> = ({
               </div>
 
               {/* 月份内容 */}
-              {isExpanded && (
+              {isExpanded && sortedMonthSleeps.length > 0 && (
                 <div className="sleep-list__month-content">
                   <div className="sleep-list__grid">
                     {sortedMonthSleeps.map((sleep) => (

@@ -5,7 +5,8 @@ import {
   FortuneRecord, 
   FORTUNE_LEVEL_LABELS, 
   FORTUNE_LEVEL_COLORS,
-  FORTUNE_ASPECT_LABELS 
+  FORTUNE_ASPECT_LABELS,
+  FortuneAspect
 } from '@/utils';
 import { 
   getTodayFortune, 
@@ -140,6 +141,19 @@ const Fortune: React.FC = () => {
                 {todayFortune.overallScore}分
               </div>
               <div className="fortune__result-extras">
+                {(() => {
+                  // 找出分数最高的运势（排除综合运）
+                  const maxAspect = todayFortune.aspects
+                    .filter(a => a.aspect !== FortuneAspect.OVERALL)
+                    .reduce((max, current) => 
+                      current.score > max.score ? current : max
+                    );
+                  return (
+                    <span className="fortune__lucky-item">
+                      {FORTUNE_ASPECT_LABELS[maxAspect.aspect]}
+                    </span>
+                  );
+                })()}
                 <span className="fortune__lucky-item">
                   {todayFortune.luckyColor}
                 </span>

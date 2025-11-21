@@ -130,6 +130,24 @@ const SleepForm: React.FC<SleepFormProps> = ({
     onCancelEdit();
   };
 
+  // 快捷键处理：Ctrl + Enter 保存
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        const form = document.querySelector('.sleep-form__form') as HTMLFormElement;
+        if (form) {
+          form.requestSubmit();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     <div className="sleep-form">
       <div className="sleep-form__header">
@@ -139,7 +157,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
       <form onSubmit={handleSubmit} className="sleep-form__form">
         <div className="form-group">
           <label htmlFor="date">
-            日期 <span className="required">*</span>
+            📅 日期 <span className="required">*</span>
           </label>
           <DatePicker
             value={date}
@@ -151,7 +169,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="sleepTime">
-              入睡时间 <span className="required">*</span>
+              🌙 入睡时间 <span className="required">*</span>
             </label>
             <input
               type="time"
@@ -164,7 +182,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
 
           <div className="form-group">
             <label htmlFor="wakeTime">
-              醒来时间 <span className="required">*</span>
+              ☀️ 醒来时间 <span className="required">*</span>
             </label>
             <input
               type="time"
@@ -216,7 +234,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
 
         <div className="form-group">
           <label htmlFor="quality">
-            睡眠质量 <span className="required">*</span>
+            ⭐ 睡眠质量 <span className="required">*</span>
             <span className="quality-hint">（手环分数：0-100）</span>
           </label>
           <input
@@ -232,7 +250,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
         </div>
 
         <div className="form-group">
-          <label htmlFor="notes">备注</label>
+          <label htmlFor="notes">📝 备注</label>
           <textarea
             id="notes"
             value={notes}

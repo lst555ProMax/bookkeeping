@@ -2,6 +2,10 @@
   text-align: center;
   padding: 4rem 2rem;
   color: #999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   &__icon {
     font-size: 4rem;
@@ -11,10 +15,11 @@
   &__message {
     margin: 0.5rem 0;
     font-size: 1.1rem;
+    color: #666;
   }
 
   &__hint {
-    margin: 0.5rem 0;
+    margin: 0.5rem 0 0 0;
     font-size: 0.95rem;
     color: #bbb;
   }

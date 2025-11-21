@@ -7,6 +7,7 @@ import './DailyRecordList.scss';
 
 interface DailyRecordListProps {
   records: DailyRecord[];
+  allRecords?: DailyRecord[]; // 所有记录（用于计算总数）
   onDeleteRecord: (id: string) => void;
   onEditRecord: (record: DailyRecord) => void;
   onViewDashboard?: () => void;
@@ -29,6 +30,7 @@ interface DailyRecordListProps {
 
 const DailyRecordList: React.FC<DailyRecordListProps> = ({ 
   records, 
+  allRecords,
   onDeleteRecord, 
   onEditRecord,
   onViewDashboard,
@@ -47,21 +49,42 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
   onStepsLevelChange,
   onSearchNotesChange
 }) => {
-  // 使用通用的月份分组 Hook
-  const { groupedByMonth, sortedMonths, expandedMonths, toggleMonth, formatMonthDisplay } = useMonthGroup(records);
+  // 使用通用的月份分组 Hook（用于当前筛选结果）
+  const { groupedByMonth, expandedMonths, toggleMonth, formatMonthDisplay } = useMonthGroup(records);
+  
+  // 计算所有记录按月份分组（用于显示总数和月份头）
+  const allGroupedByMonth = React.useMemo(() => {
+    const all = allRecords || records;
+    return all.reduce((groups, record) => {
+      const monthKey = record.date.substring(0, 7); // YYYY-MM
+      if (!groups[monthKey]) {
+        groups[monthKey] = [];
+      }
+      groups[monthKey].push(record);
+      return groups;
+    }, {} as Record<string, DailyRecord[]>);
+  }, [allRecords, records]);
+  
+  // 使用所有记录的月份来生成月份头列表
+  const sortedMonths = React.useMemo(() => {
+    return Object.keys(allGroupedByMonth).sort((a, b) => b.localeCompare(a));
+  }, [allGroupedByMonth]);
 
   // 计算某个月早餐未吃的次数
-  const calculateBreakfastNotEaten = (monthRecords: DailyRecord[]): number => {
+  const calculateBreakfastNotEaten = (monthRecords: DailyRecord[] | undefined): number => {
+    if (!monthRecords || monthRecords.length === 0) return 0;
     return monthRecords.filter(record => record.meals.breakfast === MealStatus.NOT_EATEN).length;
   };
 
   // 计算某个月午餐不规律的次数
-  const calculateLunchIrregular = (monthRecords: DailyRecord[]): number => {
+  const calculateLunchIrregular = (monthRecords: DailyRecord[] | undefined): number => {
+    if (!monthRecords || monthRecords.length === 0) return 0;
     return monthRecords.filter(record => record.meals.lunch === MealStatus.EATEN_IRREGULAR).length;
   };
 
   // 计算某个月的平均步数
-  const calculateAverageSteps = (monthRecords: DailyRecord[]): number => {
+  const calculateAverageSteps = (monthRecords: DailyRecord[] | undefined): number => {
+    if (!monthRecords || monthRecords.length === 0) return 0;
     const recordsWithSteps = monthRecords.filter(record => record.wechatSteps && record.wechatSteps > 0);
     if (recordsWithSteps.length === 0) return 0;
     const totalSteps = recordsWithSteps.reduce((sum, record) => sum + (record.wechatSteps || 0), 0);
@@ -111,7 +134,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     if (!checkInTime) return true; // 没填算正常
     const [hour, minute] = checkInTime.split(':').map(Number);
     const totalMinutes = hour * 60 + minute;
-    return totalMinutes < 9 * 60; // 9:00之前算正常
+    return totalMinutes <= 9 * 60; // 9:00之前算正常
   };
 
   // 判断签退时间是否正常（6点后算正常）
@@ -195,7 +218,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
       <div className="daily-list__content">
         {/* 按月份分组显示 */}
         {sortedMonths.map(monthKey => {
-          const monthRecords = groupedByMonth[monthKey];
+          const monthRecords = groupedByMonth[monthKey] || [];
           const isExpanded = expandedMonths[monthKey];
           const breakfastNotEaten = calculateBreakfastNotEaten(monthRecords);
           const lunchIrregular = calculateLunchIrregular(monthRecords);
@@ -216,7 +239,9 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
                     ▶
                   </span>
                   <span className="daily-list__month-title">{formatMonthDisplay(monthKey)}</span>
-                  <span className="daily-list__month-count">({monthRecords.length}条)</span>
+                  <span className="daily-list__month-count">
+                    (<span className="daily-list__month-count-current">{monthRecords.length}</span>/{allGroupedByMonth[monthKey]?.length || 0}条)
+                  </span>
                 </div>
                 <div className="daily-list__month-stats">
                   <span className="daily-list__month-stat">
@@ -234,7 +259,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
               </div>
 
               {/* 月份内容 */}
-              {isExpanded && (
+              {isExpanded && sortedMonthRecords.length > 0 && (
                 <div className="daily-list__month-content">
                   <div className="daily-list__grid">
                     {sortedMonthRecords.map((record) => (
