@@ -125,30 +125,6 @@
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   }
 
-  &__modal-close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: transparent;
-    border: none;
-    font-size: 2rem;
-    color: #999;
-    cursor: pointer;
-    line-height: 1;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-
-    &:hover {
-      color: #333;
-      // transform: rotate(90deg);
-    }
-  }
-
   &__settings-icon {
     position: absolute;
     top: 1rem;

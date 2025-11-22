@@ -46,19 +46,20 @@
   }
 
   &__dropdown {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    right: 0;
+    position: fixed; // 改为 fixed，避免被滚动容器裁剪
     background: white;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     padding: 1rem;
-    z-index: 1000;
+    z-index: 10000; // 提高 z-index，确保在最上层
     animation: slideDown 0.2s ease;
     border: 1px solid #e8eaed;
     overflow: hidden;
     box-sizing: border-box;
+    // 优化动画性能，避免抖动
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0); // 强制 GPU 加速
   }
 
   &__header {
@@ -206,11 +207,11 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translate3d(0, -10px, 0); // 使用 translate3d 强制 GPU 加速
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -218,11 +219,8 @@
 @media (max-width: 768px) {
   .date-picker {
     &__dropdown {
-      left: 50%;
-      right: auto;
-      transform: translateX(-50%);
-      width: 90vw;
-      max-width: 360px;
+      // 移动端位置由 JS 动态计算，这里不需要特殊处理
+      max-width: 90vw;
     }
 
     &__day {

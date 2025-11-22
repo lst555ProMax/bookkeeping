@@ -12,8 +12,94 @@ interface MusicExportData {
   version: string;
 }
 
+interface QuickNotesExportData {
+  version: string;
+  exportDate: string;
+  quickNotes: QuickNote[];
+  totalQuickNotes: number;
+}
+
+interface DiaryEntriesExportData {
+  version: string;
+  exportDate: string;
+  diaryEntries: DiaryEntry[];
+  totalDiaryEntries: number;
+}
+
 /**
- * 导出音乐日记数据
+ * 导出速记数据
+ */
+export const exportQuickNotesOnly = (quickNotes?: QuickNote[]): void => {
+  try {
+    const notesToExport = quickNotes || loadQuickNotes();
+    
+    const exportData: QuickNotesExportData = {
+      version: '1.0.0',
+      exportDate: new Date().toISOString(),
+      quickNotes: notesToExport,
+      totalQuickNotes: notesToExport.length
+    };
+
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    link.download = `music-quicknotes-${dateStr}.json`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    console.log(`成功导出 ${notesToExport.length} 条速记`);
+  } catch (error) {
+    console.error('导出失败:', error);
+    throw new Error('导出速记数据失败，请重试');
+  }
+};
+
+/**
+ * 导出日记数据
+ */
+export const exportDiaryEntriesOnly = (diaryEntries?: DiaryEntry[]): void => {
+  try {
+    const entriesToExport = diaryEntries || loadDiaryEntries();
+    
+    const exportData: DiaryEntriesExportData = {
+      version: '1.0.0',
+      exportDate: new Date().toISOString(),
+      diaryEntries: entriesToExport,
+      totalDiaryEntries: entriesToExport.length
+    };
+
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    link.download = `music-entries-${dateStr}.json`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    console.log(`成功导出 ${entriesToExport.length} 条日记`);
+  } catch (error) {
+    console.error('导出失败:', error);
+    throw new Error('导出日记数据失败，请重试');
+  }
+};
+
+/**
+ * 导出所有音乐日记数据（速记+日记）
  */
 export const exportMusicData = (): void => {
   const data: MusicExportData = {
@@ -27,7 +113,9 @@ export const exportMusicData = (): void => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `music_backup_${new Date().toISOString().split('T')[0]}.json`;
+  const now = new Date();
+  const dateStr = now.toISOString().split('T')[0];
+  a.download = `music-backup-${dateStr}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -35,7 +123,152 @@ export const exportMusicData = (): void => {
 };
 
 /**
- * 导入音乐日记数据
+ * 导入速记数据
+ */
+export const importQuickNotesOnly = (file: File): Promise<{
+  imported: number;
+  skipped: number;
+  total: number;
+}> => {
+  return new Promise((resolve, reject) => {
+    try {
+      const reader = new FileReader();
+      
+      reader.onload = (event) => {
+        try {
+          const content = event.target?.result as string;
+          const importData: QuickNotesExportData = JSON.parse(content);
+          
+          if (!importData.quickNotes || !Array.isArray(importData.quickNotes)) {
+            throw new Error('无效的数据格式：缺少quickNotes数组');
+          }
+          
+          const existingNotes = loadQuickNotes();
+          const existingIds = new Set(existingNotes.map(n => n.id));
+          
+          let imported = 0;
+          let skipped = 0;
+          const newNotes: QuickNote[] = [];
+          
+          importData.quickNotes.forEach(note => {
+            if (!note.id || !note.content) {
+              skipped++;
+              return;
+            }
+            
+            if (existingIds.has(note.id)) {
+              skipped++;
+              return;
+            }
+            
+            newNotes.push(note);
+            imported++;
+          });
+          
+          if (newNotes.length > 0) {
+            saveQuickNotes([...existingNotes, ...newNotes]);
+          }
+          
+          resolve({
+            imported,
+            skipped,
+            total: importData.quickNotes.length
+          });
+          
+          console.log(`导入完成: ${imported} 条新速记 (${skipped} 条跳过)`);
+        } catch (parseError) {
+          console.error('解析文件失败:', parseError);
+          reject(new Error('文件格式错误，请确保是有效的JSON文件'));
+        }
+      };
+      
+      reader.onerror = () => {
+        reject(new Error('读取文件失败'));
+      };
+      
+      reader.readAsText(file);
+    } catch (error) {
+      console.error('导入失败:', error);
+      reject(new Error('导入速记数据失败，请重试'));
+    }
+  });
+};
+
+/**
+ * 导入日记数据
+ */
+export const importDiaryEntriesOnly = (file: File): Promise<{
+  imported: number;
+  skipped: number;
+  total: number;
+}> => {
+  return new Promise((resolve, reject) => {
+    try {
+      const reader = new FileReader();
+      
+      reader.onload = (event) => {
+        try {
+          const content = event.target?.result as string;
+          const importData: DiaryEntriesExportData = JSON.parse(content);
+          
+          if (!importData.diaryEntries || !Array.isArray(importData.diaryEntries)) {
+            throw new Error('无效的数据格式：缺少diaryEntries数组');
+          }
+          
+          const existingEntries = loadDiaryEntries();
+          const existingDates = new Set(existingEntries.map(e => e.date));
+          
+          let imported = 0;
+          let skipped = 0;
+          
+          importData.diaryEntries.forEach(entry => {
+            if (!entry.id || !entry.date) {
+              skipped++;
+              return;
+            }
+            
+            if (existingDates.has(entry.date)) {
+              skipped++;
+              return;
+            }
+            
+            existingEntries.push(entry);
+            existingDates.add(entry.date);
+            imported++;
+          });
+          
+          if (imported > 0) {
+            existingEntries.sort((a, b) => b.date.localeCompare(a.date));
+            saveDiaryEntries(existingEntries);
+          }
+          
+          resolve({
+            imported,
+            skipped,
+            total: importData.diaryEntries.length
+          });
+          
+          console.log(`导入完成: ${imported} 条新日记 (${skipped} 条跳过)`);
+        } catch (parseError) {
+          console.error('解析文件失败:', parseError);
+          reject(new Error('文件格式错误，请确保是有效的JSON文件'));
+        }
+      };
+      
+      reader.onerror = () => {
+        reject(new Error('读取文件失败'));
+      };
+      
+      reader.readAsText(file);
+    } catch (error) {
+      console.error('导入失败:', error);
+      reject(new Error('导入日记数据失败，请重试'));
+    }
+  });
+};
+
+/**
+ * 导入所有音乐日记数据（速记+日记）
  */
 export const importMusicData = async (file: File): Promise<{ imported: number; skipped: number }> => {
   return new Promise((resolve, reject) => {

@@ -1,6 +1,7 @@
 // 学习记录导入导出功能
 import { StudyRecord } from './types';
 import { loadStudyRecords, addStudyRecord } from './storage';
+import { getStudyCategories, addStudyCategory } from './category';
 
 /**
  * 导出学习记录为 JSON 文件
@@ -90,6 +91,37 @@ export const importStudyRecords = (file: File): Promise<{
         if (!data.records || !Array.isArray(data.records)) {
           reject(new Error('无效的文件格式：缺少 records 字段'));
           return;
+        }
+        
+        // 检查缺失的分类
+        const currentCategories = getStudyCategories();
+        const missingCategories = new Set<string>();
+        
+        data.records.forEach((record: unknown) => {
+          // 先验证记录格式，以便安全访问 category
+          if (validateStudyRecord(record)) {
+            if (record.category && !currentCategories.includes(record.category)) {
+              missingCategories.add(record.category);
+            }
+          }
+        });
+        
+        // 如果有缺失的分类，提示用户
+        if (missingCategories.size > 0) {
+          let message = '导入的数据中有以下学习分类没有创建：\n\n';
+          message += Array.from(missingCategories).join('、') + '\n';
+          message += '\n是否创建这些分类并继续导入？';
+          
+          const userConfirmed = window.confirm(message);
+          
+          if (!userConfirmed) {
+            reject(new Error('用户取消导入'));
+            return;
+          }
+          
+          missingCategories.forEach(category => {
+            addStudyCategory(category);
+          });
         }
         
         const existingRecords = loadStudyRecords();

@@ -14,9 +14,10 @@ interface QuickNotesProps {
   searchContent?: string;
   onSearchContentChange?: (value: string) => void;
   onExportAll?: () => void;
-  onImportAll?: (notes: QuickNote[]) => void;
+  onImportAll?: () => void;
   onDeleteAll?: () => void;
   onHasUnsavedChangesChange?: (hasUnsaved: boolean) => void;
+  isImporting?: boolean;
 }
 
 const MAX_QUICK_NOTE_LENGTH = 100;
@@ -34,6 +35,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
   onImportAll,
   onDeleteAll,
   onHasUnsavedChangesChange,
+  isImporting = false,
 }) => {
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [originalContent, setOriginalContent] = useState<string>('');
@@ -212,42 +214,9 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
 
   // 导入速记
   const handleImportAll = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        
-        if (!Array.isArray(data)) {
-          toast.error('导入文件格式错误');
-          return;
-        }
-
-        // 验证数据格式
-        const isValid = data.every(note => 
-          note.id && note.content && note.timestamp
-        );
-
-        if (!isValid) {
-          toast.error('导入文件数据格式不正确');
-          return;
-        }
-
-        if (onImportAll) {
-          onImportAll(data);
-          toast.success(`成功导入 ${data.length} 条速记`);
-        }
-      } catch (error) {
-        console.error('导入失败:', error);
-        toast.error('导入失败，请检查文件格式');
-      }
-    };
-    input.click();
+    if (onImportAll) {
+      onImportAll();
+    }
   };
 
   // 删除所有速记

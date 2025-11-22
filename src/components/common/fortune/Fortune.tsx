@@ -92,7 +92,10 @@ const Fortune: React.FC = () => {
         setHasResetToday(false); // 生成后重置标志
         createConfetti(); // 触发彩带效果
         
-        // 不自动关闭，让用户手动关闭
+        // 延迟关闭模态框，让用户看到结果
+        setTimeout(() => {
+          handleCloseModal();
+        }, 3000);
       } catch (error) {
         console.error('算命失败:', error);
         toast.error('算命失败，请重试');
@@ -181,10 +184,6 @@ const Fortune: React.FC = () => {
       {showModal && ReactDOM.createPortal(
         <div className="fortune__modal" onClick={handleCloseModal}>
           <div className="fortune__modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="fortune__modal-close" onClick={handleCloseModal}>
-              ×
-            </button>
-
             <h2 className="fortune__modal-title">🔮 今日运势</h2>
 
             {!generatedFortune ? (
@@ -297,10 +296,6 @@ const Fortune: React.FC = () => {
       {showDetailModal && todayFortune && ReactDOM.createPortal(
         <div className="fortune__modal" onClick={handleCloseDetailModal}>
           <div className="fortune__modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="fortune__modal-close" onClick={handleCloseDetailModal}>
-              ×
-            </button>
-
             <h2 className="fortune__modal-title">🔮 今日运势</h2>
 
             <div className="fortune__result-area">

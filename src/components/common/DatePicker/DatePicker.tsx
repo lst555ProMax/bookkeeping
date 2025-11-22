@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import './DatePicker.scss';
 
 interface DatePickerProps {
@@ -13,7 +14,9 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
   const [viewDate, setViewDate] = useState<Date>(() => {
     return value ? new Date(value) : new Date();
   });
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const pickerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // 格式化显示日期
   const formatDisplayDate = (dateStr: string): string => {
@@ -27,16 +30,54 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
     return `${year}年${month}月${day}日 星期${weekDay}`;
   };
 
+  // 计算下拉框位置
+  const updateDropdownPosition = () => {
+    if (pickerRef.current) {
+      const rect = pickerRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      updateDropdownPosition();
+      
+      // 监听滚动和窗口大小变化，更新位置
+      const handleScroll = () => updateDropdownPosition();
+      const handleResize = () => updateDropdownPosition();
+      
+      window.addEventListener('scroll', handleScroll, true);
+      window.addEventListener('resize', handleResize);
+      
+      return () => {
+        window.removeEventListener('scroll', handleScroll, true);
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, [isOpen]);
+
   // 点击外部关闭
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+      if (
+        pickerRef.current && 
+        !pickerRef.current.contains(event.target as Node) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // 延迟添加事件监听，避免立即触发关闭
+      setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+      }, 0);
     }
 
     return () => {
@@ -130,8 +171,16 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
         <span className={`date-picker__arrow ${isOpen ? 'open' : ''}`}>▼</span>
       </div>
 
-      {isOpen && (
-        <div className="date-picker__dropdown">
+      {isOpen && ReactDOM.createPortal(
+        <div 
+          ref={dropdownRef}
+          className="date-picker__dropdown"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+            width: `${dropdownPosition.width}px`
+          }}
+        >
           <div className="date-picker__header">
             <button 
               type="button"
@@ -179,7 +228,8 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
               </div>
             ))}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

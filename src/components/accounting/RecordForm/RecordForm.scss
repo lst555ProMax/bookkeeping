@@ -70,7 +70,7 @@
       display: none;
     }
 
-    &:hover {
+    &:hover:not(.disabled) {
       border-color: var(--theme-color-start);
       background-color: #f0f0f0;
     }
@@ -81,6 +81,17 @@
       color: white;
       font-weight: 600;
       box-shadow: 0 2px 8px rgba(var(--theme-color-rgb), 0.3);
+    }
+
+    // 编辑模式下禁用状态的样式
+    &.disabled {
+      cursor: not-allowed;
+      opacity: 0.8;
+      
+      &:hover {
+        border-color: var(--theme-color-start);
+        background: linear-gradient(135deg, var(--theme-color-start) 0%, var(--theme-color-end) 100%);
+      }
     }
   }
 

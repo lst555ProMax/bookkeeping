@@ -9,10 +9,12 @@ interface DiaryListProps {
   currentDiaryId: string | null;
   onLoadDiary: (entry: DiaryEntry) => void;
   onDeleteDiary: (id: string) => void;
-  onImportAll?: (entries: DiaryEntry[]) => void;
+  onExportAll?: () => void;
+  onImportAll?: () => void;
   onDeleteAll?: () => void;
   searchContent?: string;
   onSearchContentChange?: (value: string) => void;
+  isImporting?: boolean;
 }
 
 const DiaryList: React.FC<DiaryListProps> = ({
@@ -20,10 +22,12 @@ const DiaryList: React.FC<DiaryListProps> = ({
   currentDiaryId,
   onLoadDiary,
   onDeleteDiary,
+  onExportAll,
   onImportAll,
   onDeleteAll,
   searchContent = '',
   onSearchContentChange,
+  isImporting = false,
 }) => {
   const [exportMenuOpenId, setExportMenuOpenId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -119,57 +123,17 @@ const DiaryList: React.FC<DiaryListProps> = ({
   };
 
   // 导出所有日记为JSON
-  const handleExportAll = () => {
-    if (diaryEntries.length === 0) {
-      toast('没有日记可以导出', { icon: '⚠️' });
-      return;
+  const handleExportAllClick = () => {
+    if (onExportAll) {
+      onExportAll();
     }
-
-    const jsonData = JSON.stringify(diaryEntries, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json;charset=utf-8' });
-    const date = new Date();
-    const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-    downloadFile(blob, `日记导出_${dateStr}.json`);
   };
 
   // 导入日记
-  const handleImportAll = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        
-        if (!Array.isArray(data)) {
-          toast.error('导入文件格式错误');
-          return;
-        }
-
-        // 验证数据格式
-        const isValid = data.every(entry => 
-          entry.id && entry.date && entry.content
-        );
-
-        if (!isValid) {
-          toast.error('导入文件数据格式不正确');
-          return;
-        }
-
-        if (onImportAll) {
-          onImportAll(data);
-          toast.success(`成功导入 ${data.length} 篇日记`);
-        }
-      } catch (error) {
-        console.error('导入失败:', error);
-        toast.error('导入失败，请检查文件格式');
-      }
-    };
-    input.click();
+  const handleImportAllClick = () => {
+    if (onImportAll) {
+      onImportAll();
+    }
   };
 
   // 删除所有日记
@@ -220,14 +184,14 @@ const DiaryList: React.FC<DiaryListProps> = ({
         <div className="diary-list__actions">
           <button 
             className="action-icon-btn"
-            onClick={handleExportAll}
+            onClick={handleExportAllClick}
             title="导出所有日记为JSON"
           >
             📤
           </button>
           <button 
             className="action-icon-btn"
-            onClick={handleImportAll}
+            onClick={handleImportAllClick}
             title="从JSON导入日记"
           >
             📥

@@ -193,10 +193,6 @@ const CardDraw: React.FC = () => {
       {showModal && ReactDOM.createPortal(
         <div className="card-draw__modal" onClick={handleCloseModal}>
           <div className="card-draw__modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="card-draw__modal-close" onClick={handleCloseModal}>
-              ×
-            </button>
-
             <button 
               className="card-draw__settings-icon" 
               onClick={() => setShowActivityManager(true)}

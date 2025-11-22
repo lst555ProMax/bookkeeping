@@ -48,7 +48,7 @@ const RecordForm: React.FC<RecordFormProps> = ({
 
   // 动态确定主题类
   const getThemeClass = () => {
-    if (isEditing) return 'theme-edit'; // 编辑模式：蓝色
+    // 编辑模式下根据记录类型决定颜色，保持与添加模式一致
     if (recordType === RecordType.INCOME) return 'theme-income'; // 收入模式：绿色
     return 'theme-expense'; // 支出模式：橙色（默认）
   };
@@ -99,7 +99,7 @@ const RecordForm: React.FC<RecordFormProps> = ({
     };
     loadCategoriesEffect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoriesKey, recordType]); // 故意移除 category 和 isEditing 依赖，避免循环更新
+  }, [categoriesKey]); // 只在分类列表变化时触发，recordType 改变时 onChange 已处理分类设置
 
   // 当编辑状态变化时，更新表单数据
   useEffect(() => {
@@ -218,51 +218,59 @@ const RecordForm: React.FC<RecordFormProps> = ({
         <h2 className="expense-form__title">
           {isEditing 
             ? (editingExpense ? '✏️ 编辑支出' : '✏️ 编辑收入')
-            : '💰 添加记录'
+            : '💰 添加收支'
           }
         </h2>
       </div>
       
       <form className="expense-form__form" onSubmit={handleSubmit}>
-      {!isEditing && (
-        <div className="expense-form__group">
-          <label className="expense-form__label">
-            🔄 模式 <span className="required">*</span>
-          </label>
-          <div className="expense-form__radio-group">
-            <label className={`expense-form__radio ${recordType === RecordType.EXPENSE ? 'active' : ''}`}>
+      <div className="expense-form__group">
+        <label className="expense-form__label">
+          🔄 模式 <span className="required">*</span>
+        </label>
+        <div className="expense-form__radio-group">
+          {(!isEditing || recordType === RecordType.EXPENSE) && (
+            <label className={`expense-form__radio ${recordType === RecordType.EXPENSE ? 'active' : ''} ${isEditing ? 'disabled' : ''}`}>
               <input
                 type="radio"
                 name="recordType"
                 value={RecordType.EXPENSE}
                 checked={recordType === RecordType.EXPENSE}
+                disabled={isEditing}
                 onChange={() => {
-                  setRecordType(RecordType.EXPENSE);
-                  if (expenseCategories.length > 0) {
-                    setCategory(expenseCategories[0]);
+                  if (!isEditing) {
+                    setRecordType(RecordType.EXPENSE);
+                    if (expenseCategories.length > 0) {
+                      setCategory(expenseCategories[0]);
+                    }
                   }
                 }}
               />
               <span>支出</span>
             </label>
-            <label className={`expense-form__radio ${recordType === RecordType.INCOME ? 'active' : ''}`}>
+          )}
+          {(!isEditing || recordType === RecordType.INCOME) && (
+            <label className={`expense-form__radio ${recordType === RecordType.INCOME ? 'active' : ''} ${isEditing ? 'disabled' : ''}`}>
               <input
                 type="radio"
                 name="recordType"
                 value={RecordType.INCOME}
                 checked={recordType === RecordType.INCOME}
+                disabled={isEditing}
                 onChange={() => {
-                  setRecordType(RecordType.INCOME);
-                  if (incomeCategories.length > 0) {
-                    setCategory(incomeCategories[0]);
+                  if (!isEditing) {
+                    setRecordType(RecordType.INCOME);
+                    if (incomeCategories.length > 0) {
+                      setCategory(incomeCategories[0]);
+                    }
                   }
                 }}
               />
               <span>收入</span>
             </label>
-          </div>
+          )}
         </div>
-      )}
+      </div>
       <div className="expense-form__group">
         <label htmlFor="date" className="expense-form__label">
           📅 日期 <span className="required">*</span>

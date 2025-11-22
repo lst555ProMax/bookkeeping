@@ -995,6 +995,7 @@ const Home: React.FC = () => {
     try {
       const result = await importStudyRecords(file);
       loadData(); // 重新加载数据
+      setStudyCategoriesKey(prev => prev + 1); // 触发分类重新加载
 
       const message = `导入完成！\n新增 ${result.imported} 条记录，跳过 ${result.skipped} 条重复记录\n总计 ${result.total} 条记录`;
       toast.success(message);

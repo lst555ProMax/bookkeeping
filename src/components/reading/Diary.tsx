@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
 import QuickNotes from './QuickNotes/QuickNotes';
 import DiaryNotebook from './DiaryNotebook/DiaryNotebook';
@@ -10,14 +10,19 @@ import {
   addQuickNote as addQuickNoteToStorage,
   updateQuickNote as updateQuickNoteInStorage,
   deleteQuickNote as deleteQuickNoteFromStorage,
-  saveQuickNotes,
   clearAllQuickNotes,
   loadDiaryEntries,
   saveDiaryEntry as saveDiaryToStorage,
   deleteDiaryEntry as deleteDiaryFromStorage,
-  saveDiaryEntries,
   clearAllDiaryEntries
 } from '@/utils/reading';
+import {
+  exportQuickNotesOnly,
+  importQuickNotesOnly,
+  exportDiaryEntriesOnly,
+  importDiaryEntriesOnly,
+  validateReadingImportFile
+} from '@/utils/reading/dataImportExport';
 import './Diary.scss';
 
 const Reading: React.FC = () => {
@@ -56,6 +61,12 @@ const Reading: React.FC = () => {
   
   // 速记是否有未保存的修改
   const [hasUnsavedQuickNote, setHasUnsavedQuickNote] = useState<boolean>(false);
+  
+  // 文件输入引用
+  const quickNotesFileInputRef = useRef<HTMLInputElement>(null);
+  const diaryEntriesFileInputRef = useRef<HTMLInputElement>(null);
+  const [isImportingQuickNotes, setIsImportingQuickNotes] = useState(false);
+  const [isImportingDiaryEntries, setIsImportingDiaryEntries] = useState(false);
 
   // 加载数据
   useEffect(() => {
@@ -169,54 +180,55 @@ const Reading: React.FC = () => {
 
   // 导出所有速记
   const handleExportQuickNotes = () => {
-    if (quickNotes.length === 0) {
-      toast('没有速记可以导出', { icon: '⚠️' });
+    try {
+      const message = `确定导出速记吗？\n\n速记：${quickNotes.length} 条`;
+      
+      if (window.confirm(message)) {
+        exportQuickNotesOnly(quickNotes);
+        toast.success('速记数据导出成功！');
+      }
+    } catch (error) {
+      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+    }
+  };
+
+  // 处理速记导入
+  const handleImportQuickNotes = async (file: File) => {
+    setIsImportingQuickNotes(true);
+    try {
+      const result = await importQuickNotesOnly(file);
+      const notes = loadQuickNotes();
+      setQuickNotes(notes);
+      
+      const message = `导入完成！\n新增 ${result.imported} 条速记，跳过 ${result.skipped} 条重复记录`;
+      toast.success(message);
+    } catch (error) {
+      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+    } finally {
+      setIsImportingQuickNotes(false);
+      if (quickNotesFileInputRef.current) {
+        quickNotesFileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // 处理速记文件选择
+  const handleQuickNotesFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const validationError = validateReadingImportFile(file);
+    if (validationError) {
+      toast.error(validationError);
       return;
     }
 
-    const jsonData = JSON.stringify(quickNotes, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json;charset=utf-8' });
-    const date = new Date();
-    const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-    
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `速记导出_${dateStr}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    handleImportQuickNotes(file);
   };
 
-  // 导入速记
-  const handleImportQuickNotes = (notes: QuickNote[]) => {
-    try {
-      // 合并新导入的速记和现有速记
-      const existingNotes = loadQuickNotes();
-      const mergedNotes = [...existingNotes];
-
-      notes.forEach(newNote => {
-        // 检查是否已存在相同ID的速记
-        const existingIndex = mergedNotes.findIndex(n => n.id === newNote.id);
-        if (existingIndex >= 0) {
-          // 更新现有速记
-          mergedNotes[existingIndex] = newNote;
-        } else {
-          // 添加新速记
-          mergedNotes.push(newNote);
-        }
-      });
-
-      // 按时间戳降序排序
-      mergedNotes.sort((a, b) => b.timestamp - a.timestamp);
-
-      saveQuickNotes(mergedNotes);
-      setQuickNotes(mergedNotes);
-    } catch (error) {
-      console.error('导入速记失败:', error);
-      toast.error('导入失败，请重试');
-    }
+  // 触发速记文件选择
+  const triggerQuickNotesFileSelect = () => {
+    quickNotesFileInputRef.current?.click();
   };
 
   // 删除所有速记
@@ -397,38 +409,57 @@ const Reading: React.FC = () => {
     createNewDiary();
   };
 
-  // 导入所有日记
-  const handleImportAll = (entries: DiaryEntry[]) => {
+  // 导出所有日记
+  const handleExportDiaryEntries = () => {
     try {
-      // 合并新导入的日记和现有日记
-      const existingEntries = loadDiaryEntries();
-      const mergedEntries = [...existingEntries];
-
-      entries.forEach(newEntry => {
-        // 检查是否已存在相同ID的日记
-        const existingIndex = mergedEntries.findIndex(e => e.id === newEntry.id);
-        if (existingIndex >= 0) {
-          // 更新现有日记
-          mergedEntries[existingIndex] = newEntry;
-        } else {
-          // 添加新日记
-          mergedEntries.push(newEntry);
-        }
-      });
-
-      // 排序并保存
-      mergedEntries.sort((a, b) => {
-        const dateCompare = b.date.localeCompare(a.date);
-        if (dateCompare !== 0) return dateCompare;
-        return b.createdAt - a.createdAt;
-      });
-
-      saveDiaryEntries(mergedEntries);
-      setDiaryEntries(mergedEntries);
+      const message = `确定导出日记吗？\n\n日记：${diaryEntries.length} 篇`;
+      
+      if (window.confirm(message)) {
+        exportDiaryEntriesOnly(diaryEntries);
+        toast.success('日记数据导出成功！');
+      }
     } catch (error) {
-      console.error('导入日记失败:', error);
-      toast.error('导入失败，请重试');
+      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
+  };
+
+  // 处理日记导入
+  const handleImportDiaryEntries = async (file: File) => {
+    setIsImportingDiaryEntries(true);
+    try {
+      const result = await importDiaryEntriesOnly(file);
+      const entries = loadDiaryEntries();
+      setDiaryEntries(entries);
+      
+      const message = `导入完成！\n新增 ${result.imported} 篇日记，跳过 ${result.skipped} 篇重复记录`;
+      toast.success(message);
+    } catch (error) {
+      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+    } finally {
+      setIsImportingDiaryEntries(false);
+      if (diaryEntriesFileInputRef.current) {
+        diaryEntriesFileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // 处理日记文件选择
+  const handleDiaryEntriesFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const validationError = validateReadingImportFile(file);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+
+    handleImportDiaryEntries(file);
+  };
+
+  // 触发日记文件选择
+  const triggerDiaryEntriesFileSelect = () => {
+    diaryEntriesFileInputRef.current?.click();
   };
 
   // 删除所有日记
@@ -481,6 +512,22 @@ const Reading: React.FC = () => {
 
   return (
     <div className="reading">
+      {/* 隐藏的文件输入 */}
+      <input
+        ref={quickNotesFileInputRef}
+        type="file"
+        accept=".json,application/json"
+        onChange={handleQuickNotesFileSelect}
+        style={{ display: 'none' }}
+      />
+      <input
+        ref={diaryEntriesFileInputRef}
+        type="file"
+        accept=".json,application/json"
+        onChange={handleDiaryEntriesFileSelect}
+        style={{ display: 'none' }}
+      />
+      
       <QuickNotes
         quickNotes={filteredQuickNotes}
         quickNoteInput={quickNoteInput}
@@ -491,9 +538,10 @@ const Reading: React.FC = () => {
         searchContent={quickNotesSearch}
         onSearchContentChange={setQuickNotesSearch}
         onExportAll={handleExportQuickNotes}
-        onImportAll={handleImportQuickNotes}
+        onImportAll={triggerQuickNotesFileSelect}
         onDeleteAll={handleDeleteAllQuickNotes}
         onHasUnsavedChangesChange={setHasUnsavedQuickNote}
+        isImporting={isImportingQuickNotes}
       />
       
       <DiaryNotebook
@@ -527,10 +575,12 @@ const Reading: React.FC = () => {
         currentDiaryId={currentDiary?.id || null}
         onLoadDiary={handleLoadDiary}
         onDeleteDiary={handleDeleteDiary}
-        onImportAll={handleImportAll}
+        onExportAll={handleExportDiaryEntries}
+        onImportAll={triggerDiaryEntriesFileSelect}
         onDeleteAll={handleDeleteAll}
         searchContent={diaryEntriesSearch}
         onSearchContentChange={setDiaryEntriesSearch}
+        isImporting={isImportingDiaryEntries}
       />
     </div>
   );
