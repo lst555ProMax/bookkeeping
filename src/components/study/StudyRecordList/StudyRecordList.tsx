@@ -263,7 +263,7 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
                     <span className="info-label">📺 观看集数</span>
                     <span className="info-value">{formatEpisodes(record.episodeStart, record.episodeEnd)}</span>
                   </div>
-                  <div className="duration-info">
+                  <div className="study-duration-info">
                     <span className="info-label">⏱️ 观看时长</span>
                     <span className="info-value">{formatDuration(record.totalTime)}</span>
                   </div>

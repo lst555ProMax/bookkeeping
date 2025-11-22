@@ -35,7 +35,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
   onImportAll,
   onDeleteAll,
   onHasUnsavedChangesChange,
-  isImporting = false,
+  isImporting: _isImporting = false,
 }) => {
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [originalContent, setOriginalContent] = useState<string>('');

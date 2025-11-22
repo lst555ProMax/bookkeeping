@@ -6,6 +6,7 @@
 
   &__header {
     // 通用样式在 RecordListHeader 组件中
+    // 占位符，避免空规则集警告
   }
 
   // 搜索区域样式（在通用组件中使用）
@@ -148,6 +149,7 @@
 
   &__empty {
     // 通用样式在 RecordListEmpty 组件中
+    // 占位符，避免空规则集警告
   }
 }
 
@@ -171,6 +173,7 @@
     padding: 0.75rem 1rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+    border-radius: 12px 12px 0 0;
   }
 
   &__date {
@@ -252,6 +255,7 @@
   background: #f8f9fa;
   border-radius: 8px;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .time-info {
@@ -260,20 +264,21 @@
   gap: 0.5rem;
   flex: 1;
   min-width: 0;
-  justify-content: center;
+  justify-content: flex-start;
 
   .info-label {
     font-size: 0.9rem;
     font-weight: 600;
     color: #495057;
     flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .info-value {
     font-size: 0.9rem;
     font-weight: 600;
     color: #6c757d;
-    text-align: center;
+    text-align: left;
   }
 }
 
@@ -286,26 +291,30 @@
   background: #f8f9fa;
   border-radius: 8px;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .duration-info {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-shrink: 0;
-  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-start;
 
   .info-label {
     font-size: 0.9rem;
     font-weight: 600;
     color: #495057;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .info-value {
     font-size: 0.9rem;
     font-weight: 600;
     color: #667eea;
-    text-align: center;
+    text-align: left;
   }
 }
 
@@ -315,12 +324,14 @@
   gap: 0.5rem;
   flex: 1;
   min-width: 0;
+  justify-content: flex-start;
 
   .info-label {
     font-size: 0.9rem;
     font-weight: 600;
     color: #495057;
     flex-shrink: 0;
+    white-space: nowrap;
   }
 }
 
@@ -404,16 +415,18 @@
 
 .sleep-notes {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
   flex: 1;
   min-width: 0;
+  width: 100%;
 
   .notes-label {
     font-weight: 600;
     font-size: 0.85rem;
     color: #495057;
     flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .notes-content {
@@ -423,6 +436,7 @@
     white-space: pre-wrap;
     word-wrap: break-word;
     flex: 1;
+    text-align: left;
   }
 }
 

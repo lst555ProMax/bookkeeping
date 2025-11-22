@@ -27,7 +27,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
   onDeleteAll,
   searchContent = '',
   onSearchContentChange,
-  isImporting = false,
+  isImporting: _isImporting = false,
 }) => {
   const [exportMenuOpenId, setExportMenuOpenId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
