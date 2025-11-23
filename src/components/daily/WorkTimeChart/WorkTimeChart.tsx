@@ -56,7 +56,7 @@ const WorkTimeChart: React.FC<WorkTimeChartProps> = ({ data }) => {
             <Bar
               dataKey="工作时长"
               stackId="a"
-              fill="#667eea"
+              fill="#1ea5f9"
             />
             <Bar
               dataKey="学习时长"

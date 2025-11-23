@@ -50,9 +50,9 @@ const StepsTrendChart: React.FC<StepsTrendChartProps> = ({ data }) => {
             <Line
               type="monotone"
               dataKey="步数"
-              stroke="#667eea"
+              stroke="#1ea5f9"
               strokeWidth={3}
-              dot={{ r: 5, fill: '#667eea' }}
+              dot={{ r: 5, fill: '#1ea5f9' }}
               activeDot={{ r: 7 }}
             />
           </LineChart>

@@ -51,8 +51,8 @@
       box-sizing: border-box;
 
       &:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        border-color: #1ea5f9;
+        box-shadow: 0 0 0 2px rgba(30, 165, 249, 0.1);
       }
 
       &--text {
@@ -175,11 +175,11 @@
       }
 
       &--active {
-        border-color: #667eea;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+        border-color: #1ea5f9;
+        box-shadow: 0 2px 8px rgba(30, 165, 249, 0.25);
         
         &:hover {
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+          box-shadow: 0 4px 12px rgba(30, 165, 249, 0.35);
         }
       }
 
@@ -200,7 +200,7 @@
       &__date {
         font-size: 0.85rem;
         font-weight: 600;
-        color: #667eea;
+        color: #1ea5f9;
       }
 
       &__weather,
@@ -291,7 +291,7 @@
           transition: all 0.2s ease;
 
           &:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
             color: white;
             transform: translateX(4px);
           }

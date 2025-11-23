@@ -89,10 +89,10 @@ const StudyTrendChart: React.FC<StudyTrendChartProps> = ({ dateStats }) => {
               <Line 
                 type="monotone" 
                 dataKey="minutes" 
-                stroke="#667eea"
+                stroke="#45B7D1"
                 strokeWidth={3}
-                dot={{ fill: '#667eea', strokeWidth: 2, r: 5 }}
-                activeDot={{ r: 7, stroke: '#667eea', strokeWidth: 2 }}
+                dot={{ fill: '#45B7D1', strokeWidth: 2, r: 5 }}
+                activeDot={{ r: 7, stroke: '#45B7D1', strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>

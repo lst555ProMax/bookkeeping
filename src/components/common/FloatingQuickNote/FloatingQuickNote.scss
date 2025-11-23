@@ -6,8 +6,8 @@
   width: 48px; // 原来60px的80%
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
+  box-shadow: 0 4px 20px rgba(30, 165, 249, 0.4);
   cursor: grab;
   display: flex;
   align-items: center;
@@ -44,7 +44,7 @@
 
   &:hover:not(.dragging) {
     transform: scale(1.1);
-    box-shadow: 0 6px 28px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 6px 28px rgba(30, 165, 249, 0.6);
 
     &.todo-mode {
       box-shadow: 0 6px 28px rgba(245, 87, 108, 0.6);
@@ -60,10 +60,10 @@
 
   @keyframes breathe {
     0%, 100% {
-      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 4px 20px rgba(30, 165, 249, 0.4);
     }
     50% {
-      box-shadow: 0 6px 28px rgba(102, 126, 234, 0.6);
+      box-shadow: 0 6px 28px rgba(30, 165, 249, 0.6);
     }
   }
 }
@@ -161,8 +161,8 @@
 
       &:focus {
         outline: none;
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        border-color: #1ea5f9;
+        box-shadow: 0 0 0 3px rgba(30, 165, 249, 0.1);
       }
 
       &::placeholder {
@@ -198,7 +198,7 @@
         }
 
         &.save-hint {
-          color: #667eea;
+          color: #1ea5f9;
           font-size: 0.8rem;
           font-weight: 500;
         }

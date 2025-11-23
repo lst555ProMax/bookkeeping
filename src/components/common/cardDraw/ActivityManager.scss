@@ -55,13 +55,13 @@
     h2 {
       margin: 0;
       font-size: 1.5rem;
-      color: #667eea;
+      color: #1ea5f9;
       font-weight: 700;
     }
   }
 
   &__btn-auto {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -73,7 +73,7 @@
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 4px 12px rgba(30, 165, 249, 0.4);
     }
   }
 
@@ -139,14 +139,14 @@
     transition: all 0.3s ease;
 
     &:hover {
-      border-color: #667eea;
+      border-color: #1ea5f9;
       transform: translateX(4px);
     }
 
     &.active {
-      border-color: #667eea;
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+      border-color: #1ea5f9;
+      background: linear-gradient(135deg, rgba(30, 165, 249, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      box-shadow: 0 4px 15px rgba(30, 165, 249, 0.2);
     }
 
     &.custom {
@@ -178,7 +178,7 @@
   }
 
   &__category-prob {
-    background: #667eea;
+    background: #1ea5f9;
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 12px;
@@ -250,21 +250,21 @@
     flex: 1;
     width: 100%;
     padding: 0.5rem;
-    border: 2px solid #667eea;
+    border: 2px solid #1ea5f9;
     border-radius: 6px;
     font-size: 0.95rem;
     font-weight: 600;
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+      box-shadow: 0 0 0 3px rgba(30, 165, 249, 0.2);
     }
   }
 
   &__edit-prob {
     flex: 1;
     padding: 0.5rem;
-    border: 2px solid #667eea;
+    border: 2px solid #1ea5f9;
     border-radius: 6px;
     font-size: 0.95rem;
     font-weight: 600;
@@ -272,7 +272,7 @@
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+      box-shadow: 0 0 0 3px rgba(30, 165, 249, 0.2);
     }
 
     // 隐藏默认的number input spinner按钮样式，使用浏览器原生的
@@ -356,7 +356,7 @@
   }
 
   &__btn-auto-balance-items {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
     color: white;
     border: none;
     padding: 0.4rem 0.8rem;
@@ -368,7 +368,7 @@
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(30, 165, 249, 0.3);
     }
   }
 
@@ -412,8 +412,8 @@
     transition: all 0.3s ease;
 
     &:hover {
-      border-color: #667eea;
-      box-shadow: 0 2px 12px rgba(102, 126, 234, 0.15);
+      border-color: #1ea5f9;
+      box-shadow: 0 2px 12px rgba(30, 165, 249, 0.15);
     }
   }
 
@@ -439,7 +439,7 @@
   &__item-name-input {
     flex: 1;
     padding: 0.5rem;
-    border: 2px solid #764ba2;
+    border: 2px solid #0d8bd9;
     border-radius: 6px;
     font-size: 0.95rem;
     font-weight: 600;
@@ -451,7 +451,7 @@
   }
 
   &__item-prob {
-    background: #764ba2;
+    background: #0d8bd9;
     color: white;
     padding: 0.3rem 0.7rem;
     border-radius: 12px;
@@ -464,7 +464,7 @@
   &__item-prob-input-edit {
     width: 70px;
     padding: 0.5rem;
-    border: 2px solid #764ba2;
+    border: 2px solid #0d8bd9;
     border-radius: 6px;
     font-size: 0.95rem;
     font-weight: 600;
@@ -553,7 +553,7 @@
     input {
       width: 100%;
       padding: 0.5rem;
-      border: 2px solid #667eea;
+      border: 2px solid #1ea5f9;
       border-radius: 6px;
       font-size: 1rem;
       font-weight: 600;
@@ -618,7 +618,7 @@
   }
 
   &__btn-save {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
     color: white;
     border: none;
     padding: 0.75rem 2rem;
@@ -626,11 +626,11 @@
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(30, 165, 249, 0.3);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 6px 20px rgba(30, 165, 249, 0.4);
     }
   }
 }

@@ -130,7 +130,7 @@
     text-align: center;
     font-size: 1.8rem;
     margin-bottom: 1rem;
-    color: #667eea;
+    color: #1ea5f9;
     font-weight: 700;
   }
 
@@ -151,7 +151,7 @@
 
     p {
       font-size: 1.2rem;
-      color: #667eea;
+      color: #1ea5f9;
       font-weight: 600;
       animation: pulse 1.5s ease-in-out infinite;
     }
@@ -161,11 +161,11 @@
     font-size: 8rem;
     animation: cardFlip3D 2s ease-in-out infinite;
     transform-style: preserve-3d;
-    filter: drop-shadow(0 12px 30px rgba(102, 126, 234, 0.5));
+    filter: drop-shadow(0 12px 30px rgba(30, 165, 249, 0.5));
   }
 
   &__generate-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
     color: white;
     border: none;
     padding: 1.5rem 3rem;
@@ -174,11 +174,11 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 15px rgba(30, 165, 249, 0.4);
 
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+      box-shadow: 0 8px 25px rgba(30, 165, 249, 0.5);
     }
 
     &:active {
@@ -262,7 +262,7 @@
 
   // 额外信息
   &__extras {
-    background: linear-gradient(135deg, #667eea15, #764ba215);
+    background: linear-gradient(135deg, #1ea5f915, #0d8bd915);
     border-radius: 12px;
     padding: 1.5rem;
     display: flex;

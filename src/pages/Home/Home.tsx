@@ -485,11 +485,6 @@ const Home: React.FC = () => {
     window.location.hash = '#/dashboard?tab=daily';
   };
 
-  // 跳转到学习数据面板页面
-  const goToStudyDashboard = () => {
-    window.location.hash = '#/dashboard?tab=study';
-  };
-
   // === 支出相关操作 ===
   
   // 处理支出导出

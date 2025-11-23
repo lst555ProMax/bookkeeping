@@ -160,7 +160,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
                 @page { margin: 1cm; }
               }
               body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
-              h1 { color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+              h1 { color: #333; border-bottom: 2px solid #1ea5f9; padding-bottom: 10px; }
               p { margin: 0.5rem 0; line-height: 1.6; }
               img { max-width: 100%; height: auto; display: block; margin: 1rem auto; }
               .content { line-height: 1.8; }

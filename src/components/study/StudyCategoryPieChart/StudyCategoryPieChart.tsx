@@ -21,9 +21,13 @@ interface StudyCategoryPieChartProps {
 }
 
 const StudyCategoryPieChart: React.FC<StudyCategoryPieChartProps> = ({ categoryStats }) => {
-  // 获取分类颜色
+  // 获取分类颜色（参照账单面板支出饼图配色）
   const getCategoryColor = (index: number) => {
-    const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#feca57'];
+    const colors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', 
+      '#FF9FF3', '#54A0FF', '#5F27CD', '#C8D6E5', '#A8E6CF',
+      '#FFD93D', '#6C5CE7', '#FD79A8', '#00B894', '#E17055'
+    ];
     return colors[index % colors.length];
   };
 

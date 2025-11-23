@@ -6,13 +6,13 @@
 
 ### 主渐变色
 ```scss
-// 主要品牌渐变色（紫色系）
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+// 主要品牌渐变色（天蓝色系）
+background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
 
 // 单独使用时
---primary-color-start: #667eea;  // 紫罗兰蓝
---primary-color-end: #764ba2;    // 深紫色
---primary-color-rgb: 102, 126, 234;  // RGB值（用于透明度）
+--primary-color-start: #1ea5f9;  // 天蓝色
+--primary-color-end: #0d8bd9;    // 深天蓝色
+--primary-color-rgb: 30, 165, 249;  // RGB值（用于透明度）
 ```
 
 **使用场景：**
@@ -26,23 +26,23 @@ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 ```scss
 // 按钮
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
+  box-shadow: 0 4px 15px rgba(30, 165, 249, 0.3);
   
   &:hover {
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 20px rgba(30, 165, 249, 0.4);
   }
 }
 
 // 输入框焦点
 input:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #1ea5f9;
+  box-shadow: 0 0 0 3px rgba(30, 165, 249, 0.1);
 }
 
 // 标题文字渐变
 .title-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -145,7 +145,7 @@ color: #666;
 ### 支出/收入类别色
 ```scss
 // 使用主渐变色作为支出类别主色
-支出: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+支出: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
 
 // 使用绿色系作为收入类别主色
 收入: linear-gradient(135deg, #43bc8e 0%, #2d8a64 100%);
@@ -154,7 +154,7 @@ color: #666;
 ### 睡眠质量等级色
 ```scss
 // 优秀（90-100）
-excellent: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  // 主紫色
+excellent: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);  // 主天蓝色
 
 // 良好（75-89）
 good: linear-gradient(135deg, #28a745 0%, #20c997 100%);       // 绿色
@@ -171,7 +171,7 @@ poor: linear-gradient(135deg, #dc3545 0%, #c82333 100%);       // 红色
 ### 日常记录模块
 ```scss
 // 日常记录卡片头部（建议统一为主色调）
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
 
 // ❌ 避免使用非主题色
 // background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); // 粉红色（不推荐）
@@ -180,14 +180,14 @@ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 ### 软件使用记录模块
 ```scss
 // 统计值强调色（建议使用主色调）
-color: #667eea;
+color: #1ea5f9;
 
 // 类别标签
 background: #e6f7ff;
-color: #667eea;  // 统一使用主色调
+color: #1ea5f9;  // 统一使用主色调
 
 // 排名强调
-color: #667eea;  // 统一使用主色调
+color: #1ea5f9;  // 统一使用主色调
 ```
 
 ## ✅ 使用建议
@@ -219,13 +219,13 @@ box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 // 按钮阴影
-box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+box-shadow: 0 4px 15px rgba(30, 165, 249, 0.3);
 &:hover {
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(30, 165, 249, 0.4);
 }
 
 // 焦点框阴影
-box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+box-shadow: 0 0 0 3px rgba(30, 165, 249, 0.1);
 ```
 
 ## 🚫 避免使用的颜色
@@ -246,8 +246,8 @@ box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 ```scss
 .my-component {
   // 使用 CSS 变量（推荐）
-  --primary-start: #667eea;
-  --primary-end: #764ba2;
+  --primary-start: #1ea5f9;
+  --primary-end: #0d8bd9;
   --primary-rgb: 102, 126, 234;
   
   &__header {

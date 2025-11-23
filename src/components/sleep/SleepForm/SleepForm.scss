@@ -88,8 +88,8 @@
 
     &:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      border-color: #1ea5f9;
+      box-shadow: 0 0 0 3px rgba(30, 165, 249, 0.1);
     }
   }
 
@@ -128,12 +128,12 @@
     transition: all 0.2s ease;
     
     &:checked {
-      background-color: #667eea;
-      border-color: #667eea;
+      background-color: #1ea5f9;
+      border-color: #1ea5f9;
     }
     
     &:hover {
-      border-color: #667eea;
+      border-color: #1ea5f9;
     }
 
     &:checked::after {
@@ -154,7 +154,7 @@
   }
 
   &:hover {
-    color: #667eea;
+    color: #1ea5f9;
   }
 }
 
@@ -183,13 +183,13 @@
     transition: all 0.3s ease;
 
     &--submit {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
       color: white;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 15px rgba(30, 165, 249, 0.3);
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 20px rgba(30, 165, 249, 0.4);
       }
 
       &:active {

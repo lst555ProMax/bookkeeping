@@ -7,7 +7,7 @@ interface HabitStatsChartProps {
   data: HabitStats[];
 }
 
-const COLORS = ['#667eea', '#52c41a', '#faad14', '#ff4d4f', '#13c2c2', '#722ed1', '#eb2f96'];
+const COLORS = ['#1ea5f9', '#52c41a', '#faad14', '#ff4d4f', '#13c2c2', '#722ed1', '#eb2f96'];
 
 const HabitStatsChart: React.FC<HabitStatsChartProps> = ({ data }) => {
   return (

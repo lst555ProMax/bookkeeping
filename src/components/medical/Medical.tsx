@@ -266,7 +266,7 @@ const Medical: React.FC = () => {
                     </div>
 
                     <div style={{ marginTop: '1.5rem' }}>
-                      <h5 style={{ color: '#667eea', marginBottom: '1rem' }}>主要手术方式</h5>
+                      <h5 style={{ color: '#1ea5f9', marginBottom: '1rem' }}>主要手术方式</h5>
                       <div className="cause-grid">
                         <div className="cause-card">
                           <h4>🔧 腹腔镜胃底折叠术</h4>

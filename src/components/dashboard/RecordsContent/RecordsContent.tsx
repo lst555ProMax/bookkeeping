@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { MonthSelector, RecordDaysChart, RecordTrendChart, RecordPieChart } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType } from '@/utils';
-import { loadExpenses, loadIncomes, formatCurrency, getCategories, getIncomeCategories } from '@/utils';
+import { loadExpenses, loadIncomes, formatCurrency } from '@/utils';
 import './RecordsContent.scss';
 
 interface RecordsContentProps {
   recordType: RecordType;
-  onRecordTypeChange: (type: RecordType) => void;
+  onRecordTypeChange?: (type: RecordType) => void;
 }
 
-const RecordsContent: React.FC<RecordsContentProps> = ({ recordType, onRecordTypeChange }) => {
+const RecordsContent: React.FC<RecordsContentProps> = ({ recordType }) => {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [incomes, setIncomes] = useState<IncomeRecord[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {

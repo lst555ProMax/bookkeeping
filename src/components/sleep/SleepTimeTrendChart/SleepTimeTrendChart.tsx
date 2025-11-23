@@ -90,10 +90,10 @@ const SleepTimeTrendChart: React.FC<SleepTimeTrendChartProps> = ({ data }) => {
           <Line
             type="monotone"
             dataKey="sleepTime"
-            stroke="#667eea"
+            stroke="#1ea5f9"
             strokeWidth={2}
             name="入睡时间"
-            dot={{ fill: '#667eea', r: 4 }}
+            dot={{ fill: '#1ea5f9', r: 4 }}
             activeDot={{ r: 6 }}
           />
           <Line

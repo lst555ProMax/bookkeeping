@@ -20,7 +20,7 @@
     min-height: 48px;
 
     &:hover {
-      border-color: var(--theme-color-start, #667eea);
+      border-color: var(--theme-color-start, #1ea5f9);
       background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
       transform: translateY(-2px);
       box-shadow: 0 4px 16px rgba(var(--theme-color-rgb, 102, 126, 234), 0.2);
@@ -45,12 +45,12 @@
 
     .custom-select.open & {
       transform: rotate(180deg);
-      color: var(--theme-color-end, #764ba2);
+      color: var(--theme-color-end, #0d8bd9);
     }
   }
 
   &.open &__trigger {
-    border-color: var(--theme-color-start, #667eea);
+    border-color: var(--theme-color-start, #1ea5f9);
     background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
     box-shadow: 0 4px 16px rgba(var(--theme-color-rgb, 102, 126, 234), 0.25);
     transform: translateY(-2px);
@@ -90,11 +90,11 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--theme-color-start, #667eea);
+      background: var(--theme-color-start, #1ea5f9);
       border-radius: 3px;
 
       &:hover {
-        background: var(--theme-color-end, #764ba2);
+        background: var(--theme-color-end, #0d8bd9);
       }
     }
   }
@@ -113,18 +113,18 @@
 
     &:hover {
       background: linear-gradient(135deg, rgba(var(--theme-color-rgb, 102, 126, 234), 0.08) 0%, rgba(var(--theme-color-rgb, 102, 126, 234), 0.12) 100%);
-      color: var(--theme-color-start, #667eea);
+      color: var(--theme-color-start, #1ea5f9);
       transform: translateX(4px);
     }
 
     &.selected {
-      background: linear-gradient(135deg, var(--theme-color-start, #667eea) 0%, var(--theme-color-end, #764ba2) 100%);
+      background: linear-gradient(135deg, var(--theme-color-start, #1ea5f9) 0%, var(--theme-color-end, #0d8bd9) 100%);
       color: white;
       font-weight: 600;
       box-shadow: 0 2px 8px rgba(var(--theme-color-rgb, 102, 126, 234), 0.3);
 
       &:hover {
-        background: linear-gradient(135deg, var(--theme-color-end, #764ba2) 0%, var(--theme-color-start, #667eea) 100%);
+        background: linear-gradient(135deg, var(--theme-color-end, #0d8bd9) 0%, var(--theme-color-start, #1ea5f9) 100%);
         transform: translateX(4px);
         box-shadow: 0 4px 12px rgba(var(--theme-color-rgb, 102, 126, 234), 0.4);
       }

@@ -85,9 +85,9 @@ const StudyDaysChart: React.FC<StudyDaysChartProps> = ({
     return null;
   };
 
-  // 根据类型获取柱子颜色
+  // 根据类型获取柱子颜色（参照账单面板配色）
   const getBarColor = () => {
-    return type === 'top' ? '#667eea' : '#4facfe';
+    return type === 'top' ? '#FF6B6B' : '#4ECDC4';
   };
 
   const data = getDaysData();

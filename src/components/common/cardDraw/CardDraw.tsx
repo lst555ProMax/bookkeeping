@@ -294,7 +294,7 @@ const CardDraw: React.FC = () => {
                 left: `${Math.random() * 100}%`,
                 animationDelay: `${Math.random() * 0.5}s`,
                 animationDuration: `${2 + Math.random() * 2}s`,
-                backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b'][Math.floor(Math.random() * 5)]
+                backgroundColor: ['#1ea5f9', '#0d8bd9', '#f093fb', '#4facfe', '#43e97b'][Math.floor(Math.random() * 5)]
               }}
             />
           ))}
