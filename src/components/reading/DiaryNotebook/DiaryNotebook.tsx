@@ -8,6 +8,7 @@ import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
+import toast from 'react-hot-toast';
 import { PRESET_THEMES, WEATHER_OPTIONS, MOOD_OPTIONS, FONT_OPTIONS } from '@/utils';
 import DatePicker from '@/components/common/DatePicker/DatePicker';
 import './DiaryNotebook.scss';

@@ -23,7 +23,7 @@ const HabitStatsChart: React.FC<HabitStatsChartProps> = ({ data }) => {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={(entry) => `${entry.percentage}%`}
+              label={(entry) => `${entry.percent}%`}
               outerRadius={120}
               fill="#8884d8"
               dataKey="value"
