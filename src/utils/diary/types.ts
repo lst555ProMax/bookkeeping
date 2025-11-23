@@ -18,6 +18,7 @@ export interface DiaryEntry {
   weather: string;
   mood: string;
   font?: string; // 字体样式
+  image?: string; // 图片（base64格式）
   createdAt: number;
   updatedAt: number;
 }

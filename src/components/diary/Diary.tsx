@@ -52,6 +52,7 @@ const Diary: React.FC = () => {
   
   // 记录初始状态，用于检测是否有未保存的更改
   const [initialDiaryState, setInitialDiaryState] = useState<{
+    date: string;
     content: string;
     theme: string;
     weather: string;
@@ -77,7 +78,10 @@ const Diary: React.FC = () => {
     setDiaryEntries(entries);
     
     // 初始化为空白新建状态
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
     setInitialDiaryState({
+      date: todayStr,
       content: '',
       theme: '#fff',
       weather: '晴天',
@@ -91,13 +95,14 @@ const Diary: React.FC = () => {
     if (!initialDiaryState) return false;
     
     return (
+      selectedDate !== initialDiaryState.date ||
       diaryContent !== initialDiaryState.content ||
       currentTheme !== initialDiaryState.theme ||
       currentWeather !== initialDiaryState.weather ||
       currentMood !== initialDiaryState.mood ||
       currentFont !== initialDiaryState.font
     );
-  }, [diaryContent, currentTheme, currentWeather, currentMood, currentFont, initialDiaryState]);
+  }, [selectedDate, diaryContent, currentTheme, currentWeather, currentMood, currentFont, initialDiaryState]);
 
   // 监听全局速记添加事件
   useEffect(() => {
@@ -263,6 +268,7 @@ const Diary: React.FC = () => {
     setCurrentFont("'Courier New', 'STKaiti', 'KaiTi', serif");
     
     setInitialDiaryState({
+      date: today,
       content: '',
       theme: '#fff',
       weather: '晴天',
@@ -282,6 +288,7 @@ const Diary: React.FC = () => {
     setCurrentFont(entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif");
     
     setInitialDiaryState({
+      date: entry.date,
       content: entry.content,
       theme: entry.theme,
       weather: entry.weather,
@@ -323,6 +330,7 @@ const Diary: React.FC = () => {
     
     // 更新初始状态
     setInitialDiaryState({
+      date: selectedDate,
       content: diaryContent,
       theme: currentTheme,
       weather: currentWeather,
@@ -546,6 +554,7 @@ const Diary: React.FC = () => {
       
       <DiaryNotebook
         selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
         currentTheme={currentTheme}
         onThemeChange={setCurrentTheme}
         currentWeather={currentWeather}

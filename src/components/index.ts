@@ -59,7 +59,7 @@ export { default as Diary } from './diary';
 // 乐记组件
 export { default as Music } from './music';
 
-// 读记组件
+// 书记组件
 export { default as Reading } from './reading';
 
 // 病记组件

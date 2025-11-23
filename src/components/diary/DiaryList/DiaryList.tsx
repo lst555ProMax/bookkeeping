@@ -171,7 +171,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
   return (
     <div className="diary-list">
       <div className="diary-list__header">
-        <h3 className="diary-list__title">📚 日记 ({diaryEntries.length})</h3>
+        <h3 className="diary-list__title">📚 笔记 ({diaryEntries.length})</h3>
         {onSearchContentChange && (
           <div className="diary-list__search">
             <FilterSearchInput
@@ -209,7 +209,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
         {diaryEntries.map(entry => (
           <div 
             key={entry.id} 
-            className={`diary-item ${entry.id === currentDiaryId ? 'diary-item--active' : ''}`}
+            className={`diary-item ${entry.id === currentDiaryId ? 'diary-item--active' : ''} ${exportMenuOpenId === entry.id ? 'diary-item--menu-open' : ''}`}
             onClick={() => onLoadDiary(entry)}
             style={{ 
               backgroundColor: entry.theme || '#f8f9fa',

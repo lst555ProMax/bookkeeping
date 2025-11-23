@@ -42,7 +42,7 @@ export const PAGE_MODE_LABELS: Record<PageMode, string> = {
   [PageMode.SOFTWARE]: '软件使用',
   [PageMode.DIARY]: '日记',
   [PageMode.MUSIC]: '乐记',
-  [PageMode.READING]: '读记',
+  [PageMode.READING]: '书记',
   [PageMode.MEDICAL]: '病记',
 };
 

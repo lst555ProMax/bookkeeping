@@ -8,7 +8,9 @@ import { Color } from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
+import toast from 'react-hot-toast';
 import { PRESET_THEMES, WEATHER_OPTIONS, MOOD_OPTIONS, FONT_OPTIONS } from '@/utils';
+import DatePicker from '@/components/common/DatePicker/DatePicker';
 import './DiaryNotebook.scss';
 
 const TEXT_COLORS = [
@@ -35,6 +37,7 @@ const HIGHLIGHT_COLORS = [
 
 interface DiaryNotebookProps {
   selectedDate: string;
+  onDateChange: (date: string) => void;
   currentTheme: string;
   onThemeChange: (theme: string) => void;
   currentWeather: string;
@@ -45,6 +48,8 @@ interface DiaryNotebookProps {
   onFontChange: (font: string) => void;
   diaryContent: string;
   onContentChange: (content: string) => void;
+  currentImage?: string;
+  onImageChange: (image: string | undefined) => void;
   onSave: () => void;
   onNew: () => void;
   showThemePicker: boolean;
@@ -61,6 +66,7 @@ interface DiaryNotebookProps {
 
 const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
   selectedDate,
+  onDateChange,
   currentTheme,
   onThemeChange,
   currentWeather,
@@ -71,6 +77,8 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
   onFontChange,
   diaryContent,
   onContentChange,
+  currentImage,
+  onImageChange,
   onSave,
   onNew,
   showThemePicker,
@@ -95,7 +103,7 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
     Underline,
     BubbleMenuExtension,
     Placeholder.configure({
-      placeholder: '记录你的音乐日常（按Ctrl+Enter保存）',
+      placeholder: '记录你的音乐感悟（按Ctrl+Enter保存）',
     }),
   ], []);
 
@@ -299,6 +307,7 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
   // 竖线元素引用
   const verticalLineRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 处理鼠标离开事件，添加延迟
   const handleMouseLeave = useCallback((
@@ -320,16 +329,55 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
     }
   }, []);
   
-  // 格式化日期显示
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
-    });
-  };
+  // 处理图片上传（固定区域）
+  const handleImageUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // 检查文件类型
+    if (!file.type.startsWith('image/')) {
+      toast.error('请选择图片文件');
+      return;
+    }
+
+    // 检查文件大小（限制为 5MB）
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('图片大小不能超过 5MB');
+      return;
+    }
+
+    // 读取文件并转换为 base64
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      if (base64) {
+        // 更新固定区域的图片
+        onImageChange(base64);
+        toast.success('图片上传成功');
+      }
+    };
+    reader.onerror = () => {
+      toast.error('图片读取失败，请重试');
+    };
+    reader.readAsDataURL(file);
+
+    // 清空文件输入，以便可以再次选择同一文件
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [onImageChange]);
+
+  // 删除图片
+  const handleDeleteImage = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onImageChange(undefined);
+    toast.success('图片已删除');
+  }, [onImageChange]);
+
+  // 触发文件选择
+  const triggerImageUpload = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
   
 
 
@@ -340,7 +388,11 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
         <div className="notebook__header">
           <div className="notebook__header-left">
             <div className="date-display">
-              📅 {formatDate(selectedDate)}
+              <DatePicker
+                value={selectedDate}
+                onChange={onDateChange}
+                minDate="2024-01-01"
+              />
             </div>
             
             {/* 主题颜色选择器 */}
@@ -517,7 +569,7 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
             </div>
           </div>
           <div className="notebook__actions">
-            <button className="action-icon-btn" onClick={onNew} title="新建音乐日记">
+            <button className="action-icon-btn" onClick={onNew} title="新建乐记">
               ➕
             </button>
             <button className="action-icon-btn" onClick={onSave} title="保存">
@@ -621,6 +673,38 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
             </BubbleMenu>
           )}
           <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+            {/* 固定的图片容器 - 左上角 */}
+            <div className="notebook__image-container">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+              />
+              {currentImage ? (
+                <div className="image-wrapper">
+                  <img src={currentImage} alt="日记图片" />
+                  <button 
+                    className="image-delete-btn" 
+                    onClick={handleDeleteImage}
+                    title="删除图片"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  className="image-upload-btn" 
+                  onClick={triggerImageUpload}
+                  title="点击上传专辑封面"
+                >
+                  <span className="upload-icon">📷</span>
+                  <span className="upload-text">上传专辑封面</span>
+                </button>
+              )}
+            </div>
+            
             {/* 竖线元素 - 放在编辑器内容内部，跟随内容滚动 */}
             <div 
               ref={verticalLineRef}

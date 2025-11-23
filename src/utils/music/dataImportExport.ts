@@ -63,16 +63,19 @@ export const exportQuickNotesOnly = (quickNotes?: QuickNote[]): void => {
 };
 
 /**
- * 导出日记数据
+ * 导出日记数据（包含图片数据）
  */
 export const exportDiaryEntriesOnly = (diaryEntries?: DiaryEntry[]): void => {
   try {
     const entriesToExport = diaryEntries || loadDiaryEntries();
     
+    // 统计包含图片的日记数量
+    const entriesWithImages = entriesToExport.filter(e => e.image).length;
+    
     const exportData: DiaryEntriesExportData = {
       version: '1.0.0',
       exportDate: new Date().toISOString(),
-      diaryEntries: entriesToExport,
+      diaryEntries: entriesToExport, // 包含完整的entry数据，包括image字段（base64格式）
       totalDiaryEntries: entriesToExport.length
     };
 
@@ -91,7 +94,7 @@ export const exportDiaryEntriesOnly = (diaryEntries?: DiaryEntry[]): void => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    console.log(`成功导出 ${entriesToExport.length} 条日记`);
+    console.log(`成功导出 ${entriesToExport.length} 条日记（其中 ${entriesWithImages} 条包含图片）`);
   } catch (error) {
     console.error('导出失败:', error);
     throw new Error('导出日记数据失败，请重试');
@@ -216,7 +219,8 @@ export const importDiaryEntriesOnly = (file: File): Promise<{
           }
           
           const existingEntries = loadDiaryEntries();
-          const existingDates = new Set(existingEntries.map(e => e.date));
+          // 使用id作为唯一标识，而不是date，因为同一天可能有多篇日记
+          const existingIds = new Set(existingEntries.map(e => e.id));
           
           let imported = 0;
           let skipped = 0;
@@ -227,13 +231,25 @@ export const importDiaryEntriesOnly = (file: File): Promise<{
               return;
             }
             
-            if (existingDates.has(entry.date)) {
+            // 检查是否已存在相同id的日记
+            if (existingIds.has(entry.id)) {
               skipped++;
               return;
             }
             
+            // 验证图片数据格式（如果存在）
+            if (entry.image && typeof entry.image === 'string') {
+              // 检查是否是有效的base64图片格式
+              if (!entry.image.startsWith('data:image/')) {
+                // 如果不是data URI格式，尝试添加默认前缀
+                // 或者保持原样（可能是base64字符串）
+                console.warn(`日记 ${entry.id} 的图片格式可能不正确`);
+              }
+            }
+            
+            // 保存完整的entry数据（包括image字段）
             existingEntries.push(entry);
-            existingDates.add(entry.date);
+            existingIds.add(entry.id);
             imported++;
           });
           
@@ -295,11 +311,24 @@ export const importMusicData = async (file: File): Promise<{ imported: number; s
           skipped += data.quickNotes.length - newNotes.length;
         }
 
-        // 导入日记
+        // 导入日记（包含图片数据）
         if (data.diaryEntries && Array.isArray(data.diaryEntries)) {
           const existingEntries = loadDiaryEntries();
-          const existingDates = new Set(existingEntries.map(e => e.date));
-          const newEntries = data.diaryEntries.filter(e => !existingDates.has(e.date));
+          // 使用id作为唯一标识，而不是date
+          const existingIds = new Set(existingEntries.map(e => e.id));
+          const newEntries = data.diaryEntries.filter(e => {
+            if (!e.id || !e.date) return false;
+            return !existingIds.has(e.id);
+          });
+          
+          // 验证并处理图片数据
+          newEntries.forEach(entry => {
+            if (entry.image && typeof entry.image === 'string') {
+              if (!entry.image.startsWith('data:image/')) {
+                console.warn(`日记 ${entry.id} 的图片格式可能不正确`);
+              }
+            }
+          });
           
           if (newEntries.length > 0) {
             const merged = [...existingEntries, ...newEntries];

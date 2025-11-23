@@ -88,7 +88,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
     
     // 验证内容不能为空
     if (!trimmedContent) {
-      toast.error('速记内容不能为空！');
+      toast.error('歌词内容不能为空！');
       // 恢复原内容
       onQuickNoteInputChange(originalContent);
       return;
@@ -117,12 +117,12 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
     }
   }, [hasUnsavedChanges, onHasUnsavedChangesChange]);
 
-  // 如果当前正在编辑的速记被删除，清空编辑面板
+  // 如果当前正在编辑的歌词被删除，清空编辑面板
   useEffect(() => {
     if (editingNoteId) {
       const noteExists = quickNotes.some(note => note.id === editingNoteId);
       if (!noteExists) {
-        // 当前编辑的速记已被删除，清空编辑面板
+        // 当前编辑的歌词已被删除，清空编辑面板
         setEditingNoteId(null);
         setOriginalContent('');
         onQuickNoteInputChange('');
@@ -130,14 +130,14 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
     }
   }, [quickNotes, editingNoteId, onQuickNoteInputChange]);
 
-  // 点击速记进入编辑模式
+  // 点击歌词进入编辑模式
   const handleNoteClick = (note: QuickNote) => {
-    // 如果点击的是当前正在编辑的速记，清空面板
+    // 如果点击的是当前正在编辑的歌词，清空面板
     if (editingNoteId === note.id) {
       // 检查是否有未保存的修改
       if (hasUnsavedChanges()) {
         const shouldContinue = window.confirm(
-          '当前有未保存的速记，是否继续当前操作？\n\n'
+          '当前有未保存的歌词，是否继续当前操作？\n\n'
         );
         
         if (!shouldContinue) {
@@ -150,11 +150,11 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
       return;
     }
     
-    // 如果正在编辑其他速记，先检查是否有未保存的改动
+    // 如果正在编辑其他歌词，先检查是否有未保存的改动
     if (editingNoteId && editingNoteId !== note.id) {
       if (hasUnsavedChanges()) {
         const shouldContinue = window.confirm(
-          '当前有未保存的速记，是否继续当前操作？\n\n'
+          '当前有未保存的歌词，是否继续当前操作？\n\n'
         );
         
         if (!shouldContinue) {
@@ -189,7 +189,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
         e.preventDefault();
         handleSaveEdit();
       } else {
-        // 新建模式：添加新速记
+        // 新建模式：添加新歌词
         // 如果输入框有内容，直接添加（这是新建操作，不是切换）
         if (quickNoteInput.trim()) {
           onAddQuickNote(e);
@@ -200,7 +200,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
       e.preventDefault();
       if (hasUnsavedChanges()) {
         const shouldContinue = window.confirm(
-          '当前有未保存的速记，是否继续当前操作？\n\n'
+          '当前有未保存的歌词，是否继续当前操作？\n\n'
         );
         
         if (shouldContinue) {
@@ -212,22 +212,22 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
     }
   };
 
-  // 导入速记
+  // 导入歌词
   const handleImportAll = () => {
     if (onImportAll) {
       onImportAll();
     }
   };
 
-  // 删除所有速记
+  // 删除所有歌词
   const handleDeleteAll = () => {
     if (quickNotes.length === 0) {
-      toast('没有速记可以删除', { icon: '⚠️' });
+      toast('没有歌词可以删除', { icon: '⚠️' });
       return;
     }
 
     const confirmed = window.confirm(
-      `确定要删除所有 ${quickNotes.length} 条速记吗？\n\n此操作无法撤销！建议先导出备份。`
+      `确定要删除所有 ${quickNotes.length} 条歌词吗？\n\n此操作无法撤销！建议先导出备份。`
     );
 
     if (confirmed && onDeleteAll) {
@@ -238,7 +238,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
   return (
     <div className="quick-notes" ref={quickNotesRef}>
       <div className="quick-notes__header">
-        <h3 className="quick-notes__title">💭 速记 ({quickNotes.length})</h3>
+        <h3 className="quick-notes__title">💭 歌词 ({quickNotes.length})</h3>
         {onSearchContentChange && (
           <div className="quick-notes__search">
             <FilterSearchInput
@@ -252,21 +252,21 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
           <button 
             className="action-icon-btn"
             onClick={onExportAll}
-            title="导出所有速记为JSON"
+            title="导出所有歌词为JSON"
           >
             📤
           </button>
           <button 
             className="action-icon-btn"
             onClick={handleImportAll}
-            title="从JSON导入速记"
+            title="从JSON导入歌词"
           >
             📥
           </button>
           <button 
             className="action-icon-btn"
             onClick={handleDeleteAll}
-            title="删除所有速记"
+            title="删除所有歌词"
           >
             🗑️
           </button>
@@ -277,7 +277,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
           placeholder={
             editingNoteId 
               ? "修改内容后按Ctrl+Enter保存，ESC取消" 
-              : "记录你的灵感（按Ctrl+Enter保存）"
+              : "记录你喜爱的歌词（按Ctrl+Enter保存）"
           }
           value={quickNoteInput}
           onChange={handleInputChange}
@@ -295,8 +295,8 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
         {quickNotes.length === 0 ? (
           <div className="quick-notes__empty">
             <div className="quick-notes__empty-icon">💭</div>
-            <p className="quick-notes__empty-message">还没有速记</p>
-            <p className="quick-notes__empty-hint">开始记录你的灵感吧~</p>
+            <p className="quick-notes__empty-message">还没有歌词</p>
+            <p className="quick-notes__empty-hint">开始记录你的歌词吧~</p>
           </div>
         ) : (
           quickNotes.map(note => (

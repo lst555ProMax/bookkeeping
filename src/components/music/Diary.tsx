@@ -36,6 +36,7 @@ const Music: React.FC = () => {
   });
   const [currentDiary, setCurrentDiary] = useState<DiaryEntry | null>(null);
   const [diaryContent, setDiaryContent] = useState<string>('');
+  const [currentImage, setCurrentImage] = useState<string | undefined>(undefined);
   const [currentTheme, setCurrentTheme] = useState<string>('#fff');
   const [currentWeather, setCurrentWeather] = useState<string>('晴天');
   const [currentMood, setCurrentMood] = useState<string>('开心');
@@ -52,14 +53,16 @@ const Music: React.FC = () => {
   
   // 记录初始状态，用于检测是否有未保存的更改
   const [initialDiaryState, setInitialDiaryState] = useState<{
+    date: string;
     content: string;
+    image?: string;
     theme: string;
     weather: string;
     mood: string;
     font: string;
   } | null>(null);
   
-  // 速记是否有未保存的修改
+  // 歌词是否有未保存的修改
   const [hasUnsavedQuickNote, setHasUnsavedQuickNote] = useState<boolean>(false);
   
   // 文件输入引用
@@ -77,8 +80,12 @@ const Music: React.FC = () => {
     setDiaryEntries(entries);
     
     // 初始化为空白新建状态
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
     setInitialDiaryState({
+      date: todayStr,
       content: '',
+      image: undefined,
       theme: '#fff',
       weather: '晴天',
       mood: '开心',
@@ -91,18 +98,20 @@ const Music: React.FC = () => {
     if (!initialDiaryState) return false;
     
     return (
+      selectedDate !== initialDiaryState.date ||
       diaryContent !== initialDiaryState.content ||
+      currentImage !== initialDiaryState.image ||
       currentTheme !== initialDiaryState.theme ||
       currentWeather !== initialDiaryState.weather ||
       currentMood !== initialDiaryState.mood ||
       currentFont !== initialDiaryState.font
     );
-  }, [diaryContent, currentTheme, currentWeather, currentMood, currentFont, initialDiaryState]);
+  }, [selectedDate, diaryContent, currentImage, currentTheme, currentWeather, currentMood, currentFont, initialDiaryState]);
 
-  // 监听全局速记添加事件
+  // 监听全局歌词添加事件
   useEffect(() => {
     const handleQuickNoteAdded = () => {
-      // 重新加载速记列表
+      // 重新加载歌词列表
       const notes = loadQuickNotes();
       setQuickNotes(notes);
     };
@@ -126,11 +135,11 @@ const Music: React.FC = () => {
         
         // 检查是否有未保存的修改
         if (hasUnsavedDiary && hasUnsavedQuickNote) {
-          message = '当前有未保存的音乐日记和速记，是否继续当前操作？\n\n';
+          message = '当前有未保存的乐记和歌词，是否继续当前操作？\n\n';
         } else if (hasUnsavedDiary) {
-          message = '当前有未保存的音乐日记，是否继续当前操作？\n\n';
+          message = '当前有未保存的乐记，是否继续当前操作？\n\n';
         } else if (hasUnsavedQuickNote) {
-          message = '当前有未保存的速记，是否继续当前操作？\n\n';
+          message = '当前有未保存的歌词，是否继续当前操作？\n\n';
         }
         
         if (message) {
@@ -153,7 +162,7 @@ const Music: React.FC = () => {
     };
   }, [hasUnsavedChanges, hasUnsavedQuickNote]);
 
-  // 添加速记
+  // 添加歌词
   const handleAddQuickNote = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && e.ctrlKey && quickNoteInput.trim()) {
       const newNote = addQuickNoteToStorage(quickNoteInput.trim());
@@ -162,7 +171,7 @@ const Music: React.FC = () => {
     }
   };
 
-  // 更新速记
+  // 更新歌词
   const handleUpdateQuickNote = (id: string, content: string) => {
     const updatedNote = updateQuickNoteInStorage(id, content);
     if (updatedNote) {
@@ -172,27 +181,27 @@ const Music: React.FC = () => {
     }
   };
 
-  // 删除速记
+  // 删除歌词
   const handleDeleteQuickNote = (id: string) => {
     deleteQuickNoteFromStorage(id);
     setQuickNotes(prev => prev.filter(note => note.id !== id));
   };
 
-  // 导出所有速记
+  // 导出所有歌词
   const handleExportQuickNotes = () => {
     try {
-      const message = `确定导出速记吗？\n\n速记：${quickNotes.length} 条`;
+      const message = `确定导出歌词吗？\n\n歌词：${quickNotes.length} 条`;
       
       if (window.confirm(message)) {
         exportQuickNotesOnly(quickNotes);
-        toast.success('速记数据导出成功！');
+        toast.success('歌词数据导出成功！');
       }
     } catch (error) {
       toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
   };
 
-  // 处理速记导入
+  // 处理歌词导入
   const handleImportQuickNotes = async (file: File) => {
     setIsImportingQuickNotes(true);
     try {
@@ -200,7 +209,7 @@ const Music: React.FC = () => {
       const notes = loadQuickNotes();
       setQuickNotes(notes);
       
-      const message = `导入完成！\n新增 ${result.imported} 条速记，跳过 ${result.skipped} 条重复记录`;
+      const message = `导入完成！\n新增 ${result.imported} 条歌词，跳过 ${result.skipped} 条重复记录`;
       toast.success(message);
     } catch (error) {
       toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
@@ -212,7 +221,7 @@ const Music: React.FC = () => {
     }
   };
 
-  // 处理速记文件选择
+  // 处理歌词文件选择
   const handleQuickNotesFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -226,19 +235,19 @@ const Music: React.FC = () => {
     handleImportQuickNotes(file);
   };
 
-  // 触发速记文件选择
+  // 触发歌词文件选择
   const triggerQuickNotesFileSelect = () => {
     quickNotesFileInputRef.current?.click();
   };
 
-  // 删除所有速记
+  // 删除所有歌词
   const handleDeleteAllQuickNotes = () => {
     try {
       const count = clearAllQuickNotes();
       setQuickNotes([]);
-      toast.success(`已删除 ${count} 条速记`);
-    } catch (error) {
-      console.error('删除所有速记失败:', error);
+      toast.success(`已删除 ${count} 条歌词`);
+      } catch (error) {
+      console.error('删除所有歌词失败:', error);
       toast.error('删除失败，请重试');
     }
   };
@@ -257,13 +266,16 @@ const Music: React.FC = () => {
     setSelectedDate(today);
     setCurrentDiary(null);
     setDiaryContent('');
+    setCurrentImage(undefined);
     setCurrentTheme('#fff');
     setCurrentWeather('晴天');
     setCurrentMood('开心');
     setCurrentFont("'Courier New', 'STKaiti', 'KaiTi', serif");
     
     setInitialDiaryState({
+      date: today,
       content: '',
+      image: undefined,
       theme: '#fff',
       weather: '晴天',
       mood: '开心',
@@ -276,13 +288,16 @@ const Music: React.FC = () => {
     setSelectedDate(entry.date);
     setCurrentDiary(entry);
     setDiaryContent(entry.content);
+    setCurrentImage(entry.image);
     setCurrentTheme(entry.theme);
     setCurrentWeather(entry.weather);
     setCurrentMood(entry.mood);
     setCurrentFont(entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif");
     
     setInitialDiaryState({
+      date: entry.date,
       content: entry.content,
+      image: entry.image,
       theme: entry.theme,
       weather: entry.weather,
       mood: entry.mood,
@@ -310,6 +325,7 @@ const Music: React.FC = () => {
       id: currentDiary?.id || Date.now().toString(),
       date: selectedDate,
       content: diaryContent,
+      image: currentImage,
       theme: currentTheme,
       weather: currentWeather,
       mood: currentMood,
@@ -323,7 +339,9 @@ const Music: React.FC = () => {
     
     // 更新初始状态
     setInitialDiaryState({
+      date: selectedDate,
       content: diaryContent,
+      image: currentImage,
       theme: currentTheme,
       weather: currentWeather,
       mood: currentMood,
@@ -352,7 +370,7 @@ const Music: React.FC = () => {
   const handleDeleteDiary = (id: string, silent: boolean = false) => {
     // 如果不是静默删除，需要确认
     if (!silent) {
-      const confirmed = window.confirm('确定要删除这篇音乐日记吗？\n\n删除后将无法恢复！');
+      const confirmed = window.confirm('确定要删除这篇乐记吗？\n\n删除后将无法恢复！');
       if (!confirmed) return;
     }
     
@@ -396,7 +414,7 @@ const Music: React.FC = () => {
     // 检查是否有未保存的更改
     if (hasUnsavedChanges()) {
       const shouldContinue = window.confirm(
-        '当前有未保存的音乐日记，是否继续当前操作？\n\n'
+        '当前有未保存的乐记，是否继续当前操作？\n\n'
       );
       
       if (!shouldContinue) {
@@ -468,7 +486,7 @@ const Music: React.FC = () => {
       const count = clearAllDiaryEntries();
       setDiaryEntries([]);
       resetDiaryState();
-      toast.success(`已删除 ${count} 篇音乐日记`);
+      toast.success(`已删除 ${count} 篇乐记`);
     } catch (error) {
       console.error('删除所有日记失败:', error);
       toast.error('删除失败，请重试');
@@ -485,7 +503,7 @@ const Music: React.FC = () => {
     // 检查是否有未保存的更改
     if (hasUnsavedChanges()) {
       const shouldContinue = window.confirm(
-        '当前有未保存的音乐日记，是否继续当前操作？\n\n'
+        '当前有未保存的乐记，是否继续当前操作？\n\n'
       );
       
       if (!shouldContinue) {
@@ -498,7 +516,7 @@ const Music: React.FC = () => {
     loadDiaryEntry(entry);
   };
 
-  // 筛选速记
+  // 筛选歌词
   const filteredQuickNotes = quickNotes.filter(note => {
     if (!quickNotesSearch.trim()) return true;
     return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
@@ -546,6 +564,7 @@ const Music: React.FC = () => {
       
       <DiaryNotebook
         selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
         currentTheme={currentTheme}
         onThemeChange={setCurrentTheme}
         currentWeather={currentWeather}
@@ -556,6 +575,8 @@ const Music: React.FC = () => {
         onFontChange={setCurrentFont}
         diaryContent={diaryContent}
         onContentChange={setDiaryContent}
+        currentImage={currentImage}
+        onImageChange={setCurrentImage}
         onSave={handleSaveDiary}
         onNew={handleNewDiary}
         showThemePicker={showThemePicker}

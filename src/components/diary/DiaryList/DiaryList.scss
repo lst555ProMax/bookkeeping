@@ -124,12 +124,20 @@
       margin-bottom: 0.75rem;
       cursor: pointer;
       transition: all 0.3s ease;
-      border: 2px solid transparent;
+      border: 2px solid #F2F2F2;
+      position: relative;
+      z-index: 1;
 
       &:hover {
         filter: brightness(0.95);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        z-index: 2;
+      }
+
+      // 当export-menu打开时，提高当前item的z-index
+      &.diary-item--menu-open {
+        z-index: 100;
       }
 
       &--active {
@@ -175,6 +183,7 @@
 
       .export-dropdown {
         position: relative;
+        z-index: 100;
       }
 
       &__export,
@@ -190,6 +199,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
+        z-index: 101;
 
         &:hover {
           transform: scale(1.2);
@@ -214,12 +225,13 @@
         border-radius: 8px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
         padding: 0.5rem;
-        z-index: 1000;
+        z-index: 10000;
         min-width: 120px;
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
         animation: slideDown 0.2s ease;
+        pointer-events: auto;
 
         @keyframes slideDown {
           from {

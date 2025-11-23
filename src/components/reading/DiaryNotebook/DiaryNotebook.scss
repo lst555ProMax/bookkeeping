@@ -67,13 +67,41 @@
         font-weight: 600;
         color: #667eea;
         background: rgba(255, 255, 255, 0.8);
-        padding: 0.5rem 1rem;
+        padding: 0;
         border-radius: 8px;
         user-select: none;
         transition: all 0.3s ease;
 
         &:hover {
           background: rgba(102, 126, 234, 0.1);
+        }
+
+        .date-picker {
+          width: 100%;
+
+          &__input {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #667eea;
+
+            &:hover {
+              background: rgba(102, 126, 234, 0.1);
+              transform: none;
+              box-shadow: none;
+            }
+          }
+
+          &__value {
+            font-weight: 600;
+            color: #667eea;
+          }
+
+          &__icon {
+            font-size: 1.2rem;
+          }
         }
       }
 

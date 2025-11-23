@@ -9,6 +9,7 @@ import Highlight from '@tiptap/extension-highlight';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import { PRESET_THEMES, WEATHER_OPTIONS, MOOD_OPTIONS, FONT_OPTIONS } from '@/utils';
+import DatePicker from '@/components/common/DatePicker/DatePicker';
 import './DiaryNotebook.scss';
 
 const TEXT_COLORS = [
@@ -35,6 +36,7 @@ const HIGHLIGHT_COLORS = [
 
 interface DiaryNotebookProps {
   selectedDate: string;
+  onDateChange: (date: string) => void;
   currentTheme: string;
   onThemeChange: (theme: string) => void;
   currentWeather: string;
@@ -61,6 +63,7 @@ interface DiaryNotebookProps {
 
 const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
   selectedDate,
+  onDateChange,
   currentTheme,
   onThemeChange,
   currentWeather,
@@ -320,19 +323,6 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
     }
   }, []);
   
-  // 格式化日期显示
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
-    });
-  };
-  
-
-
   return (
     <div className="diary-notebook">
       <div className="notebook__spine"></div>
@@ -340,7 +330,11 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
         <div className="notebook__header">
           <div className="notebook__header-left">
             <div className="date-display">
-              📅 {formatDate(selectedDate)}
+              <DatePicker
+                value={selectedDate}
+                onChange={onDateChange}
+                minDate="2024-01-01"
+              />
             </div>
             
             {/* 主题颜色选择器 */}
