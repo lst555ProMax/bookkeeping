@@ -12,13 +12,8 @@
     flex-shrink: 0;
     overflow-y: auto;
 
-    .nav-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #667eea;
-      margin: 0 0 1.5rem 0;
-      padding-bottom: 0.75rem;
-      border-bottom: 2px solid #667eea;
+    .disease-select-wrapper {
+      margin-bottom: 1.5rem;
     }
 
     .nav-list {
@@ -832,43 +827,8 @@
 /* 响应式设计 */
 @media (max-width: 768px) {
   .medical-record {
-    &__header {
-      padding: 1.5rem 1rem;
-
-      h2 {
-        font-size: 1.5rem;
-      }
-
-      .subtitle {
-        font-size: 0.9rem;
-      }
-    }
-
     &__content {
       padding: 0 1rem 2rem 1rem;
-    }
-  }
-
-  .disease-tabs {
-    flex-direction: column;
-    padding: 1.5rem 1rem 0 1rem;
-    gap: 1rem;
-  }
-
-  .disease-tab {
-    max-width: 100%;
-    padding: 1.25rem 1.5rem;
-
-    .tab-icon {
-      font-size: 2rem;
-    }
-
-    .tab-title {
-      font-size: 1rem;
-    }
-
-    .tab-subtitle {
-      font-size: 0.8rem;
     }
   }
 
