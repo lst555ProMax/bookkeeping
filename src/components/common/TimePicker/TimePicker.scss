@@ -1,0 +1,230 @@
+.time-picker {
+  position: relative;
+  width: 100%;
+
+  &__input {
+    width: 100%;
+    padding: 0.6rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #f4f5f7;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-sizing: border-box;
+
+    &:hover:not(.disabled) {
+      border-color: var(--theme-color-start, #1ea5f9);
+      background: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(var(--theme-color-rgb, 30, 165, 249), 0.15);
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      background: #f0f0f0;
+    }
+  }
+
+  &__icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  &__value {
+    flex: 1;
+    color: #333;
+    font-weight: 500;
+  }
+
+  &__arrow {
+    font-size: 0.7rem;
+    color: #999;
+    transition: transform 0.3s ease;
+
+    &.open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__dropdown {
+    position: fixed;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    padding: 8px;
+    z-index: 10000;
+    animation: slideDown 0.2s ease;
+    border: 1px solid #e8eaed;
+    overflow: hidden;
+    box-sizing: border-box;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  &__header {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    border-bottom: 2px solid #f0f2f5;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    background: linear-gradient(135deg, var(--theme-color-start, #1ea5f9) 0%, var(--theme-color-end, #0d8bd9) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__selectors {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  &__selector {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #999;
+    margin-bottom: 0.5rem;
+  }
+
+  &__scroll-container {
+    width: 100%;
+    height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 2px solid #f0f2f5;
+    border-radius: 8px;
+    background: #fafbfc;
+    position: relative;
+
+    /* 自定义滚动条 */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    /* 添加渐变遮罩效果 */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), transparent);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.9), transparent);
+      pointer-events: none;
+      z-index: 1;
+    }
+  }
+
+  &__option {
+    padding: 0.25rem 0.5rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    margin: 2px 4px;
+    position: relative;
+    z-index: 2;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(var(--theme-color-rgb, 30, 165, 249), 0.1) 0%, rgba(var(--theme-color-rgb, 30, 165, 249), 0.15) 100%);
+      color: var(--theme-color-start, #1ea5f9);
+      font-weight: 600;
+    }
+
+    &.selected {
+      background: linear-gradient(135deg, var(--theme-color-start, #1ea5f9) 0%, var(--theme-color-end, #0d8bd9) 100%);
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(var(--theme-color-rgb, 30, 165, 249), 0.25);
+      
+      &:hover {
+        box-shadow: 0 4px 12px rgba(var(--theme-color-rgb, 30, 165, 249), 0.35);
+      }
+    }
+  }
+
+  &__separator {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--theme-color-start, #1ea5f9);
+    margin-top: 1.5rem;
+    align-self: flex-start;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .time-picker {
+    &__dropdown {
+      max-width: 90vw;
+    }
+
+    &__scroll-container {
+      height: 180px;
+    }
+
+    &__option {
+      font-size: 0.9rem;
+      padding: 0.25rem 0.4rem;
+    }
+  }
+}
+

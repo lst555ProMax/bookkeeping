@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { DailyRecord, MealStatus } from '@/utils';
-import { DatePicker } from '@/components/common';
+import { DatePicker, TimePicker } from '@/components/common';
 import './DailyRecordForm.scss';
 
 interface DailyRecordFormProps {
@@ -49,10 +49,10 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
   const [cleaning, setCleaning] = useState(false);
   const [wechatSteps, setWechatSteps] = useState('');
   
-  // 打卡时间
-  const [checkInTime, setCheckInTime] = useState('');
-  const [checkOutTime, setCheckOutTime] = useState('');
-  const [leaveTime, setLeaveTime] = useState('');
+  // 打卡时间（默认值：签到9点、签退18点、离开22点）
+  const [checkInTime, setCheckInTime] = useState('09:00');
+  const [checkOutTime, setCheckOutTime] = useState('18:00');
+  const [leaveTime, setLeaveTime] = useState('22:00');
   
   // 备注
   const [notes, setNotes] = useState('');
@@ -71,9 +71,9 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     setLaundry(false);
     setCleaning(false);
     setWechatSteps('');
-    setCheckInTime('');
-    setCheckOutTime('');
-    setLeaveTime('');
+    setCheckInTime('09:00');
+    setCheckOutTime('18:00');
+    setLeaveTime('22:00');
     setNotes('');
   };
 
@@ -93,9 +93,9 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       setLaundry(editingRecord.laundry);
       setCleaning(editingRecord.cleaning);
       setWechatSteps(editingRecord.wechatSteps?.toString() || '');
-      setCheckInTime(editingRecord.checkInTime || '');
-      setCheckOutTime(editingRecord.checkOutTime || '');
-      setLeaveTime(editingRecord.leaveTime || '');
+      setCheckInTime(editingRecord.checkInTime || '09:00');
+      setCheckOutTime(editingRecord.checkOutTime || '18:00');
+      setLeaveTime(editingRecord.leaveTime || '22:00');
       setNotes(editingRecord.notes || '');
     } else {
       resetForm();
@@ -227,25 +227,60 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
           />
         </div>
 
-        {/* 微信步数 */}
-        <div className="form-group">
-          <label htmlFor="wechatSteps">
-            👣 微信步数 <span className="required">*</span>
-          </label>
-          <input
-            type="number"
-            id="wechatSteps"
-            value={wechatSteps}
-            onChange={(e) => setWechatSteps(e.target.value)}
-            placeholder="输入今天的微信步数"
-            min="0"
-            required
-          />
+        {/* 打卡签到和打卡签退 */}
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="checkInTime">
+              💼 打卡签到 <span className="required">*</span>
+            </label>
+            <TimePicker
+              value={checkInTime}
+              onChange={setCheckInTime}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="checkOutTime">
+              💼 打卡签退 <span className="required">*</span>
+            </label>
+            <TimePicker
+              value={checkOutTime}
+              onChange={setCheckOutTime}
+            />
+          </div>
+        </div>
+
+        {/* 打卡离开和微信步数 */}
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="leaveTime">
+              💼 打卡离开 <span className="required">*</span>
+            </label>
+            <TimePicker
+              value={leaveTime}
+              onChange={setLeaveTime}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="wechatSteps">
+              👣 微信步数 <span className="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="wechatSteps"
+              value={wechatSteps}
+              onChange={(e) => setWechatSteps(e.target.value)}
+              placeholder="今天的微信步数"
+              min="0"
+              required
+            />
+          </div>
         </div>
 
         {/* 三餐 */}
         <div className="form-group">
-          <label>🍽️ 三餐</label>
+          <label>🍽️ 三餐 <span className="required">*</span></label>
           <div className="meal-checkboxes">
             <div className="meal-item">
               <span className="meal-name">早餐</span>
@@ -364,36 +399,6 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
           </div>
         </div>
 
-        {/* 工作日打卡 */}
-        <div className="form-group">
-          <label>💼 打卡</label>
-          <div className="time-inputs-inline">
-            <div className="time-item">
-              <span>签到</span>
-              <input
-                type="time"
-                value={checkInTime}
-                onChange={(e) => setCheckInTime(e.target.value)}
-              />
-            </div>
-            <div className="time-item">
-              <span>签退</span>
-              <input
-                type="time"
-                value={checkOutTime}
-                onChange={(e) => setCheckOutTime(e.target.value)}
-              />
-            </div>
-            <div className="time-item">
-              <span>离开</span>
-              <input
-                type="time"
-                value={leaveTime}
-                onChange={(e) => setLeaveTime(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
 
         {/* 备注 */}
         <div className="form-group">

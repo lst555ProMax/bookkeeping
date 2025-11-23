@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { SleepRecord } from '@/utils';
 import { calculateSleepDuration } from '@/utils';
-import { DatePicker } from '@/components/common';
+import { DatePicker, TimePicker } from '@/components/common';
 import './SleepForm.scss';
 
 interface SleepFormProps {
@@ -171,12 +171,10 @@ const SleepForm: React.FC<SleepFormProps> = ({
             <label htmlFor="sleepTime">
               🌙 入睡时间 <span className="required">*</span>
             </label>
-            <input
-              type="time"
-              id="sleepTime"
+            <TimePicker
               value={sleepTime}
-              onChange={(e) => setSleepTime(e.target.value)}
-              required
+              onChange={setSleepTime}
+              placeholder="请选择入睡时间"
             />
           </div>
 
@@ -184,12 +182,10 @@ const SleepForm: React.FC<SleepFormProps> = ({
             <label htmlFor="wakeTime">
               ☀️ 醒来时间 <span className="required">*</span>
             </label>
-            <input
-              type="time"
-              id="wakeTime"
+            <TimePicker
               value={wakeTime}
-              onChange={(e) => setWakeTime(e.target.value)}
-              required
+              onChange={setWakeTime}
+              placeholder="请选择醒来时间"
             />
           </div>
         </div>

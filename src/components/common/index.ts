@@ -3,6 +3,7 @@ export { default as Fortune } from './fortune/Fortune';
 export { default as MonthSelector } from './MonthSelector/MonthSelector';
 export { FloatingQuickNote } from './FloatingQuickNote';
 export { DatePicker } from './DatePicker';
+export { TimePicker } from './TimePicker';
 export { FormSelect } from './FormSelect';
 export type { FormSelectOption } from './FormSelect';
 export { FilterNumberInput } from './FilterNumberInput';
