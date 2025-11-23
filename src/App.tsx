@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { Home, Records, SleepRecords, DailyRecords, StudyRecords } from '@/pages';
+import { Home, Dashboard } from '@/pages';
 import { getCurrentPath, findRouteByPath } from '@/router';
 import { FloatingQuickNote } from '@/components/common';
 import { addQuickNote } from '@/utils/diary/storage';
@@ -23,6 +23,30 @@ const App: React.FC = () => {
       const route = findRouteByPath(path);
       
       if (route) {
+        // 处理旧路由重定向到dashboard
+        if (['records', 'sleepRecords', 'dailyRecords', 'studyRecords'].includes(route.name)) {
+          const params = new URLSearchParams();
+          const tabMap: Record<string, string> = {
+            'records': 'records',
+            'sleepRecords': 'sleep',
+            'dailyRecords': 'daily',
+            'studyRecords': 'study'
+          };
+          params.set('tab', tabMap[route.name] || 'records');
+          
+          // 如果是records路由，检查是否有type参数
+          if (route.name === 'records') {
+            const oldParams = new URLSearchParams(window.location.hash.split('?')[1]);
+            const type = oldParams.get('type');
+            if (type) {
+              params.set('type', type);
+            }
+          }
+          
+          window.location.hash = `#/dashboard?${params.toString()}`;
+          return;
+        }
+        
         setCurrentPage(route.name);
       } else {
         setCurrentPage('home');
@@ -43,14 +67,12 @@ const App: React.FC = () => {
   // 渲染对应的页面
   const renderPage = () => {
     switch (currentPage) {
+      case 'dashboard':
       case 'records':
-        return <Records />;
       case 'sleepRecords':
-        return <SleepRecords />;
       case 'dailyRecords':
-        return <DailyRecords />;
       case 'studyRecords':
-        return <StudyRecords />;
+        return <Dashboard />;
       case 'home':
       default:
         return <Home />;

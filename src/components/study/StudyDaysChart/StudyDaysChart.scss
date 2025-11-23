@@ -1,9 +1,15 @@
-.expense-trend-chart {
+.study-days-chart {
   background: white;
   border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
   padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
 
   &__title {
     margin: 0 0 1rem 0;
@@ -18,13 +24,28 @@
     height: 300px;
   }
 
+  &--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+
+  &__empty-message {
+    color: #999;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+  }
+
   &__tooltip {
     background: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 6px;
-    border: none;
     font-size: 0.9rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: none;
 
     .tooltip__label {
       margin: 0 0 0.25rem 0;
@@ -33,15 +54,15 @@
 
     .tooltip__value {
       margin: 0;
-      color: #45B7D1;
-      font-weight: 700;
+      color: #667eea;
+      font-weight: 600;
     }
   }
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .expense-trend-chart {
+  .study-days-chart {
     padding: 1rem;
 
     &__title {
@@ -55,17 +76,3 @@
   }
 }
 
-@media (max-width: 480px) {
-  .expense-trend-chart {
-    padding: 0.8rem;
-
-    &__title {
-      font-size: 1rem;
-      text-align: left;
-    }
-
-    &__container {
-      height: 200px;
-    }
-  }
-}

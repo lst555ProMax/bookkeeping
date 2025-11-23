@@ -192,7 +192,11 @@ export const getMonthSleepStats = (year: number, month: number) => {
       averageSleepTime: '00:00',
       averageWakeTime: '00:00',
       averageDuration: 0,
-      averageQuality: 0
+      averageQuality: 0,
+      lateNightDays: 0,
+      insomniaDays: 0,
+      sleepTimeRegularity: 0,
+      durationRegularity: 0
     };
   }
 
@@ -218,12 +222,75 @@ export const getMonthSleepStats = (year: number, month: number) => {
     displayAvgSleepTime += 24 * 60; // 转换回21:00-23:59的范围
   }
 
+  // 计算熬穿天数：入睡时间在6点-12点（早上6点到中午12点）
+  const lateNightDays = records.filter(record => {
+    const [hours] = record.sleepTime.split(':').map(Number);
+    // 6点-12点视为熬夜（通宵到早上）
+    return hours >= 6 && hours < 12;
+  }).length;
+
+  // 计算失眠天数：入睡时间在3点-6点（凌晨3点到早上6点）
+  const insomniaDays = records.filter(record => {
+    const [hours] = record.sleepTime.split(':').map(Number);
+    // 3点-6点视为失眠（很晚才睡）
+    return hours >= 3 && hours < 6;
+  }).length;
+
+  // 计算入睡规律性：入睡时间在平均入睡时间上下0.5小时区间的记录数 / 总记录数
+  const sleepTimeRegularity = (() => {
+    if (records.length === 0) return 0;
+    const mean = avgSleepTime;
+    const halfHourInMinutes = 30; // 0.5小时 = 30分钟
+    
+    // 处理跨天的情况：如果平均入睡时间是负数（21:00-23:59），需要特殊处理
+    let meanForComparison = mean;
+    if (mean < 0) {
+      meanForComparison = mean + 24 * 60; // 转换为正数
+    }
+    
+    const regularCount = records.filter(record => {
+      const recordSleepTime = sleepTimeToMinutes(record.sleepTime);
+      let recordTimeForComparison = recordSleepTime;
+      if (recordSleepTime < 0) {
+        recordTimeForComparison = recordSleepTime + 24 * 60;
+      }
+      
+      // 计算时间差（考虑跨天情况）
+      let diff = Math.abs(recordTimeForComparison - meanForComparison);
+      if (diff > 12 * 60) { // 如果差值大于12小时，可能是跨天的情况
+        diff = 24 * 60 - diff;
+      }
+      
+      return diff <= halfHourInMinutes;
+    }).length;
+    
+    return Math.round((regularCount / records.length) * 100);
+  })();
+
+  // 计算睡眠时长规律性：睡眠时长在平均睡眠时长上下0.5小时区间的记录数 / 总记录数
+  const durationRegularity = (() => {
+    if (records.length === 0) return 0;
+    const mean = avgDuration;
+    const halfHourInMinutes = 30; // 0.5小时 = 30分钟
+    
+    const regularCount = records.filter(record => {
+      const duration = record.duration || 0;
+      return Math.abs(duration - mean) <= halfHourInMinutes;
+    }).length;
+    
+    return Math.round((regularCount / records.length) * 100);
+  })();
+
   return {
     totalRecords: records.length,
     averageSleepTime: minutesToTime(displayAvgSleepTime),
     averageWakeTime: minutesToTime(avgWakeTime),
     averageDuration: Math.round(avgDuration),
-    averageQuality: Math.round(avgQuality)
+    averageQuality: Math.round(avgQuality),
+    lateNightDays,
+    insomniaDays,
+    sleepTimeRegularity,
+    durationRegularity
   };
 };
 

@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { MonthSelector } from '@/components';
 import { MealRegularityChart, HabitStatsChart, StepsTrendChart, WorkTimeChart, AttendanceComplianceChart } from '@/components/daily';
 import { getMonthlyStats, getMonthlyTrendData, getHabitStats } from '@/utils/daily/statistics';
-import './DailyRecords.scss';
+import './DailyRecordsContent.scss';
 
-const DailyRecords: React.FC = () => {
+const DailyRecordsContent: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -22,25 +22,11 @@ const DailyRecords: React.FC = () => {
   // 获取生活习惯统计
   const habitStats = getHabitStats(year, month);
 
-  // 返回首页（切换到日常记录模式）
-  const goToHome = () => {
-    window.location.hash = '#/?mode=daily';
-  };
-
   return (
-    <div className="daily-records">
-      {/* 页面头部 */}
-      <header className="daily-records__header">
-        <button className="back-btn" onClick={goToHome}>
-          ← 返回首页
-        </button>
-        <h1>📊 日常数据面板</h1>
-        <p>全方位了解你的日常生活状态</p>
-      </header>
-
-      <div className="daily-records__content">
+    <div className="daily-records-content">
+      <div className="daily-records-content__content">
         {/* 月份选择器 */}
-        <div className="daily-records__month-selector">
+        <div className="daily-records-content__month-selector">
           <MonthSelector
             selectedMonth={selectedMonth}
             onMonthChange={setSelectedMonth}
@@ -48,16 +34,8 @@ const DailyRecords: React.FC = () => {
         </div>
 
         {/* 统计概览卡片 */}
-        <div className="daily-records__stats">
-          <div className="stat-card">
-            <div className="stat-icon">📅</div>
-            <div className="stat-content">
-              <div className="stat-label">本月记录天数</div>
-              <div className="stat-value">{stats.totalRecords} 天</div>
-            </div>
-          </div>
-
-          <div className="stat-card">
+        <div className="daily-records-content__stats">
+          <div className="stat-card stat-card--success">
             <div className="stat-icon">🍽️</div>
             <div className="stat-content">
               <div className="stat-label">三餐规律率</div>
@@ -65,7 +43,7 @@ const DailyRecords: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-card--info">
             <div className="stat-icon">🚶</div>
             <div className="stat-content">
               <div className="stat-label">平均步数</div>
@@ -73,7 +51,7 @@ const DailyRecords: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-card--warning">
             <div className="stat-icon">⏰</div>
             <div className="stat-content">
               <div className="stat-label">平均工作时长</div>
@@ -81,7 +59,7 @@ const DailyRecords: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-card--info">
             <div className="stat-icon">🏢</div>
             <div className="stat-content">
               <div className="stat-label">平均在公司时长</div>
@@ -89,7 +67,7 @@ const DailyRecords: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-card--success">
             <div className="stat-icon">✅</div>
             <div className="stat-content">
               <div className="stat-label">签到合格率</div>
@@ -97,7 +75,7 @@ const DailyRecords: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-card--primary">
             <div className="stat-icon">🧼</div>
             <div className="stat-content">
               <div className="stat-label">每日内务完成率</div>
@@ -105,7 +83,7 @@ const DailyRecords: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-card--info">
             <div className="stat-icon">💇</div>
             <div className="stat-content">
               <div className="stat-label">洗头完成率 (2天/次)</div>
@@ -113,7 +91,7 @@ const DailyRecords: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-card--warning">
             <div className="stat-icon">🛁</div>
             <div className="stat-content">
               <div className="stat-label">洗澡完成率 (7天/次)</div>
@@ -121,7 +99,7 @@ const DailyRecords: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-card--success">
             <div className="stat-icon">👔</div>
             <div className="stat-content">
               <div className="stat-label">洗衣完成率 (3天/次)</div>
@@ -129,7 +107,7 @@ const DailyRecords: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-card--primary">
             <div className="stat-icon">🧹</div>
             <div className="stat-content">
               <div className="stat-label">打扫完成率 (7天/次)</div>
@@ -139,7 +117,7 @@ const DailyRecords: React.FC = () => {
         </div>
 
         {/* 图表区域 */}
-        <div className="daily-records__charts">
+        <div className="daily-records-content__charts">
           {/* 第一行：三餐规律性 和 生活习惯 */}
           <div className="charts-row">
             <div className="chart-item">
@@ -180,4 +158,5 @@ const DailyRecords: React.FC = () => {
   );
 };
 
-export default DailyRecords;
+export default DailyRecordsContent;
+

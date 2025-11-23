@@ -20,27 +20,34 @@ export const routes: RouteConfig[] = [
     description: '首页 - 记账记录'
   },
   {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: 'Dashboard',
+    description: '数据看板 - 统一的数据面板'
+  },
+  // 保留旧路由以支持向后兼容，但重定向到dashboard
+  {
     path: '/records',
     name: 'records',
-    component: 'Records',
+    component: 'Dashboard',
     description: '数据面板 - 统计图表'
   },
   {
     path: '/sleep-records',
     name: 'sleepRecords',
-    component: 'SleepRecords',
+    component: 'Dashboard',
     description: '睡眠记录 - 睡眠数据面板'
   },
   {
     path: '/daily-records',
     name: 'dailyRecords',
-    component: 'DailyRecords',
+    component: 'Dashboard',
     description: '日常记录 - 日常数据面板'
   },
   {
     path: '/study-records',
     name: 'studyRecords',
-    component: 'StudyRecords',
+    component: 'Dashboard',
     description: '学习记录 - 学习数据面板'
   }
 ];

@@ -467,22 +467,27 @@ const Home: React.FC = () => {
 
   // 跳转到支出数据看板页面
   const goToExpenseDashboard = () => {
-    window.location.hash = '#/records?type=expense';
+    window.location.hash = '#/dashboard?tab=records&type=expense';
   };
 
   // 跳转到收入数据看板页面
   const goToIncomeDashboard = () => {
-    window.location.hash = '#/records?type=income';
+    window.location.hash = '#/dashboard?tab=records&type=income';
   };
 
   // 跳转到睡眠数据面板页面
   const goToSleepDashboard = () => {
-    window.location.hash = '#/sleep-records';
+    window.location.hash = '#/dashboard?tab=sleep';
   };
 
   // 跳转到日常数据面板页面
   const goToDailyDashboard = () => {
-    window.location.hash = '#/daily-records';
+    window.location.hash = '#/dashboard?tab=daily';
+  };
+
+  // 跳转到学习数据面板页面
+  const goToStudyDashboard = () => {
+    window.location.hash = '#/dashboard?tab=study';
   };
 
   // === 支出相关操作 ===

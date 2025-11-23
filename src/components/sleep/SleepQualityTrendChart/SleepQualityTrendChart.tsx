@@ -16,7 +16,7 @@ const SleepQualityTrendChart: React.FC<SleepQualityTrendChartProps> = ({ data, a
   return (
     <div className="sleep-quality-trend-chart">
       <div className="chart-header">
-        <h3 className="chart-title">睡眠质量趋势</h3>
+        <h3 className="chart-title">🌙 睡眠质量趋势</h3>
         <span className="chart-average">平均质量：{averageQuality.toFixed(1)}分</span>
       </div>
       <ResponsiveContainer width="100%" height={300}>

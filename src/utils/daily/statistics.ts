@@ -40,6 +40,7 @@ export interface DailyTrendData {
   hygieneScore: number; // 0-100 的卫生评分
   workHours: number; // 工作时长（小时）
   companyHours: number; // 在公司时长（小时）
+  studyHours: number; // 学习时长（小时）= 在公司时长 - 工作时长（或离开时间 - 签退时间）
   checkInCompliant: boolean; // 签到是否合格
   checkOutCompliant: boolean; // 签退是否合格
   leaveCompliant: boolean; // 离开是否合格
@@ -111,6 +112,37 @@ const calculateCompanyHours = (record: DailyRecord): number => {
   const leaveMinutes = leaveHour * 60 + leaveMin;
   
   return Math.round(((leaveMinutes - inMinutes) / 60) * 10) / 10;
+};
+
+/**
+ * 计算学习时长（小时）- 在公司时长 - 工作时长（或离开时间 - 签退时间）
+ */
+const calculateStudyHours = (record: DailyRecord): number => {
+  // 优先使用：在公司时长 - 工作时长
+  if (record.checkInTime && record.checkOutTime && record.leaveTime) {
+    const companyHours = calculateCompanyHours(record);
+    const workHours = calculateWorkHours(record);
+    return Math.max(0, Math.round((companyHours - workHours) * 10) / 10);
+  }
+  
+  // 备选方案：离开时间 - 签退时间
+  if (record.checkOutTime && record.leaveTime) {
+    const [outHour, outMin] = record.checkOutTime.split(':').map(Number);
+    const [leaveHour, leaveMin] = record.leaveTime.split(':').map(Number);
+    
+    const outMinutes = outHour * 60 + outMin;
+    const leaveMinutes = leaveHour * 60 + leaveMin;
+    
+    // 处理跨天情况
+    let diffMinutes = leaveMinutes - outMinutes;
+    if (diffMinutes < 0) {
+      diffMinutes += 24 * 60;
+    }
+    
+    return Math.max(0, Math.round((diffMinutes / 60) * 10) / 10);
+  }
+  
+  return 0;
 };
 
 /**
@@ -208,6 +240,7 @@ export const getMonthlyStats = (year: number, month: number): MonthlyStats => {
   let hairWashCount = 0;
   let showerCount = 0;
   let companyDaysCount = 0;
+  let completeAttendanceDays = 0; // 有完整考勤记录的天数（签到、签退、离开都有）
   
   records.forEach(record => {
     // 三餐统计
@@ -254,10 +287,13 @@ export const getMonthlyStats = (year: number, month: number): MonthlyStats => {
       totalCompanyHours += calculateCompanyHours(record);
     }
     
-    // 考勤合规统计
-    if (isCheckInCompliant(record)) checkInCompliantCount++;
-    if (isCheckOutCompliant(record)) checkOutCompliantCount++;
-    if (isLeaveCompliant(record)) leaveCompliantCount++;
+    // 考勤合规统计（只有签到、签退和离开时间都有的记录才纳入统计）
+    if (record.checkInTime && record.checkOutTime && record.leaveTime) {
+      completeAttendanceDays++;
+      if (isCheckInCompliant(record)) checkInCompliantCount++;
+      if (isCheckOutCompliant(record)) checkOutCompliantCount++;
+      if (isLeaveCompliant(record)) leaveCompliantCount++;
+    }
     
     // 内务完成统计
     if (isDailyHygieneComplete(record)) dailyHygieneCompleteCount++;
@@ -283,9 +319,9 @@ export const getMonthlyStats = (year: number, month: number): MonthlyStats => {
     workDays,
     averageWorkHours: workDays > 0 ? Math.round((totalWorkHours / workDays) * 10) / 10 : 0,
     averageCompanyHours: companyDaysCount > 0 ? Math.round((totalCompanyHours / companyDaysCount) * 10) / 10 : 0,
-    checkInComplianceRate: workDays > 0 ? Math.round((checkInCompliantCount / workDays) * 100) : 0,
-    checkOutComplianceRate: workDays > 0 ? Math.round((checkOutCompliantCount / workDays) * 100) : 0,
-    leaveComplianceRate: companyDaysCount > 0 ? Math.round((leaveCompliantCount / companyDaysCount) * 100) : 0,
+    checkInComplianceRate: completeAttendanceDays > 0 ? Math.round((checkInCompliantCount / completeAttendanceDays) * 100) : 0,
+    checkOutComplianceRate: completeAttendanceDays > 0 ? Math.round((checkOutCompliantCount / completeAttendanceDays) * 100) : 0,
+    leaveComplianceRate: completeAttendanceDays > 0 ? Math.round((leaveCompliantCount / completeAttendanceDays) * 100) : 0,
     dailyHygieneCompletionRate: Math.round((dailyHygieneCompleteCount / records.length) * 100),
     hairWashCompletionRate: expectedHairWash > 0 ? Math.round((hairWashCount / expectedHairWash) * 100) : 0,
     showerCompletionRate: expectedShower > 0 ? Math.round((showerCount / expectedShower) * 100) : 0,
@@ -307,6 +343,7 @@ export const getMonthlyTrendData = (year: number, month: number): DailyTrendData
     hygieneScore: calculateHygieneScore(record),
     workHours: calculateWorkHours(record),
     companyHours: calculateCompanyHours(record),
+    studyHours: calculateStudyHours(record),
     checkInCompliant: isCheckInCompliant(record),
     checkOutCompliant: isCheckOutCompliant(record),
     leaveCompliant: isLeaveCompliant(record)
@@ -333,6 +370,7 @@ export const getRecentTrendData = (days: number = 7): DailyTrendData[] => {
     hygieneScore: calculateHygieneScore(record),
     workHours: calculateWorkHours(record),
     companyHours: calculateCompanyHours(record),
+    studyHours: calculateStudyHours(record),
     checkInCompliant: isCheckInCompliant(record),
     checkOutCompliant: isCheckOutCompliant(record),
     leaveCompliant: isLeaveCompliant(record)
@@ -365,13 +403,23 @@ export const getHabitStats = (year: number, month: number): HabitStats[] => {
     cleaning: records.filter(r => r.cleaning).length
   };
   
+  // 计算期望完成次数（基于频率要求）
+  const expectedMorningWash = total; // 1天1次
+  const expectedNightWash = total; // 1天1次
+  const expectedFootWash = total; // 1天1次（假设）
+  const expectedHairWash = Math.ceil(total / 2); // 2天1次
+  const expectedShower = Math.ceil(total / 7); // 7天1次
+  const expectedLaundry = Math.ceil(total / 3); // 3天1次
+  const expectedCleaning = Math.ceil(total / 7); // 7天1次
+  
+  // 计算完成率：实际完成次数 / 期望完成次数 * 100
   return [
-    { name: '早上洗漱', value: stats.morningWash, percentage: Math.round((stats.morningWash / total) * 100) },
-    { name: '晚上洗漱', value: stats.nightWash, percentage: Math.round((stats.nightWash / total) * 100) },
-    { name: '洗澡', value: stats.shower, percentage: Math.round((stats.shower / total) * 100) },
-    { name: '洗头', value: stats.hairWash, percentage: Math.round((stats.hairWash / total) * 100) },
-    { name: '洗脚', value: stats.footWash, percentage: Math.round((stats.footWash / total) * 100) },
-    { name: '洗衣服', value: stats.laundry, percentage: Math.round((stats.laundry / total) * 100) },
-    { name: '打扫卫生', value: stats.cleaning, percentage: Math.round((stats.cleaning / total) * 100) }
+    { name: '早上洗漱', value: stats.morningWash, percentage: expectedMorningWash > 0 ? Math.round((stats.morningWash / expectedMorningWash) * 100) : 0 },
+    { name: '晚上洗漱', value: stats.nightWash, percentage: expectedNightWash > 0 ? Math.round((stats.nightWash / expectedNightWash) * 100) : 0 },
+    { name: '洗脚', value: stats.footWash, percentage: expectedFootWash > 0 ? Math.round((stats.footWash / expectedFootWash) * 100) : 0 },
+    { name: '洗头', value: stats.hairWash, percentage: expectedHairWash > 0 ? Math.round((stats.hairWash / expectedHairWash) * 100) : 0 },
+    { name: '洗澡', value: stats.shower, percentage: expectedShower > 0 ? Math.round((stats.shower / expectedShower) * 100) : 0 },
+    { name: '打扫卫生', value: stats.cleaning, percentage: expectedCleaning > 0 ? Math.round((stats.cleaning / expectedCleaning) * 100) : 0 },
+    { name: '洗衣服', value: stats.laundry, percentage: expectedLaundry > 0 ? Math.round((stats.laundry / expectedLaundry) * 100) : 0 }
   ];
 };

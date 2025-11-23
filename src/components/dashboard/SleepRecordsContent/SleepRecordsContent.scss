@@ -1,0 +1,123 @@
+.sleep-records-content {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &__content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  &__month-selector {
+    margin-bottom: 2rem;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      .stat-icon {
+        font-size: 4rem;
+        flex-shrink: 0;
+      }
+
+      .stat-content {
+        flex: 1;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: #999;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+      }
+
+      &--primary {
+        border-left: 4px solid #667eea;
+      }
+
+      &--success {
+        border-left: 4px solid #43e97b;
+      }
+
+      &--info {
+        border-left: 4px solid #4facfe;
+      }
+
+      &--warning {
+        border-left: 4px solid #feca57;
+      }
+
+      &--danger {
+        border-left: 4px solid #ff6b6b;
+      }
+    }
+  }
+
+  &__charts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.chart-with-stats {
+  position: relative;
+
+  .chart-header-stats {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    z-index: 10;
+
+    .stat-item {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #666;
+      padding: 0.5rem 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sleep-records-content {
+    &__content {
+      padding: 1rem;
+    }
+
+    &__stats {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+}
+

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { MonthSelector, StudyCategoryPieChart, StudyTrendChart } from '@/components';
+import StudyDaysChart from '@/components/study/StudyDaysChart/StudyDaysChart';
 import { StudyRecord } from '@/utils';
 import { loadStudyRecords } from '@/utils';
-import './StudyRecords.scss';
+import './StudyRecordsContent.scss';
 
 interface CategoryStats {
   category: string;
@@ -17,7 +18,7 @@ interface DateStats {
   recordCount: number;
 }
 
-const StudyRecords: React.FC = () => {
+const StudyRecordsContent: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -147,25 +148,11 @@ const StudyRecords: React.FC = () => {
     return `${mins}m`;
   };
 
-  // 返回首页
-  const goToHome = () => {
-    window.location.hash = '#/?mode=study';
-  };
-
   return (
-    <div className="study-records">
-      {/* 页面头部 */}
-      <header className="study-records__header">
-        <button className="back-btn" onClick={goToHome}>
-          ← 返回首页
-        </button>
-        <h1>📚 学习数据面板</h1>
-        <p>记录成长，见证进步</p>
-      </header>
-
-      <div className="study-records__content">
+    <div className="study-records-content">
+      <div className="study-records-content__content">
         {/* 月份选择器 */}
-        <div className="study-records__month-selector">
+        <div className="study-records-content__month-selector">
           <MonthSelector
             selectedMonth={selectedMonth}
             onMonthChange={setSelectedMonth}
@@ -173,7 +160,7 @@ const StudyRecords: React.FC = () => {
         </div>
 
         {/* 统计概览卡片 */}
-        <div className="study-records__stats">
+        <div className="study-records-content__stats">
           <div className="stat-card stat-card--primary">
             <div className="stat-icon">⏱️</div>
             <div className="stat-content">
@@ -217,7 +204,7 @@ const StudyRecords: React.FC = () => {
         </div>
 
         {/* 图表区域 */}
-        <div className="study-records__charts">
+        <div className="study-records-content__charts">
           {/* 分类统计和趋势图在同一行 */}
           <div className="chart-row">
             <StudyCategoryPieChart 
@@ -225,10 +212,27 @@ const StudyRecords: React.FC = () => {
             />
             <StudyTrendChart dateStats={recentDaysStats} />
           </div>
+          
+          {/* 学习时长最多和最少的7天 */}
+          <div className="chart-row">
+            <StudyDaysChart
+              dailyStats={maxStudyDay}
+              selectedMonth={selectedMonth}
+              type="top"
+              count={7}
+            />
+            <StudyDaysChart
+              dailyStats={maxStudyDay}
+              selectedMonth={selectedMonth}
+              type="bottom"
+              count={7}
+            />
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default StudyRecords;
+export default StudyRecordsContent;
+

@@ -1,0 +1,141 @@
+.records-content {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &__main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__month-selector {
+    margin-bottom: 0;
+  }
+
+  &__stats-section {
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+
+      .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+          font-size: 4rem;
+          flex-shrink: 0;
+        }
+
+        .stat-content {
+          flex: 1;
+        }
+
+        .stat-label {
+          font-size: 0.9rem;
+          color: #999;
+          margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: #333;
+        }
+
+        .stat-subvalue {
+          display: block;
+          font-size: 0.9rem;
+          color: #999;
+          font-weight: 400;
+          margin-top: 0.25rem;
+        }
+
+        &--primary {
+          border-left: 4px solid #667eea;
+        }
+
+        &--success {
+          border-left: 4px solid #43e97b;
+        }
+
+        &--info {
+          border-left: 4px solid #4facfe;
+        }
+
+        &--warning {
+          border-left: 4px solid #feca57;
+        }
+      }
+    }
+  }
+
+  &__chart-section {
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+
+      .chart-item {
+        min-width: 0;
+      }
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .records-content {
+    &__chart-section {
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .records-content {
+    &__main {
+      padding: 1rem;
+    }
+
+    &__stats-section {
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+
+    &__chart-section {
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
+

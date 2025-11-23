@@ -1,0 +1,120 @@
+.study-records-content {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &__content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  &__month-selector {
+    margin-bottom: 2rem;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    .stat-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      .stat-icon {
+        font-size: 4rem;
+        flex-shrink: 0;
+      }
+
+      .stat-content {
+        flex: 1;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: #999;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+      }
+
+      .stat-subvalue {
+        display: block;
+        font-size: 0.9rem;
+        color: #999;
+        font-weight: 400;
+        margin-top: 0.25rem;
+      }
+
+      &--primary {
+        border-left: 4px solid #667eea;
+      }
+
+      &--success {
+        border-left: 4px solid #43e97b;
+      }
+
+      &--info {
+        border-left: 4px solid #4facfe;
+      }
+
+      &--warning {
+        border-left: 4px solid #feca57;
+      }
+    }
+  }
+
+  &__charts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .study-records-content {
+    &__charts {
+      .chart-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .study-records-content {
+    &__content {
+      padding: 1rem;
+    }
+
+    &__stats {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+}
+

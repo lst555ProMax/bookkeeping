@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { MonthSelector, SleepTimeTrendChart, SleepDurationTrendChart, SleepQualityTrendChart } from '@/components';
 import { getMonthSleepStats, getMonthSleepTrend, formatSleepDuration } from '@/utils';
-import './SleepRecords.scss';
+import './SleepRecordsContent.scss';
 
-const SleepRecords: React.FC = () => {
+const SleepRecordsContent: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -24,25 +24,11 @@ const SleepRecords: React.FC = () => {
     quality: item.quality
   }));
 
-  // 返回首页（切换到睡眠记录模式）
-  const goToHome = () => {
-    window.location.hash = '#/?mode=sleep';
-  };
-
   return (
-    <div className="sleep-records">
-      {/* 页面头部 */}
-      <header className="sleep-records__header">
-        <button className="back-btn" onClick={goToHome}>
-          ← 返回首页
-        </button>
-        <h1>🌙 睡眠数据面板</h1>
-        <p>查看你的睡眠统计与趋势分析</p>
-      </header>
-
-      <div className="sleep-records__content">
+    <div className="sleep-records-content">
+      <div className="sleep-records-content__content">
         {/* 月份选择器 */}
-        <div className="sleep-records__month-selector">
+        <div className="sleep-records-content__month-selector">
           <MonthSelector
             selectedMonth={selectedMonth}
             onMonthChange={setSelectedMonth}
@@ -50,18 +36,42 @@ const SleepRecords: React.FC = () => {
         </div>
 
         {/* 统计概览卡片 */}
-        <div className="sleep-records__overview">
-          <div className="overview-card">
-            <div className="overview-icon">📊</div>
-            <div className="overview-content">
-              <div className="overview-label">本月记录天数</div>
-              <div className="overview-value">{stats.totalRecords} 天</div>
+        <div className="sleep-records-content__stats">
+          <div className="stat-card stat-card--warning">
+            <div className="stat-icon">🌃</div>
+            <div className="stat-content">
+              <div className="stat-label">熬穿天数</div>
+              <div className="stat-value">{stats.lateNightDays} 天</div>
+            </div>
+          </div>
+
+          <div className="stat-card stat-card--danger">
+            <div className="stat-icon">😴</div>
+            <div className="stat-content">
+              <div className="stat-label">失眠天数</div>
+              <div className="stat-value">{stats.insomniaDays} 天</div>
+            </div>
+          </div>
+
+          <div className="stat-card stat-card--info">
+            <div className="stat-icon">📊</div>
+            <div className="stat-content">
+              <div className="stat-label">入睡规律性</div>
+              <div className="stat-value">{stats.sleepTimeRegularity}%</div>
+            </div>
+          </div>
+
+          <div className="stat-card stat-card--success">
+            <div className="stat-icon">⏰</div>
+            <div className="stat-content">
+              <div className="stat-label">睡眠时长规律性</div>
+              <div className="stat-value">{stats.durationRegularity}%</div>
             </div>
           </div>
         </div>
 
         {/* 图表区域 */}
-        <div className="sleep-records__charts">
+        <div className="sleep-records-content__charts">
           {/* 入睡与醒来时间趋势 */}
           <div className="chart-with-stats">
             <div className="chart-header-stats">
@@ -90,4 +100,5 @@ const SleepRecords: React.FC = () => {
   );
 };
 
-export default SleepRecords;
+export default SleepRecordsContent;
+

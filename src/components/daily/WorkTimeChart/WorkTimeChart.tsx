@@ -10,12 +10,12 @@ interface WorkTimeChartProps {
 const WorkTimeChart: React.FC<WorkTimeChartProps> = ({ data }) => {
   // 筛选最近10天有工作时长的数据
   const chartData = data
-    .filter(item => item.workHours > 0 || item.companyHours > 0)
+    .filter(item => item.workHours > 0 || item.studyHours > 0)
     .slice(-10) // 只取最近10天
     .map(item => ({
       日期: item.date.slice(5), // MM-DD
       工作时长: item.workHours,
-      在公司时长: item.companyHours,
+      学习时长: item.studyHours,
       date: item.date
     }));
 
@@ -59,7 +59,7 @@ const WorkTimeChart: React.FC<WorkTimeChartProps> = ({ data }) => {
               fill="#667eea"
             />
             <Bar
-              dataKey="在公司时长"
+              dataKey="学习时长"
               stackId="a"
               fill="#52c41a"
             />
