@@ -159,6 +159,16 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
     setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
   };
 
+  // 切换到上一年
+  const handlePrevYear = () => {
+    setViewDate(new Date(viewDate.getFullYear() - 1, viewDate.getMonth(), 1));
+  };
+
+  // 切换到下一年
+  const handleNextYear = () => {
+    setViewDate(new Date(viewDate.getFullYear() + 1, viewDate.getMonth(), 1));
+  };
+
 
   const days = getDaysInMonth(viewDate);
   const monthYear = `${viewDate.getFullYear()}年${viewDate.getMonth() + 1}月`;
@@ -182,23 +192,43 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
           }}
         >
           <div className="date-picker__header">
-            <button 
-              type="button"
-              className="date-picker__nav-btn" 
-              onClick={handlePrevMonth}
-              title="上个月"
-            >
-              ←
-            </button>
+            <div className="date-picker__nav-group">
+              <button 
+                type="button"
+                className="date-picker__nav-btn" 
+                onClick={handlePrevMonth}
+                title="上个月"
+              >
+                ←
+              </button>
+              <button 
+                type="button"
+                className="date-picker__year-btn" 
+                onClick={handlePrevYear}
+                title="上一年"
+              >
+                ⇇
+              </button>
+            </div>
             <div className="date-picker__month">{monthYear}</div>
-            <button 
-              type="button"
-              className="date-picker__nav-btn" 
-              onClick={handleNextMonth}
-              title="下个月"
-            >
-              →
-            </button>
+            <div className="date-picker__nav-group">
+              <button 
+                type="button"
+                className="date-picker__year-btn" 
+                onClick={handleNextYear}
+                title="下一年"
+              >
+                ⇉
+              </button>
+              <button 
+                type="button"
+                className="date-picker__nav-btn" 
+                onClick={handleNextMonth}
+                title="下个月"
+              >
+                →
+              </button>
+            </div>
           </div>
 
           <div className="date-picker__weekdays">

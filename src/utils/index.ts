@@ -64,6 +64,10 @@ export * from './common/fortune/types';
 export * from './common/fortune/storage';
 export * from './common/fortune/fortuneConfig';
 
+// ==================== 年龄计算模块 ====================
+export * from './common/ageCalculator/types';
+export * from './common/ageCalculator/storage';
+
 // ==================== 向后兼容的别名导出 ====================
 // 为了不破坏现有代码，保留一些常用的别名
 export { 

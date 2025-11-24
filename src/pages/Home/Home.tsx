@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
-import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, DailyRecordForm, DailyRecordList, CardDraw, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, Diary, Music, Reading, Medical } from '@/components';
+import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, DailyRecordForm, DailyRecordList, CardDraw, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, AgeCalculator, Diary, Music, Reading, Medical } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, DailyRecord, StudyRecord, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS, MealStatus } from '@/utils';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
@@ -229,12 +229,12 @@ const Home: React.FC = () => {
           
           let normal = true;
           
-          // 签到时间检查：9点前算正常
+          // 签到时间检查：9点半及以前算正常
           if (d.checkInTime) {
             const checkInHour = parseInt(d.checkInTime.split(':')[0]);
             const checkInMinute = parseInt(d.checkInTime.split(':')[1]);
             const checkInTotalMinutes = checkInHour * 60 + checkInMinute;
-            if (checkInTotalMinutes >= 9 * 60) {
+            if (checkInTotalMinutes > 9 * 60 + 30) { // 9:30之后算不正常
               normal = false;
             }
           }
@@ -1153,6 +1153,7 @@ const Home: React.FC = () => {
         <div className="home__games">
           <CardDraw />
           <Fortune />
+          <AgeCalculator />
         </div>
       </header>
 

@@ -4,6 +4,7 @@
 export {
   CardDraw,
   Fortune,
+  AgeCalculator,
   MonthSelector,
   DatePicker,
   FormSelect,

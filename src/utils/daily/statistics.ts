@@ -20,7 +20,7 @@ export interface MonthlyStats {
   workDays: number; // 工作天数
   averageWorkHours: number; // 平均工作时长（小时）
   averageCompanyHours: number; // 平均在公司时长（小时）
-  checkInComplianceRate: number; // 签到合格率（不晚于9点）
+  checkInComplianceRate: number; // 签到合格率（不晚于9:30）
   checkOutComplianceRate: number; // 签退合格率（不早于18点）
   leaveComplianceRate: number; // 离开合格率（不早于22点）
   dailyHygieneCompletionRate: number; // 每日内务完成率（早洗+晚洗+洗脸+洗脚）
@@ -146,12 +146,13 @@ const calculateStudyHours = (record: DailyRecord): number => {
 };
 
 /**
- * 检查签到是否合格（不晚于9:00）
+ * 检查签到是否合格（不晚于9:30）
  */
 const isCheckInCompliant = (record: DailyRecord): boolean => {
   if (!record.checkInTime) return false;
   const [hour, min] = record.checkInTime.split(':').map(Number);
-  return hour < 9 || (hour === 9 && min === 0);
+  const totalMinutes = hour * 60 + min;
+  return totalMinutes <= 9 * 60 + 30; // 9:30及以前算合格
 };
 
 /**

@@ -296,7 +296,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
           <div className="quick-notes__empty">
             <div className="quick-notes__empty-icon">💭</div>
             <p className="quick-notes__empty-message">还没有歌词</p>
-            <p className="quick-notes__empty-hint">开始记录你的歌词吧~</p>
+            <p className="quick-notes__empty-hint">开始记录你喜爱的歌词吧~</p>
           </div>
         ) : (
           quickNotes.map(note => (

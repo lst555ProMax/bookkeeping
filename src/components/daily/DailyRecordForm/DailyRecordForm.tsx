@@ -49,10 +49,10 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
   const [cleaning, setCleaning] = useState(false);
   const [wechatSteps, setWechatSteps] = useState('');
   
-  // 打卡时间（默认值：签到9点、签退18点、离开22点）
-  const [checkInTime, setCheckInTime] = useState('09:00');
-  const [checkOutTime, setCheckOutTime] = useState('18:00');
-  const [leaveTime, setLeaveTime] = useState('22:00');
+  // 打卡时间
+  const [checkInTime, setCheckInTime] = useState('');
+  const [checkOutTime, setCheckOutTime] = useState('');
+  const [leaveTime, setLeaveTime] = useState('');
   
   // 备注
   const [notes, setNotes] = useState('');
@@ -71,9 +71,9 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     setLaundry(false);
     setCleaning(false);
     setWechatSteps('');
-    setCheckInTime('09:00');
-    setCheckOutTime('18:00');
-    setLeaveTime('22:00');
+    setCheckInTime('');
+    setCheckOutTime('');
+    setLeaveTime('');
     setNotes('');
   };
 
@@ -93,9 +93,9 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       setLaundry(editingRecord.laundry);
       setCleaning(editingRecord.cleaning);
       setWechatSteps(editingRecord.wechatSteps?.toString() || '');
-      setCheckInTime(editingRecord.checkInTime || '09:00');
-      setCheckOutTime(editingRecord.checkOutTime || '18:00');
-      setLeaveTime(editingRecord.leaveTime || '22:00');
+      setCheckInTime(editingRecord.checkInTime || '');
+      setCheckOutTime(editingRecord.checkOutTime || '');
+      setLeaveTime(editingRecord.leaveTime || '');
       setNotes(editingRecord.notes || '');
     } else {
       resetForm();
@@ -231,21 +231,23 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="checkInTime">
-              💼 打卡签到 <span className="required">*</span>
+              💼 打卡签到
             </label>
             <TimePicker
               value={checkInTime}
               onChange={setCheckInTime}
+              placeholder="请选择"
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="checkOutTime">
-              💼 打卡签退 <span className="required">*</span>
+              💼 打卡签退
             </label>
             <TimePicker
               value={checkOutTime}
               onChange={setCheckOutTime}
+              placeholder="请选择"
             />
           </div>
         </div>
@@ -254,11 +256,12 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="leaveTime">
-              💼 打卡离开 <span className="required">*</span>
+              💼 打卡离开
             </label>
             <TimePicker
               value={leaveTime}
               onChange={setLeaveTime}
+              placeholder="请选择"
             />
           </div>
 

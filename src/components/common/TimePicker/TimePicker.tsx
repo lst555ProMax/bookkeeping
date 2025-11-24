@@ -122,6 +122,13 @@ const TimePicker: React.FC<TimePickerProps> = ({
     }
   };
 
+  // 处理清除时间
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 阻止事件冒泡
+    onChange('');
+    setIsOpen(false);
+  };
+
   // 滚动到选中项
   const scrollToSelected = (containerRef: React.RefObject<HTMLDivElement>, selectedValue: number) => {
     if (containerRef.current) {
@@ -168,6 +175,15 @@ const TimePicker: React.FC<TimePickerProps> = ({
         >
           <div className="time-picker__header">
             <span className="time-picker__title">选择时间</span>
+            {value && (
+              <span 
+                className="time-picker__clear"
+                onClick={handleClear}
+                title="清空"
+              >
+                ✕
+              </span>
+            )}
           </div>
 
           <div className="time-picker__selectors">

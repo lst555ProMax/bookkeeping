@@ -14,7 +14,7 @@ const AttendanceComplianceChart: React.FC<AttendanceComplianceChartProps> = ({
   leaveRate
 }) => {
   const data = [
-    { name: '签到合格率 (≤9:00)', value: checkInRate, fullValue: 100 },
+    { name: '签到合格率 (≤9:30)', value: checkInRate, fullValue: 100 },
     { name: '签退合格率 (≥18:00)', value: checkOutRate, fullValue: 100 },
     { name: '离开合格率 (≥22:00)', value: leaveRate, fullValue: 100 }
   ];

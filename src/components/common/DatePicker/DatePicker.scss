@@ -69,15 +69,25 @@
     margin-bottom: 0.75rem;
     padding-bottom: 0.75rem;
     border-bottom: 2px solid #f0f2f5;
+    gap: 0.5rem;
+  }
+
+  &__nav-group {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
   }
 
   &__nav-btn {
     width: 32px;
     height: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    padding: 0;
     border: none;
     background: transparent;
     color: var(--theme-color-start, #1ea5f9);
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -85,6 +95,38 @@
     justify-content: center;
     line-height: 1;
     font-weight: normal;
+    flex-shrink: 0;
+    box-sizing: border-box;
+
+    &:hover {
+      color: var(--theme-color-end, #0d8bd9);
+      transform: scale(1.2);
+    }
+
+    &:active {
+      transform: scale(1);
+    }
+  }
+
+  &__year-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--theme-color-start, #1ea5f9);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+    font-weight: normal;
+    box-sizing: border-box;
 
     &:hover {
       color: var(--theme-color-end, #0d8bd9);

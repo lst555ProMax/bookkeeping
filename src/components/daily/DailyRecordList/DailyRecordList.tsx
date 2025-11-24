@@ -129,12 +129,12 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
     }
   };
 
-  // 判断签到时间是否正常（9点前算正常）
+  // 判断签到时间是否正常（9点半及以前算正常）
   const isCheckInTimeNormal = (checkInTime: string | undefined): boolean => {
     if (!checkInTime) return true; // 没填算正常
     const [hour, minute] = checkInTime.split(':').map(Number);
     const totalMinutes = hour * 60 + minute;
-    return totalMinutes <= 9 * 60; // 9:00之前算正常
+    return totalMinutes <= 9 * 60 + 30; // 9:30及以前算正常
   };
 
   // 判断签退时间是否正常（6点后算正常）

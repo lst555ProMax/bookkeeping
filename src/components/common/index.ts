@@ -1,5 +1,6 @@
 export { default as CardDraw } from './cardDraw/CardDraw';
 export { default as Fortune } from './fortune/Fortune';
+export { default as AgeCalculator } from './ageCalculator/AgeCalculator';
 export { default as MonthSelector } from './MonthSelector/MonthSelector';
 export { FloatingQuickNote } from './FloatingQuickNote';
 export { DatePicker } from './DatePicker';
