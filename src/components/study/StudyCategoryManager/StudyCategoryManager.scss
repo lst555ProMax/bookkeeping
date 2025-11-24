@@ -46,23 +46,27 @@
   }
 
   &__close {
-    background: none;
+    background: transparent;
     border: none;
-    font-size: 24px;
-    color: #666;
+    font-size: 1.5rem;
+    color: #999;
     cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
+    flex-shrink: 0;
 
     &:hover {
-      background-color: #e9ecef;
+      background: #f5f5f5;
       color: #333;
+    }
+
+    &:active {
+      transform: scale(0.9);
     }
   }
 
@@ -218,15 +222,12 @@
     gap: 8px;
   }
 
-  &__edit-form {
-    padding: 12px 16px;
-    background-color: #f8f9fa;
-  }
-
-  &__edit-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
+  &__input--inline {
+    flex: 1;
+    margin: 0;
+    padding: 6px 12px;
+    border: 2px solid #007bff;
+    background-color: white;
   }
 }
 
@@ -261,10 +262,6 @@
 
     &__actions {
       justify-content: flex-end;
-    }
-
-    &__edit-actions {
-      flex-direction: column;
     }
   }
 }

@@ -168,7 +168,7 @@ const Fortune: React.FC = () => {
           </div>
         ) : (
           <button className="fortune__button" onClick={handleOpenModal}>
-            🔮 算命
+            🔮 今日运势
           </button>
         )}
       </div>

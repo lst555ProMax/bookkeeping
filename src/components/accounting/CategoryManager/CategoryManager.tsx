@@ -197,7 +197,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
             onClick={onClose}
             type="button"
           >
-            ×
+            ✕
           </button>
         </div>
 
@@ -241,66 +241,71 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, index)}
                 >
-                  {editingCategory === category ? (
-                    <div className="category-manager__edit-form">
-                      <input
-                        type="text"
-                        className="category-manager__input"
-                        value={editingName}
-                        onChange={(e) => setEditingName(e.target.value)}
-                        onKeyPress={(e) => handleKeyPress(e, 'edit')}
-                        maxLength={20}
-                        autoFocus
-                      />
-                      <div className="category-manager__edit-actions">
-                        <button 
-                          className="category-manager__btn"
-                          onClick={handleSaveEdit}
-                          title="保存编辑"
-                        >
-                          💾
-                        </button>
-                        <button 
-                          className="category-manager__btn"
-                          onClick={handleCancelEdit}
-                          title="取消编辑"
-                        >
-                          ❌
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="category-manager__view">
-                      <div className="category-manager__drag-handle">
-                        ⋮⋮
-                      </div>
-                      <span className="category-manager__name">
-                        {category}
-                        {(isIncome 
-                          ? incomeCategoryHasRecords(category as IncomeCategory)
-                          : categoryHasRecords(category as ExpenseCategory)
-                        ) && (
-                          <span className="category-manager__has-records"> (有记录)</span>
-                        )}
-                      </span>
-                      <div className="category-manager__actions">
-                        <button 
-                          className="category-manager__btn"
-                          onClick={() => handleStartEdit(category)}
-                          title="编辑分类"
-                        >
-                          ✏️
-                        </button>
-                        <button 
-                          className="category-manager__btn"
-                          onClick={() => handleDeleteCategory(category)}
-                          title="删除分类"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <div className="category-manager__view">
+                    {editingCategory === category ? (
+                      <>
+                        <div className="category-manager__drag-handle" style={{ opacity: 0.3 }}>
+                          ⋮⋮
+                        </div>
+                        <input
+                          type="text"
+                          className="category-manager__input category-manager__input--inline"
+                          value={editingName}
+                          onChange={(e) => setEditingName(e.target.value)}
+                          onKeyPress={(e) => handleKeyPress(e, 'edit')}
+                          maxLength={20}
+                          autoFocus
+                        />
+                        <div className="category-manager__actions">
+                          <button 
+                            className="category-manager__btn"
+                            onClick={handleCancelEdit}
+                            title="取消编辑"
+                          >
+                            ❌
+                          </button>
+                          <button 
+                            className="category-manager__btn"
+                            onClick={handleSaveEdit}
+                            title="保存编辑"
+                          >
+                            💾
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="category-manager__drag-handle">
+                          ⋮⋮
+                        </div>
+                        <span className="category-manager__name">
+                          {category}
+                          {(isIncome 
+                            ? incomeCategoryHasRecords(category as IncomeCategory)
+                            : categoryHasRecords(category as ExpenseCategory)
+                          ) && (
+                            <span className="category-manager__has-records"> (有记录)</span>
+                          )}
+                        </span>
+                        <div className="category-manager__actions">
+                          <button 
+                            className="category-manager__btn"
+                            onClick={() => handleStartEdit(category)}
+                            title="编辑分类"
+                          >
+                            ✏️
+                          </button>
+                          <button 
+                            className="category-manager__btn"
+                            onClick={() => handleDeleteCategory(category)}
+                            title="删除分类"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

@@ -162,7 +162,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
           <DatePicker
             value={date}
             onChange={setDate}
-            minDate="2024-10-01"
+            minDate="2025-10-01"
           />
         </div>
 

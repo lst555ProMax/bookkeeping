@@ -14,13 +14,15 @@
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.5);
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1rem;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
+    width: 8rem;
+    text-align: center;
 
     &:hover {
       background: rgba(255, 255, 255, 0.3);
@@ -32,16 +34,17 @@
   // 结果展示 - 对齐算命和抽卡结果样式
   &__result {
     background: rgba(255, 255, 255, 0.15);
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem 1rem;
     border-radius: 12px;
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.3);
-    min-width: 140px;
+    width: 8rem;
     height: 110px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     transition: all 0.3s ease;
+    text-align: center;
 
     &:hover {
       background: rgba(255, 255, 255, 0.25);

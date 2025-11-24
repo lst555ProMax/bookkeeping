@@ -175,7 +175,7 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
             onClick={onClose}
             type="button"
           >
-            ×
+            ✕
           </button>
         </div>
 
@@ -219,63 +219,68 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, index)}
                 >
-                  {editingCategory === category ? (
-                    <div className="study-category-manager__edit-form">
-                      <input
-                        type="text"
-                        className="study-category-manager__input"
-                        value={editingName}
-                        onChange={(e) => setEditingName(e.target.value)}
-                        onKeyPress={(e) => handleKeyPress(e, 'edit')}
-                        maxLength={20}
-                        autoFocus
-                      />
-                      <div className="study-category-manager__edit-actions">
-                        <button 
-                          className="study-category-manager__btn"
-                          onClick={handleSaveEdit}
-                          title="保存编辑"
-                        >
-                          💾
-                        </button>
-                        <button 
-                          className="study-category-manager__btn"
-                          onClick={handleCancelEdit}
-                          title="取消编辑"
-                        >
-                          ❌
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="study-category-manager__view">
-                      <div className="study-category-manager__drag-handle">
-                        ⋮⋮
-                      </div>
-                      <span className="study-category-manager__name">
-                        {category}
-                        {studyCategoryHasRecords(category) && (
-                          <span className="study-category-manager__has-records"> (有记录)</span>
-                        )}
-                      </span>
-                      <div className="study-category-manager__actions">
-                        <button 
-                          className="study-category-manager__btn"
-                          onClick={() => handleStartEdit(category)}
-                          title="编辑分类"
-                        >
-                          ✏️
-                        </button>
-                        <button 
-                          className="study-category-manager__btn"
-                          onClick={() => handleDeleteCategory(category)}
-                          title="删除分类"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <div className="study-category-manager__view">
+                    {editingCategory === category ? (
+                      <>
+                        <div className="study-category-manager__drag-handle" style={{ opacity: 0.3 }}>
+                          ⋮⋮
+                        </div>
+                        <input
+                          type="text"
+                          className="study-category-manager__input study-category-manager__input--inline"
+                          value={editingName}
+                          onChange={(e) => setEditingName(e.target.value)}
+                          onKeyPress={(e) => handleKeyPress(e, 'edit')}
+                          maxLength={20}
+                          autoFocus
+                        />
+                        <div className="study-category-manager__actions">
+                          <button 
+                            className="study-category-manager__btn"
+                            onClick={handleCancelEdit}
+                            title="取消编辑"
+                          >
+                            ❌
+                          </button>
+                          <button 
+                            className="study-category-manager__btn"
+                            onClick={handleSaveEdit}
+                            title="保存编辑"
+                          >
+                            💾
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="study-category-manager__drag-handle">
+                          ⋮⋮
+                        </div>
+                        <span className="study-category-manager__name">
+                          {category}
+                          {studyCategoryHasRecords(category) && (
+                            <span className="study-category-manager__has-records"> (有记录)</span>
+                          )}
+                        </span>
+                        <div className="study-category-manager__actions">
+                          <button 
+                            className="study-category-manager__btn"
+                            onClick={() => handleStartEdit(category)}
+                            title="编辑分类"
+                          >
+                            ✏️
+                          </button>
+                          <button 
+                            className="study-category-manager__btn"
+                            onClick={() => handleDeleteCategory(category)}
+                            title="删除分类"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

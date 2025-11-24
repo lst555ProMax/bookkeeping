@@ -351,13 +351,36 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
       <div className="activity-manager__modal">
         <div className="activity-manager__header">
           <h2>活动配置管理</h2>
-          <button 
-            className="activity-manager__btn-auto" 
-            onClick={handleAutoBalance}
-            title="自动平衡所有概率"
-          >
-            ⚖️ 自动平衡
-          </button>
+          <div className="activity-manager__header-actions">
+            <button 
+              className="activity-manager__btn-reset" 
+              onClick={handleReset}
+              title="重置为默认"
+            >
+              🔄
+            </button>
+            <button 
+              className="activity-manager__btn-auto" 
+              onClick={handleAutoBalance}
+              title="自动平衡所有概率"
+            >
+              ⚖️
+            </button>
+            <button 
+              className="activity-manager__btn-save" 
+              onClick={handleSave}
+              title="保存配置"
+            >
+              💾
+            </button>
+            <button 
+              className="activity-manager__btn-close" 
+              onClick={onClose}
+              title="关闭"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         <div className="activity-manager__content">
@@ -370,7 +393,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                 onClick={handleAddCategory}
                 title="新增分类"
               >
-                ➕ 新增分类
+                ➕
               </button>
             </div>
 
@@ -391,52 +414,47 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                     onClick={() => setSelectedCategoryId(category.id)}
                   >
                     {isEditing && !isCustom ? (
-                      // 编辑模式（两行布局）
+                      // 编辑模式（一行布局）
                       <div className="activity-manager__category-edit" onClick={e => e.stopPropagation()}>
-                        <div className="activity-manager__edit-row">
-                          <input
-                            type="text"
-                            className="activity-manager__edit-name"
-                            value={editingCategoryName}
-                            onChange={(e) => setEditingCategoryName(e.target.value)}
-                            placeholder="分类名称"
-                            autoFocus
-                          />
-                        </div>
-                        <div className="activity-manager__edit-row">
-                          <input
-                            type="number"
-                            className="activity-manager__edit-prob"
-                            value={editingCategoryProb}
-                            onChange={(e) => {
-                              const val = parseInt(e.target.value) || 0;
-                              setEditingCategoryProb(Math.max(0, Math.min(100, val)));
-                            }}
-                            min="0"
-                            max="100"
-                            step="5"
-                          />
-                          <span className="activity-manager__prob-unit">%</span>
-                          <button
-                            className="activity-manager__btn-save-edit"
-                            onClick={() => {
-                              if (editingCategoryName.trim()) {
-                                handleUpdateCategory(category.id, {
-                                  name: editingCategoryName.trim(),
-                                  totalProbability: editingCategoryProb / 100
-                                });
-                              }
-                            }}
-                          >
-                            ✓
-                          </button>
-                          <button
-                            className="activity-manager__btn-cancel-edit"
-                            onClick={() => setEditingCategoryId(null)}
-                          >
-                            ✕
-                          </button>
-                        </div>
+                        <input
+                          type="text"
+                          className="activity-manager__edit-name"
+                          value={editingCategoryName}
+                          onChange={(e) => setEditingCategoryName(e.target.value)}
+                          placeholder="分类名称"
+                          autoFocus
+                        />
+                        <input
+                          type="number"
+                          className="activity-manager__edit-prob"
+                          value={editingCategoryProb}
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            setEditingCategoryProb(Math.max(0, Math.min(100, val)));
+                          }}
+                          min="0"
+                          max="100"
+                          step="5"
+                        />
+                        <button
+                          className="activity-manager__btn-cancel-edit"
+                          onClick={() => setEditingCategoryId(null)}
+                        >
+                          ❌
+                        </button>
+                        <button
+                          className="activity-manager__btn-save-edit"
+                          onClick={() => {
+                            if (editingCategoryName.trim()) {
+                              handleUpdateCategory(category.id, {
+                                name: editingCategoryName.trim(),
+                                totalProbability: editingCategoryProb / 100
+                              });
+                            }
+                          }}
+                        >
+                          💾
+                        </button>
                       </div>
                     ) : (
                       // 显示模式
@@ -497,14 +515,14 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                       onClick={handleAutoBalanceItems}
                       title="自动平衡该分类下的活动概率"
                     >
-                      ⚖️ 自动平衡
+                      ⚖️
                     </button>
                     <button 
                       className="activity-manager__btn-add-item" 
                       onClick={handleAddItem}
                       title="新增活动"
                     >
-                      ➕ 新增活动
+                      ➕
                     </button>
                   </div>
                 </div>
@@ -538,20 +556,19 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                               max="100"
                               step="1"
                             />
-                            <span className="activity-manager__prob-unit">%</span>
-                            <button
-                              className="activity-manager__btn-save-item"
-                              onClick={() => saveEditItem(selectedCategory.id, item.id)}
-                              title="确定"
-                            >
-                              ✓
-                            </button>
                             <button
                               className="activity-manager__btn-cancel-item"
                               onClick={cancelEditItem}
                               title="取消"
                             >
-                              ✕
+                              ❌
+                            </button>
+                            <button
+                              className="activity-manager__btn-save-item"
+                              onClick={() => saveEditItem(selectedCategory.id, item.id)}
+                              title="确定"
+                            >
+                              💾
                             </button>
                           </div>
                         ) : (
@@ -595,20 +612,6 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
             ⚠️ {error}
           </div>
         )}
-
-        <div className="activity-manager__footer">
-          <button className="activity-manager__btn-reset" onClick={handleReset}>
-            重置为默认
-          </button>
-          <div className="activity-manager__footer-actions">
-            <button className="activity-manager__btn-cancel" onClick={onClose}>
-              取消
-            </button>
-            <button className="activity-manager__btn-save" onClick={handleSave}>
-              保存配置
-            </button>
-          </div>
-        </div>
       </div>
     </div>,
     document.body

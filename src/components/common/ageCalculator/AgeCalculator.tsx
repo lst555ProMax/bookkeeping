@@ -66,7 +66,7 @@ const AgeCalculator: React.FC = () => {
       years--;
     }
 
-    return `${years}年${months}月${days}日${hours}时${minutes}分${seconds}秒`;
+    return `${years}岁${months}月${days}日${hours}时${minutes}分${seconds}秒`;
   };
 
   // 计算年龄
@@ -205,13 +205,13 @@ const AgeCalculator: React.FC = () => {
             <div className="age-calculator__result-title">今日年龄</div>
             <div className="age-calculator__result-card">
               <div className="age-calculator__result-age">
-                {currentAge}年
+                {currentAge}岁
               </div>
             </div>
           </div>
         ) : (
           <button className="age-calculator__button" onClick={handleOpenModal}>
-            🎂 计算年龄
+            🎂 今日年龄
           </button>
         )}
       </div>
@@ -227,7 +227,7 @@ const AgeCalculator: React.FC = () => {
       {showModal && ReactDOM.createPortal(
         <div className="age-calculator__modal" onClick={handleCloseModal}>
           <div className="age-calculator__modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2 className="age-calculator__modal-title">🎂 计算年龄</h2>
+            <h2 className="age-calculator__modal-title">🎂 今日年龄</h2>
 
             {!calculatedAge ? (
               <div className="age-calculator__generate-area">
@@ -262,7 +262,7 @@ const AgeCalculator: React.FC = () => {
               <div className="age-calculator__result-area">
                 <div className="age-calculator__main-result">
                   <div className="age-calculator__main-age">
-                    {calculatedAge}年
+                    {calculatedAge}岁
                   </div>
                   <div className="age-calculator__main-label">
                     您的年龄

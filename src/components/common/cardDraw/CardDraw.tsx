@@ -177,7 +177,7 @@ const CardDraw: React.FC = () => {
           </div>
         ) : (
           <button className="card-draw__button" onClick={handleOpenModal}>
-            🎴 抽卡
+            🎴 今日活动
           </button>
         )}
       </div>
@@ -201,7 +201,7 @@ const CardDraw: React.FC = () => {
               ⚙️
             </button>
 
-            <h2 className="card-draw__modal-title">🎴 晚上活动抽卡</h2>
+            <h2 className="card-draw__modal-title">🎴 今日活动</h2>
 
             {!drawnCard ? (
               <div className="card-draw__draw-area">
