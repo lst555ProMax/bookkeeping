@@ -8,17 +8,19 @@
     border: 2px solid #e1e5e9;
     border-radius: 12px;
     font-size: 1rem;
-    background: #f4f5f7;
+    background: linear-gradient(135deg, #f8f9ff 0%, #f4f5f7 100%);
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     box-sizing: border-box;
+    height: 50px;
+    min-height: 50px;
 
     &:hover {
       border-color: var(--theme-color-start, #1ea5f9);
-      background: #ffffff;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(var(--theme-color-rgb, 30, 165, 249), 0.15);
     }

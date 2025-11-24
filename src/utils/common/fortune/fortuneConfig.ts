@@ -44,6 +44,14 @@ const FORTUNE_DESCRIPTIONS: Record<FortuneLevel, Record<FortuneAspect, string[]>
     [FortuneAspect.LOVE]: ['感情危机，需冷静处理', '爱情有大波折，需谨慎', '感情不顺，避免争吵'],
     [FortuneAspect.HEALTH]: ['健康告急，注意身体', '身体欠佳，需及时就医', '体力透支，必须休息'],
     [FortuneAspect.STUDY]: ['学习困难，需调整心态', '学业不顺，需寻求帮助', '学习受挫，保持信心']
+  },
+  [FortuneLevel.TERRIBLE]: {
+    [FortuneAspect.OVERALL]: ['运势极差，诸事不顺', '今日大凶，需格外小心', '运势最差，保持冷静'],
+    [FortuneAspect.CAREER]: ['工作大危机，需谨慎应对', '职场大不顺，避免冲突', '工作困难极大，需冷静处理'],
+    [FortuneAspect.WEALTH]: ['大破财之相，极度谨慎', '财运极差，切勿投资', '金钱大损失，需高度警惕'],
+    [FortuneAspect.LOVE]: ['感情大危机，需冷静处理', '爱情有大波折，需谨慎', '感情极不顺，避免争吵'],
+    [FortuneAspect.HEALTH]: ['健康大告急，注意身体', '身体极差，需及时就医', '体力严重透支，必须休息'],
+    [FortuneAspect.STUDY]: ['学习大困难，需调整心态', '学业极不顺，需寻求帮助', '学习大受挫，保持信心']
   }
 };
 
@@ -141,11 +149,12 @@ class SeededRandom {
  * 根据分数获取运势等级
  */
 const getFortuneLevel = (score: number): FortuneLevel => {
-  if (score >= 90) return FortuneLevel.EXCELLENT;
-  if (score >= 75) return FortuneLevel.GOOD;
-  if (score >= 60) return FortuneLevel.FAIR;
-  if (score >= 40) return FortuneLevel.POOR;
-  return FortuneLevel.BAD;
+  if (score >= 80) return FortuneLevel.EXCELLENT;  // 大吉：80分以上
+  if (score >= 67) return FortuneLevel.GOOD;      // 吉：67-79分
+  if (score >= 60) return FortuneLevel.FAIR;       // 小吉：60-66分
+  if (score >= 53) return FortuneLevel.POOR;       // 小凶：53-59分
+  if (score >= 40) return FortuneLevel.BAD;        // 凶：40-52分
+  return FortuneLevel.TERRIBLE;                     // 大凶：40分以下
 };
 
 /**

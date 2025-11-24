@@ -23,8 +23,8 @@ interface ActivityManagerProps {
 const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChange }) => {
   const [config, setConfig] = useState<ActivityCategoryConfig[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  // 共享的编辑状态：{ type: 'category' | 'item', id: string } | null
+  const [editing, setEditing] = useState<{ type: 'category' | 'item'; id: string } | null>(null);
   const [error, setError] = useState('');
   const [editingCategoryName, setEditingCategoryName] = useState('');
   const [editingCategoryProb, setEditingCategoryProb] = useState(0);
@@ -89,26 +89,28 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     }
 
     const categoryEnum = CardCategory.CUSTOM; // 新建的都是自定义类型
-    const newConfig = addActivityCategory(categoryName, categoryEnum);
+    addActivityCategory(categoryName, categoryEnum);
     setError('');
     loadConfig();
     onConfigChange();
-    
-    // 找到刚创建的分类ID，自动进入编辑状态
-    const newCategory = newConfig.find(c => c.name === categoryName);
-    if (newCategory) {
-      setEditingCategoryId(newCategory.id);
-      setEditingCategoryName(categoryName);
-      setEditingCategoryProb(0);
-    }
   };
 
   // 更新一级分类
   const handleUpdateCategory = (id: string, updates: Partial<ActivityCategoryConfig>) => {
     // 验证分类名称长度
-    if (updates.name && updates.name.trim().length > 5) {
-      toast.error('分类名称不能超过5个字');
+    if (updates.name && updates.name.trim().length > 3) {
+      toast.error('分类名称不能超过3个字');
       return;
+    }
+
+    // 检查一级分类名称是否与其他一级分类重名（排除自己）
+    if (updates.name) {
+      const trimmedName = updates.name.trim();
+      const duplicateCategory = config.find(c => c.id !== id && c.name === trimmedName);
+      if (duplicateCategory) {
+        toast.error(`分类名称"${trimmedName}"已存在，请使用其他名称`);
+        return;
+      }
     }
 
     const newConfig = config.map(c => 
@@ -120,7 +122,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     setConfig(updated);
     saveActivityConfig(updated);
     onConfigChange();
-    setEditingCategoryId(null);
+    setEditing(null);
   };
 
   // 删除一级分类
@@ -162,17 +164,10 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
       counter++;
     }
 
-    const newConfig = addActivityItem(selectedCategoryId, itemName, CardType.CUSTOM);
+    addActivityItem(selectedCategoryId, itemName, CardType.CUSTOM);
     setError('');
     loadConfig();
     onConfigChange();
-    
-    // 找到刚创建的活动ID，自动进入编辑状态
-    const updatedCategory = newConfig.find(c => c.id === selectedCategoryId);
-    const newItem = updatedCategory?.items.find(i => i.name === itemName);
-    if (newItem) {
-      setEditingItemId(newItem.id);
-    }
   };
 
   // 自动平衡当前分类的二级活动概率
@@ -214,18 +209,18 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     updateActivityItem(categoryId, itemId, updates);
     loadConfig();
     onConfigChange();
-    setEditingItemId(null);
+    setEditing(null);
   };
 
   // 开始编辑二级活动项
   const startEditItem = (item: ActivityItem) => {
-    setEditingItemId(item.id);
+    setEditing({ type: 'item', id: item.id });
     setEditingItemName(item.name);
     setEditingItemProb(formatProbability(item.probability));
   };
 
   const cancelEditItem = () => {
-    setEditingItemId(null);
+    setEditing(null);
     setEditingItemName('');
     setEditingItemProb(0);
   };
@@ -241,10 +236,47 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
       return;
     }
 
+    // 检查二级活动项名称是否与同一分类下的其他活动项重名（排除自己）
+    const category = config.find(c => c.id === categoryId);
+    if (category) {
+      const trimmedName = editingItemName.trim();
+      const duplicateItem = category.items.find(item => item.id !== itemId && item.name === trimmedName);
+      if (duplicateItem) {
+        toast.error(`活动名称"${trimmedName}"已存在于当前分类中，请使用其他名称`);
+        return;
+      }
+    }
+
     handleUpdateItem(categoryId, itemId, {
       name: editingItemName.trim(),
       probability: editingItemProb / 100
     });
+  };
+
+  // 保存一级分类编辑
+  const saveEditCategory = (categoryId: string) => {
+    if (editingCategoryName.trim()) {
+      handleUpdateCategory(categoryId, {
+        name: editingCategoryName.trim(),
+        totalProbability: editingCategoryProb / 100
+      });
+    }
+  };
+
+  // 处理一级分类编辑时的键盘事件
+  const handleCategoryKeyDown = (e: React.KeyboardEvent, categoryId: string) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveEditCategory(categoryId);
+    }
+  };
+
+  // 处理二级活动项编辑时的键盘事件
+  const handleItemKeyDown = (e: React.KeyboardEvent, categoryId: string, itemId: string) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveEditItem(categoryId, itemId);
+    }
   };
 
   // 删除二级活动项
@@ -259,8 +291,8 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
       onConfigChange();
       
       // 如果正在编辑这个项目，退出编辑状态
-      if (editingItemId === itemId) {
-        setEditingItemId(null);
+      if (editing?.type === 'item' && editing.id === itemId) {
+        setEditing(null);
       }
     }
   };
@@ -269,8 +301,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
   const handleReset = () => {
     if (confirm('确定要重置为默认配置吗？\n\n所有自定义设置将丢失且无法恢复！')) {
       resetActivityConfig();
-      setEditingCategoryId(null); // 退出一级分类编辑状态
-      setEditingItemId(null); // 退出活动编辑状态
+      setEditing(null); // 退出编辑状态
       setError(''); // 清空错误信息
       loadConfig();
       onConfigChange();
@@ -414,7 +445,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
             <div className="activity-manager__category-list">
               {config.map(category => {
                 const isCustom = category.name === '自定义';
-                const isEditing = editingCategoryId === category.id;
+                const isEditing = editing?.type === 'category' && editing.id === category.id;
                 const prob = formatProbability(category.totalProbability);
                 const isNegative = prob < 0;
                 const itemsSum = calculateItemsProbabilitySum(category.id);
@@ -424,7 +455,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                 return (
                   <div
                     key={category.id}
-                    className={`activity-manager__category-item ${selectedCategoryId === category.id ? 'active' : ''} ${isCustom ? 'custom' : ''}`}
+                    className={`activity-manager__category-item ${selectedCategoryId === category.id ? 'active' : ''}`}
                     onClick={() => setSelectedCategoryId(category.id)}
                   >
                     {isEditing && !isCustom ? (
@@ -435,8 +466,9 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                           className="activity-manager__edit-name"
                           value={editingCategoryName}
                           onChange={(e) => setEditingCategoryName(e.target.value)}
-                          placeholder="分类名称（最多5个字）"
-                          maxLength={5}
+                          onKeyDown={(e) => handleCategoryKeyDown(e, category.id)}
+                          placeholder="分类名称（最多3个字）"
+                          maxLength={3}
                           autoFocus
                         />
                         <input
@@ -447,26 +479,20 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                             const val = parseInt(e.target.value) || 0;
                             setEditingCategoryProb(Math.max(0, Math.min(100, val)));
                           }}
+                          onKeyDown={(e) => handleCategoryKeyDown(e, category.id)}
                           min="0"
                           max="100"
                           step="5"
                         />
                         <button
                           className="activity-manager__btn-cancel-edit"
-                          onClick={() => setEditingCategoryId(null)}
+                          onClick={() => setEditing(null)}
                         >
                           ❌
                         </button>
                         <button
                           className="activity-manager__btn-save-edit"
-                          onClick={() => {
-                            if (editingCategoryName.trim()) {
-                              handleUpdateCategory(category.id, {
-                                name: editingCategoryName.trim(),
-                                totalProbability: editingCategoryProb / 100
-                              });
-                            }
-                          }}
+                          onClick={() => saveEditCategory(category.id)}
                         >
                           💾
                         </button>
@@ -486,7 +512,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setEditingCategoryId(category.id);
+                                setEditing({ type: 'category', id: category.id });
                                 setEditingCategoryName(category.name);
                                 setEditingCategoryProb(prob);
                               }}
@@ -519,32 +545,36 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
               <>
                 <div className="activity-manager__main-header">
                   <div className="activity-manager__main-header-left">
-                    <h3>{selectedCategory.name} - 活动列表</h3>
+                    <h3>二级分类 - {selectedCategory.name}</h3>
                     <span className="activity-manager__item-count">
                       {selectedCategory.items.length} 个活动
                     </span>
                   </div>
-                  <div className="activity-manager__main-header-right">
-                    <button 
-                      className="activity-manager__btn-auto-balance-items" 
-                      onClick={handleAutoBalanceItems}
-                      title="自动平衡该分类下的活动概率"
-                    >
-                      ⚖️
-                    </button>
-                    <button 
-                      className="activity-manager__btn-add-item" 
-                      onClick={handleAddItem}
-                      title="新增活动"
-                    >
-                      ➕
-                    </button>
-                  </div>
+                  {/* 自定义分类的二级活动项中，隐藏添加和平衡按钮 */}
+                  {selectedCategory.name !== '自定义' && (
+                    <div className="activity-manager__main-header-right">
+                      <button 
+                        className="activity-manager__btn-auto-balance-items" 
+                        onClick={handleAutoBalanceItems}
+                        title="自动平衡该分类下的活动概率"
+                      >
+                        ⚖️
+                      </button>
+                      <button 
+                        className="activity-manager__btn-add-item" 
+                        onClick={handleAddItem}
+                        title="新增活动"
+                      >
+                        ➕
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="activity-manager__item-list">
                   {selectedCategory.items.map(item => {
-                    const isEditing = editingItemId === item.id;
+                    const isEditing = editing?.type === 'item' && editing.id === item.id;
+                    const isCustomCategory = selectedCategory.name === '自定义';
                     
                     return (
                       <div key={item.id} className="activity-manager__item">
@@ -556,6 +586,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                               className="activity-manager__item-name-input"
                               value={editingItemName}
                               onChange={(e) => setEditingItemName(e.target.value)}
+                              onKeyDown={(e) => handleItemKeyDown(e, selectedCategory.id, item.id)}
                               placeholder="活动名称（最多5个字）"
                               maxLength={5}
                               autoFocus
@@ -568,6 +599,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                                 const val = parseInt(e.target.value) || 0;
                                 setEditingItemProb(Math.max(0, Math.min(100, val)));
                               }}
+                              onKeyDown={(e) => handleItemKeyDown(e, selectedCategory.id, item.id)}
                               min="0"
                               max="100"
                               step="1"
@@ -601,12 +633,15 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                               >
                                 ✏️
                               </button>
-                              <button
-                                onClick={() => handleDeleteItem(selectedCategory.id, item.id)}
-                                title="删除"
-                              >
-                                🗑️
-                              </button>
+                              {/* 自定义分类的二级活动项中，隐藏删除按钮 */}
+                              {!isCustomCategory && (
+                                <button
+                                  onClick={() => handleDeleteItem(selectedCategory.id, item.id)}
+                                  title="删除"
+                                >
+                                  🗑️
+                                </button>
+                              )}
                             </div>
                           </div>
                         )}

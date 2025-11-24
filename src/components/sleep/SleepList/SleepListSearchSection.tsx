@@ -4,12 +4,12 @@ import { FilterNumberInput, FilterSelect, FilterSearchInput } from '@/components
 interface SleepListSearchSectionProps {
   minSleepHour?: number | undefined;
   maxSleepHour?: number | undefined;
-  minDurationHour?: number;
+  durationLevel?: 'all' | 'too-short' | 'insufficient' | 'normal' | 'excessive';
   qualityLevel?: 'all' | 'excellent' | 'good' | 'fair' | 'poor';
   searchNotes?: string;
   onMinSleepHourChange?: (value: number | undefined) => void;
   onMaxSleepHourChange?: (value: number | undefined) => void;
-  onMinDurationHourChange?: (value: number) => void;
+  onDurationLevelChange?: (value: 'all' | 'too-short' | 'insufficient' | 'normal' | 'excessive') => void;
   onQualityLevelChange?: (value: 'all' | 'excellent' | 'good' | 'fair' | 'poor') => void;
   onSearchNotesChange?: (value: string) => void;
 }
@@ -17,16 +17,16 @@ interface SleepListSearchSectionProps {
 export const SleepListSearchSection: React.FC<SleepListSearchSectionProps> = ({
   minSleepHour,
   maxSleepHour,
-  minDurationHour = 0,
+  durationLevel = 'all',
   qualityLevel = 'all',
   searchNotes,
   onMinSleepHourChange,
   onMaxSleepHourChange,
-  onMinDurationHourChange,
+  onDurationLevelChange,
   onQualityLevelChange,
   onSearchNotesChange
 }) => {
-  if (!onMinSleepHourChange && !onMinDurationHourChange && !onQualityLevelChange && !onSearchNotesChange) {
+  if (!onMinSleepHourChange && !onDurationLevelChange && !onQualityLevelChange && !onSearchNotesChange) {
     return null;
   }
 
@@ -60,21 +60,20 @@ export const SleepListSearchSection: React.FC<SleepListSearchSectionProps> = ({
         </div>
       )}
       {/* 睡眠时长 */}
-      {onMinDurationHourChange && (
+      {onDurationLevelChange && (
         <div className="search-group">
-          <span className="search-label">时长≥</span>
-          <FilterNumberInput
-            value={minDurationHour}
-            onChange={(val) => {
-              const numVal = val ?? 0;
-              onMinDurationHourChange(Math.max(0, Math.min(12, numVal)));
-            }}
-            placeholder="0"
-            min={0}
-            max={12}
-            step={1}
-            width="60px"
-            textAlign="center"
+          <span className="search-label">时长</span>
+          <FilterSelect
+            value={durationLevel}
+            onChange={(val) => onDurationLevelChange(val as 'all' | 'too-short' | 'insufficient' | 'normal' | 'excessive')}
+            options={[
+              { value: 'all', label: '全部' },
+              { value: 'too-short', label: '过少 <4小时' },
+              { value: 'insufficient', label: '欠缺 4-7小时' },
+              { value: 'normal', label: '正常 7-9小时' },
+              { value: 'excessive', label: '过多 >9小时' }
+            ]}
+            width="140px"
           />
         </div>
       )}

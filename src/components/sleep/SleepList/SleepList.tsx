@@ -20,12 +20,12 @@ interface SleepListProps {
   // 查询功能相关
   minSleepHour?: number | undefined;
   maxSleepHour?: number | undefined;
-  minDurationHour?: number;
+  durationLevel?: 'all' | 'too-short' | 'insufficient' | 'normal' | 'excessive';
   qualityLevel?: 'all' | 'excellent' | 'good' | 'fair' | 'poor';
   searchNotes?: string;
   onMinSleepHourChange?: (value: number | undefined) => void;
   onMaxSleepHourChange?: (value: number | undefined) => void;
-  onMinDurationHourChange?: (value: number) => void;
+  onDurationLevelChange?: (value: 'all' | 'too-short' | 'insufficient' | 'normal' | 'excessive') => void;
   onQualityLevelChange?: (value: 'all' | 'excellent' | 'good' | 'fair' | 'poor') => void;
   onSearchNotesChange?: (value: string) => void;
 }
@@ -42,12 +42,12 @@ const SleepList: React.FC<SleepListProps> = ({
   isImporting = false,
   minSleepHour,
   maxSleepHour,
-  minDurationHour = 0,
+  durationLevel = 'all',
   qualityLevel = 'all',
   searchNotes,
   onMinSleepHourChange,
   onMaxSleepHourChange,
-  onMinDurationHourChange,
+  onDurationLevelChange,
   onQualityLevelChange,
   onSearchNotesChange
 }) => {
@@ -152,17 +152,44 @@ const SleepList: React.FC<SleepListProps> = ({
     }
   };
 
+  // 获取睡眠时长分类（小时）
+  const getSleepDurationLevel = (durationMinutes: number | undefined): 'too-short' | 'insufficient' | 'normal' | 'excessive' | 'unknown' => {
+    if (durationMinutes === undefined) return 'unknown';
+    const hours = durationMinutes / 60;
+    if (hours < 4) return 'too-short';      // 0-4小时：过少
+    if (hours < 7) return 'insufficient';  // 4-7小时：欠缺
+    if (hours <= 9) return 'normal';       // 7-9小时：正常
+    return 'excessive';                     // 9小时以上：过多
+  };
+
+  // 获取睡眠时长对应的颜色类
+  const getDurationColorClass = (durationMinutes: number | undefined): string => {
+    const level = getSleepDurationLevel(durationMinutes);
+    switch (level) {
+      case 'too-short':
+        return 'duration--too-short';
+      case 'insufficient':
+        return 'duration--insufficient';
+      case 'normal':
+        return 'duration--normal';
+      case 'excessive':
+        return 'duration--excessive';
+      default:
+        return '';
+    }
+  };
+
   // 渲染搜索区域
   const renderSearchSection = () => (
     <SleepListSearchSection
       minSleepHour={minSleepHour}
       maxSleepHour={maxSleepHour}
-      minDurationHour={minDurationHour}
+      durationLevel={durationLevel}
       qualityLevel={qualityLevel}
       searchNotes={searchNotes}
       onMinSleepHourChange={onMinSleepHourChange}
       onMaxSleepHourChange={onMaxSleepHourChange}
-      onMinDurationHourChange={onMinDurationHourChange}
+      onDurationLevelChange={onDurationLevelChange}
       onQualityLevelChange={onQualityLevelChange}
       onSearchNotesChange={onSearchNotesChange}
     />
@@ -306,13 +333,13 @@ const SleepList: React.FC<SleepListProps> = ({
                             {sleep.duration !== undefined && (
                               <div className="duration-info">
                                 <span className="info-label">⏱️ 睡眠时长</span>
-                                <span className="info-value">
+                                <span className={`info-value ${getDurationColorClass(sleep.duration)}`}>
                                   {formatSleepDuration(sleep.duration)}
                                 </span>
                               </div>
                             )}
                             <div className="quality-info">
-                              <span className="info-label">睡眠质量</span>
+                              <span className="info-label">⭐ 睡眠质量</span>
                               <span className={`sleep-quality ${getQualityClass(sleep.quality)}`}>
                                 {getQualityEmoji(sleep.quality)} {sleep.quality}分 ({SLEEP_QUALITY_LABELS[getSleepQualityLevel(sleep.quality)]})
                               </span>

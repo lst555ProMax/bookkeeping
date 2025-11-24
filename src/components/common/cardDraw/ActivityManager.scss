@@ -189,20 +189,6 @@
       background: linear-gradient(135deg, rgba(30, 165, 249, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
       box-shadow: 0 4px 15px rgba(30, 165, 249, 0.2);
     }
-
-    &.custom {
-      background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
-      border-color: #ffc107;
-
-      &:hover {
-        border-color: #ffa000;
-      }
-
-      &.active {
-        border-color: #ffa000;
-        box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
-      }
-    }
   }
 
   &__category-row {
@@ -222,7 +208,7 @@
     background: #1ea5f9;
     color: white;
     padding: 0.3rem 0.8rem;
-    border-radius: 12px;
+    border-radius: 4px;
     font-size: 0.9rem;
     font-weight: 700;
     min-width: 55px;
@@ -302,7 +288,7 @@
   }
 
   &__edit-prob {
-    min-width: 55px;
+    min-width: 90px;
     width: auto;
     padding: 0.3rem 0.5rem;
     border: 2px solid #1ea5f9;
@@ -322,10 +308,15 @@
       box-shadow: 0 0 0 3px rgba(30, 165, 249, 0.2);
     }
 
-    // 隐藏默认的number input spinner按钮样式，使用浏览器原生的
+    // 隐藏数字输入框的spinner按钮
+    -moz-appearance: textfield;
+    appearance: textfield;
+    
     &::-webkit-inner-spin-button,
     &::-webkit-outer-spin-button {
-      opacity: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 0;
     }
   }
 
@@ -445,6 +436,7 @@
     padding: 1rem;
     margin-bottom: 0.75rem;
     transition: all 0.3s ease;
+    cursor: pointer;
 
     &:hover {
       border-color: #1ea5f9;
@@ -492,10 +484,10 @@
   }
 
   &__item-prob {
-    background: #0d8bd9;
+    background: #1ea5f9;
     color: white;
     padding: 0.3rem 0.7rem;
-    border-radius: 12px;
+    border-radius: 4px;
     font-size: 0.9rem;
     font-weight: 600;
     min-width: 55px;
@@ -503,7 +495,8 @@
   }
 
   &__item-prob-input-edit {
-    max-width: 70px;
+    min-width: 75px;
+    max-width: 90px;
     width: auto;
     padding: 0.3rem 0.5rem;
     border: 2px solid #0d8bd9;
@@ -523,9 +516,15 @@
       box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.2);
     }
 
+    // 隐藏数字输入框的spinner按钮
+    -moz-appearance: textfield;
+    appearance: textfield;
+    
     &::-webkit-inner-spin-button,
     &::-webkit-outer-spin-button {
-      opacity: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 0;
     }
   }
 

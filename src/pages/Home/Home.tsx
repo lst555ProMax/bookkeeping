@@ -92,7 +92,7 @@ const Home: React.FC = () => {
   // 查询筛选状态 - 睡眠记录
   const [sleepMinHour, setSleepMinHour] = useState<number | undefined>(undefined);
   const [sleepMaxHour, setSleepMaxHour] = useState<number | undefined>(undefined);
-  const [sleepMinDurationHour, setSleepMinDurationHour] = useState<number>(0);
+  const [sleepDurationLevel, setSleepDurationLevel] = useState<'all' | 'too-short' | 'insufficient' | 'normal' | 'excessive'>('all');
   const [sleepQualityLevel, setSleepQualityLevel] = useState<'all' | 'excellent' | 'good' | 'fair' | 'poor'>('all');
   const [sleepSearchNotes, setSleepSearchNotes] = useState<string>('');
 
@@ -176,11 +176,14 @@ const Home: React.FC = () => {
         if (sleepMaxHour !== undefined && sleepHour > sleepMaxHour) return false;
       }
       
-      // 睡眠时长筛选（以小时为单位，筛选大于等于指定值的记录）
-      if (sleepMinDurationHour !== undefined && sleepMinDurationHour > 0) {
+      // 睡眠时长分类筛选
+      if (sleepDurationLevel !== 'all') {
         if (s.duration === undefined) return false;
         const durationHours = s.duration / 60; // 将分钟转换为小时
-        if (durationHours < sleepMinDurationHour) return false;
+        if (sleepDurationLevel === 'too-short' && durationHours >= 4) return false;
+        if (sleepDurationLevel === 'insufficient' && (durationHours < 4 || durationHours >= 7)) return false;
+        if (sleepDurationLevel === 'normal' && (durationHours < 7 || durationHours > 9)) return false;
+        if (sleepDurationLevel === 'excessive' && durationHours <= 9) return false;
       }
       
       // 睡眠质量等级筛选
@@ -1303,12 +1306,12 @@ const Home: React.FC = () => {
                       isImporting={isImportingSleep}
                       minSleepHour={sleepMinHour}
                       maxSleepHour={sleepMaxHour}
-                      minDurationHour={sleepMinDurationHour}
+                      durationLevel={sleepDurationLevel}
                       qualityLevel={sleepQualityLevel}
                       searchNotes={sleepSearchNotes}
                       onMinSleepHourChange={setSleepMinHour}
                       onMaxSleepHourChange={setSleepMaxHour}
-                      onMinDurationHourChange={setSleepMinDurationHour}
+                      onDurationLevelChange={setSleepDurationLevel}
                       onQualityLevelChange={setSleepQualityLevel}
                       onSearchNotesChange={setSleepSearchNotes}
                     />

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { SleepRecord } from '@/utils';
 import { calculateSleepDuration } from '@/utils';
-import { DatePicker, TimePicker } from '@/components/common';
+import { DatePicker, TimePicker, FormNumberInput, FormTextarea } from '@/components/common';
 import './SleepForm.scss';
 
 interface SleepFormProps {
@@ -30,7 +30,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
   const [date, setDate] = useState(getDefaultDate());
   const [sleepTime, setSleepTime] = useState('00:00');
   const [wakeTime, setWakeTime] = useState('08:00');
-  const [quality, setQuality] = useState<string>('80');
+  const [quality, setQuality] = useState<string>('');
   const [notes, setNotes] = useState('');
   const [naps, setNaps] = useState({
     morning: false,
@@ -43,7 +43,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
     setDate(getDefaultDate());
     setSleepTime('00:00');
     setWakeTime('08:00');
-    setQuality('80');
+    setQuality('');
     setNotes('');
     setNaps({
       morning: false,
@@ -192,39 +192,41 @@ const SleepForm: React.FC<SleepFormProps> = ({
 
         <div className="form-group">
           <label>💤 小睡</label>
-          <div className="checkbox-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={naps.morning}
-                onChange={(e) => setNaps({ ...naps, morning: e.target.checked })}
-              />
-              <span>上午</span>
-            </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={naps.noon}
-                onChange={(e) => setNaps({ ...naps, noon: e.target.checked })}
-              />
-              <span>中午</span>
-            </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={naps.afternoon}
-                onChange={(e) => setNaps({ ...naps, afternoon: e.target.checked })}
-              />
-              <span>下午</span>
-            </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={naps.evening}
-                onChange={(e) => setNaps({ ...naps, evening: e.target.checked })}
-              />
-              <span>晚上</span>
-            </label>
+          <div className="nap-checkboxes">
+            <div className="nap-row">
+              <div className="checkbox-item">
+                <span>🌅 上午</span>
+                <input
+                  type="checkbox"
+                  checked={naps.morning}
+                  onChange={(e) => setNaps({ ...naps, morning: e.target.checked })}
+                />
+              </div>
+              <div className="checkbox-item">
+                <span>☀️ 中午</span>
+                <input
+                  type="checkbox"
+                  checked={naps.noon}
+                  onChange={(e) => setNaps({ ...naps, noon: e.target.checked })}
+                />
+              </div>
+              <div className="checkbox-item">
+                <span>🌤️ 下午</span>
+                <input
+                  type="checkbox"
+                  checked={naps.afternoon}
+                  onChange={(e) => setNaps({ ...naps, afternoon: e.target.checked })}
+                />
+              </div>
+              <div className="checkbox-item">
+                <span>🌙 晚上</span>
+                <input
+                  type="checkbox"
+                  checked={naps.evening}
+                  onChange={(e) => setNaps({ ...naps, evening: e.target.checked })}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -233,26 +235,25 @@ const SleepForm: React.FC<SleepFormProps> = ({
             ⭐ 睡眠质量 <span className="required">*</span>
             <span className="quality-hint">（手环分数：0-100）</span>
           </label>
-          <input
-            type="number"
+          <FormNumberInput
             id="quality"
             value={quality}
-            onChange={(e) => setQuality(e.target.value)}
-            min="0"
-            max="100"
-            placeholder="输入手环监测的睡眠质量分数"
+            onChange={setQuality}
+            min={0}
+            max={100}
+            step={1}
+            placeholder="80"
             required
           />
         </div>
 
         <div className="form-group">
           <label htmlFor="notes">📝 备注</label>
-          <textarea
+          <FormTextarea
             id="notes"
             value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            onChange={setNotes}
             placeholder="记录今天的睡眠情况..."
-            rows={3}
           />
         </div>
 

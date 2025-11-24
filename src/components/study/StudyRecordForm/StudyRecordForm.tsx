@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { StudyRecord, StudyCategory } from '@/utils';
 import { getStudyCategories } from '@/utils';
-import { DatePicker, FormSelect } from '@/components/common';
+import { DatePicker, FormSelect, FormNumberInput, FormTextInput, FormTextarea } from '@/components/common';
 import type { FormSelectOption } from '@/components/common';
 import './StudyRecordForm.scss';
 
@@ -240,11 +240,10 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
           <label htmlFor="videoTitle">
             🎬 视频标题 <span className="required">*</span>
           </label>
-          <input
-            type="text"
+          <FormTextInput
             id="videoTitle"
             value={videoTitle}
-            onChange={(e) => setVideoTitle(e.target.value)}
+            onChange={setVideoTitle}
             placeholder="例如：React 入门教程"
             required
           />
@@ -258,21 +257,21 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
                 📺 观看集数 <span className="required">*</span>
               </label>
               <div className="episode-inputs">
-                <input
-                  type="number"
+                <FormNumberInput
                   value={episodeStart}
-                  onChange={(e) => setEpisodeStart(e.target.value)}
+                  onChange={setEpisodeStart}
                   placeholder="0"
-                  min="0"
+                  min={0}
+                  step={1}
                   required
                 />
                 <span className="episode-separator">至</span>
-                <input
-                  type="number"
+                <FormNumberInput
                   value={episodeEnd}
-                  onChange={(e) => setEpisodeEnd(e.target.value)}
+                  onChange={setEpisodeEnd}
                   placeholder="20"
-                  min="0"
+                  min={0}
+                  step={1}
                   required
                 />
                 <span className="episode-unit">集</span>
@@ -283,13 +282,13 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
                 ⏱️ 观看总时间 <span className="required">*</span>
               </label>
               <div className="time-input-wrapper">
-                <input
-                  type="number"
+                <FormNumberInput
                   id="totalTime"
                   value={totalTime}
-                  onChange={(e) => setTotalTime(e.target.value)}
+                  onChange={setTotalTime}
                   placeholder="120"
-                  min="1"
+                  min={1}
+                  step={1}
                   required
                 />
                 <span className="time-unit">分钟</span>
@@ -301,12 +300,11 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
         {/* 备注 */}
         <div className="form-group">
           <label htmlFor="remark">📝 备注</label>
-          <textarea
+          <FormTextarea
             id="remark"
             value={remark}
-            onChange={(e) => setRemark(e.target.value)}
+            onChange={setRemark}
             placeholder="记录学习心得、难点等..."
-            rows={3}
           />
         </div>
 

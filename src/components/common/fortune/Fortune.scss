@@ -57,16 +57,16 @@
     }
   }
 
+  &__result-title {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+
   &__result-level {
     font-size: 1.1rem;
     font-weight: 700;
     color: white;
-  }
-
-  &__result-score {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 500;
   }
 
   &__result-extras {
@@ -75,6 +75,8 @@
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.7);
     margin-top: 0.25rem;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   // 重置按钮 - 对齐抽卡重置按钮
@@ -204,16 +206,16 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   }
 
-  &__main-level {
-    font-size: 2.5rem;
-    font-weight: 800;
+  &__main-title {
+    font-size: 1rem;
+    color: #495057;
+    font-weight: 600;
     margin-bottom: 0.5rem;
   }
 
-  &__main-score {
-    font-size: 1.2rem;
-    color: #495057;
-    font-weight: 600;
+  &__main-level {
+    font-size: 2.5rem;
+    font-weight: 800;
   }
 
   // 各方面运势 - 两列布局

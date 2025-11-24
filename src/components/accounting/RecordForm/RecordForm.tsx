@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { ExpenseCategory, ExpenseRecord, IncomeCategory, IncomeRecord, RecordType } from '@/utils';
 import { generateId, formatDate, getCategories, getIncomeCategories } from '@/utils';
-import { DatePicker, FormSelect } from '@/components/common';
+import { DatePicker, FormSelect, FormNumberInput, FormTextarea } from '@/components/common';
 import type { FormSelectOption } from '@/components/common';
 import './RecordForm.scss';
 
@@ -286,39 +286,16 @@ const RecordForm: React.FC<RecordFormProps> = ({
         <label htmlFor="amount" className="expense-form__label">
           💰 金额 (¥) <span className="required">*</span>
         </label>
-        <input
-          type="number"
+        <FormNumberInput
           id="amount"
-          className="expense-form__input"
           value={amount}
-          onChange={(e) => {
-            const inputValue = e.target.value;
-            // 如果输入为空，允许清空
-            if (inputValue === '') {
-              setAmount('');
-              return;
-            }
-            // 限制小数位数最多为两位
-            const regex = /^\d*\.?\d{0,2}$/;
-            if (regex.test(inputValue)) {
-              setAmount(inputValue);
-            }
-          }}
-          onKeyDown={(e) => {
-            // 自定义上下箭头键处理：按 10 调整
-            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-              e.preventDefault();
-              const currentVal = parseFloat(amount) || 0;
-              const step = 10;
-              const newVal = e.key === 'ArrowUp' 
-                ? currentVal + step 
-                : Math.max(0, currentVal - step);
-              setAmount(newVal.toFixed(2));
-            }
-          }}
+          onChange={setAmount}
           placeholder="0"
-          step="0.01"
-          min="0"
+          min={0}
+          step={0.01}
+          arrowStep={10}
+          wheelStep={10}
+          decimalPlaces={2}
           required
         />
       </div>
@@ -350,13 +327,11 @@ const RecordForm: React.FC<RecordFormProps> = ({
 
       <div className="expense-form__group">
         <label htmlFor="description" className="expense-form__label">📝 备注</label>
-        <textarea
+        <FormTextarea
           id="description"
-          className="expense-form__textarea"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={setDescription}
           placeholder="记录今天的收支情况..."
-          rows={3}
           maxLength={100}
         />
       </div>

@@ -315,6 +315,25 @@
     font-weight: 600;
     color: #1ea5f9;
     text-align: left;
+
+    &.duration--too-short {
+      color: #dc3545;
+      font-weight: 700;
+    }
+
+    &.duration--insufficient {
+      color: #ff8c00;
+      font-weight: 700;
+    }
+
+    &.duration--normal {
+      color: #1ea5f9;
+    }
+
+    &.duration--excessive {
+      color: #9b59b6;
+      font-weight: 700;
+    }
   }
 }
 

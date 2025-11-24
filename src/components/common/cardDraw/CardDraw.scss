@@ -133,7 +133,7 @@
     top: 1rem;
     left: 1rem;
     background: transparent;
-    border: 2px solid #e0e0e0;
+    border: none;
     font-size: 1.5rem;
     color: #1ea5f9;
     cursor: pointer;
@@ -141,18 +141,14 @@
     padding: 0;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
 
     &:hover {
-      background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
-      color: white;
-      border-color: transparent;
       transform: rotate(90deg);
-      box-shadow: 0 4px 15px rgba(30, 165, 249, 0.3);
+      // box-shadow: 0 4px 15px rgba(30, 165, 249, 0.3);
     }
   }
 

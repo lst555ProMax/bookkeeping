@@ -28,7 +28,7 @@ const DEFAULT_ACTIVITY_CONFIG: ActivityCategoryConfig[] = [
       { id: 'art_appreciation', name: '艺术欣赏', probability: 0.05, cardType: CardType.ART_APPRECIATION },
       { id: 'music_appreciation', name: '音乐欣赏', probability: 0.05, cardType: CardType.MUSIC_APPRECIATION },
       { id: 'reading', name: '读书', probability: 0.05, cardType: CardType.READING },
-      { id: 'comedy', name: '喜剧/脱口秀', probability: 0.05, cardType: CardType.COMEDY }
+      { id: 'comedy', name: '喜剧脱口秀', probability: 0.05, cardType: CardType.COMEDY }
     ]
   },
   {
@@ -39,7 +39,7 @@ const DEFAULT_ACTIVITY_CONFIG: ActivityCategoryConfig[] = [
     items: [
       { id: 'english', name: '英语学习', probability: 0.05, cardType: CardType.ENGLISH_LISTENING },
       { id: 'dev', name: '前后端开发', probability: 0.05, cardType: CardType.FRONTEND_BACKEND },
-      { id: 'ai_agent', name: 'AI/Agent', probability: 0.05, cardType: CardType.AI_ALGORITHM },
+      { id: 'ai_agent', name: 'AI应用', probability: 0.05, cardType: CardType.AI_ALGORITHM },
       { id: 'algorithm', name: '算法', probability: 0.05, cardType: CardType.ALGORITHM }
     ]
   },
@@ -59,7 +59,7 @@ const DEFAULT_ACTIVITY_CONFIG: ActivityCategoryConfig[] = [
     category: CardCategory.OUTDOOR,
     totalProbability: 0.10,
     items: [
-      { id: 'citywalk', name: 'citywalk', probability: 0.05, cardType: CardType.CITYWALK },
+      { id: 'citywalk', name: '城市旅行', probability: 0.05, cardType: CardType.CITYWALK },
       { id: 'exercise', name: '运动跑步', probability: 0.05, cardType: CardType.EXERCISE }
     ]
   },

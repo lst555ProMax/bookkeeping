@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { DailyRecord, MealStatus } from '@/utils';
-import { DatePicker, TimePicker } from '@/components/common';
+import { DatePicker, TimePicker, FormNumberInput, FormTextarea } from '@/components/common';
 import './DailyRecordForm.scss';
 
 interface DailyRecordFormProps {
@@ -269,13 +269,15 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
             <label htmlFor="wechatSteps">
               👣 微信步数 <span className="required">*</span>
             </label>
-            <input
-              type="number"
+            <FormNumberInput
               id="wechatSteps"
               value={wechatSteps}
-              onChange={(e) => setWechatSteps(e.target.value)}
-              placeholder="今天的微信步数"
-              min="0"
+              onChange={setWechatSteps}
+              placeholder="8000"
+              min={0}
+              step={1}
+              arrowStep={500}
+              wheelStep={500}
               required
             />
           </div>
@@ -333,7 +335,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
           <div className="housework-checkboxes">
             <div className="housework-row">
               <div className="checkbox-item">
-                <span>早洗</span>
+                <span>🌞 早洗</span>
                 <input
                   type="checkbox"
                   checked={morningWash}
@@ -341,7 +343,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
                 />
               </div>
               <div className="checkbox-item">
-                <span>晚洗</span>
+                <span>🌙 晚洗</span>
                 <input
                   type="checkbox"
                   checked={nightWash}
@@ -349,7 +351,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
                 />
               </div>
               <div className="checkbox-item">
-                <span>洗衣</span>
+                <span>👕 洗衣</span>
                 <input
                   type="checkbox"
                   checked={laundry}
@@ -357,7 +359,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
                 />
               </div>
               <div className="checkbox-item">
-                <span>打扫</span>
+                <span>🧹 打扫</span>
                 <input
                   type="checkbox"
                   checked={cleaning}
@@ -367,7 +369,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
             </div>
             <div className="housework-row">
               <div className="checkbox-item">
-                <span>洗脸</span>
+                <span>😊 洗脸</span>
                 <input
                   type="checkbox"
                   checked={faceWash}
@@ -375,7 +377,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
                 />
               </div>
               <div className="checkbox-item">
-                <span>洗脚</span>
+                <span>🦶 洗脚</span>
                 <input
                   type="checkbox"
                   checked={footWash}
@@ -383,7 +385,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
                 />
               </div>
               <div className="checkbox-item">
-                <span>洗头</span>
+                <span>💆 洗头</span>
                 <input
                   type="checkbox"
                   checked={hairWash}
@@ -391,7 +393,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
                 />
               </div>
               <div className="checkbox-item">
-                <span>洗澡</span>
+                <span>🚿 洗澡</span>
                 <input
                   type="checkbox"
                   checked={shower}
@@ -406,12 +408,11 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
         {/* 备注 */}
         <div className="form-group">
           <label htmlFor="notes">📝 备注</label>
-          <textarea
+          <FormTextarea
             id="notes"
             value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            onChange={setNotes}
             placeholder="记录今天的日常生活..."
-            rows={3}
           />
         </div>
 

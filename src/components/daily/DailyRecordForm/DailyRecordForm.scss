@@ -180,19 +180,20 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  width: 100%;
 }
 
 .housework-row {
   display: flex;
   gap: 1rem;
   justify-content: space-between;
-  flex: 1;
+  width: 100%;
 }
 
 .checkbox-item {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.3rem;
   flex: 1;
 
   span {

@@ -4,9 +4,10 @@
 export enum FortuneLevel {
   EXCELLENT = 'excellent',  // 大吉
   GOOD = 'good',           // 吉
-  FAIR = 'fair',           // 中吉
-  POOR = 'poor',           // 小吉
-  BAD = 'bad'              // 凶
+  FAIR = 'fair',           // 小吉
+  POOR = 'poor',           // 小凶
+  BAD = 'bad',             // 凶
+  TERRIBLE = 'terrible'    // 大凶
 }
 
 // 运势等级中文映射
@@ -15,16 +16,18 @@ export const FORTUNE_LEVEL_LABELS: Record<FortuneLevel, string> = {
   [FortuneLevel.GOOD]: '吉',
   [FortuneLevel.FAIR]: '小吉',
   [FortuneLevel.POOR]: '小凶',
-  [FortuneLevel.BAD]: '大凶'
+  [FortuneLevel.BAD]: '凶',
+  [FortuneLevel.TERRIBLE]: '大凶'
 };
 
-// 运势等级颜色映射
+// 运势等级颜色映射（避免蓝色，背景是蓝色）
 export const FORTUNE_LEVEL_COLORS: Record<FortuneLevel, string> = {
-  [FortuneLevel.EXCELLENT]: '#ff6b6b',
-  [FortuneLevel.GOOD]: '#ee5a6f',
-  [FortuneLevel.FAIR]: '#ffa94d',
-  [FortuneLevel.POOR]: '#74c0fc',
-  [FortuneLevel.BAD]: '#868e96'
+  [FortuneLevel.EXCELLENT]: '#9b59b6',      // 大吉：紫色
+  [FortuneLevel.GOOD]: '#ffa94d',          // 吉：橙色
+  [FortuneLevel.FAIR]: '#ffd700',          // 小吉：金色
+  [FortuneLevel.POOR]: '#ff8c00',          // 小凶：深橙色
+  [FortuneLevel.BAD]: '#dc3545',           // 凶：深红色
+  [FortuneLevel.TERRIBLE]: '#28a745'        // 大凶：绿色
 };
 
 // 运势方面枚举

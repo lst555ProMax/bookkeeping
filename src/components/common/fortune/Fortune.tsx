@@ -134,14 +134,14 @@ const Fortune: React.FC = () => {
                 cursor: 'pointer'
               }}
             >
+              <div className="fortune__result-title">
+                今日运势
+              </div>
               <div 
                 className="fortune__result-level"
                 style={{ color: FORTUNE_LEVEL_COLORS[todayFortune.overallLevel] }}
               >
                 {FORTUNE_LEVEL_LABELS[todayFortune.overallLevel]}
-              </div>
-              <div className="fortune__result-score">
-                {todayFortune.overallScore}分
               </div>
               <div className="fortune__result-extras">
                 {(() => {
@@ -208,14 +208,14 @@ const Fortune: React.FC = () => {
                     background: `linear-gradient(135deg, ${FORTUNE_LEVEL_COLORS[generatedFortune.overallLevel]}20, transparent)`
                   }}
                 >
+                  <div className="fortune__main-title">
+                    今日运势
+                  </div>
                   <div 
                     className="fortune__main-level"
                     style={{ color: FORTUNE_LEVEL_COLORS[generatedFortune.overallLevel] }}
                   >
                     {FORTUNE_LEVEL_LABELS[generatedFortune.overallLevel]}
-                  </div>
-                  <div className="fortune__main-score">
-                    综合运势：{generatedFortune.overallScore}分
                   </div>
                 </div>
 
@@ -301,19 +301,19 @@ const Fortune: React.FC = () => {
             <div className="fortune__result-area">
               <div 
                 className="fortune__main-result"
-                style={{ 
+                style={{
                   borderColor: FORTUNE_LEVEL_COLORS[todayFortune.overallLevel],
                   background: `linear-gradient(135deg, ${FORTUNE_LEVEL_COLORS[todayFortune.overallLevel]}20, transparent)`
                 }}
               >
+                <div className="fortune__main-title">
+                  今日运势
+                </div>
                 <div 
                   className="fortune__main-level"
                   style={{ color: FORTUNE_LEVEL_COLORS[todayFortune.overallLevel] }}
                 >
                   {FORTUNE_LEVEL_LABELS[todayFortune.overallLevel]}
-                </div>
-                <div className="fortune__main-score">
-                  综合运势：{todayFortune.overallScore}分
                 </div>
               </div>
 

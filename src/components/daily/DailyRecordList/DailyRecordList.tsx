@@ -325,8 +325,8 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
               <div className="section-content">
                 <div className="tag-group">
                   {/* 洗漱 */}
-                  {record.hygiene.morningWash && <span className="tag tag--success">✅ 早洗</span>}
-                  {record.hygiene.nightWash && <span className="tag tag--success">✅ 晚洗</span>}
+                  {record.hygiene.morningWash && <span className="tag tag--success">🌞 早洗</span>}
+                  {record.hygiene.nightWash && <span className="tag tag--success">🌙 晚洗</span>}
                   {/* 洗浴 */}
                   {record.bathing.shower && <span className="tag tag--info">🚿 洗澡</span>}
                   {record.bathing.hairWash && <span className="tag tag--info">💆 洗头</span>}

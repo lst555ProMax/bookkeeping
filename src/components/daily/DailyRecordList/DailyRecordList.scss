@@ -467,13 +467,11 @@
 
     &.steps--gold {
       color: #ffd700;
-      font-weight: 700;
       text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
     }
 
     &.steps--green {
       color: #28a745;
-      font-weight: 700;
     }
 
     &.steps--normal {
@@ -482,12 +480,10 @@
 
     &.steps--orange {
       color: #ff8c00;
-      font-weight: 700;
     }
 
     &.steps--red {
       color: #dc3545;
-      font-weight: 700;
     }
   }
 }
