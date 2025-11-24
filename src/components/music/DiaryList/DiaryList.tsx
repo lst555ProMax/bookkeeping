@@ -390,7 +390,7 @@ const DiaryList: React.FC<DiaryListProps> = ({
                 {getTextFromHTML(entry.content).length > 100 && '...'}
               </span>
               {entry.image && (
-                <span className="diary-item__preview-image" style={{ marginLeft: '1rem', display: 'inline-block', width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                <span className="music-diary-item__preview-image" style={{ marginLeft: '1rem', display: 'inline-block', width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
                   <img src={entry.image} alt="预览图片" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </span>
               )}

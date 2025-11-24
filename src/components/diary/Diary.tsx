@@ -513,10 +513,18 @@ const Diary: React.FC = () => {
   });
 
   // 筛选日记
-  const filteredDiaryEntries = diaryEntries.filter(entry => {
-    if (!diaryEntriesSearch.trim()) return true;
-    return entry.content.toLowerCase().includes(diaryEntriesSearch.toLowerCase());
-  });
+  const filteredDiaryEntries = diaryEntries
+    .filter(entry => {
+      if (!diaryEntriesSearch.trim()) return true;
+      return entry.content.toLowerCase().includes(diaryEntriesSearch.toLowerCase());
+    })
+    .sort((a, b) => {
+      // 先按日期倒序排序
+      const dateCompare = b.date.localeCompare(a.date);
+      if (dateCompare !== 0) return dateCompare;
+      // 如果日期相同，按创建时间倒序排序
+      return b.createdAt - a.createdAt;
+    });
 
   return (
     <div className="diary">

@@ -380,7 +380,7 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
   }, []);
   
   return (
-    <div className="diary-notebook">
+    <div className="reading-notebook">
       <div className="notebook__spine"></div>
       <div className="notebook__page" style={{ backgroundColor: currentTheme }}>
         <div className="notebook__header">
@@ -695,10 +695,10 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
                 <button 
                   className="image-upload-btn" 
                   onClick={triggerImageUpload}
-                  title="点击上传书记封面"
+                  title="点击上传书籍封面"
                 >
                   <span className="upload-icon">📷</span>
-                  <span className="upload-text">上传书记封面</span>
+                  <span className="upload-text">上传书籍封面</span>
                 </button>
               )}
             </div>

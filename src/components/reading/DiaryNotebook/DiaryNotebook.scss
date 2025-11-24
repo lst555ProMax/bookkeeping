@@ -1,4 +1,4 @@
-.diary-notebook {
+.reading-notebook {
   display: flex;
   position: relative;
   background: linear-gradient(to right, #8b7355 0%, #a0826d 2%, #fff 2%);
@@ -464,6 +464,94 @@
       flex-direction: column;
       min-height: 0;
       
+      // 固定的图片容器 - 右上角
+      .notebook__image-container {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.8rem;
+        width: 35%;
+        aspect-ratio: 144 / 209; // 书籍封面比例 144:209
+        z-index: 10;
+        padding: 0.5rem;
+        pointer-events: auto;
+        
+        .image-wrapper {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+          
+          .image-delete-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            line-height: 1;
+            transition: all 0.2s ease;
+            opacity: 0;
+            pointer-events: none;
+          }
+          &:hover .image-delete-btn {
+            opacity: 1;
+            pointer-events: auto;
+          }
+          .image-delete-btn:hover {
+            background: rgba(255, 0, 0, 0.8);
+            transform: scale(1.1);
+          }
+        }
+        
+        .image-upload-btn {
+          width: 100%;
+          height: 100%;
+          border: 2px dashed #ccc;
+          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.8);
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            border-color: #1ea5f9;
+            background: rgba(30, 165, 249, 0.1);
+            transform: scale(1.02);
+          }
+          
+          .upload-icon {
+            font-size: 2rem;
+          }
+          
+          .upload-text {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+          }
+        }
+      }
+      
       // 移除自定义滚动条样式(滚动条在 ProseMirror 上)
 
       // Tiptap Bubble Menu
@@ -622,6 +710,16 @@
         outline: none;
         overflow-y: auto;
         padding: 0;
+        
+        // 使用伪元素在右上角创建保留区域，文字会环绕此区域
+        &::before {
+          content: '';
+          float: right;
+          width: calc(35%); // 图片区域宽度 + 间距
+          aspect-ratio: 144 / 209; // 书籍封面比例 144:209
+          shape-outside: inset(0);
+          margin-left: 1rem;
+        }
         
         // 行线背景 - 使用 background-size 让横线填满容器
         background: 

@@ -382,7 +382,7 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
 
 
   return (
-    <div className="diary-notebook">
+    <div className="music-notebook">
       <div className="notebook__spine"></div>
       <div className="notebook__page" style={{ backgroundColor: currentTheme }}>
         <div className="notebook__header">

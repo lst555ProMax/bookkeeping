@@ -40,6 +40,11 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
       return;
     }
 
+    if (newCategoryName.trim().length > 5) {
+      toast.error('分类名称不能超过5个字');
+      return;
+    }
+
     if(window.confirm(`确定要添加"${newCategoryName}"分类吗？`)){
       const success = addStudyCategory(newCategoryName);
       
@@ -96,6 +101,11 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
     setError('');
     if (!editingName.trim()) {
       toast.error('分类名称不能为空');
+      return;
+    }
+
+    if (editingName.trim().length > 5) {
+      toast.error('分类名称不能超过5个字');
       return;
     }
 
@@ -193,8 +203,8 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 onKeyPress={(e) => handleKeyPress(e, 'add')}
-                placeholder="输入分类名称"
-                maxLength={20}
+                placeholder="输入分类名称（最多5个字）"
+                maxLength={5}
               />
               <button 
                 className="study-category-manager__btn"
@@ -231,7 +241,7 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
                           value={editingName}
                           onChange={(e) => setEditingName(e.target.value)}
                           onKeyPress={(e) => handleKeyPress(e, 'edit')}
-                          maxLength={20}
+                          maxLength={5}
                           autoFocus
                         />
                         <div className="study-category-manager__actions">

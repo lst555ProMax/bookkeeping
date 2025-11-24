@@ -105,6 +105,12 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
 
   // 更新一级分类
   const handleUpdateCategory = (id: string, updates: Partial<ActivityCategoryConfig>) => {
+    // 验证分类名称长度
+    if (updates.name && updates.name.trim().length > 5) {
+      toast.error('分类名称不能超过5个字');
+      return;
+    }
+
     const newConfig = config.map(c => 
       c.id === id ? { ...c, ...updates } : c
     );
@@ -225,12 +231,20 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
   };
 
   const saveEditItem = (categoryId: string, itemId: string) => {
-    if (editingItemName.trim()) {
-      handleUpdateItem(categoryId, itemId, {
-        name: editingItemName.trim(),
-        probability: editingItemProb / 100
-      });
+    if (!editingItemName.trim()) {
+      toast.error('活动名称不能为空');
+      return;
     }
+
+    if (editingItemName.trim().length > 5) {
+      toast.error('活动名称不能超过5个字');
+      return;
+    }
+
+    handleUpdateItem(categoryId, itemId, {
+      name: editingItemName.trim(),
+      probability: editingItemProb / 100
+    });
   };
 
   // 删除二级活动项
@@ -421,7 +435,8 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                           className="activity-manager__edit-name"
                           value={editingCategoryName}
                           onChange={(e) => setEditingCategoryName(e.target.value)}
-                          placeholder="分类名称"
+                          placeholder="分类名称（最多5个字）"
+                          maxLength={5}
                           autoFocus
                         />
                         <input
@@ -541,7 +556,8 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                               className="activity-manager__item-name-input"
                               value={editingItemName}
                               onChange={(e) => setEditingItemName(e.target.value)}
-                              placeholder="活动名称"
+                              placeholder="活动名称（最多5个字）"
+                              maxLength={5}
                               autoFocus
                             />
                             <input

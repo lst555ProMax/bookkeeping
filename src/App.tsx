@@ -84,6 +84,9 @@ const App: React.FC = () => {
       <Toaster
         position="top-center"
         reverseOrder={false}
+        containerStyle={{
+          zIndex: 10000, // 确保 toast 容器层级高于 ActivityManager (9999)
+        }}
         toastOptions={{
           duration: 2000,
           style: {
