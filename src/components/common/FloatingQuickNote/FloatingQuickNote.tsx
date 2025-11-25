@@ -329,7 +329,7 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
               <>
                 <textarea
                   ref={textareaRef}
-                  placeholder="记录你的灵感（自动保存）&#10;按 Ctrl+Enter 保存到速记列表"
+                  placeholder="记录你的灵感（自动保存）&#10;按 Ctrl+Enter 新增到日记-速记列表"
                   value={quickNoteInput}
                   onChange={(e) => setQuickNoteInput(e.target.value)}
                   onKeyDown={handleKeyDown}
