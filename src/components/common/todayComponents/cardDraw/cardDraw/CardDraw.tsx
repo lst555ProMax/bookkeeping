@@ -10,7 +10,7 @@ import {
   loadActivityConfig,
   drawCardByConfig
 } from '@/utils';
-import ActivityManager from './ActivityManager';
+import { ActivityManager } from '../activityManager';
 import './CardDraw.scss';
 
 const CardDraw: React.FC = () => {

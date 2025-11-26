@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import './TimePicker.scss';
+import './FormTimePicker.scss';
 
 interface TimePickerProps {
   value: string; // HH:MM 格式

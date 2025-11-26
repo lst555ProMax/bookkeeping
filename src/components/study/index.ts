@@ -1,7 +1,7 @@
-export { default as StudyRecordForm } from './StudyRecordForm/StudyRecordForm';
-export { default as StudyRecordList } from './StudyRecordList/StudyRecordList';
-export { default as StudyCategoryManager } from './StudyCategoryManager/StudyCategoryManager';
-export { default as StudyCategoryPieChart } from './studyChart/StudyCategoryPieChart/StudyCategoryPieChart';
-export { default as StudyTrendChart } from './studyChart/StudyTrendChart/StudyTrendChart';
-export { default as StudyDaysChart } from './studyChart/StudyDaysChart/StudyDaysChart';
-export { default as StudyRecordsDashboard } from './studyChart/StudyRecordsDashboard/StudyRecordsDashboard';
+export { StudyRecordForm } from './StudyRecordForm';
+export { StudyRecordList } from './StudyRecordList';
+export { StudyCategoryManager } from './StudyCategoryManager';
+export { StudyCategoryPieChart } from './studyChart';
+export { StudyTrendChart } from './studyChart';
+export { StudyDaysChart } from './studyChart';
+export { StudyRecordsDashboard } from './studyChart';

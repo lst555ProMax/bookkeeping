@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import FormSelect from '@/components/common/FormSelect/FormSelect';
+import { FormSelect } from '@/components/common';
 import './Medical.scss';
 
 type DiseaseType = 'hernia';

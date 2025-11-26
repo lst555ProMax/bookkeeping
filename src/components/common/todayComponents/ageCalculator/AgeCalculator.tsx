@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import toast from 'react-hot-toast';
-import DatePicker from '../DatePicker/DatePicker';
+import { DatePicker } from '@/components/common';
 import { 
   getTodayAgeRecord, 
   hasTodayAgeRecord, 

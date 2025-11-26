@@ -1,6 +1,6 @@
 import React from 'react';
-import { FormSelect } from '../FormSelect';
-import type { FormSelectOption } from '../FormSelect';
+import { FormSelect } from '@/components/common';
+import type { FormSelectOption } from '@/components/common';
 import './MonthSelector.scss';
 
 interface MonthSelectorProps {
