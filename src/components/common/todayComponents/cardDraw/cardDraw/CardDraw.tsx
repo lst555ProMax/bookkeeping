@@ -167,6 +167,8 @@ const CardDraw: React.FC = () => {
       const deleted = clearTodayCardDrawRecord();
       if (deleted) {
         setTodayCard(null);
+        setDrawnCard(null);
+        handleCloseModal(); // 关闭模态框
         toast.success('已重置抽卡记录');
       } else {
         toast('今天还没有抽卡记录', { icon: '⚠️' });
@@ -179,7 +181,7 @@ const CardDraw: React.FC = () => {
       <div className="card-draw__content">
         {todayCard ? (
           <div className="card-draw__result" onClick={handleOpenModal} style={{ cursor: 'pointer' }}>
-            <div className="card-draw__result-title">今日任务</div>
+            <div className="card-draw__result-title">今日活动</div>
             <div className="card-draw__result-card">
               <div className="card-draw__result-category">
                 {CARD_CATEGORY_LABELS[todayCard.category]}
@@ -198,13 +200,6 @@ const CardDraw: React.FC = () => {
         )}
       </div>
 
-      {/* 调试按钮 - 仅在开发环境显示 */}
-      {import.meta.env.DEV && todayCard && (
-        <button className="card-draw__reset" onClick={handleReset} title="重置抽卡（仅用于调试）">
-          🔄
-        </button>
-      )}
-
       {/* 抽卡模态框 - 使用 Portal 渲染到 body */}
       {showModal && ReactDOM.createPortal(
         <div className="card-draw__modal" onClick={handleCloseModal}>
@@ -216,6 +211,20 @@ const CardDraw: React.FC = () => {
             >
               ⚙️
             </button>
+
+            {/* 重置按钮 - 仅在开发环境且显示结果时显示 */}
+            {import.meta.env.DEV && drawnCard && (
+              <button 
+                className="card-draw__reset-icon" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReset();
+                }} 
+                title="重置抽卡（仅用于调试）"
+              >
+                🔄
+              </button>
+            )}
 
             <h2 className="card-draw__modal-title">🎴 今日活动</h2>
 
@@ -258,7 +267,8 @@ const CardDraw: React.FC = () => {
                         type="text"
                         value={customContent}
                         onChange={(e) => setCustomContent(e.target.value)}
-                        placeholder="今晚要做什么呢..."
+                        placeholder="今天要做什么呢..."
+                        maxLength={5}
                         autoFocus
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {

@@ -236,17 +236,23 @@ const AgeCalculator: React.FC = () => {
         )}
       </div>
 
-      {/* 调试按钮 - 仅在开发环境显示 */}
-      {import.meta.env.DEV && todayRecord && (
-        <button className="age-calculator__reset" onClick={handleReset} title="重置年龄（仅用于调试）">
-          🔄
-        </button>
-      )}
-
       {/* 年龄计算模态框 */}
       {showModal && ReactDOM.createPortal(
         <div className="age-calculator__modal" onClick={handleCloseModal}>
           <div className="age-calculator__modal-content" onClick={(e) => e.stopPropagation()}>
+            {/* 重置按钮 - 仅在开发环境且显示结果时显示 */}
+            {import.meta.env.DEV && calculatedAge && (
+              <button 
+                className="age-calculator__reset-icon" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReset();
+                }} 
+                title="重置年龄（仅用于调试）"
+              >
+                🔄
+              </button>
+            )}
             <h2 className="age-calculator__modal-title">🎂 今日年龄</h2>
 
             {!calculatedAge ? (
@@ -299,6 +305,19 @@ const AgeCalculator: React.FC = () => {
       {showDetailModal && todayRecord && ReactDOM.createPortal(
         <div className="age-calculator__modal" onClick={handleCloseDetailModal}>
           <div className="age-calculator__modal-content" onClick={(e) => e.stopPropagation()}>
+            {/* 重置按钮 - 仅在开发环境显示 */}
+            {import.meta.env.DEV && (
+              <button 
+                className="age-calculator__reset-icon" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReset();
+                }} 
+                title="重置年龄（仅用于调试）"
+              >
+                🔄
+              </button>
+            )}
             <h2 className="age-calculator__modal-title">🎂 今日年龄</h2>
 
             <div className="age-calculator__result-area">

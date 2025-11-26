@@ -195,31 +195,23 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
             <div className="date-picker__nav-group">
               <button 
                 type="button"
-                className="date-picker__nav-btn" 
-                onClick={handlePrevMonth}
-                title="上个月"
-              >
-                ←
-              </button>
-              <button 
-                type="button"
                 className="date-picker__year-btn" 
                 onClick={handlePrevYear}
                 title="上一年"
               >
                 ⇇
               </button>
+              <button 
+                type="button"
+                className="date-picker__nav-btn" 
+                onClick={handlePrevMonth}
+                title="上个月"
+              >
+                ←
+              </button>
             </div>
             <div className="date-picker__month">{monthYear}</div>
             <div className="date-picker__nav-group">
-              <button 
-                type="button"
-                className="date-picker__year-btn" 
-                onClick={handleNextYear}
-                title="下一年"
-              >
-                ⇉
-              </button>
               <button 
                 type="button"
                 className="date-picker__nav-btn" 
@@ -227,6 +219,14 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
                 title="下个月"
               >
                 →
+              </button>
+              <button 
+                type="button"
+                className="date-picker__year-btn" 
+                onClick={handleNextYear}
+                title="下一年"
+              >
+                ⇉
               </button>
             </div>
           </div>

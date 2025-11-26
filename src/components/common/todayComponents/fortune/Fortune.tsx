@@ -193,17 +193,23 @@ const Fortune: React.FC = () => {
         )}
       </div>
 
-      {/* 调试按钮 - 仅在开发环境显示 */}
-      {import.meta.env.DEV && todayFortune && (
-        <button className="fortune__reset" onClick={handleReset} title="重置运势（仅用于调试）">
-          🔄
-        </button>
-      )}
-
       {/* 算命模态框 - 使用 Portal 渲染到 body */}
       {showModal && ReactDOM.createPortal(
         <div className="fortune__modal" onClick={handleCloseModal}>
           <div className="fortune__modal-content" onClick={(e) => e.stopPropagation()}>
+            {/* 重置按钮 - 仅在开发环境且显示结果时显示 */}
+            {import.meta.env.DEV && generatedFortune && (
+              <button 
+                className="fortune__reset-icon" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReset();
+                }} 
+                title="重置运势（仅用于调试）"
+              >
+                🔄
+              </button>
+            )}
             <h2 className="fortune__modal-title">🔮 今日运势</h2>
 
             {!generatedFortune ? (
@@ -316,6 +322,19 @@ const Fortune: React.FC = () => {
       {showDetailModal && todayFortune && ReactDOM.createPortal(
         <div className="fortune__modal" onClick={handleCloseDetailModal}>
           <div className="fortune__modal-content" onClick={(e) => e.stopPropagation()}>
+            {/* 重置按钮 - 仅在开发环境显示 */}
+            {import.meta.env.DEV && (
+              <button 
+                className="fortune__reset-icon" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReset();
+                }} 
+                title="重置运势（仅用于调试）"
+              >
+                🔄
+              </button>
+            )}
             <h2 className="fortune__modal-title">🔮 今日运势</h2>
 
             <div className="fortune__result-area">

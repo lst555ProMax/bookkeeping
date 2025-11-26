@@ -97,6 +97,30 @@
     }
   }
 
+  // 重置图标按钮 - 模态框右上角
+  &__reset-icon {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    z-index: 10;
+    line-height: 1;
+
+    &:hover {
+      transform: rotate(180deg);
+      filter: brightness(1.2);
+    }
+
+    &:active {
+      transform: rotate(180deg) scale(0.9);
+    }
+  }
+
   // 模态框样式
   &__modal {
     position: fixed;
@@ -296,6 +320,8 @@
       border-radius: 8px;
       font-size: 1rem;
       transition: all 0.3s ease;
+      background-color: white;
+      color: #000000;
 
       &:focus {
         outline: none;

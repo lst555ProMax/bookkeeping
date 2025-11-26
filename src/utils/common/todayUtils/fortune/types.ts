@@ -24,10 +24,10 @@ export const FORTUNE_LEVEL_LABELS: Record<FortuneLevel, string> = {
 export const FORTUNE_LEVEL_COLORS: Record<FortuneLevel, string> = {
   [FortuneLevel.EXCELLENT]: '#9b59b6',      // 大吉：紫色
   [FortuneLevel.GOOD]: '#ffd700',          // 吉：金色（原小吉的颜色）
-  [FortuneLevel.FAIR]: '#c0c0c0',          // 小吉：银色
+  [FortuneLevel.FAIR]: '#d1c7c7',          // 小吉：银色（更亮）
   [FortuneLevel.POOR]: '#ff8c00',          // 小凶：深橙色
   [FortuneLevel.BAD]: '#dc3545',           // 凶：深红色
-  [FortuneLevel.TERRIBLE]: '#28a745'        // 大凶：绿色
+  [FortuneLevel.TERRIBLE]: '#1a7032'        // 大凶：绿色
 };
 
 // 运势方面枚举

@@ -79,7 +79,7 @@
     flex-wrap: wrap;
   }
 
-  // 重置按钮 - 对齐抽卡重置按钮
+  // 重置按钮 - 对齐抽卡重置按钮（外部使用）
   &__reset {
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -97,6 +97,30 @@
     &:hover {
       background: rgba(255, 255, 255, 0.3);
       transform: rotate(180deg);
+    }
+  }
+
+  // 重置图标按钮 - 模态框右上角
+  &__reset-icon {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    z-index: 10;
+    line-height: 1;
+
+    &:hover {
+      transform: rotate(180deg);
+      filter: brightness(1.2);
+    }
+
+    &:active {
+      transform: rotate(180deg) scale(0.9);
     }
   }
 
