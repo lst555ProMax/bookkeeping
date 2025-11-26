@@ -11,7 +11,7 @@ import Underline from '@tiptap/extension-underline';
 import toast from 'react-hot-toast';
 import { PRESET_THEMES, WEATHER_OPTIONS, MOOD_OPTIONS, FONT_OPTIONS } from '@/utils';
 import DatePicker from '@/components/common/DatePicker/DatePicker';
-import './DiaryNotebook.scss';
+import './MusicNotebook.scss';
 
 const TEXT_COLORS = [
   '#1a1a1a', 
@@ -35,7 +35,7 @@ const HIGHLIGHT_COLORS = [
   '#D4D4D4', // 柔和灰
 ];
 
-interface DiaryNotebookProps {
+interface MusicNotebookProps {
   selectedDate: string;
   onDateChange: (date: string) => void;
   currentTheme: string;
@@ -64,7 +64,7 @@ interface DiaryNotebookProps {
   onCustomThemeColorChange: (color: string) => void;
 }
 
-const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
+const MusicNotebook: React.FC<MusicNotebookProps> = ({
   selectedDate,
   onDateChange,
   currentTheme,
@@ -727,4 +727,4 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
   );
 };
 
-export default DiaryNotebook;
+export default MusicNotebook;

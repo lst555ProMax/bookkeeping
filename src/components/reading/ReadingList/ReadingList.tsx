@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { DiaryEntry, WEATHER_OPTIONS, MOOD_OPTIONS } from '@/utils';
 import { FilterSearchInput } from '@/components/common';
-import './DiaryList.scss';
+import './ReadingList.scss';
 
-interface DiaryListProps {
+interface ReadingListProps {
   diaryEntries: DiaryEntry[];
   currentDiaryId: string | null;
   onLoadDiary: (entry: DiaryEntry) => void;
@@ -17,7 +17,7 @@ interface DiaryListProps {
   isImporting?: boolean;
 }
 
-const DiaryList: React.FC<DiaryListProps> = ({
+const ReadingList: React.FC<ReadingListProps> = ({
   diaryEntries,
   currentDiaryId,
   onLoadDiary,
@@ -408,4 +408,4 @@ const DiaryList: React.FC<DiaryListProps> = ({
   );
 };
 
-export default DiaryList;
+export default ReadingList;

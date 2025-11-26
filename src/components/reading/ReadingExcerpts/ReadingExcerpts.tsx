@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { QuickNote } from '@/utils';
 import { FilterSearchInput } from '@/components/common';
-import './QuickNotes.scss';
+import './ReadingExcerpts.scss';
 
-interface QuickNotesProps {
+interface ReadingExcerptsProps {
   quickNotes: QuickNote[];
   quickNoteInput: string;
   onQuickNoteInputChange: (value: string) => void;
@@ -22,7 +22,7 @@ interface QuickNotesProps {
 
 const MAX_QUICK_NOTE_LENGTH = 100;
 
-const QuickNotes: React.FC<QuickNotesProps> = ({
+const ReadingExcerpts: React.FC<ReadingExcerptsProps> = ({
   quickNotes,
   quickNoteInput,
   onQuickNoteInputChange,
@@ -336,4 +336,4 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
   );
 };
 
-export default QuickNotes;
+export default ReadingExcerpts;

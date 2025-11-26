@@ -1,43 +1,57 @@
 /**
- * 音乐日记数据导入导出
+ * 乐记数据导入导出
  */
 
 import { QuickNote, DiaryEntry } from './types';
-import { loadQuickNotes, saveQuickNotes, loadDiaryEntries, saveDiaryEntries } from './storage';
+import { loadMusicLyrics, saveMusicLyrics, loadMusicEntries, saveMusicEntries } from './storage';
 
 interface MusicExportData {
-  quickNotes: QuickNote[];
-  diaryEntries: DiaryEntry[];
+  musicLyrics: QuickNote[];
+  musicEntries: DiaryEntry[];
   exportTime: number;
   version: string;
 }
 
-interface QuickNotesExportData {
+interface MusicLyricsExportData {
   version: string;
   exportDate: string;
-  quickNotes: QuickNote[];
-  totalQuickNotes: number;
+  musicLyrics: QuickNote[];
+  totalMusicLyrics: number;
 }
 
-interface DiaryEntriesExportData {
+interface MusicEntriesExportData {
   version: string;
   exportDate: string;
-  diaryEntries: DiaryEntry[];
-  totalDiaryEntries: number;
+  musicEntries: DiaryEntry[];
+  totalMusicEntries: number;
+}
+
+// 兼容旧格式的类型
+interface LegacyQuickNotesExportData {
+  quickNotes?: QuickNote[];
+}
+
+interface LegacyDiaryEntriesExportData {
+  diaryEntries?: DiaryEntry[];
+}
+
+interface LegacyMusicExportData {
+  quickNotes?: QuickNote[];
+  diaryEntries?: DiaryEntry[];
 }
 
 /**
- * 导出速记数据
+ * 导出歌词数据
  */
-export const exportQuickNotesOnly = (quickNotes?: QuickNote[]): void => {
+export const exportMusicLyricsOnly = (musicLyrics?: QuickNote[]): void => {
   try {
-    const notesToExport = quickNotes || loadQuickNotes();
+    const lyricsToExport = musicLyrics || loadMusicLyrics();
     
-    const exportData: QuickNotesExportData = {
+    const exportData: MusicLyricsExportData = {
       version: '1.0.0',
       exportDate: new Date().toISOString(),
-      quickNotes: notesToExport,
-      totalQuickNotes: notesToExport.length
+      musicLyrics: lyricsToExport,
+      totalMusicLyrics: lyricsToExport.length
     };
 
     const dataStr = JSON.stringify(exportData, null, 2);
@@ -48,35 +62,35 @@ export const exportQuickNotesOnly = (quickNotes?: QuickNote[]): void => {
     
     const now = new Date();
     const dateStr = now.toISOString().split('T')[0];
-    link.download = `music-quicknotes-${dateStr}.json`;
+    link.download = `music-lyrics-${dateStr}.json`;
     
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    console.log(`成功导出 ${notesToExport.length} 条速记`);
+    console.log(`成功导出 ${lyricsToExport.length} 条歌词`);
   } catch (error) {
     console.error('导出失败:', error);
-    throw new Error('导出速记数据失败，请重试');
+    throw new Error('导出歌词数据失败，请重试');
   }
 };
 
 /**
- * 导出日记数据（包含图片数据）
+ * 导出乐记数据（包含图片数据）
  */
-export const exportDiaryEntriesOnly = (diaryEntries?: DiaryEntry[]): void => {
+export const exportMusicEntriesOnly = (musicEntries?: DiaryEntry[]): void => {
   try {
-    const entriesToExport = diaryEntries || loadDiaryEntries();
+    const entriesToExport = musicEntries || loadMusicEntries();
     
-    // 统计包含图片的日记数量
+    // 统计包含图片的乐记数量
     const entriesWithImages = entriesToExport.filter(e => e.image).length;
     
-    const exportData: DiaryEntriesExportData = {
+    const exportData: MusicEntriesExportData = {
       version: '1.0.0',
       exportDate: new Date().toISOString(),
-      diaryEntries: entriesToExport, // 包含完整的entry数据，包括image字段（base64格式）
-      totalDiaryEntries: entriesToExport.length
+      musicEntries: entriesToExport, // 包含完整的entry数据，包括image字段（base64格式）
+      totalMusicEntries: entriesToExport.length
     };
 
     const dataStr = JSON.stringify(exportData, null, 2);
@@ -94,20 +108,20 @@ export const exportDiaryEntriesOnly = (diaryEntries?: DiaryEntry[]): void => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    console.log(`成功导出 ${entriesToExport.length} 条日记（其中 ${entriesWithImages} 条包含图片）`);
+    console.log(`成功导出 ${entriesToExport.length} 条乐记（其中 ${entriesWithImages} 条包含图片）`);
   } catch (error) {
     console.error('导出失败:', error);
-    throw new Error('导出日记数据失败，请重试');
+    throw new Error('导出乐记数据失败，请重试');
   }
 };
 
 /**
- * 导出所有音乐日记数据（速记+日记）
+ * 导出所有乐记数据（歌词+乐记）
  */
 export const exportMusicData = (): void => {
   const data: MusicExportData = {
-    quickNotes: loadQuickNotes(),
-    diaryEntries: loadDiaryEntries(),
+    musicLyrics: loadMusicLyrics(),
+    musicEntries: loadMusicEntries(),
     exportTime: Date.now(),
     version: '1.0.0',
   };
@@ -126,9 +140,9 @@ export const exportMusicData = (): void => {
 };
 
 /**
- * 导入速记数据
+ * 导入歌词数据
  */
-export const importQuickNotesOnly = (file: File): Promise<{
+export const importMusicLyricsOnly = (file: File): Promise<{
   imported: number;
   skipped: number;
   total: number;
@@ -140,45 +154,48 @@ export const importQuickNotesOnly = (file: File): Promise<{
       reader.onload = (event) => {
         try {
           const content = event.target?.result as string;
-          const importData: QuickNotesExportData = JSON.parse(content);
+          const importData: MusicLyricsExportData = JSON.parse(content);
           
-          if (!importData.quickNotes || !Array.isArray(importData.quickNotes)) {
-            throw new Error('无效的数据格式：缺少quickNotes数组');
+          // 兼容旧格式
+          const legacyData = importData as MusicLyricsExportData & LegacyQuickNotesExportData;
+          const lyrics = legacyData.musicLyrics || legacyData.quickNotes || [];
+          if (!Array.isArray(lyrics)) {
+            throw new Error('无效的数据格式：缺少musicLyrics数组');
           }
           
-          const existingNotes = loadQuickNotes();
-          const existingIds = new Set(existingNotes.map(n => n.id));
+          const existingLyrics = loadMusicLyrics();
+          const existingIds = new Set(existingLyrics.map(l => l.id));
           
           let imported = 0;
           let skipped = 0;
-          const newNotes: QuickNote[] = [];
+          const newLyrics: QuickNote[] = [];
           
-          importData.quickNotes.forEach(note => {
-            if (!note.id || !note.content) {
+          lyrics.forEach(lyric => {
+            if (!lyric.id || !lyric.content) {
               skipped++;
               return;
             }
             
-            if (existingIds.has(note.id)) {
+            if (existingIds.has(lyric.id)) {
               skipped++;
               return;
             }
             
-            newNotes.push(note);
+            newLyrics.push(lyric);
             imported++;
           });
           
-          if (newNotes.length > 0) {
-            saveQuickNotes([...existingNotes, ...newNotes]);
+          if (newLyrics.length > 0) {
+            saveMusicLyrics([...existingLyrics, ...newLyrics]);
           }
           
           resolve({
             imported,
             skipped,
-            total: importData.quickNotes.length
+            total: lyrics.length
           });
           
-          console.log(`导入完成: ${imported} 条新速记 (${skipped} 条跳过)`);
+          console.log(`导入完成: ${imported} 条新歌词 (${skipped} 条跳过)`);
         } catch (parseError) {
           console.error('解析文件失败:', parseError);
           reject(new Error('文件格式错误，请确保是有效的JSON文件'));
@@ -192,15 +209,15 @@ export const importQuickNotesOnly = (file: File): Promise<{
       reader.readAsText(file);
     } catch (error) {
       console.error('导入失败:', error);
-      reject(new Error('导入速记数据失败，请重试'));
+      reject(new Error('导入歌词数据失败，请重试'));
     }
   });
 };
 
 /**
- * 导入日记数据
+ * 导入乐记数据
  */
-export const importDiaryEntriesOnly = (file: File): Promise<{
+export const importMusicEntriesOnly = (file: File): Promise<{
   imported: number;
   skipped: number;
   total: number;
@@ -212,26 +229,29 @@ export const importDiaryEntriesOnly = (file: File): Promise<{
       reader.onload = (event) => {
         try {
           const content = event.target?.result as string;
-          const importData: DiaryEntriesExportData = JSON.parse(content);
+          const importData: MusicEntriesExportData = JSON.parse(content);
           
-          if (!importData.diaryEntries || !Array.isArray(importData.diaryEntries)) {
-            throw new Error('无效的数据格式：缺少diaryEntries数组');
+          // 兼容旧格式
+          const legacyData = importData as MusicEntriesExportData & LegacyDiaryEntriesExportData;
+          const entries = legacyData.musicEntries || legacyData.diaryEntries || [];
+          if (!Array.isArray(entries)) {
+            throw new Error('无效的数据格式：缺少musicEntries数组');
           }
           
-          const existingEntries = loadDiaryEntries();
-          // 使用id作为唯一标识，而不是date，因为同一天可能有多篇日记
+          const existingEntries = loadMusicEntries();
+          // 使用id作为唯一标识，而不是date，因为同一天可能有多篇乐记
           const existingIds = new Set(existingEntries.map(e => e.id));
           
           let imported = 0;
           let skipped = 0;
           
-          importData.diaryEntries.forEach(entry => {
+          entries.forEach(entry => {
             if (!entry.id || !entry.date) {
               skipped++;
               return;
             }
             
-            // 检查是否已存在相同id的日记
+            // 检查是否已存在相同id的乐记
             if (existingIds.has(entry.id)) {
               skipped++;
               return;
@@ -243,7 +263,7 @@ export const importDiaryEntriesOnly = (file: File): Promise<{
               if (!entry.image.startsWith('data:image/')) {
                 // 如果不是data URI格式，尝试添加默认前缀
                 // 或者保持原样（可能是base64字符串）
-                console.warn(`日记 ${entry.id} 的图片格式可能不正确`);
+                console.warn(`乐记 ${entry.id} 的图片格式可能不正确`);
               }
             }
             
@@ -255,16 +275,16 @@ export const importDiaryEntriesOnly = (file: File): Promise<{
           
           if (imported > 0) {
             existingEntries.sort((a, b) => b.date.localeCompare(a.date));
-            saveDiaryEntries(existingEntries);
+            saveMusicEntries(existingEntries);
           }
           
           resolve({
             imported,
             skipped,
-            total: importData.diaryEntries.length
+            total: entries.length
           });
           
-          console.log(`导入完成: ${imported} 条新日记 (${skipped} 条跳过)`);
+          console.log(`导入完成: ${imported} 条新乐记 (${skipped} 条跳过)`);
         } catch (parseError) {
           console.error('解析文件失败:', parseError);
           reject(new Error('文件格式错误，请确保是有效的JSON文件'));
@@ -278,13 +298,13 @@ export const importDiaryEntriesOnly = (file: File): Promise<{
       reader.readAsText(file);
     } catch (error) {
       console.error('导入失败:', error);
-      reject(new Error('导入日记数据失败，请重试'));
+      reject(new Error('导入乐记数据失败，请重试'));
     }
   });
 };
 
 /**
- * 导入所有音乐日记数据（速记+日记）
+ * 导入所有乐记数据（歌词+乐记）
  */
 export const importMusicData = async (file: File): Promise<{ imported: number; skipped: number }> => {
   return new Promise((resolve, reject) => {
@@ -298,25 +318,30 @@ export const importMusicData = async (file: File): Promise<{ imported: number; s
         let imported = 0;
         let skipped = 0;
 
-        // 导入速记
-        if (data.quickNotes && Array.isArray(data.quickNotes)) {
-          const existingNotes = loadQuickNotes();
-          const existingIds = new Set(existingNotes.map(n => n.id));
-          const newNotes = data.quickNotes.filter(n => !existingIds.has(n.id));
+        // 兼容旧格式
+        const legacyData = data as MusicExportData & LegacyMusicExportData;
+
+        // 导入歌词（兼容旧格式）
+        const lyrics = legacyData.musicLyrics || legacyData.quickNotes || [];
+        if (Array.isArray(lyrics)) {
+          const existingLyrics = loadMusicLyrics();
+          const existingIds = new Set(existingLyrics.map(l => l.id));
+          const newLyrics = lyrics.filter(l => !existingIds.has(l.id));
           
-          if (newNotes.length > 0) {
-            saveQuickNotes([...existingNotes, ...newNotes]);
-            imported += newNotes.length;
+          if (newLyrics.length > 0) {
+            saveMusicLyrics([...existingLyrics, ...newLyrics]);
+            imported += newLyrics.length;
           }
-          skipped += data.quickNotes.length - newNotes.length;
+          skipped += lyrics.length - newLyrics.length;
         }
 
-        // 导入日记（包含图片数据）
-        if (data.diaryEntries && Array.isArray(data.diaryEntries)) {
-          const existingEntries = loadDiaryEntries();
+        // 导入乐记（包含图片数据，兼容旧格式）
+        const entries = legacyData.musicEntries || legacyData.diaryEntries || [];
+        if (Array.isArray(entries)) {
+          const existingEntries = loadMusicEntries();
           // 使用id作为唯一标识，而不是date
           const existingIds = new Set(existingEntries.map(e => e.id));
-          const newEntries = data.diaryEntries.filter(e => {
+          const newEntries = entries.filter(e => {
             if (!e.id || !e.date) return false;
             return !existingIds.has(e.id);
           });
@@ -325,7 +350,7 @@ export const importMusicData = async (file: File): Promise<{ imported: number; s
           newEntries.forEach(entry => {
             if (entry.image && typeof entry.image === 'string') {
               if (!entry.image.startsWith('data:image/')) {
-                console.warn(`日记 ${entry.id} 的图片格式可能不正确`);
+                console.warn(`乐记 ${entry.id} 的图片格式可能不正确`);
               }
             }
           });
@@ -333,10 +358,10 @@ export const importMusicData = async (file: File): Promise<{ imported: number; s
           if (newEntries.length > 0) {
             const merged = [...existingEntries, ...newEntries];
             merged.sort((a, b) => b.date.localeCompare(a.date));
-            saveDiaryEntries(merged);
+            saveMusicEntries(merged);
             imported += newEntries.length;
           }
-          skipped += data.diaryEntries.length - newEntries.length;
+          skipped += entries.length - newEntries.length;
         }
 
         resolve({ imported, skipped });
@@ -367,4 +392,10 @@ export const validateMusicImportFile = (file: File): string | null => {
 
   return null;
 };
+
+// 向后兼容的别名
+export const exportQuickNotesOnly = exportMusicLyricsOnly;
+export const importQuickNotesOnly = importMusicLyricsOnly;
+export const exportDiaryEntriesOnly = exportMusicEntriesOnly;
+export const importDiaryEntriesOnly = importMusicEntriesOnly;
 

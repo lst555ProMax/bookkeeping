@@ -1,4 +1,4 @@
-export { default } from './Diary';
-export { default as QuickNotes } from './QuickNotes/QuickNotes';
-export { default as DiaryNotebook } from './DiaryNotebook/DiaryNotebook';
-export { default as DiaryList } from './DiaryList/DiaryList';
+export { default } from './Music';
+export { default as MusicLyrics } from './MusicLyrics/MusicLyrics';
+export { default as MusicNotebook } from './MusicNotebook/MusicNotebook';
+export { default as MusicList } from './MusicList/MusicList';

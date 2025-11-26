@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
-import QuickNotes from './QuickNotes/QuickNotes';
-import DiaryNotebook from './DiaryNotebook/DiaryNotebook';
-import DiaryList from './DiaryList/DiaryList';
+import ReadingExcerpts from './ReadingExcerpts/ReadingExcerpts';
+import ReadingNotebook from './ReadingNotebook/ReadingNotebook';
+import ReadingList from './ReadingList/ReadingList';
 import {
   QuickNote,
   DiaryEntry,
@@ -23,7 +23,7 @@ import {
   importDiaryEntriesOnly,
   validateReadingImportFile
 } from '@/utils/reading/dataImportExport';
-import './Diary.scss';
+import './Reading.scss';
 
 const Reading: React.FC = () => {
   // 状态管理
@@ -553,7 +553,7 @@ const Reading: React.FC = () => {
         style={{ display: 'none' }}
       />
       
-      <QuickNotes
+      <ReadingExcerpts
         quickNotes={filteredQuickNotes}
         quickNoteInput={quickNoteInput}
         onQuickNoteInputChange={setQuickNoteInput}
@@ -569,7 +569,7 @@ const Reading: React.FC = () => {
         isImporting={isImportingQuickNotes}
       />
       
-      <DiaryNotebook
+      <ReadingNotebook
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
         currentTheme={currentTheme}
@@ -598,7 +598,7 @@ const Reading: React.FC = () => {
         onCustomThemeColorChange={setCustomThemeColor}
       />
       
-      <DiaryList
+      <ReadingList
         diaryEntries={filteredDiaryEntries}
         currentDiaryId={currentDiary?.id || null}
         onLoadDiary={handleLoadDiary}

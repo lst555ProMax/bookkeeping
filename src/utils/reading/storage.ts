@@ -1,129 +1,129 @@
 /**
- * 阅读日记数据存储管理
+ * 书记数据存储管理
  */
 
 import { QuickNote, DiaryEntry } from './types';
 
-const QUICK_NOTES_KEY = 'reading_quick_notes';
-const DIARY_ENTRIES_KEY = 'reading_entries';
+const READING_EXCERPTS_KEY = 'reading_quick_notes';
+const READING_ENTRIES_KEY = 'reading_entries';
 
 /**
- * 加载速记列表
+ * 加载摘抄列表
  */
-export const loadQuickNotes = (): QuickNote[] => {
+export const loadReadingExcerpts = (): QuickNote[] => {
   try {
-    const data = localStorage.getItem(QUICK_NOTES_KEY);
+    const data = localStorage.getItem(READING_EXCERPTS_KEY);
     if (!data) return [];
     return JSON.parse(data);
   } catch (error) {
-    console.error('加载速记失败:', error);
+    console.error('加载摘抄失败:', error);
     return [];
   }
 };
 
 /**
- * 保存速记列表
+ * 保存摘抄列表
  */
-export const saveQuickNotes = (notes: QuickNote[]): void => {
+export const saveReadingExcerpts = (excerpts: QuickNote[]): void => {
   try {
-    localStorage.setItem(QUICK_NOTES_KEY, JSON.stringify(notes));
+    localStorage.setItem(READING_EXCERPTS_KEY, JSON.stringify(excerpts));
   } catch (error) {
-    console.error('保存速记失败:', error);
+    console.error('保存摘抄失败:', error);
   }
 };
 
 /**
- * 添加速记
+ * 添加摘抄
  */
-export const addQuickNote = (content: string): QuickNote => {
-  const note: QuickNote = {
+export const addReadingExcerpt = (content: string): QuickNote => {
+  const excerpt: QuickNote = {
     id: Date.now().toString(),
     content,
     timestamp: Date.now(),
   };
   
-  const notes = loadQuickNotes();
-  notes.unshift(note);
-  saveQuickNotes(notes);
+  const excerpts = loadReadingExcerpts();
+  excerpts.unshift(excerpt);
+  saveReadingExcerpts(excerpts);
   
-  return note;
+  return excerpt;
 };
 
 /**
- * 更新速记
+ * 更新摘抄
  */
-export const updateQuickNote = (id: string, content: string): QuickNote | null => {
-  const notes = loadQuickNotes();
-  const index = notes.findIndex(note => note.id === id);
+export const updateReadingExcerpt = (id: string, content: string): QuickNote | null => {
+  const excerpts = loadReadingExcerpts();
+  const index = excerpts.findIndex(excerpt => excerpt.id === id);
   
   if (index === -1) return null;
   
-  notes[index] = {
-    ...notes[index],
+  excerpts[index] = {
+    ...excerpts[index],
     content,
     timestamp: Date.now(), // 更新时间戳
   };
   
-  saveQuickNotes(notes);
-  return notes[index];
+  saveReadingExcerpts(excerpts);
+  return excerpts[index];
 };
 
 /**
- * 删除速记
+ * 删除摘抄
  */
-export const deleteQuickNote = (id: string): void => {
-  const notes = loadQuickNotes();
-  const filtered = notes.filter(note => note.id !== id);
-  saveQuickNotes(filtered);
+export const deleteReadingExcerpt = (id: string): void => {
+  const excerpts = loadReadingExcerpts();
+  const filtered = excerpts.filter(excerpt => excerpt.id !== id);
+  saveReadingExcerpts(filtered);
 };
 
 /**
- * 清空所有速记
+ * 清空所有摘抄
  */
-export const clearAllQuickNotes = (): number => {
-  const notes = loadQuickNotes();
-  const count = notes.length;
-  saveQuickNotes([]);
+export const clearAllReadingExcerpts = (): number => {
+  const excerpts = loadReadingExcerpts();
+  const count = excerpts.length;
+  saveReadingExcerpts([]);
   return count;
 };
 
 /**
- * 加载日记列表
+ * 加载书记列表
  */
-export const loadDiaryEntries = (): DiaryEntry[] => {
+export const loadReadingEntries = (): DiaryEntry[] => {
   try {
-    const data = localStorage.getItem(DIARY_ENTRIES_KEY);
+    const data = localStorage.getItem(READING_ENTRIES_KEY);
     if (!data) return [];
     return JSON.parse(data);
   } catch (error) {
-    console.error('加载日记失败:', error);
+    console.error('加载书记失败:', error);
     return [];
   }
 };
 
 /**
- * 保存日记列表
+ * 保存书记列表
  */
-export const saveDiaryEntries = (entries: DiaryEntry[]): void => {
+export const saveReadingEntries = (entries: DiaryEntry[]): void => {
   try {
-    localStorage.setItem(DIARY_ENTRIES_KEY, JSON.stringify(entries));
+    localStorage.setItem(READING_ENTRIES_KEY, JSON.stringify(entries));
   } catch (error) {
-    console.error('保存日记失败:', error);
+    console.error('保存书记失败:', error);
   }
 };
 
 /**
- * 保存日记条目（支持同一天多篇日记）
+ * 保存书记条目（支持同一天多篇书记）
  */
-export const saveDiaryEntry = (entry: DiaryEntry): DiaryEntry => {
-  const entries = loadDiaryEntries();
+export const saveReadingEntry = (entry: DiaryEntry): DiaryEntry => {
+  const entries = loadReadingEntries();
   const existingIndex = entries.findIndex(e => e.id === entry.id);
   
   if (existingIndex >= 0) {
-    // 更新现有日记
+    // 更新现有书记
     entries[existingIndex] = entry;
   } else {
-    // 创建新日记
+    // 创建新书记
     entries.push(entry);
   }
   
@@ -135,34 +135,48 @@ export const saveDiaryEntry = (entry: DiaryEntry): DiaryEntry => {
     return b.createdAt - a.createdAt;
   });
   
-  saveDiaryEntries(entries);
+  saveReadingEntries(entries);
   return entry;
 };
 
 /**
- * 根据日期加载日记（返回该日期的所有日记）
+ * 根据日期加载书记（返回该日期的所有书记）
  */
-export const loadDiaryByDate = (date: string): DiaryEntry[] => {
-  const entries = loadDiaryEntries();
+export const loadReadingByDate = (date: string): DiaryEntry[] => {
+  const entries = loadReadingEntries();
   return entries.filter(e => e.date === date);
 };
 
 /**
- * 删除日记（按 ID）
+ * 删除书记（按 ID）
  */
-export const deleteDiaryEntry = (id: string): void => {
-  const entries = loadDiaryEntries();
+export const deleteReadingEntry = (id: string): void => {
+  const entries = loadReadingEntries();
   const filtered = entries.filter(e => e.id !== id);
-  saveDiaryEntries(filtered);
+  saveReadingEntries(filtered);
 };
 
 /**
- * 清空所有日记
+ * 清空所有书记
  */
-export const clearAllDiaryEntries = (): number => {
-  const entries = loadDiaryEntries();
+export const clearAllReadingEntries = (): number => {
+  const entries = loadReadingEntries();
   const count = entries.length;
-  saveDiaryEntries([]);
+  saveReadingEntries([]);
   return count;
 };
+
+// 向后兼容的别名
+export const loadQuickNotes = loadReadingExcerpts;
+export const saveQuickNotes = saveReadingExcerpts;
+export const addQuickNote = addReadingExcerpt;
+export const updateQuickNote = updateReadingExcerpt;
+export const deleteQuickNote = deleteReadingExcerpt;
+export const clearAllQuickNotes = clearAllReadingExcerpts;
+export const loadDiaryEntries = loadReadingEntries;
+export const saveDiaryEntries = saveReadingEntries;
+export const saveDiaryEntry = saveReadingEntry;
+export const loadDiaryByDate = loadReadingByDate;
+export const deleteDiaryEntry = deleteReadingEntry;
+export const clearAllDiaryEntries = clearAllReadingEntries;
 

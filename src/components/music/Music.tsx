@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
-import QuickNotes from './QuickNotes/QuickNotes';
-import DiaryNotebook from './DiaryNotebook/DiaryNotebook';
-import DiaryList from './DiaryList/DiaryList';
+import MusicLyrics from './MusicLyrics/MusicLyrics';
+import MusicNotebook from './MusicNotebook/MusicNotebook';
+import MusicList from './MusicList/MusicList';
 import {
   QuickNote,
   DiaryEntry,
@@ -23,7 +23,7 @@ import {
   importDiaryEntriesOnly,
   validateMusicImportFile
 } from '@/utils/music/dataImportExport';
-import './Diary.scss';
+import './Music.scss';
 
 const Music: React.FC = () => {
   // 状态管理
@@ -554,7 +554,7 @@ const Music: React.FC = () => {
         style={{ display: 'none' }}
       />
       
-      <QuickNotes
+      <MusicLyrics
         quickNotes={filteredQuickNotes}
         quickNoteInput={quickNoteInput}
         onQuickNoteInputChange={setQuickNoteInput}
@@ -570,7 +570,7 @@ const Music: React.FC = () => {
         isImporting={isImportingQuickNotes}
       />
       
-      <DiaryNotebook
+      <MusicNotebook
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
         currentTheme={currentTheme}
@@ -599,7 +599,7 @@ const Music: React.FC = () => {
         onCustomThemeColorChange={setCustomThemeColor}
       />
       
-      <DiaryList
+      <MusicList
         diaryEntries={filteredDiaryEntries}
         currentDiaryId={currentDiary?.id || null}
         onLoadDiary={handleLoadDiary}

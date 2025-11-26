@@ -1,129 +1,129 @@
 /**
- * 音乐日记数据存储管理
+ * 乐记数据存储管理
  */
 
 import { QuickNote, DiaryEntry } from './types';
 
-const QUICK_NOTES_KEY = 'music_quick_notes';
-const DIARY_ENTRIES_KEY = 'music_entries';
+const MUSIC_LYRICS_KEY = 'music_quick_notes';
+const MUSIC_ENTRIES_KEY = 'music_entries';
 
 /**
- * 加载速记列表
+ * 加载歌词列表
  */
-export const loadQuickNotes = (): QuickNote[] => {
+export const loadMusicLyrics = (): QuickNote[] => {
   try {
-    const data = localStorage.getItem(QUICK_NOTES_KEY);
+    const data = localStorage.getItem(MUSIC_LYRICS_KEY);
     if (!data) return [];
     return JSON.parse(data);
   } catch (error) {
-    console.error('加载速记失败:', error);
+    console.error('加载歌词失败:', error);
     return [];
   }
 };
 
 /**
- * 保存速记列表
+ * 保存歌词列表
  */
-export const saveQuickNotes = (notes: QuickNote[]): void => {
+export const saveMusicLyrics = (lyrics: QuickNote[]): void => {
   try {
-    localStorage.setItem(QUICK_NOTES_KEY, JSON.stringify(notes));
+    localStorage.setItem(MUSIC_LYRICS_KEY, JSON.stringify(lyrics));
   } catch (error) {
-    console.error('保存速记失败:', error);
+    console.error('保存歌词失败:', error);
   }
 };
 
 /**
- * 添加速记
+ * 添加歌词
  */
-export const addQuickNote = (content: string): QuickNote => {
-  const note: QuickNote = {
+export const addMusicLyric = (content: string): QuickNote => {
+  const lyric: QuickNote = {
     id: Date.now().toString(),
     content,
     timestamp: Date.now(),
   };
   
-  const notes = loadQuickNotes();
-  notes.unshift(note);
-  saveQuickNotes(notes);
+  const lyrics = loadMusicLyrics();
+  lyrics.unshift(lyric);
+  saveMusicLyrics(lyrics);
   
-  return note;
+  return lyric;
 };
 
 /**
- * 更新速记
+ * 更新歌词
  */
-export const updateQuickNote = (id: string, content: string): QuickNote | null => {
-  const notes = loadQuickNotes();
-  const index = notes.findIndex(note => note.id === id);
+export const updateMusicLyric = (id: string, content: string): QuickNote | null => {
+  const lyrics = loadMusicLyrics();
+  const index = lyrics.findIndex(lyric => lyric.id === id);
   
   if (index === -1) return null;
   
-  notes[index] = {
-    ...notes[index],
+  lyrics[index] = {
+    ...lyrics[index],
     content,
     timestamp: Date.now(), // 更新时间戳
   };
   
-  saveQuickNotes(notes);
-  return notes[index];
+  saveMusicLyrics(lyrics);
+  return lyrics[index];
 };
 
 /**
- * 删除速记
+ * 删除歌词
  */
-export const deleteQuickNote = (id: string): void => {
-  const notes = loadQuickNotes();
-  const filtered = notes.filter(note => note.id !== id);
-  saveQuickNotes(filtered);
+export const deleteMusicLyric = (id: string): void => {
+  const lyrics = loadMusicLyrics();
+  const filtered = lyrics.filter(lyric => lyric.id !== id);
+  saveMusicLyrics(filtered);
 };
 
 /**
- * 清空所有速记
+ * 清空所有歌词
  */
-export const clearAllQuickNotes = (): number => {
-  const notes = loadQuickNotes();
-  const count = notes.length;
-  saveQuickNotes([]);
+export const clearAllMusicLyrics = (): number => {
+  const lyrics = loadMusicLyrics();
+  const count = lyrics.length;
+  saveMusicLyrics([]);
   return count;
 };
 
 /**
- * 加载日记列表
+ * 加载乐记列表
  */
-export const loadDiaryEntries = (): DiaryEntry[] => {
+export const loadMusicEntries = (): DiaryEntry[] => {
   try {
-    const data = localStorage.getItem(DIARY_ENTRIES_KEY);
+    const data = localStorage.getItem(MUSIC_ENTRIES_KEY);
     if (!data) return [];
     return JSON.parse(data);
   } catch (error) {
-    console.error('加载日记失败:', error);
+    console.error('加载乐记失败:', error);
     return [];
   }
 };
 
 /**
- * 保存日记列表
+ * 保存乐记列表
  */
-export const saveDiaryEntries = (entries: DiaryEntry[]): void => {
+export const saveMusicEntries = (entries: DiaryEntry[]): void => {
   try {
-    localStorage.setItem(DIARY_ENTRIES_KEY, JSON.stringify(entries));
+    localStorage.setItem(MUSIC_ENTRIES_KEY, JSON.stringify(entries));
   } catch (error) {
-    console.error('保存日记失败:', error);
+    console.error('保存乐记失败:', error);
   }
 };
 
 /**
- * 保存日记条目（支持同一天多篇日记）
+ * 保存乐记条目（支持同一天多篇乐记）
  */
-export const saveDiaryEntry = (entry: DiaryEntry): DiaryEntry => {
-  const entries = loadDiaryEntries();
+export const saveMusicEntry = (entry: DiaryEntry): DiaryEntry => {
+  const entries = loadMusicEntries();
   const existingIndex = entries.findIndex(e => e.id === entry.id);
   
   if (existingIndex >= 0) {
-    // 更新现有日记
+    // 更新现有乐记
     entries[existingIndex] = entry;
   } else {
-    // 创建新日记
+    // 创建新乐记
     entries.push(entry);
   }
   
@@ -135,34 +135,48 @@ export const saveDiaryEntry = (entry: DiaryEntry): DiaryEntry => {
     return b.createdAt - a.createdAt;
   });
   
-  saveDiaryEntries(entries);
+  saveMusicEntries(entries);
   return entry;
 };
 
 /**
- * 根据日期加载日记（返回该日期的所有日记）
+ * 根据日期加载乐记（返回该日期的所有乐记）
  */
-export const loadDiaryByDate = (date: string): DiaryEntry[] => {
-  const entries = loadDiaryEntries();
+export const loadMusicByDate = (date: string): DiaryEntry[] => {
+  const entries = loadMusicEntries();
   return entries.filter(e => e.date === date);
 };
 
 /**
- * 删除日记（按 ID）
+ * 删除乐记（按 ID）
  */
-export const deleteDiaryEntry = (id: string): void => {
-  const entries = loadDiaryEntries();
+export const deleteMusicEntry = (id: string): void => {
+  const entries = loadMusicEntries();
   const filtered = entries.filter(e => e.id !== id);
-  saveDiaryEntries(filtered);
+  saveMusicEntries(filtered);
 };
 
 /**
- * 清空所有日记
+ * 清空所有乐记
  */
-export const clearAllDiaryEntries = (): number => {
-  const entries = loadDiaryEntries();
+export const clearAllMusicEntries = (): number => {
+  const entries = loadMusicEntries();
   const count = entries.length;
-  saveDiaryEntries([]);
+  saveMusicEntries([]);
   return count;
 };
+
+// 向后兼容的别名
+export const loadQuickNotes = loadMusicLyrics;
+export const saveQuickNotes = saveMusicLyrics;
+export const addQuickNote = addMusicLyric;
+export const updateQuickNote = updateMusicLyric;
+export const deleteQuickNote = deleteMusicLyric;
+export const clearAllQuickNotes = clearAllMusicLyrics;
+export const loadDiaryEntries = loadMusicEntries;
+export const saveDiaryEntries = saveMusicEntries;
+export const saveDiaryEntry = saveMusicEntry;
+export const loadDiaryByDate = loadMusicByDate;
+export const deleteDiaryEntry = deleteMusicEntry;
+export const clearAllDiaryEntries = clearAllMusicEntries;
 
