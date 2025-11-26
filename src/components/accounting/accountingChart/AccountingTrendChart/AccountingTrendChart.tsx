@@ -2,21 +2,21 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ExpenseRecord, IncomeRecord, RecordType } from '@/utils';
 import { formatCurrency } from '@/utils';
-import './RecordTrendChart.scss';
+import './AccountingTrendChart.scss';
 
-interface RecordTrendChartProps {
+interface AccountingTrendChartProps {
   records: ExpenseRecord[] | IncomeRecord[];
   recordType: RecordType;
   title?: string;
 }
 
-interface DayData {
+interface AccountingDayData {
   date: string;
   amount: number;
   displayDate: string;
 }
 
-const RecordTrendChart: React.FC<RecordTrendChartProps> = ({ 
+const AccountingTrendChart: React.FC<AccountingTrendChartProps> = ({ 
   records,
   recordType,
   title
@@ -45,7 +45,7 @@ const RecordTrendChart: React.FC<RecordTrendChartProps> = ({
   };
 
   // 计算最近7天每天的记录
-  const getTrendData = (): DayData[] => {
+  const getTrendData = (): AccountingDayData[] => {
     const last7Days = getLast7Days();
     const dailyExpenses: Record<string, number> = {};
     
@@ -136,4 +136,4 @@ const RecordTrendChart: React.FC<RecordTrendChartProps> = ({
   );
 };
 
-export default RecordTrendChart;
+export default AccountingTrendChart;

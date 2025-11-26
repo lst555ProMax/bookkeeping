@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { MonthSelector, StudyCategoryPieChart, StudyTrendChart } from '@/components';
-import StudyDaysChart from '@/components/study/StudyDaysChart/StudyDaysChart';
+import { MonthSelector, StudyCategoryPieChart, StudyTrendChart, StudyDaysChart } from '@/components';
 import { StudyRecord } from '@/utils';
 import { loadStudyRecords } from '@/utils';
-import './StudyRecordsContent.scss';
+import './StudyRecordsDashboard.scss';
 
-interface CategoryStats {
+interface StudyCategoryStats {
   category: string;
   totalMinutes: number;
   recordCount: number;
   percentage: number;
 }
 
-interface DateStats {
+interface StudyDateStats {
   date: string;
   totalMinutes: number;
   recordCount: number;
 }
 
-const StudyRecordsContent: React.FC = () => {
+const StudyRecordsDashboard: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -66,7 +65,7 @@ const StudyRecordsContent: React.FC = () => {
   const daysPassedInMonth = getDaysPassedInMonth();
 
   // 按分类统计
-  const categoryStats: CategoryStats[] = (() => {
+  const categoryStats: StudyCategoryStats[] = (() => {
     const statsMap = new Map<string, { totalMinutes: number; recordCount: number }>();
     
     monthlyRecords.forEach(record => {
@@ -88,7 +87,7 @@ const StudyRecordsContent: React.FC = () => {
   })();
 
   // 按日期统计（最近7天）
-  const recentDaysStats: DateStats[] = (() => {
+  const recentDaysStats: StudyDateStats[] = (() => {
     const statsMap = new Map<string, { totalMinutes: number; recordCount: number }>();
     
     // 获取最近7天的日期
@@ -234,5 +233,5 @@ const StudyRecordsContent: React.FC = () => {
   );
 };
 
-export default StudyRecordsContent;
+export default StudyRecordsDashboard;
 

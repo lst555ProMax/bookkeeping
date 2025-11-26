@@ -2,16 +2,16 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { ExpenseRecord, IncomeRecord, RecordType } from '@/utils';
 import { formatCurrency, getCategories, getIncomeCategories } from '@/utils';
-import './RecordPieChart.scss';
+import './AccountingCategoryPieChart.scss';
 
-interface RecordPieChartProps {
+interface AccountingCategoryPieChartProps {
   records: ExpenseRecord[] | IncomeRecord[];
   recordType: RecordType;
   title?: string;
   totalAmount?: number; // 总金额（保留作为备用参数）
 }
 
-interface CategoryData {
+interface AccountingCategoryData {
   name: string;
   value: number;
   color: string;
@@ -44,7 +44,7 @@ const getCategoryColor = (index: number, isIncome: boolean = false): string => {
 };
 
 
-const RecordPieChart: React.FC<RecordPieChartProps> = ({ 
+const AccountingCategoryPieChart: React.FC<AccountingCategoryPieChartProps> = ({ 
   records, 
   recordType,
   title
@@ -62,7 +62,7 @@ const RecordPieChart: React.FC<RecordPieChartProps> = ({
   const categories = isIncome ? getIncomeCategories() : getCategories();
   
   // 计算每个分类的总金额
-  const categoryData: CategoryData[] = categories.map((category, index) => {
+  const categoryData: AccountingCategoryData[] = categories.map((category, index) => {
     const categoryRecords = records.filter(record => record.category === category);
     const total = categoryRecords.reduce((sum, record) => sum + record.amount, 0);
     
@@ -76,10 +76,10 @@ const RecordPieChart: React.FC<RecordPieChartProps> = ({
   // 自定义Tooltip
   const CustomTooltip = ({ active, payload }: {
     active?: boolean;
-    payload?: Array<{ payload: CategoryData }>;
+    payload?: Array<{ payload: AccountingCategoryData }>;
   }) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload as CategoryData;
+      const data = payload[0].payload as AccountingCategoryData;
       return (
         <div className="expense-pie-chart__tooltip">
           <p className="tooltip__label">{data.name}</p>
@@ -135,4 +135,4 @@ const RecordPieChart: React.FC<RecordPieChartProps> = ({
   );
 };
 
-export default RecordPieChart;
+export default AccountingCategoryPieChart;

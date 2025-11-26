@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { FilterNumberInput, FilterSearchInput } from '@/components/common';
-import './CategoryFilter.scss';
+import './AccountingCategoryFilter.scss';
 
-interface CategoryFilterProps {
+interface AccountingCategoryFilterProps {
   categories: string[];
   selectedCategories: string[];
   onCategoryChange: (categories: string[]) => void;
@@ -27,7 +27,7 @@ interface CategoryFilterProps {
   onSearchDescriptionChange?: (value: string) => void;
 }
 
-const CategoryFilter: React.FC<CategoryFilterProps> = ({
+const AccountingCategoryFilter: React.FC<AccountingCategoryFilterProps> = ({
   categories,
   selectedCategories,
   onCategoryChange,
@@ -238,4 +238,4 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   );
 };
 
-export default CategoryFilter;
+export default AccountingCategoryFilter;

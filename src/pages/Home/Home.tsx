@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
-import { RecordForm, RecordList, CategoryManager, SleepForm, SleepList, CategoryFilter, DailyRecordForm, DailyRecordList, CardDraw, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, AgeCalculator, Diary, Music, Reading, Medical } from '@/components';
+import { AccountingRecordForm, AccountingRecordList, AccountingCategoryManager, SleepForm, SleepList, AccountingCategoryFilter, DailyRecordForm, DailyRecordList, CardDraw, StudyRecordForm, StudyRecordList, StudyCategoryManager, Fortune, AgeCalculator, Diary, Music, Reading, Medical } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType, SleepRecord, DailyRecord, StudyRecord, PageMode, PAGE_MODE_LABELS, PAGE_MODE_ICONS, MealStatus } from '@/utils';
 import { 
   loadExpenses, addExpense, deleteExpense, updateExpense,
@@ -1187,7 +1187,7 @@ const Home: React.FC = () => {
                   <div className="records-container">
                     {/* 支出记录列表 */}
                     <div className="expense-list-container">
-                      <CategoryFilter
+                      <AccountingCategoryFilter
                         title="支出记录"
                         categories={getCategories()}
                         selectedCategories={selectedExpenseCategories}
@@ -1208,7 +1208,7 @@ const Home: React.FC = () => {
                         onMaxAmountChange={setExpenseMaxAmount}
                         onSearchDescriptionChange={setExpenseSearchDescription}
                       />
-                      <RecordList 
+                      <AccountingRecordList 
                         records={filterExpenses(expenses)} 
                         allRecords={expenses}
                         onDeleteRecord={handleDeleteExpense}
@@ -1219,7 +1219,7 @@ const Home: React.FC = () => {
                     
                     {/* 添加支出表单 */}
                     <div className="form-container">
-                      <RecordForm
+                      <AccountingRecordForm
                         onAddExpense={handleAddExpense}
                         onAddIncome={handleAddIncome}
                         onUpdateExpense={handleUpdateExpense}
@@ -1234,7 +1234,7 @@ const Home: React.FC = () => {
                     
                     {/* 收入记录列表 */}
                     <div className="income-list-container">
-                      <CategoryFilter
+                      <AccountingCategoryFilter
                         title="收入记录"
                         theme="income"
                         categories={getIncomeCategories()}
@@ -1256,7 +1256,7 @@ const Home: React.FC = () => {
                         onMaxAmountChange={setIncomeMaxAmount}
                         onSearchDescriptionChange={setIncomeSearchDescription}
                       />
-                      <RecordList 
+                      <AccountingRecordList 
                         records={filterIncomes(incomes)} 
                         allRecords={incomes}
                         onDeleteRecord={handleDeleteIncome}
@@ -1441,7 +1441,7 @@ const Home: React.FC = () => {
 
       {/* 分类管理器模态框 */}
       {showCategoryManager && (
-        <CategoryManager
+        <AccountingCategoryManager
           recordType={categoryManagerType}
           onClose={handleCloseCategoryManager}
           onCategoriesChange={handleCategoriesChange}

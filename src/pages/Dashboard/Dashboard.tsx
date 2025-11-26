@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RecordsContent, SleepRecordsContent, StudyRecordsContent, DailyRecordsContent } from '@/components/dashboard';
+import { AccountingRecordsDashboard, SleepRecordsDashboard, StudyRecordsDashboard, DailyRecordsDashboard } from '@/components';
 import { RecordType } from '@/utils';
 import './Dashboard.scss';
 
@@ -176,11 +176,11 @@ const Dashboard: React.FC = () => {
       {/* 内容区域 */}
       <div className="dashboard__content">
         {activeTab === 'records' && (
-          <RecordsContent recordType={recordType} onRecordTypeChange={setRecordType} />
+          <AccountingRecordsDashboard recordType={recordType} onRecordTypeChange={setRecordType} />
         )}
-        {activeTab === 'sleep' && <SleepRecordsContent />}
-        {activeTab === 'study' && <StudyRecordsContent />}
-        {activeTab === 'daily' && <DailyRecordsContent />}
+        {activeTab === 'sleep' && <SleepRecordsDashboard />}
+        {activeTab === 'study' && <StudyRecordsDashboard />}
+        {activeTab === 'daily' && <DailyRecordsDashboard />}
       </div>
     </div>
   );

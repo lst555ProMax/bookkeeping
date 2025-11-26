@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { MonthSelector, SleepTimeTrendChart, SleepDurationTrendChart, SleepQualityTrendChart } from '@/components';
 import { getMonthSleepStats, getMonthSleepTrend, formatSleepDuration } from '@/utils';
-import './SleepRecordsContent.scss';
+import './SleepRecordsDashboard.scss';
 
-const SleepRecordsContent: React.FC = () => {
+const SleepRecordsDashboard: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -100,5 +100,5 @@ const SleepRecordsContent: React.FC = () => {
   );
 };
 
-export default SleepRecordsContent;
+export default SleepRecordsDashboard;
 

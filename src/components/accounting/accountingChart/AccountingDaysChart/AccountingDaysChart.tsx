@@ -2,9 +2,9 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ExpenseRecord, IncomeRecord, RecordType } from '@/utils';
 import { formatCurrency } from '@/utils';
-import './RecordDaysChart.scss';
+import './AccountingDaysChart.scss';
 
-interface RecordDaysChartProps {
+interface AccountingDaysChartProps {
   records: ExpenseRecord[] | IncomeRecord[];
   recordType: RecordType;
   selectedMonth: string;
@@ -13,13 +13,13 @@ interface RecordDaysChartProps {
   count?: number; // 显示天数，默认7天
 }
 
-interface DayData {
+interface AccountingDayData {
   date: string;
   amount: number;
   displayDate: string;
 }
 
-const RecordDaysChart: React.FC<RecordDaysChartProps> = ({ 
+const AccountingDaysChart: React.FC<AccountingDaysChartProps> = ({ 
   records,
   recordType,
   selectedMonth, 
@@ -52,7 +52,7 @@ const RecordDaysChart: React.FC<RecordDaysChartProps> = ({
   };
 
   // 获取指定类型的天数数据
-  const getDaysData = (): DayData[] => {
+  const getDaysData = (): AccountingDayData[] => {
     const dailyExpenses = getDailyExpenses();
     
     let sortedEntries = Object.entries(dailyExpenses)
@@ -162,4 +162,4 @@ const RecordDaysChart: React.FC<RecordDaysChartProps> = ({
   );
 };
 
-export default RecordDaysChart;
+export default AccountingDaysChart;

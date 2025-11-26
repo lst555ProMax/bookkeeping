@@ -4,9 +4,9 @@ import { ExpenseCategory, ExpenseRecord, IncomeCategory, IncomeRecord, RecordTyp
 import { generateId, formatDate, getCategories, getIncomeCategories } from '@/utils';
 import { DatePicker, FormSelect, FormNumberInput, FormTextarea } from '@/components/common';
 import type { FormSelectOption } from '@/components/common';
-import './RecordForm.scss';
+import './accountingRecordForm.scss';
 
-interface RecordFormProps {
+interface AccountingRecordFormProps {
   onAddExpense: (expense: ExpenseRecord) => void;
   onAddIncome: (income: IncomeRecord) => void;
   onUpdateExpense?: (expense: ExpenseRecord) => void;
@@ -18,7 +18,7 @@ interface RecordFormProps {
   editingIncome?: IncomeRecord | null; // 正在编辑的收入
 }
 
-const RecordForm: React.FC<RecordFormProps> = ({ 
+const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({ 
   onAddExpense,
   onAddIncome,
   onUpdateExpense,
@@ -413,4 +413,4 @@ const RecordForm: React.FC<RecordFormProps> = ({
   );
 };
 
-export default RecordForm;
+export default AccountingRecordForm;

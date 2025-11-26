@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import { ExpenseRecord, IncomeRecord } from '@/utils';
 import { formatCurrency, formatDisplayDate } from '@/utils';
 import { RecordListEmpty } from '@/components/common';
-import './RecordList.scss';
+import './AccountingRecordList.scss';
 
-type RecordItem = ExpenseRecord | IncomeRecord;
+type AccountingRecordItem = ExpenseRecord | IncomeRecord;
 
-interface RecordListProps {
-  records: RecordItem[];
-  allRecords?: RecordItem[]; // 所有记录（用于计算总数）
+interface AccountingRecordListProps {
+  records: AccountingRecordItem[];
+  allRecords?: AccountingRecordItem[]; // 所有记录（用于计算总数）
   onDeleteRecord: (id: string) => void;
-  onEditRecord: (record: RecordItem) => void;
+  onEditRecord: (record: AccountingRecordItem) => void;
   type?: 'expense' | 'income'; // 用于区分显示样式
 }
 
-const RecordList: React.FC<RecordListProps> = ({ 
+const AccountingRecordList: React.FC<AccountingRecordListProps> = ({ 
   records, 
   allRecords,
   onDeleteRecord, 
@@ -39,7 +39,7 @@ const RecordList: React.FC<RecordListProps> = ({
     
     groups[monthKey][date].push(record);
     return groups;
-  }, {} as Record<string, Record<string, RecordItem[]>>);
+  }, {} as Record<string, Record<string, AccountingRecordItem[]>>);
   
 
   // 计算所有记录按月份分组（用于显示总数和月份头）
@@ -59,7 +59,7 @@ const RecordList: React.FC<RecordListProps> = ({
       
       groups[monthKey][date].push(record);
       return groups;
-    }, {} as Record<string, Record<string, RecordItem[]>>);
+    }, {} as Record<string, Record<string, AccountingRecordItem[]>>);
   }, [allRecords, records]);
   
   // 使用所有记录的月份来生成月份头列表
@@ -89,12 +89,12 @@ const RecordList: React.FC<RecordListProps> = ({
   };
 
   // 计算某一天的总额
-  const calculateDayTotal = (records: RecordItem[]): number => {
+  const calculateDayTotal = (records: AccountingRecordItem[]): number => {
     return records.reduce((sum, record) => sum + record.amount, 0);
   };
 
   // 计算某个月的总额
-  const calculateMonthTotal = (monthRecords: Record<string, RecordItem[]> | undefined): number => {
+  const calculateMonthTotal = (monthRecords: Record<string, AccountingRecordItem[]> | undefined): number => {
     if (!monthRecords) return 0;
     return Object.values(monthRecords).reduce((sum, dayRecords) => {
       return sum + calculateDayTotal(dayRecords);
@@ -209,4 +209,4 @@ const RecordList: React.FC<RecordListProps> = ({
   );
 };
 
-export default RecordList;
+export default AccountingRecordList;

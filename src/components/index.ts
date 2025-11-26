@@ -16,13 +16,14 @@ export type { FormSelectOption, FilterSelectOption } from './common';
 
 // 账单记录相关组件
 export {
-  RecordForm,
-  RecordList,
-  RecordPieChart,
-  RecordDaysChart,
-  RecordTrendChart,
-  CategoryManager,
-  CategoryFilter
+  AccountingRecordForm,
+  AccountingRecordList,
+  AccountingCategoryPieChart,
+  AccountingDaysChart,
+  AccountingTrendChart,
+  AccountingRecordsDashboard,
+  AccountingCategoryManager,
+  AccountingCategoryFilter
 } from './accounting';
 
 // 睡眠记录相关组件
@@ -31,7 +32,8 @@ export {
   SleepList,
   SleepTimeTrendChart,
   SleepDurationTrendChart,
-  SleepQualityTrendChart
+  SleepQualityTrendChart,
+  SleepRecordsDashboard
 } from './sleep';
 
 // 日常记录相关组件
@@ -42,7 +44,8 @@ export {
   HabitStatsChart,
   AttendanceComplianceChart,
   StepsTrendChart,
-  WorkTimeChart
+  WorkTimeChart,
+  DailyRecordsDashboard
 } from './daily';
 
 // 学习记录相关组件
@@ -51,7 +54,9 @@ export {
   StudyRecordList,
   StudyCategoryManager,
   StudyCategoryPieChart,
-  StudyTrendChart
+  StudyTrendChart,
+  StudyDaysChart,
+  StudyRecordsDashboard
 } from './study';
 
 // 日记组件

@@ -1,8 +1,9 @@
 // 导出账单记录相关组件
-export { default as RecordForm } from './RecordForm/RecordForm';
-export { default as RecordList } from './RecordList/RecordList';
-export { default as RecordPieChart } from './RecordPieChart/RecordPieChart';
-export { default as RecordDaysChart } from './RecordDaysChart/RecordDaysChart';
-export { default as RecordTrendChart } from './RecordTrendChart/RecordTrendChart';
-export { default as CategoryManager } from './CategoryManager/CategoryManager';
-export { default as CategoryFilter } from './CategoryFilter/CategoryFilter';
+export { default as AccountingRecordForm } from './AccountingRecordForm/accountingRecordForm';
+export { default as AccountingRecordList } from './AccountingRecordList/AccountingRecordList';
+export { default as AccountingCategoryPieChart } from './accountingChart/AccountingCategoryPieChart/AccountingCategoryPieChart';
+export { default as AccountingDaysChart } from './accountingChart/AccountingDaysChart/AccountingDaysChart';
+export { default as AccountingTrendChart } from './accountingChart/AccountingTrendChart/AccountingTrendChart';
+export { default as AccountingRecordsDashboard } from './accountingChart/AccountingRecordsDashboard/AccountingRecordsDashboard';
+export { default as AccountingCategoryManager } from './AccountingCategoryManager/AccountingCategoryManager';
+export { default as AccountingCategoryFilter } from './AccountingCategoryFilter/AccountingCategoryFilter';

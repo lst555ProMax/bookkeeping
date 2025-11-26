@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { MonthSelector } from '@/components';
 import { MealRegularityChart, HabitStatsChart, StepsTrendChart, WorkTimeChart, AttendanceComplianceChart } from '@/components/daily';
 import { getMonthlyStats, getMonthlyTrendData, getHabitStats } from '@/utils/daily/statistics';
-import './DailyRecordsContent.scss';
+import './DailyRecordsDashboard.scss';
 
-const DailyRecordsContent: React.FC = () => {
+const DailyRecordsDashboard: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const now = new Date();
     return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -158,5 +158,5 @@ const DailyRecordsContent: React.FC = () => {
   );
 };
 
-export default DailyRecordsContent;
+export default DailyRecordsDashboard;
 

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { MonthSelector, RecordDaysChart, RecordTrendChart, RecordPieChart } from '@/components';
+import { MonthSelector, AccountingDaysChart, AccountingTrendChart, AccountingCategoryPieChart } from '@/components';
 import { ExpenseRecord, IncomeRecord, RecordType } from '@/utils';
 import { loadExpenses, loadIncomes, formatCurrency } from '@/utils';
-import './RecordsContent.scss';
+import './AccountingRecordsDashboard.scss';
 
-interface RecordsContentProps {
+interface AccountingRecordsDashboardProps {
   recordType: RecordType;
   onRecordTypeChange?: (type: RecordType) => void;
 }
 
-const RecordsContent: React.FC<RecordsContentProps> = ({ recordType }) => {
+const AccountingRecordsDashboard: React.FC<AccountingRecordsDashboardProps> = ({ recordType }) => {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [incomes, setIncomes] = useState<IncomeRecord[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
@@ -118,7 +118,7 @@ const RecordsContent: React.FC<RecordsContentProps> = ({ recordType }) => {
               {/* 第一行：饼状图和趋势图 */}
               <div className="charts-row">
                 <div className="chart-item">
-                  <RecordPieChart 
+                  <AccountingCategoryPieChart 
                     records={monthlyRecords}
                     recordType={recordType}
                     title={`${recordType === RecordType.EXPENSE ? '💰' : '📈'} ${selectedMonth.split('-')[0]}年${selectedMonth.split('-')[1]}月${recordType === RecordType.EXPENSE ? '支出' : '收入'}分析`}
@@ -126,7 +126,7 @@ const RecordsContent: React.FC<RecordsContentProps> = ({ recordType }) => {
                   />
                 </div>
                 <div className="chart-item">
-                  <RecordTrendChart 
+                  <AccountingTrendChart 
                     records={currentRecords}
                     recordType={recordType}
                     title={`${recordType === RecordType.EXPENSE ? '💰' : '📈'} 最近7天${recordType === RecordType.EXPENSE ? '开销' : '收入'}趋势`}
@@ -137,7 +137,7 @@ const RecordsContent: React.FC<RecordsContentProps> = ({ recordType }) => {
               {/* 第二行：最高和最低开销柱状图 */}
               <div className="charts-row">
                 <div className="chart-item">
-                  <RecordDaysChart 
+                  <AccountingDaysChart 
                     records={currentRecords}
                     recordType={recordType}
                     selectedMonth={selectedMonth}
@@ -146,7 +146,7 @@ const RecordsContent: React.FC<RecordsContentProps> = ({ recordType }) => {
                   />
                 </div>
                 <div className="chart-item">
-                  <RecordDaysChart 
+                  <AccountingDaysChart 
                     records={currentRecords}
                     recordType={recordType}
                     selectedMonth={selectedMonth}
@@ -163,5 +163,5 @@ const RecordsContent: React.FC<RecordsContentProps> = ({ recordType }) => {
   );
 };
 
-export default RecordsContent;
+export default AccountingRecordsDashboard;
 

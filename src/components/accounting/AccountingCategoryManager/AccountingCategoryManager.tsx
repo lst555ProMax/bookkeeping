@@ -15,15 +15,15 @@ import {
   incomeCategoryHasRecords,
   saveIncomeCategoriesOrder
 } from '@/utils';
-import './CategoryManager.scss';
+import './AccountingCategoryManager.scss';
 
-interface CategoryManagerProps {
+interface AccountingCategoryManagerProps {
   recordType: RecordType;
   onClose: () => void;
   onCategoriesChange: () => void;
 }
 
-const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, onCategoriesChange }) => {
+const AccountingCategoryManager: React.FC<AccountingCategoryManagerProps> = ({ recordType, onClose, onCategoriesChange }) => {
   const isIncome = recordType === RecordType.INCOME;
   const [categories, setCategories] = useState<(ExpenseCategory | IncomeCategory)[]>([]);
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -342,4 +342,4 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
   );
 };
 
-export default CategoryManager;
+export default AccountingCategoryManager;
