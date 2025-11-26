@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
  * 用于区分页面刷新和页面切换，页面刷新时清除表单数据
  * @param sessionKey sessionStorage 键名
  * @param storageKey localStorage 键名（用于清除表单数据）
- * @returns 是否是首次加载
+ * @returns 包含 isFirstLoad 和 setIsFirstLoad 的对象
  */
 export function useFirstLoad(sessionKey: string, storageKey?: string) {
   const [isFirstLoad, setIsFirstLoad] = useState(() => {
@@ -37,6 +37,6 @@ export function useFirstLoad(sessionKey: string, storageKey?: string) {
     };
   }, [sessionKey, storageKey]);
 
-  return isFirstLoad;
+  return { isFirstLoad, setIsFirstLoad };
 }
 
