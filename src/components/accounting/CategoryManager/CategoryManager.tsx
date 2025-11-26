@@ -37,6 +37,19 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
     setCategories(loadedCategories);
   }, [recordType, isIncome]); // 当类型改变时重新加载
 
+  // ESC退出绑定
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   const loadCategories = () => {
     const loadedCategories = isIncome ? getManageableIncomeCategories() : getManageableCategories();
     setCategories(loadedCategories);
@@ -142,8 +155,11 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent, action: 'add' | 'edit') => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (e: React.KeyboardEvent, action: 'add' | 'edit') => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+      e.preventDefault();
+      e.stopPropagation();
+      // 阻止事件冒泡到window，防止触发表单的Ctrl+Enter监听器
       if (action === 'add') {
         handleAddCategory();
       } else {
@@ -224,7 +240,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
                 className="category-manager__input"
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
-                onKeyPress={(e) => handleKeyPress(e, 'add')}
+                onKeyDown={(e) => handleKeyDown(e, 'add')}
                 placeholder="输入分类名称（最多5个字）"
                 maxLength={5}
               />
@@ -262,7 +278,7 @@ const CategoryManager: React.FC<CategoryManagerProps> = ({ recordType, onClose, 
                           className="category-manager__input category-manager__input--inline"
                           value={editingName}
                           onChange={(e) => setEditingName(e.target.value)}
-                          onKeyPress={(e) => handleKeyPress(e, 'edit')}
+                          onKeyDown={(e) => handleKeyDown(e, 'edit')}
                           maxLength={5}
                           autoFocus
                         />

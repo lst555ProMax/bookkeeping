@@ -26,36 +26,50 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     return `${year}-${month}-${day}`;
   };
 
+  // 从 localStorage 恢复表单数据（页面切换时保持）
+  const loadFormData = () => {
+    const saved = localStorage.getItem('dailyFormData');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const savedFormData = loadFormData();
   // 表单状态
-  const [date, setDate] = useState(getDefaultDate());
+  const [date, setDate] = useState(savedFormData?.date || getDefaultDate());
   
   // 三餐状态（默认都是规律）
-  const [breakfast, setBreakfast] = useState<MealStatus>(MealStatus.EATEN_REGULAR);
-  const [lunch, setLunch] = useState<MealStatus>(MealStatus.EATEN_REGULAR);
-  const [dinner, setDinner] = useState<MealStatus>(MealStatus.EATEN_REGULAR);
+  const [breakfast, setBreakfast] = useState<MealStatus>(savedFormData?.breakfast || MealStatus.EATEN_REGULAR);
+  const [lunch, setLunch] = useState<MealStatus>(savedFormData?.lunch || MealStatus.EATEN_REGULAR);
+  const [dinner, setDinner] = useState<MealStatus>(savedFormData?.dinner || MealStatus.EATEN_REGULAR);
   
   // 洗漱状态
-  const [morningWash, setMorningWash] = useState(false);
-  const [nightWash, setNightWash] = useState(false);
+  const [morningWash, setMorningWash] = useState(savedFormData?.morningWash || false);
+  const [nightWash, setNightWash] = useState(savedFormData?.nightWash || false);
   
   // 洗浴状态
-  const [shower, setShower] = useState(false);
-  const [hairWash, setHairWash] = useState(false);
-  const [footWash, setFootWash] = useState(false);
-  const [faceWash, setFaceWash] = useState(false);
+  const [shower, setShower] = useState(savedFormData?.shower || false);
+  const [hairWash, setHairWash] = useState(savedFormData?.hairWash || false);
+  const [footWash, setFootWash] = useState(savedFormData?.footWash || false);
+  const [faceWash, setFaceWash] = useState(savedFormData?.faceWash || false);
   
   // 其他状态
-  const [laundry, setLaundry] = useState(false);
-  const [cleaning, setCleaning] = useState(false);
-  const [wechatSteps, setWechatSteps] = useState('');
+  const [laundry, setLaundry] = useState(savedFormData?.laundry || false);
+  const [cleaning, setCleaning] = useState(savedFormData?.cleaning || false);
+  const [wechatSteps, setWechatSteps] = useState(savedFormData?.wechatSteps || '');
   
   // 打卡时间
-  const [checkInTime, setCheckInTime] = useState('');
-  const [checkOutTime, setCheckOutTime] = useState('');
-  const [leaveTime, setLeaveTime] = useState('');
+  const [checkInTime, setCheckInTime] = useState(savedFormData?.checkInTime || '');
+  const [checkOutTime, setCheckOutTime] = useState(savedFormData?.checkOutTime || '');
+  const [leaveTime, setLeaveTime] = useState(savedFormData?.leaveTime || '');
   
   // 备注
-  const [notes, setNotes] = useState('');
+  const [notes, setNotes] = useState(savedFormData?.notes || '');
 
   const resetForm = () => {
     setDate(getDefaultDate());
@@ -76,6 +90,57 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     setLeaveTime('');
     setNotes('');
   };
+
+  // 检查是否是页面刷新（首次加载）
+  const [isFirstLoad, setIsFirstLoad] = useState(() => {
+    const initialized = sessionStorage.getItem('dailyFormInitialized');
+    if (!initialized) {
+      sessionStorage.setItem('dailyFormInitialized', 'true');
+      // 首次加载时清除 localStorage 中的表单数据
+      localStorage.removeItem('dailyFormData');
+      return true;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    // 监听页面卸载，清除标记（刷新时会重新设置）
+    const handleBeforeUnload = () => {
+      sessionStorage.removeItem('dailyFormInitialized');
+      // 刷新时清除表单数据
+      localStorage.removeItem('dailyFormData');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  // 保存表单数据到 localStorage（页面切换时保持）
+  useEffect(() => {
+    if (!editingRecord) {
+      localStorage.setItem('dailyFormData', JSON.stringify({
+        date,
+        breakfast,
+        lunch,
+        dinner,
+        morningWash,
+        nightWash,
+        shower,
+        hairWash,
+        footWash,
+        faceWash,
+        laundry,
+        cleaning,
+        wechatSteps,
+        checkInTime,
+        checkOutTime,
+        leaveTime,
+        notes
+      }));
+    }
+  }, [date, breakfast, lunch, dinner, morningWash, nightWash, shower, hairWash, footWash, faceWash, laundry, cleaning, wechatSteps, checkInTime, checkOutTime, leaveTime, notes, editingRecord]);
 
   // 当编辑记录时，填充表单
   useEffect(() => {
@@ -98,7 +163,11 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       setLeaveTime(editingRecord.leaveTime || '');
       setNotes(editingRecord.notes || '');
     } else {
-      resetForm();
+      // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
+      if (isFirstLoad && !savedFormData) {
+        resetForm();
+        setIsFirstLoad(false); // 标记已处理首次加载
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingRecord]);

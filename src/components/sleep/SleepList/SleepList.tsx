@@ -95,9 +95,20 @@ const SleepList: React.FC<SleepListProps> = ({
 
     // 将分钟数转换回时间字符串
     const minutesToTime = (minutes: number): string => {
-      const adjustedMinutes = minutes % (24 * 60);
-      const hours = Math.floor(adjustedMinutes / 60);
-      const mins = Math.round(adjustedMinutes % 60);
+      // 处理负数情况（跨天的情况）
+      let totalMinutes = minutes;
+      if (totalMinutes < 0) {
+        totalMinutes += 24 * 60;
+      }
+      
+      // 确保在 0-24*60 范围内
+      const adjustedMinutes = totalMinutes % (24 * 60);
+      
+      // 计算小时和分钟，确保分钟数在 0-59 范围内
+      const totalMins = Math.round(adjustedMinutes);
+      const hours = Math.floor(totalMins / 60) % 24;
+      const mins = totalMins % 60;
+      
       return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
     };
 

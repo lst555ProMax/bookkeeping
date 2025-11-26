@@ -158,8 +158,17 @@ export const sleepTimeToMinutes = (time: string): number => {
  * @returns HH:mm格式
  */
 export const minutesToTime = (minutes: number): string => {
-  const hours = Math.floor(minutes / 60);
-  const mins = Math.round(minutes % 60);
+  // 处理负数情况（跨天的情况）
+  let totalMinutes = minutes;
+  if (totalMinutes < 0) {
+    totalMinutes += 24 * 60;
+  }
+  
+  // 计算小时和分钟，确保分钟数在 0-59 范围内
+  const totalMins = Math.round(totalMinutes);
+  const hours = Math.floor(totalMins / 60) % 24;
+  const mins = totalMins % 60;
+  
   return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
 };
 

@@ -69,6 +69,26 @@ const Fortune: React.FC = () => {
     setGeneratedFortune(null);
   };
 
+  // ESC退出绑定
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showDetailModal) {
+          setShowDetailModal(false);
+          setGeneratedFortune(null);
+        } else if (showModal) {
+          setShowModal(false);
+          setIsGenerating(false);
+          setGeneratedFortune(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showModal, showDetailModal]);
+
   // 执行算命
   const handleGenerate = () => {
     if (!hasResetToday && hasTodayFortune()) {

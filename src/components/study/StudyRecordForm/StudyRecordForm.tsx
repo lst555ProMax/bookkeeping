@@ -32,14 +32,28 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     return `${year}-${month}-${day}`;
   };
 
+  // 从 localStorage 恢复表单数据（页面切换时保持）
+  const loadFormData = () => {
+    const saved = localStorage.getItem('studyFormData');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const savedFormData = loadFormData();
   // 表单状态
-  const [date, setDate] = useState(getDefaultDate());
-  const [category, setCategory] = useState(getStudyCategories()[0]);
-  const [videoTitle, setVideoTitle] = useState('');
-  const [episodeStart, setEpisodeStart] = useState('');
-  const [episodeEnd, setEpisodeEnd] = useState('');
-  const [totalTime, setTotalTime] = useState('');
-  const [remark, setRemark] = useState('');
+  const [date, setDate] = useState(savedFormData?.date || getDefaultDate());
+  const [category, setCategory] = useState(savedFormData?.category || getStudyCategories()[0]);
+  const [videoTitle, setVideoTitle] = useState(savedFormData?.videoTitle || '');
+  const [episodeStart, setEpisodeStart] = useState(savedFormData?.episodeStart || '');
+  const [episodeEnd, setEpisodeEnd] = useState(savedFormData?.episodeEnd || '');
+  const [totalTime, setTotalTime] = useState(savedFormData?.totalTime || '');
+  const [remark, setRemark] = useState(savedFormData?.remark || '');
   const [categories, setCategories] = useState<StudyCategory[]>([]);
 
   // 将分类数组转换为 FormSelectOption 数组
@@ -69,6 +83,47 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     }
   }, [categoriesKey, category]);
 
+  // 检查是否是页面刷新（首次加载）
+  const [isFirstLoad, setIsFirstLoad] = useState(() => {
+    const initialized = sessionStorage.getItem('studyFormInitialized');
+    if (!initialized) {
+      sessionStorage.setItem('studyFormInitialized', 'true');
+      // 首次加载时清除 localStorage 中的表单数据
+      localStorage.removeItem('studyFormData');
+      return true;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    // 监听页面卸载，清除标记（刷新时会重新设置）
+    const handleBeforeUnload = () => {
+      sessionStorage.removeItem('studyFormInitialized');
+      // 刷新时清除表单数据
+      localStorage.removeItem('studyFormData');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  // 保存表单数据到 localStorage（页面切换时保持）
+  useEffect(() => {
+    if (!editingRecord) {
+      localStorage.setItem('studyFormData', JSON.stringify({
+        date,
+        category,
+        videoTitle,
+        episodeStart,
+        episodeEnd,
+        totalTime,
+        remark
+      }));
+    }
+  }, [date, category, videoTitle, episodeStart, episodeEnd, totalTime, remark, editingRecord]);
+
   // 当编辑记录时，填充表单
   useEffect(() => {
     if (editingRecord) {
@@ -80,7 +135,11 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
       setTotalTime(editingRecord.totalTime.toString());
       setRemark(editingRecord.remark || '');
     } else {
-      resetForm();
+      // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
+      if (isFirstLoad && !savedFormData) {
+        resetForm();
+        setIsFirstLoad(false); // 标记已处理首次加载
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingRecord]);

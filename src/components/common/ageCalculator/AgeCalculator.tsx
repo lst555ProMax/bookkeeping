@@ -130,6 +130,26 @@ const AgeCalculator: React.FC = () => {
     setShowDetailModal(false);
   };
 
+  // ESC退出绑定
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showDetailModal) {
+          setShowDetailModal(false);
+        } else if (showModal) {
+          setShowModal(false);
+          setIsCalculating(false);
+          setBirthday('2005-01-01');
+          setCalculatedAge('');
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showModal, showDetailModal]);
+
   // 确认计算年龄
   const handleConfirm = () => {
     if (!birthday) {

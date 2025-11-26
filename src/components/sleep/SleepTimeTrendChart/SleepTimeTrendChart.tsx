@@ -38,8 +38,12 @@ const SleepTimeTrendChart: React.FC<SleepTimeTrendChartProps> = ({ data }) => {
     if (displayMinutes < 0) {
       displayMinutes += 24 * 60; // 转换回21:00-23:59
     }
-    const hours = Math.floor(displayMinutes / 60);
-    const mins = Math.round(displayMinutes % 60);
+    
+    // 计算小时和分钟，确保分钟数在 0-59 范围内
+    const totalMins = Math.round(displayMinutes);
+    const hours = Math.floor(totalMins / 60) % 24;
+    const mins = totalMins % 60;
+    
     return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
   };
 

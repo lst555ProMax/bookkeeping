@@ -29,11 +29,26 @@ const RecordForm: React.FC<RecordFormProps> = ({
   editingExpense,
   editingIncome
 }) => {
-  const [recordType, setRecordType] = useState<RecordType>(RecordType.EXPENSE);
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState<ExpenseCategory | IncomeCategory>('餐饮');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState(formatDate(new Date()));
+  // 从 localStorage 恢复表单数据（页面切换时保持）
+  const loadFormData = () => {
+    const saved = localStorage.getItem('recordFormData');
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        return data;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const savedFormData = loadFormData();
+  const [recordType, setRecordType] = useState<RecordType>(savedFormData?.recordType || RecordType.EXPENSE);
+  const [amount, setAmount] = useState(savedFormData?.amount || '');
+  const [category, setCategory] = useState<ExpenseCategory | IncomeCategory>(savedFormData?.category || '餐饮');
+  const [description, setDescription] = useState(savedFormData?.description || '');
+  const [date, setDate] = useState(savedFormData?.date || formatDate(new Date()));
   const [expenseCategories, setExpenseCategories] = useState<ExpenseCategory[]>([]);
   const [incomeCategories, setIncomeCategories] = useState<IncomeCategory[]>([]);
 
@@ -101,6 +116,45 @@ const RecordForm: React.FC<RecordFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoriesKey]); // 只在分类列表变化时触发，recordType 改变时 onChange 已处理分类设置
 
+  // 检查是否是页面刷新（首次加载）
+  const [isFirstLoad, setIsFirstLoad] = useState(() => {
+    const initialized = sessionStorage.getItem('recordFormInitialized');
+    if (!initialized) {
+      sessionStorage.setItem('recordFormInitialized', 'true');
+      // 首次加载时清除 localStorage 中的表单数据
+      localStorage.removeItem('recordFormData');
+      return true;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    // 监听页面卸载，清除标记（刷新时会重新设置）
+    const handleBeforeUnload = () => {
+      sessionStorage.removeItem('recordFormInitialized');
+      // 刷新时清除表单数据
+      localStorage.removeItem('recordFormData');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  // 保存表单数据到 localStorage（页面切换时保持）
+  useEffect(() => {
+    if (!isEditing) {
+      localStorage.setItem('recordFormData', JSON.stringify({
+        recordType,
+        amount,
+        category,
+        description,
+        date
+      }));
+    }
+  }, [recordType, amount, category, description, date, isEditing]);
+
   // 当编辑状态变化时，更新表单数据
   useEffect(() => {
     if (editingExpense) {
@@ -116,18 +170,22 @@ const RecordForm: React.FC<RecordFormProps> = ({
       setDescription(editingIncome.description || '');
       setDate(editingIncome.date);
     } else {
-      // 重置表单到初始状态
-      setAmount('');
-      setDescription('');
-      setDate(formatDate(new Date()));
-      if (recordType === RecordType.EXPENSE) {
-        setCategory(expenseCategories[0] || '餐饮');
-      } else {
-        setCategory(incomeCategories[0] || '工资收入');
+      // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
+      if (isFirstLoad && !savedFormData) {
+        // 重置表单到初始状态
+        setAmount('');
+        setDescription('');
+        setDate(formatDate(new Date()));
+        if (recordType === RecordType.EXPENSE) {
+          setCategory(expenseCategories[0] || '餐饮');
+        } else {
+          setCategory(incomeCategories[0] || '工资收入');
+        }
+        setIsFirstLoad(false); // 标记已处理首次加载
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingExpense, editingIncome]); // 移除 expenseCategories, incomeCategories, recordType 依赖
+  }, [editingExpense, editingIncome]); // 移除 isFirstLoad 依赖，避免重复执行
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

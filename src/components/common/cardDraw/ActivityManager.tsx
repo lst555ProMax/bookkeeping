@@ -10,8 +10,7 @@ import {
   deleteActivityCategory,
   addActivityItem,
   updateActivityItem,
-  deleteActivityItem,
-  validateProbabilities
+  deleteActivityItem
 } from '@/utils';
 import './ActivityManager.scss';
 
@@ -36,12 +35,27 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ESC退出绑定（在捕获阶段处理，优先于今日活动界面）
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation(); // 阻止事件传播到今日活动界面
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, true); // 使用捕获阶段
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [onClose]);
+
   const loadConfig = () => {
     const loaded = loadActivityConfig();
     setConfig(loaded);
     if (loaded.length > 0 && !selectedCategoryId) {
       setSelectedCategoryId(loaded[0].id);
     }
+    return loaded;
   };
 
   const selectedCategory = config.find(c => c.id === selectedCategoryId);
@@ -61,12 +75,6 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     return categories;
   };
 
-  // 检查配置是否有效（自定义概率是否为负）
-  const isConfigValid = () => {
-    const customCategory = config.find(c => c.name === '自定义');
-    if (!customCategory) return true;
-    return customCategory.totalProbability >= 0;
-  };
 
   // 格式化概率为整数
   const formatProbability = (prob: number) => Math.round(prob * 100);
@@ -80,26 +88,37 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
 
   // 添加一级分类（直接创建新分类）
   const handleAddCategory = () => {
-    // 生成唯一的名称
-    let categoryName = '新分类';
+    // 检查一级分类数量限制（最多20个）
+    if (config.length >= 20) {
+      toast.error('一级分类最多只能创建20个，无法继续添加');
+      return;
+    }
+
+    // 生成唯一的名称：分类、分类1、分类2...
+    let categoryName = '分类';
     let counter = 1;
     while (config.some(c => c.name === categoryName)) {
-      categoryName = `新分类${counter}`;
+      categoryName = `分类${counter}`;
       counter++;
     }
 
     const categoryEnum = CardCategory.CUSTOM; // 新建的都是自定义类型
     addActivityCategory(categoryName, categoryEnum);
     setError('');
-    loadConfig();
+    const newConfig = loadConfig();
+    // 新建后默认选中第一个分类
+    if (newConfig.length > 0) {
+      setSelectedCategoryId(newConfig[0].id);
+    }
     onConfigChange();
+    toast.success('新增成功！');
   };
 
   // 更新一级分类
   const handleUpdateCategory = (id: string, updates: Partial<ActivityCategoryConfig>) => {
     // 验证分类名称长度
-    if (updates.name && updates.name.trim().length > 3) {
-      toast.error('分类名称不能超过3个字');
+    if (updates.name && updates.name.trim().length > 4) {
+      toast.error('分类名称不能超过4个字');
       return;
     }
 
@@ -123,6 +142,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     saveActivityConfig(updated);
     onConfigChange();
     setEditing(null);
+    toast.success('保存成功！');
   };
 
   // 删除一级分类
@@ -143,6 +163,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
         const newConfig = config.filter(c => c.id !== id);
         setSelectedCategoryId(newConfig[0]?.id || null);
       }
+      toast.success(' 删除成功！');
     }
   };
 
@@ -157,6 +178,12 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     const category = config.find(c => c.id === selectedCategoryId);
     if (!category) return;
 
+    // 检查二级分类数量限制（最多20个）
+    if (category.items.length >= 20) {
+      toast.error('每个一级分类下的二级分类最多只能创建20个');
+      return;
+    }
+
     let itemName = '新活动';
     let counter = 1;
     while (category.items.some(item => item.name === itemName)) {
@@ -168,6 +195,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     setError('');
     loadConfig();
     onConfigChange();
+    toast.success('新增成功！');
   };
 
   // 自动平衡当前分类的二级活动概率
@@ -202,6 +230,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     saveActivityConfig(newConfig);
     onConfigChange();
     setError('');
+    toast.success(' 自动平衡成功！');
   };
 
   // 更新二级活动项
@@ -210,6 +239,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     loadConfig();
     onConfigChange();
     setEditing(null);
+    toast.success('保存成功！');
   };
 
   // 开始编辑二级活动项
@@ -265,16 +295,18 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
 
   // 处理一级分类编辑时的键盘事件
   const handleCategoryKeyDown = (e: React.KeyboardEvent, categoryId: string) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && e.ctrlKey) {
       e.preventDefault();
+      e.stopPropagation();
       saveEditCategory(categoryId);
     }
   };
 
   // 处理二级活动项编辑时的键盘事件
   const handleItemKeyDown = (e: React.KeyboardEvent, categoryId: string, itemId: string) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && e.ctrlKey) {
       e.preventDefault();
+      e.stopPropagation();
       saveEditItem(categoryId, itemId);
     }
   };
@@ -294,6 +326,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
       if (editing?.type === 'item' && editing.id === itemId) {
         setEditing(null);
       }
+      toast.success(' 删除成功！');
     }
   };
 
@@ -305,54 +338,10 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
       setError(''); // 清空错误信息
       loadConfig();
       onConfigChange();
+      toast.success(' 重置成功！');
     }
   };
 
-  // 验证并保存
-  const handleSave = () => {
-    // 1. 检查自定义分类概率是否为负
-    if (!isConfigValid()) {
-      toast.error('⚠️ 概率总和超过100%，自定义分类概率为负！请调整其他分类的概率。');
-      return;
-    }
-
-    // 2. 检查每个分类的二级活动概率总和是否与一级分类概率一致
-    const mismatchCategories = config.filter(category => {
-      const itemsSum = calculateItemsProbabilitySum(category.id);
-      return Math.abs(itemsSum - category.totalProbability) > 0.001;
-    });
-
-    if (mismatchCategories.length > 0) {
-      const messages = mismatchCategories.map(cat => {
-        const itemsSum = calculateItemsProbabilitySum(cat.id);
-        return `"${cat.name}": 二级分类概率总和 ${formatProbability(itemsSum)}% ≠ 一级分类概率 ${formatProbability(cat.totalProbability)}%`;
-      });
-      toast.error(`⚠️ 以下分类的概率不匹配：\n\n${messages.join('\n')}\n\n请先调整概率或使用自动平衡功能。`, { duration: 5000 });
-      return;
-    }
-
-    // 3. 使用完整的概率验证
-    const validation = validateProbabilities(config);
-    if (!validation.valid) {
-      toast.error(`⚠️ ${validation.message}`);
-      return;
-    }
-
-    // 4. 检查是否有空分类（没有活动项的分类）
-    const emptyCategories = config.filter(cat => cat.name !== '自定义' && cat.items.length === 0);
-    if (emptyCategories.length > 0) {
-      const categoryNames = emptyCategories.map(cat => `"${cat.name}"`).join('、');
-      if (!confirm(`⚠️ 以下分类没有活动项：${categoryNames}\n\n这些分类将无法被抽中。是否继续保存？`)) {
-        return;
-      }
-    }
-
-    // 保存配置
-    saveActivityConfig(config);
-    setError('');
-    toast.success('✅ 保存成功！');
-    onClose();
-  };
 
   // 自动平衡概率（平均分配）
   const handleAutoBalance = () => {
@@ -388,6 +377,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
     saveActivityConfig(newConfig);
     onConfigChange();
     setError('');
+    toast.success(' 自动平衡成功！');
   };
 
   return ReactDOM.createPortal(
@@ -412,13 +402,6 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
               ⚖️
             </button>
             <button 
-              className="activity-manager__btn-save" 
-              onClick={handleSave}
-              title="保存配置"
-            >
-              💾
-            </button>
-            <button 
               className="activity-manager__btn-close" 
               onClick={onClose}
               title="关闭"
@@ -432,7 +415,12 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
           {/* 左侧：一级分类列表 */}
           <div className="activity-manager__sidebar">
             <div className="activity-manager__sidebar-header">
-              <h3>一级分类</h3>
+              <div className="activity-manager__sidebar-header-left">
+                <h3>一级分类</h3>
+                <span className="activity-manager__item-count">
+                  {config.length}个分类，共{config.reduce((sum, cat) => sum + cat.items.length, 0)}个活动
+                </span>
+              </div>
               <button 
                 className="activity-manager__btn-add-category" 
                 onClick={handleAddCategory}
@@ -467,8 +455,8 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                           value={editingCategoryName}
                           onChange={(e) => setEditingCategoryName(e.target.value)}
                           onKeyDown={(e) => handleCategoryKeyDown(e, category.id)}
-                          placeholder="分类名称（最多3个字）"
-                          maxLength={3}
+                          placeholder="分类名称（最多4个字）"
+                          maxLength={4}
                           autoFocus
                         />
                         <input

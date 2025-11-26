@@ -23,8 +23,8 @@ export const FORTUNE_LEVEL_LABELS: Record<FortuneLevel, string> = {
 // 运势等级颜色映射（避免蓝色，背景是蓝色）
 export const FORTUNE_LEVEL_COLORS: Record<FortuneLevel, string> = {
   [FortuneLevel.EXCELLENT]: '#9b59b6',      // 大吉：紫色
-  [FortuneLevel.GOOD]: '#ffa94d',          // 吉：橙色
-  [FortuneLevel.FAIR]: '#ffd700',          // 小吉：金色
+  [FortuneLevel.GOOD]: '#ffd700',          // 吉：金色（原小吉的颜色）
+  [FortuneLevel.FAIR]: '#c0c0c0',          // 小吉：银色
   [FortuneLevel.POOR]: '#ff8c00',          // 小凶：深橙色
   [FortuneLevel.BAD]: '#dc3545',           // 凶：深红色
   [FortuneLevel.TERRIBLE]: '#28a745'        // 大凶：绿色

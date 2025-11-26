@@ -27,12 +27,26 @@ const SleepForm: React.FC<SleepFormProps> = ({
     return `${year}-${month}-${day}`;
   };
 
-  const [date, setDate] = useState(getDefaultDate());
-  const [sleepTime, setSleepTime] = useState('00:00');
-  const [wakeTime, setWakeTime] = useState('08:00');
-  const [quality, setQuality] = useState<string>('');
-  const [notes, setNotes] = useState('');
-  const [naps, setNaps] = useState({
+  // 从 localStorage 恢复表单数据（页面切换时保持）
+  const loadFormData = () => {
+    const saved = localStorage.getItem('sleepFormData');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const savedFormData = loadFormData();
+  const [date, setDate] = useState(savedFormData?.date || getDefaultDate());
+  const [sleepTime, setSleepTime] = useState(savedFormData?.sleepTime || '00:00');
+  const [wakeTime, setWakeTime] = useState(savedFormData?.wakeTime || '08:00');
+  const [quality, setQuality] = useState<string>(savedFormData?.quality || '');
+  const [notes, setNotes] = useState(savedFormData?.notes || '');
+  const [naps, setNaps] = useState(savedFormData?.naps || {
     morning: false,
     noon: false,
     afternoon: false,
@@ -53,6 +67,46 @@ const SleepForm: React.FC<SleepFormProps> = ({
     });
   };
 
+  // 检查是否是页面刷新（首次加载）
+  const [isFirstLoad, setIsFirstLoad] = useState(() => {
+    const initialized = sessionStorage.getItem('sleepFormInitialized');
+    if (!initialized) {
+      sessionStorage.setItem('sleepFormInitialized', 'true');
+      // 首次加载时清除 localStorage 中的表单数据
+      localStorage.removeItem('sleepFormData');
+      return true;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    // 监听页面卸载，清除标记（刷新时会重新设置）
+    const handleBeforeUnload = () => {
+      sessionStorage.removeItem('sleepFormInitialized');
+      // 刷新时清除表单数据
+      localStorage.removeItem('sleepFormData');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
+  // 保存表单数据到 localStorage（页面切换时保持）
+  useEffect(() => {
+    if (!editingSleep) {
+      localStorage.setItem('sleepFormData', JSON.stringify({
+        date,
+        sleepTime,
+        wakeTime,
+        quality,
+        notes,
+        naps
+      }));
+    }
+  }, [date, sleepTime, wakeTime, quality, notes, naps, editingSleep]);
+
   // 当编辑记录时，填充表单
   useEffect(() => {
     if (editingSleep) {
@@ -68,7 +122,11 @@ const SleepForm: React.FC<SleepFormProps> = ({
         evening: editingSleep.naps?.evening || false
       });
     } else {
-      resetForm();
+      // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
+      if (isFirstLoad && !savedFormData) {
+        resetForm();
+        setIsFirstLoad(false); // 标记已处理首次加载
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingSleep]);

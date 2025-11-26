@@ -123,9 +123,11 @@
     max-width: 600px;
     width: 100%;
     max-height: 85vh;
-    overflow-y: auto;
+    overflow-y: hidden;
     position: relative;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
   }
 
   &__settings-icon {
@@ -166,6 +168,7 @@
     align-items: center;
     justify-content: center;
     min-height: 200px;
+    flex-shrink: 0;
   }
 
   &__already-drawn {
@@ -227,6 +230,7 @@
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
+    flex-shrink: 0;
   }
 
   &__drawn-card {
@@ -343,18 +347,25 @@
     margin-top: 2rem;
     padding-top: 2rem;
     border-top: 1px solid #e0e0e0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 400px;
   }
 
   &__probability-title {
     font-weight: 600;
     color: #333;
     margin-bottom: 0.5rem;
+    flex-shrink: 0;
   }
 
-  ul {
+  &__probability ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     li {
       padding: 0.4rem 0;

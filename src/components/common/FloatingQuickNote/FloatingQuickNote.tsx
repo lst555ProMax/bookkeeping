@@ -16,6 +16,7 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
     const savedMode = localStorage.getItem('floatingMode') as FloatingMode | null;
     const savedIsOpen = localStorage.getItem('floatingWindowOpen');
     const savedWindowPos = localStorage.getItem('floatingWindowPosition');
+    const savedButtonPos = localStorage.getItem('floatingButtonPosition');
     const savedQuickNote = localStorage.getItem('floatingQuickNoteTemp');
     const savedTodo = localStorage.getItem('floatingTodo');
 
@@ -23,6 +24,7 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
       mode: savedMode || 'quickNote',
       isWindowOpen: savedIsOpen === 'true',
       windowPosition: savedWindowPos ? JSON.parse(savedWindowPos) : { x: 100, y: 100 },
+      buttonPosition: savedButtonPos ? JSON.parse(savedButtonPos) : { x: 40, y: 40 },
       quickNoteInput: savedQuickNote || '',
       todoInput: savedTodo || '',
     };
@@ -34,7 +36,7 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
   const [isWindowOpen, setIsWindowOpen] = useState(initialState.isWindowOpen);
   const [quickNoteInput, setQuickNoteInput] = useState(initialState.quickNoteInput);
   const [todoInput, setTodoInput] = useState(initialState.todoInput); // 待办输入内容
-  const [buttonPosition, setButtonPosition] = useState({ x: 40, y: 40 }); // 悬浮球距离右下角的距离
+  const [buttonPosition, setButtonPosition] = useState(initialState.buttonPosition); // 悬浮球距离右下角的距离
   const [windowPosition, setWindowPosition] = useState(initialState.windowPosition); // 悬浮窗位置(距离左上角)
   const [isButtonDragging, setIsButtonDragging] = useState(false);
   const [isWindowDragging, setIsWindowDragging] = useState(false);
@@ -67,6 +69,11 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
   useEffect(() => {
     localStorage.setItem('floatingWindowPosition', JSON.stringify(windowPosition));
   }, [windowPosition]);
+
+  // 保存悬浮球位置到 localStorage
+  useEffect(() => {
+    localStorage.setItem('floatingButtonPosition', JSON.stringify(buttonPosition));
+  }, [buttonPosition]);
 
   // 自动保存速记内容(临时,不保存到列表)
   useEffect(() => {
@@ -243,15 +250,18 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
     if (mode === 'quickNote') {
       if (e.key === 'Enter' && e.ctrlKey) {
         e.preventDefault();
+        e.stopPropagation(); // 阻止事件冒泡，避免全局生效
         handleAddQuickNote();
       } else if (e.key === 'Escape') {
         e.preventDefault();
+        e.stopPropagation();
         handleCloseWindow();
       }
     } else {
       // 待办模式只处理ESC关闭
       if (e.key === 'Escape') {
         e.preventDefault();
+        e.stopPropagation();
         handleCloseWindow();
       }
     }

@@ -125,15 +125,18 @@ export const addCategory = (name: string, category: CardCategory): ActivityCateg
     items: []
   };
   
-  // 找到"自定义"分类的索引
+  // 添加到列表的第一位（排除"自定义"分类）
   const customIndex = config.findIndex(c => c.name === '自定义');
   
-  if (customIndex !== -1) {
-    // 如果找到"自定义"，插入到它之前
-    config.splice(customIndex, 0, newCategory);
+  if (customIndex === 0) {
+    // 如果"自定义"分类在第一位，插入到第一位，"自定义"会被推到第二位
+    config.splice(0, 0, newCategory);
+  } else if (customIndex !== -1 && customIndex > 0) {
+    // 如果"自定义"分类存在且不在第一位，插入到第一位
+    config.splice(0, 0, newCategory);
   } else {
-    // 如果没有找到"自定义"，添加到末尾
-    config.push(newCategory);
+    // 如果没有找到"自定义"，添加到第一位
+    config.unshift(newCategory);
   }
   
   saveActivityConfig(config);
@@ -145,7 +148,33 @@ export const addCategory = (name: string, category: CardCategory): ActivityCateg
  */
 export const deleteCategory = (id: string): ActivityCategoryConfig[] => {
   const config = loadActivityConfig();
+  const categoryToDelete = config.find(c => c.id === id);
+  
+  if (!categoryToDelete) {
+    return config;
+  }
+
+  // 如果删除的是自定义分类，直接删除
+  if (categoryToDelete.name === '自定义') {
+    const filtered = config.filter(c => c.id !== id);
+    saveActivityConfig(filtered);
+    return filtered;
+  }
+
+  // 找到自定义分类
+  const customCategory = config.find(c => c.name === '自定义');
+  
+  // 删除分类
   const filtered = config.filter(c => c.id !== id);
+  
+  // 如果存在自定义分类，将删除分类的概率加到自定义分类
+  if (customCategory && categoryToDelete.totalProbability > 0) {
+    const customCategoryIndex = filtered.findIndex(c => c.id === customCategory.id);
+    if (customCategoryIndex !== -1) {
+      filtered[customCategoryIndex].totalProbability += categoryToDelete.totalProbability;
+    }
+  }
+  
   saveActivityConfig(filtered);
   return filtered;
 };
@@ -163,7 +192,8 @@ export const addActivityItem = (categoryId: string, name: string, cardType: Card
       probability: 0,
       cardType
     };
-    category.items.push(newItem);
+    // 添加到列表的第一位
+    category.items.unshift(newItem);
     saveActivityConfig(config);
   }
   return config;

@@ -60,6 +60,22 @@ const CardDraw: React.FC = () => {
     setCustomContent('');
   };
 
+  // ESC退出绑定
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showModal) {
+        setShowModal(false);
+        setIsDrawing(false);
+        setDrawnCard(null);
+        setCustomContent('');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showModal]);
+
   // 执行抽卡
   const handleDraw = () => {
     if (hasTodayDrawn()) {
