@@ -1,0 +1,90 @@
+{
+  "version": "2.0.0",
+  "exportDate": "2025-11-26T00:00:00.000Z",
+  "expenses": [],
+  "incomes": [
+    {
+      "id": "income_light_1",
+      "date": "2025-10-05",
+      "amount": 8000.0,
+      "category": "工资收入",
+      "description": "示例数据",
+      "createdAt": "2025-10-05T09:00:00.000Z"
+    },
+    {
+      "id": "income_light_2",
+      "date": "2025-10-12",
+      "amount": 500.0,
+      "category": "奖助学金",
+      "description": "示例数据",
+      "createdAt": "2025-10-12T14:00:00.000Z"
+    },
+    {
+      "id": "income_light_3",
+      "date": "2025-10-18",
+      "amount": 50.0,
+      "category": "交易退款",
+      "description": "示例数据",
+      "createdAt": "2025-10-18T16:30:00.000Z"
+    },
+    {
+      "id": "income_light_4",
+      "date": "2025-10-25",
+      "amount": 200.0,
+      "category": "他人转账",
+      "description": "示例数据",
+      "createdAt": "2025-10-25T18:00:00.000Z"
+    },
+    {
+      "id": "income_light_5",
+      "date": "2025-10-31",
+      "amount": 150.0,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-10-31T10:00:00.000Z"
+    },
+    {
+      "id": "income_light_6",
+      "date": "2025-11-05",
+      "amount": 8400.0,
+      "category": "工资收入",
+      "description": "示例数据",
+      "createdAt": "2025-11-05T09:00:00.000Z"
+    },
+    {
+      "id": "income_light_7",
+      "date": "2025-11-12",
+      "amount": 580.0,
+      "category": "奖助学金",
+      "description": "示例数据",
+      "createdAt": "2025-11-12T14:00:00.000Z"
+    },
+    {
+      "id": "income_light_8",
+      "date": "2025-11-18",
+      "amount": 105.0,
+      "category": "交易退款",
+      "description": "示例数据",
+      "createdAt": "2025-11-18T16:30:00.000Z"
+    },
+    {
+      "id": "income_light_9",
+      "date": "2025-11-22",
+      "amount": 320.0,
+      "category": "他人转账",
+      "description": "示例数据",
+      "createdAt": "2025-11-22T18:00:00.000Z"
+    },
+    {
+      "id": "income_light_10",
+      "date": "2025-11-26",
+      "amount": 180.0,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-11-26T10:00:00.000Z"
+    }
+  ],
+  "totalExpenses": 0,
+  "totalIncomes": 10
+}
+

@@ -15,6 +15,272 @@ export interface ExportData {
 }
 
 /**
+ * 验证日期格式是否为 YYYY-MM-DD
+ */
+const isValidDate = (dateStr: string): boolean => {
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(dateStr)) {
+    return false;
+  }
+  const date = new Date(dateStr);
+  return date instanceof Date && !isNaN(date.getTime()) && dateStr === date.toISOString().split('T')[0];
+};
+
+/**
+ * 验证支出记录格式，返回详细的错误信息
+ */
+const validateExpenseRecordWithError = (record: unknown, index: number): { valid: boolean; error?: string } => {
+  if (typeof record !== 'object' || record === null) {
+    return { valid: false, error: `无效的支出记录[${index}]：记录必须是对象` };
+  }
+  
+  const r = record as Record<string, unknown>;
+  
+  // 检查必需字段
+  if (typeof r.id !== 'string') {
+    return { valid: false, error: `无效的支出记录[${index}]：id字段必须是字符串` };
+  }
+  
+  if (typeof r.date !== 'string') {
+    return { valid: false, error: `无效的支出记录[${index}]：date字段必须是字符串` };
+  }
+  
+  if (typeof r.amount !== 'number') {
+    return { valid: false, error: `无效的支出记录[${index}]：amount字段必须是数字` };
+  }
+  
+  if (typeof r.category !== 'string') {
+    return { valid: false, error: `无效的支出记录[${index}]：category字段必须是字符串` };
+  }
+  
+  if (typeof r.createdAt !== 'string') {
+    return { valid: false, error: `无效的支出记录[${index}]：createdAt字段必须是字符串` };
+  }
+  
+  // 验证日期格式
+  if (!isValidDate(r.date)) {
+    return { valid: false, error: `无效的支出记录[${index}]：date格式不正确，必须是YYYY-MM-DD格式` };
+  }
+  
+  // 验证金额（必须为正数，且不超过1000000）
+  if (r.amount <= 0) {
+    return { valid: false, error: `无效的支出记录[${index}]：amount必须大于0` };
+  }
+  
+  if (r.amount > 1000000) {
+    return { valid: false, error: `无效的支出记录[${index}]：amount不能超过1,000,000` };
+  }
+  
+  if (!Number.isFinite(r.amount)) {
+    return { valid: false, error: `无效的支出记录[${index}]：amount必须是有效数字` };
+  }
+  
+  // 验证分类（不能为空）
+  if (typeof r.category !== 'string' || r.category.trim().length === 0) {
+    return { valid: false, error: `无效的支出记录[${index}]：category不能为空` };
+  }
+  
+  // 验证description（如果存在，必须是字符串，且长度不超过50）
+  if (r.description !== undefined && r.description !== null) {
+    if (typeof r.description !== 'string') {
+      return { valid: false, error: `无效的支出记录[${index}]：description必须是字符串` };
+    }
+    if (r.description.length > 50) {
+      return { valid: false, error: `无效的支出记录[${index}]：description长度不能超过50个字符` };
+    }
+  }
+  
+  // 验证createdAt是有效的日期字符串
+  const createdAt = new Date(r.createdAt);
+  if (!(createdAt instanceof Date) || isNaN(createdAt.getTime())) {
+    return { valid: false, error: `无效的支出记录[${index}]：createdAt必须是有效的日期字符串` };
+  }
+  
+  return { valid: true };
+};
+
+/**
+ * 验证收入记录格式，返回详细的错误信息
+ */
+const validateIncomeRecordWithError = (record: unknown, index: number): { valid: boolean; error?: string } => {
+  if (typeof record !== 'object' || record === null) {
+    return { valid: false, error: `无效的收入记录[${index}]：记录必须是对象` };
+  }
+  
+  const r = record as Record<string, unknown>;
+  
+  // 检查必需字段
+  if (typeof r.id !== 'string') {
+    return { valid: false, error: `无效的收入记录[${index}]：id字段必须是字符串` };
+  }
+  
+  if (typeof r.date !== 'string') {
+    return { valid: false, error: `无效的收入记录[${index}]：date字段必须是字符串` };
+  }
+  
+  if (typeof r.amount !== 'number') {
+    return { valid: false, error: `无效的收入记录[${index}]：amount字段必须是数字` };
+  }
+  
+  if (typeof r.category !== 'string') {
+    return { valid: false, error: `无效的收入记录[${index}]：category字段必须是字符串` };
+  }
+  
+  if (typeof r.createdAt !== 'string') {
+    return { valid: false, error: `无效的收入记录[${index}]：createdAt字段必须是字符串` };
+  }
+  
+  // 验证日期格式
+  if (!isValidDate(r.date)) {
+    return { valid: false, error: `无效的收入记录[${index}]：date格式不正确，必须是YYYY-MM-DD格式` };
+  }
+  
+  // 验证金额（必须为正数，且不超过1000000）
+  if (r.amount <= 0) {
+    return { valid: false, error: `无效的收入记录[${index}]：amount必须大于0` };
+  }
+  
+  if (r.amount > 1000000) {
+    return { valid: false, error: `无效的收入记录[${index}]：amount不能超过1,000,000` };
+  }
+  
+  if (!Number.isFinite(r.amount)) {
+    return { valid: false, error: `无效的收入记录[${index}]：amount必须是有效数字` };
+  }
+  
+  // 验证分类（不能为空）
+  if (typeof r.category !== 'string' || r.category.trim().length === 0) {
+    return { valid: false, error: `无效的收入记录[${index}]：category不能为空` };
+  }
+  
+  // 验证description（如果存在，必须是字符串，且长度不超过50）
+  if (r.description !== undefined && r.description !== null) {
+    if (typeof r.description !== 'string') {
+      return { valid: false, error: `无效的收入记录[${index}]：description必须是字符串` };
+    }
+    if (r.description.length > 50) {
+      return { valid: false, error: `无效的收入记录[${index}]：description长度不能超过50个字符` };
+    }
+  }
+  
+  // 验证createdAt是有效的日期字符串
+  const createdAt = new Date(r.createdAt);
+  if (!(createdAt instanceof Date) || isNaN(createdAt.getTime())) {
+    return { valid: false, error: `无效的收入记录[${index}]：createdAt必须是有效的日期字符串` };
+  }
+  
+  return { valid: true };
+};
+
+/**
+ * 验证导出数据格式，返回详细的错误信息
+ */
+const validateExportDataWithError = (data: unknown): { valid: boolean; error?: string } => {
+  if (typeof data !== 'object' || data === null) {
+    return { valid: false, error: '无效的数据格式：数据必须是JSON对象' };
+  }
+  
+  const d = data as Record<string, unknown>;
+  
+  // 检查顶层字段
+  if (typeof d.version !== 'string') {
+    return { valid: false, error: '无效的数据格式：缺少version字段或类型不正确' };
+  }
+  
+  if (typeof d.exportDate !== 'string') {
+    return { valid: false, error: '无效的数据格式：缺少exportDate字段或类型不正确' };
+  }
+  
+  if (typeof d.totalExpenses !== 'number') {
+    return { valid: false, error: '无效的数据格式：缺少totalExpenses字段或类型不正确' };
+  }
+  
+  if (typeof d.totalIncomes !== 'number') {
+    return { valid: false, error: '无效的数据格式：缺少totalIncomes字段或类型不正确' };
+  }
+  
+  // 检查expenses数组
+  if (!Array.isArray(d.expenses)) {
+    return { valid: false, error: '无效的数据格式：expenses必须是数组' };
+  }
+  
+  // 检查incomes数组
+  if (!Array.isArray(d.incomes)) {
+    return { valid: false, error: '无效的数据格式：incomes必须是数组' };
+  }
+  
+  // 验证totalExpenses和totalIncomes与实际数组长度一致
+  if (d.totalExpenses !== d.expenses.length) {
+    return { valid: false, error: `无效的数据格式：totalExpenses(${d.totalExpenses})与expenses数组长度(${d.expenses.length})不一致` };
+  }
+  
+  if (d.totalIncomes !== d.incomes.length) {
+    return { valid: false, error: `无效的数据格式：totalIncomes(${d.totalIncomes})与incomes数组长度(${d.incomes.length})不一致` };
+  }
+  
+  // 检查支出记录ID唯一性
+  const expenseIds = new Set<string>();
+  for (let i = 0; i < d.expenses.length; i++) {
+    const expense = d.expenses[i];
+    if (typeof expense !== 'object' || expense === null) {
+      return { valid: false, error: `无效的数据格式：expenses[${i}]不是有效的对象` };
+    }
+    const exp = expense as Record<string, unknown>;
+    if (typeof exp.id !== 'string') {
+      return { valid: false, error: `无效的数据格式：expenses[${i}]缺少id字段或类型不正确` };
+    }
+    if (expenseIds.has(exp.id)) {
+      return { valid: false, error: `无效的数据格式：expenses中存在重复的id "${exp.id}"` };
+    }
+    expenseIds.add(exp.id);
+  }
+  
+  // 检查收入记录ID唯一性
+  const incomeIds = new Set<string>();
+  for (let i = 0; i < d.incomes.length; i++) {
+    const income = d.incomes[i];
+    if (typeof income !== 'object' || income === null) {
+      return { valid: false, error: `无效的数据格式：incomes[${i}]不是有效的对象` };
+    }
+    const inc = income as Record<string, unknown>;
+    if (typeof inc.id !== 'string') {
+      return { valid: false, error: `无效的数据格式：incomes[${i}]缺少id字段或类型不正确` };
+    }
+    if (incomeIds.has(inc.id)) {
+      return { valid: false, error: `无效的数据格式：incomes中存在重复的id "${inc.id}"` };
+    }
+    incomeIds.add(inc.id);
+  }
+  
+  // 验证每个支出记录
+  for (let i = 0; i < d.expenses.length; i++) {
+    const expense = d.expenses[i];
+    const validation = validateExpenseRecordWithError(expense, i);
+    if (!validation.valid) {
+      return validation;
+    }
+  }
+  
+  // 验证每个收入记录
+  for (let i = 0; i < d.incomes.length; i++) {
+    const income = d.incomes[i];
+    const validation = validateIncomeRecordWithError(income, i);
+    if (!validation.valid) {
+      return validation;
+    }
+  }
+  
+  return { valid: true };
+};
+
+/**
+ * 验证导出数据格式（保持向后兼容）
+ */
+const validateExportData = (data: unknown): data is ExportData => {
+  return validateExportDataWithError(data).valid;
+};
+
+/**
  * 导出所有记账记录到JSON文件（包括支出和收入）
  * @param expenses 可选的支出记录数组，如果不提供则导出所有支出记录
  * @param incomes 可选的收入记录数组，如果不提供则导出所有收入记录
@@ -149,11 +415,14 @@ export const importAccountingData = (file: File): Promise<{
       reader.onload = (event) => {
         try {
           const content = event.target?.result as string;
-          const importData: ExportData = JSON.parse(content);
+          const parsedData = JSON.parse(content);
           
-          if (!importData.expenses && !importData.incomes) {
-            throw new Error('无效的数据格式：缺少expenses或incomes数组');
+          // 严格验证数据格式
+          if (!validateExportData(parsedData)) {
+            throw new Error('无效的数据格式：文件格式与导出格式不一致，请确保使用正确的导出文件');
           }
+          
+          const importData = parsedData as ExportData;
           
           // 检查缺失的分类
           const currentExpenseCategories = getCategories();
@@ -162,21 +431,18 @@ export const importAccountingData = (file: File): Promise<{
           const missingExpenseCategories = new Set<string>();
           const missingIncomeCategories = new Set<string>();
           
-          if (importData.expenses && Array.isArray(importData.expenses)) {
-            importData.expenses.forEach(expense => {
-              if (expense.category && !currentExpenseCategories.includes(expense.category)) {
-                missingExpenseCategories.add(expense.category);
-              }
-            });
-          }
+          // 检查缺失的分类（数据已经通过校验，可以直接使用）
+          importData.expenses.forEach(expense => {
+            if (!currentExpenseCategories.includes(expense.category)) {
+              missingExpenseCategories.add(expense.category);
+            }
+          });
           
-          if (importData.incomes && Array.isArray(importData.incomes)) {
-            importData.incomes.forEach(income => {
-              if (income.category && !currentIncomeCategories.includes(income.category)) {
-                missingIncomeCategories.add(income.category);
-              }
-            });
-          }
+          importData.incomes.forEach(income => {
+            if (!currentIncomeCategories.includes(income.category)) {
+              missingIncomeCategories.add(income.category);
+            }
+          });
           
           // 如果有缺失的分类，提示用户
           const hasMissingCategories = missingExpenseCategories.size > 0 || missingIncomeCategories.size > 0;
@@ -221,55 +487,57 @@ export const importAccountingData = (file: File): Promise<{
           let importedIncomes = 0;
           let skippedIncomes = 0;
           
-          // 导入支出记录
-          if (importData.expenses && Array.isArray(importData.expenses)) {
-            importData.expenses.forEach(expense => {
-              if (!expense.id || !expense.amount || !expense.category || !expense.date) {
-                skippedExpenses++;
-                return;
-              }
-              
-              if (existingExpenseIds.has(expense.id)) {
-                skippedExpenses++;
-                return;
-              }
-              
-              addExpense(expense);
-              importedExpenses++;
-            });
-          }
+          // 导入支出记录（数据已经通过严格校验）
+          importData.expenses.forEach(expense => {
+            if (existingExpenseIds.has(expense.id)) {
+              skippedExpenses++;
+              return;
+            }
+            
+            // 转换createdAt从字符串到Date对象
+            const expenseToAdd: ExpenseRecord = {
+              ...expense,
+              createdAt: new Date(expense.createdAt)
+            };
+            
+            addExpense(expenseToAdd);
+            importedExpenses++;
+          });
           
-          // 导入收入记录
-          if (importData.incomes && Array.isArray(importData.incomes)) {
-            importData.incomes.forEach(income => {
-              if (!income.id || !income.amount || !income.category || !income.date) {
-                skippedIncomes++;
-                return;
-              }
-              
-              if (existingIncomeIds.has(income.id)) {
-                skippedIncomes++;
-                return;
-              }
-              
-              addIncome(income);
-              importedIncomes++;
-            });
-          }
+          // 导入收入记录（数据已经通过严格校验）
+          importData.incomes.forEach(income => {
+            if (existingIncomeIds.has(income.id)) {
+              skippedIncomes++;
+              return;
+            }
+            
+            // 转换createdAt从字符串到Date对象
+            const incomeToAdd: IncomeRecord = {
+              ...income,
+              createdAt: new Date(income.createdAt)
+            };
+            
+            addIncome(incomeToAdd);
+            importedIncomes++;
+          });
           
           resolve({
             importedExpenses,
             importedIncomes,
             skippedExpenses,
             skippedIncomes,
-            totalExpenses: importData.expenses?.length || 0,
-            totalIncomes: importData.incomes?.length || 0
+            totalExpenses: importData.expenses.length,
+            totalIncomes: importData.incomes.length
           });
           
           console.log(`导入完成: 支出 ${importedExpenses} 条新记录 (${skippedExpenses} 条跳过), 收入 ${importedIncomes} 条新记录 (${skippedIncomes} 条跳过)`);
-        } catch (parseError) {
-          console.error('解析文件失败:', parseError);
-          reject(new Error('文件格式错误，请确保是有效的JSON文件'));
+        } catch (error) {
+          console.error('解析文件失败:', error);
+          if (error instanceof Error) {
+            reject(error);
+          } else {
+            reject(new Error('文件格式错误，请确保是有效的JSON文件'));
+          }
         }
       };
       
@@ -300,18 +568,28 @@ export const importExpensesOnly = (file: File): Promise<{
       reader.onload = (event) => {
         try {
           const content = event.target?.result as string;
-          const importData: ExportData = JSON.parse(content);
+          let parsedData: unknown;
           
-          if (!importData.expenses || !Array.isArray(importData.expenses)) {
-            throw new Error('无效的数据格式：缺少expenses数组');
+          try {
+            parsedData = JSON.parse(content);
+          } catch {
+            throw new Error('文件格式错误：无法解析JSON，请确保文件是有效的JSON格式');
           }
+          
+          // 严格验证数据格式
+          const validation = validateExportDataWithError(parsedData);
+          if (!validation.valid) {
+            throw new Error(validation.error || '无效的数据格式：文件格式与导出格式不一致，请确保使用正确的导出文件');
+          }
+          
+          const importData = parsedData as ExportData;
           
           // 检查缺失的分类
           const currentCategories = getCategories();
           const missingCategories = new Set<string>();
           
           importData.expenses.forEach(expense => {
-            if (expense.category && !currentCategories.includes(expense.category)) {
+            if (!currentCategories.includes(expense.category)) {
               missingCategories.add(expense.category);
             }
           });
@@ -341,19 +619,20 @@ export const importExpensesOnly = (file: File): Promise<{
           let imported = 0;
           let skipped = 0;
           
-          // 导入支出记录
+          // 导入支出记录（数据已经通过严格校验）
           importData.expenses.forEach(expense => {
-            if (!expense.id || !expense.amount || !expense.category || !expense.date) {
-              skipped++;
-              return;
-            }
-            
             if (existingIds.has(expense.id)) {
               skipped++;
               return;
             }
             
-            addExpense(expense);
+            // 转换createdAt从字符串到Date对象
+            const expenseToAdd: ExpenseRecord = {
+              ...expense,
+              createdAt: new Date(expense.createdAt)
+            };
+            
+            addExpense(expenseToAdd);
             imported++;
           });
           
@@ -364,9 +643,13 @@ export const importExpensesOnly = (file: File): Promise<{
           });
           
           console.log(`导入完成: ${imported} 条新支出记录 (${skipped} 条跳过)`);
-        } catch (parseError) {
-          console.error('解析文件失败:', parseError);
-          reject(new Error('文件格式错误，请确保是有效的JSON文件'));
+        } catch (error) {
+          console.error('解析文件失败:', error);
+          if (error instanceof Error) {
+            reject(error);
+          } else {
+            reject(new Error('文件格式错误，请确保是有效的JSON文件'));
+          }
         }
       };
       
@@ -397,18 +680,28 @@ export const importIncomesOnly = (file: File): Promise<{
       reader.onload = (event) => {
         try {
           const content = event.target?.result as string;
-          const importData: ExportData = JSON.parse(content);
+          let parsedData: unknown;
           
-          if (!importData.incomes || !Array.isArray(importData.incomes)) {
-            throw new Error('无效的数据格式：缺少incomes数组');
+          try {
+            parsedData = JSON.parse(content);
+          } catch {
+            throw new Error('文件格式错误：无法解析JSON，请确保文件是有效的JSON格式');
           }
+          
+          // 严格验证数据格式
+          const validation = validateExportDataWithError(parsedData);
+          if (!validation.valid) {
+            throw new Error(validation.error || '无效的数据格式：文件格式与导出格式不一致，请确保使用正确的导出文件');
+          }
+          
+          const importData = parsedData as ExportData;
           
           // 检查缺失的分类
           const currentCategories = getIncomeCategories();
           const missingCategories = new Set<string>();
           
           importData.incomes.forEach(income => {
-            if (income.category && !currentCategories.includes(income.category)) {
+            if (!currentCategories.includes(income.category)) {
               missingCategories.add(income.category);
             }
           });
@@ -438,19 +731,20 @@ export const importIncomesOnly = (file: File): Promise<{
           let imported = 0;
           let skipped = 0;
           
-          // 导入收入记录
+          // 导入收入记录（数据已经通过严格校验）
           importData.incomes.forEach(income => {
-            if (!income.id || !income.amount || !income.category || !income.date) {
-              skipped++;
-              return;
-            }
-            
             if (existingIds.has(income.id)) {
               skipped++;
               return;
             }
             
-            addIncome(income);
+            // 转换createdAt从字符串到Date对象
+            const incomeToAdd: IncomeRecord = {
+              ...income,
+              createdAt: new Date(income.createdAt)
+            };
+            
+            addIncome(incomeToAdd);
             imported++;
           });
           
@@ -461,9 +755,13 @@ export const importIncomesOnly = (file: File): Promise<{
           });
           
           console.log(`导入完成: ${imported} 条新收入记录 (${skipped} 条跳过)`);
-        } catch (parseError) {
-          console.error('解析文件失败:', parseError);
-          reject(new Error('文件格式错误，请确保是有效的JSON文件'));
+        } catch (error) {
+          console.error('解析文件失败:', error);
+          if (error instanceof Error) {
+            reject(error);
+          } else {
+            reject(new Error('文件格式错误，请确保是有效的JSON文件'));
+          }
         }
       };
       

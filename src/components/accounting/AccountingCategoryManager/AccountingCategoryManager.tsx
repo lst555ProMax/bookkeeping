@@ -199,14 +199,15 @@ const AccountingCategoryManager: React.FC<AccountingCategoryManagerProps> = ({ r
     // 在新位置插入
     newCategories.splice(dropIndex, 0, draggedCategory);
     
-    setCategories(newCategories);
-    
-    // 保存新顺序（包含"其他"）
+    // 保存新顺序（保存函数会自动处理"其他"的位置）
     if (isIncome) {
       saveIncomeCategoriesOrder(newCategories as IncomeCategory[]);
     } else {
       saveCategoriesOrder(newCategories as ExpenseCategory[]);
     }
+    
+    // 重新加载分类列表（排除"其他"）
+    loadCategories();
     onCategoriesChange();
     
     setDraggedIndex(null);
@@ -261,7 +262,7 @@ const AccountingCategoryManager: React.FC<AccountingCategoryManagerProps> = ({ r
                 <div 
                   key={category} 
                   className={`category-manager__item ${draggedIndex === index ? 'dragging' : ''}`}
-                  draggable={editingCategory !== category}
+                  draggable={editingCategory === null}
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragEnd={handleDragEnd}
                   onDragOver={handleDragOver}
@@ -301,7 +302,7 @@ const AccountingCategoryManager: React.FC<AccountingCategoryManagerProps> = ({ r
                       </>
                     ) : (
                       <>
-                        <div className="category-manager__drag-handle">
+                        <div className="category-manager__drag-handle" style={editingCategory !== null ? { opacity: 0.3 } : undefined}>
                           ⋮⋮
                         </div>
                         <span className="category-manager__name">

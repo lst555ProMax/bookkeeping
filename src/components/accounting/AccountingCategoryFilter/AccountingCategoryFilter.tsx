@@ -207,6 +207,7 @@ const AccountingCategoryFilter: React.FC<AccountingCategoryFilterProps> = ({
                   onChange={(val) => onMinAmountChange?.(val)}
                   placeholder="0"
                   min={0}
+                  max={1000000}
                   step={500}
                   width="70px"
                   textAlign="center"
@@ -217,6 +218,7 @@ const AccountingCategoryFilter: React.FC<AccountingCategoryFilterProps> = ({
                   onChange={(val) => onMaxAmountChange?.(val)}
                   placeholder="0"
                   min={0}
+                  max={1000000}
                   step={500}
                   width="70px"
                   textAlign="center"

@@ -1,0 +1,809 @@
+{
+  "version": "2.0.0",
+  "exportDate": "2025-11-26T00:00:00.000Z",
+  "expenses": [
+    {
+      "id": "expense_sample_1",
+      "date": "2025-10-01",
+      "amount": 45.5,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-10-01T08:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_2",
+      "date": "2025-10-02",
+      "amount": 28.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-10-02T10:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_3",
+      "date": "2025-10-03",
+      "amount": 35.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-10-03T09:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_4",
+      "date": "2025-10-04",
+      "amount": 120.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-10-04T14:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_5",
+      "date": "2025-10-05",
+      "amount": 99.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-10-05T11:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_6",
+      "date": "2025-10-06",
+      "amount": 65.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-10-06T15:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_7",
+      "date": "2025-10-07",
+      "amount": 1500.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-10-07T09:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_8",
+      "date": "2025-10-08",
+      "amount": 88.0,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-10-08T18:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_9",
+      "date": "2025-10-09",
+      "amount": 52.5,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-10-09T12:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_10",
+      "date": "2025-10-10",
+      "amount": 38.0,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-10-10T13:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_11",
+      "date": "2025-10-11",
+      "amount": 22.5,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-10-11T16:10:00.000Z"
+    },
+    {
+      "id": "expense_sample_12",
+      "date": "2025-10-12",
+      "amount": 42.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-10-12T08:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_13",
+      "date": "2025-10-13",
+      "amount": 280.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-10-13T10:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_14",
+      "date": "2025-10-14",
+      "amount": 199.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-10-14T14:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_15",
+      "date": "2025-10-15",
+      "amount": 75.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-10-15T11:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_16",
+      "date": "2025-10-16",
+      "amount": 1200.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-10-16T09:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_17",
+      "date": "2025-10-17",
+      "amount": 150.0,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-10-17T19:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_18",
+      "date": "2025-10-18",
+      "amount": 68.5,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-10-18T12:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_19",
+      "date": "2025-10-19",
+      "amount": 55.0,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-10-19T13:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_20",
+      "date": "2025-10-20",
+      "amount": 18.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-10-20T15:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_21",
+      "date": "2025-10-21",
+      "amount": 48.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-10-21T08:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_22",
+      "date": "2025-10-22",
+      "amount": 350.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-10-22T10:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_23",
+      "date": "2025-10-23",
+      "amount": 149.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-10-23T11:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_24",
+      "date": "2025-10-24",
+      "amount": 95.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-10-24T14:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_25",
+      "date": "2025-10-25",
+      "amount": 1800.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-10-25T09:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_26",
+      "date": "2025-10-26",
+      "amount": 200.0,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-10-26T17:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_27",
+      "date": "2025-10-27",
+      "amount": 72.0,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-10-27T12:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_28",
+      "date": "2025-10-28",
+      "amount": 62.5,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-10-28T13:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_29",
+      "date": "2025-10-29",
+      "amount": 35.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-10-29T16:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_30",
+      "date": "2025-10-30",
+      "amount": 55.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-10-30T08:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_31",
+      "date": "2025-10-31",
+      "amount": 420.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-10-31T10:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_32",
+      "date": "2025-10-01",
+      "amount": 78.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-10-01T15:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_33",
+      "date": "2025-10-02",
+      "amount": 110.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-10-02T11:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_34",
+      "date": "2025-10-03",
+      "amount": 1350.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-10-03T09:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_35",
+      "date": "2025-10-04",
+      "amount": 95.5,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-10-04T18:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_36",
+      "date": "2025-10-05",
+      "amount": 45.0,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-10-05T12:10:00.000Z"
+    },
+    {
+      "id": "expense_sample_37",
+      "date": "2025-10-06",
+      "amount": 58.0,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-10-06T13:40:00.000Z"
+    },
+    {
+      "id": "expense_sample_38",
+      "date": "2025-10-07",
+      "amount": 25.5,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-10-07T15:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_39",
+      "date": "2025-10-08",
+      "amount": 38.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-10-08T08:50:00.000Z"
+    },
+    {
+      "id": "expense_sample_40",
+      "date": "2025-10-09",
+      "amount": 180.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-10-09T10:25:00.000Z"
+    },
+    {
+      "id": "expense_sample_41",
+      "date": "2025-10-10",
+      "amount": 89.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-10-10T14:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_42",
+      "date": "2025-10-11",
+      "amount": 82.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-10-11T11:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_43",
+      "date": "2025-10-12",
+      "amount": 1650.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-10-12T09:10:00.000Z"
+    },
+    {
+      "id": "expense_sample_44",
+      "date": "2025-10-13",
+      "amount": 125.0,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-10-13T19:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_45",
+      "date": "2025-10-14",
+      "amount": 56.5,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-10-14T12:50:00.000Z"
+    },
+    {
+      "id": "expense_sample_46",
+      "date": "2025-10-15",
+      "amount": 48.0,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-10-15T13:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_47",
+      "date": "2025-10-16",
+      "amount": 30.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-10-16T16:40:00.000Z"
+    },
+    {
+      "id": "expense_sample_48",
+      "date": "2025-10-17",
+      "amount": 42.5,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-10-17T08:25:00.000Z"
+    },
+    {
+      "id": "expense_sample_49",
+      "date": "2025-10-18",
+      "amount": 250.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-10-18T10:50:00.000Z"
+    },
+    {
+      "id": "expense_sample_50",
+      "date": "2025-10-19",
+      "amount": 129.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-10-19T15:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_51",
+      "date": "2025-11-01",
+      "amount": 50.0,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-11-01T08:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_52",
+      "date": "2025-11-02",
+      "amount": 32.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-11-02T10:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_53",
+      "date": "2025-11-03",
+      "amount": 40.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-11-03T09:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_54",
+      "date": "2025-11-04",
+      "amount": 150.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-11-04T14:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_55",
+      "date": "2025-11-05",
+      "amount": 109.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-11-05T11:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_56",
+      "date": "2025-11-06",
+      "amount": 70.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-11-06T15:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_57",
+      "date": "2025-11-07",
+      "amount": 1600.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-11-07T09:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_58",
+      "date": "2025-11-08",
+      "amount": 100.0,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-11-08T18:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_59",
+      "date": "2025-11-09",
+      "amount": 60.0,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-11-09T12:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_60",
+      "date": "2025-11-10",
+      "amount": 42.0,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-11-10T13:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_61",
+      "date": "2025-11-11",
+      "amount": 28.5,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-11-11T16:10:00.000Z"
+    },
+    {
+      "id": "expense_sample_62",
+      "date": "2025-11-12",
+      "amount": 46.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-11-12T08:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_63",
+      "date": "2025-11-13",
+      "amount": 300.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-11-13T10:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_64",
+      "date": "2025-11-14",
+      "amount": 179.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-11-14T14:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_65",
+      "date": "2025-11-15",
+      "amount": 85.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-11-15T11:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_66",
+      "date": "2025-11-16",
+      "amount": 1400.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-11-16T09:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_67",
+      "date": "2025-11-17",
+      "amount": 175.0,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-11-17T19:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_68",
+      "date": "2025-11-18",
+      "amount": 75.5,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-11-18T12:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_69",
+      "date": "2025-11-19",
+      "amount": 55.5,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-11-19T13:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_70",
+      "date": "2025-11-20",
+      "amount": 20.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-11-20T15:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_71",
+      "date": "2025-11-21",
+      "amount": 50.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-11-21T08:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_72",
+      "date": "2025-11-22",
+      "amount": 380.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-11-22T10:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_73",
+      "date": "2025-11-23",
+      "amount": 159.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-11-23T11:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_74",
+      "date": "2025-11-24",
+      "amount": 105.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-11-24T14:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_75",
+      "date": "2025-11-25",
+      "amount": 1700.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-11-25T09:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_76",
+      "date": "2025-11-26",
+      "amount": 220.0,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-11-26T17:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_77",
+      "date": "2025-11-01",
+      "amount": 65.0,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-11-01T12:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_78",
+      "date": "2025-11-02",
+      "amount": 48.5,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-11-02T13:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_79",
+      "date": "2025-11-03",
+      "amount": 38.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-11-03T16:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_80",
+      "date": "2025-11-04",
+      "amount": 58.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-11-04T08:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_81",
+      "date": "2025-11-05",
+      "amount": 220.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-11-05T10:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_82",
+      "date": "2025-11-06",
+      "amount": 89.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-11-06T15:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_83",
+      "date": "2025-11-07",
+      "amount": 92.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-11-07T11:45:00.000Z"
+    },
+    {
+      "id": "expense_sample_84",
+      "date": "2025-11-08",
+      "amount": 1550.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-11-08T09:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_85",
+      "date": "2025-11-09",
+      "amount": 130.0,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-11-09T18:00:00.000Z"
+    },
+    {
+      "id": "expense_sample_86",
+      "date": "2025-11-10",
+      "amount": 68.0,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-11-10T12:10:00.000Z"
+    },
+    {
+      "id": "expense_sample_87",
+      "date": "2025-11-11",
+      "amount": 52.0,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-11-11T13:40:00.000Z"
+    },
+    {
+      "id": "expense_sample_88",
+      "date": "2025-11-12",
+      "amount": 26.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-11-12T15:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_89",
+      "date": "2025-11-13",
+      "amount": 44.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-11-13T08:50:00.000Z"
+    },
+    {
+      "id": "expense_sample_90",
+      "date": "2025-11-14",
+      "amount": 190.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-11-14T10:25:00.000Z"
+    },
+    {
+      "id": "expense_sample_91",
+      "date": "2025-11-15",
+      "amount": 139.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-11-15T14:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_92",
+      "date": "2025-11-16",
+      "amount": 78.0,
+      "category": "医疗",
+      "description": "示例数据",
+      "createdAt": "2025-11-16T11:20:00.000Z"
+    },
+    {
+      "id": "expense_sample_93",
+      "date": "2025-11-17",
+      "amount": 1450.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-11-17T09:10:00.000Z"
+    },
+    {
+      "id": "expense_sample_94",
+      "date": "2025-11-18",
+      "amount": 115.0,
+      "category": "人情往来",
+      "description": "示例数据",
+      "createdAt": "2025-11-18T19:30:00.000Z"
+    },
+    {
+      "id": "expense_sample_95",
+      "date": "2025-11-19",
+      "amount": 64.5,
+      "category": "其他",
+      "description": "示例数据",
+      "createdAt": "2025-11-19T12:50:00.000Z"
+    },
+    {
+      "id": "expense_sample_96",
+      "date": "2025-11-20",
+      "amount": 46.5,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-11-20T13:15:00.000Z"
+    },
+    {
+      "id": "expense_sample_97",
+      "date": "2025-11-21",
+      "amount": 33.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-11-21T16:40:00.000Z"
+    },
+    {
+      "id": "expense_sample_98",
+      "date": "2025-11-22",
+      "amount": 49.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-11-22T08:25:00.000Z"
+    },
+    {
+      "id": "expense_sample_99",
+      "date": "2025-11-23",
+      "amount": 270.0,
+      "category": "旅游",
+      "description": "示例数据",
+      "createdAt": "2025-11-23T10:50:00.000Z"
+    },
+    {
+      "id": "expense_sample_100",
+      "date": "2025-11-24",
+      "amount": 169.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-11-24T15:00:00.000Z"
+    }
+  ],
+  "incomes": [],
+  "totalExpenses": 100,
+  "totalIncomes": 0
+}

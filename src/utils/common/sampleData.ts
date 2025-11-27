@@ -11,12 +11,76 @@ export enum DataType {
 }
 
 /**
+ * 加载账单记录的示例数据（分别加载expenses和incomes）
+ */
+const loadAccountingSampleData = async (): Promise<{ expenses: unknown[]; incomes: unknown[] }> => {
+  const paths = [
+    '/sample-data/',
+    `${import.meta.env.BASE_URL}sample-data/`,
+    '/bookkeeping/sample-data/'
+  ];
+  
+  let expensesData: { expenses: unknown[]; incomes: unknown[] } | null = null;
+  let incomesData: { expenses: unknown[]; incomes: unknown[] } | null = null;
+  let lastError = null;
+  
+  for (const basePath of paths) {
+    try {
+      // 加载expenses.json（包含ExportData格式）
+      if (!expensesData) {
+        const expensesResponse = await fetch(`${basePath}expenses.json`);
+        if (expensesResponse.ok) {
+          expensesData = await expensesResponse.json() as { expenses: unknown[]; incomes: unknown[] };
+        }
+      }
+      
+      // 加载incomes.json（包含ExportData格式）
+      if (!incomesData) {
+        const incomesResponse = await fetch(`${basePath}incomes.json`);
+        if (incomesResponse.ok) {
+          incomesData = await incomesResponse.json() as { expenses: unknown[]; incomes: unknown[] };
+        }
+      }
+      
+      if (expensesData && incomesData) {
+        break;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  
+  if (!expensesData || !incomesData) {
+    throw new Error(`Failed to load accounting sample data. Last error: ${lastError}`);
+  }
+  
+  // 转换日期字符串为 Date 对象
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expenses: (expensesData.expenses as any[]).map((record: any) => ({
+      ...record,
+      createdAt: new Date(record.createdAt)
+    })),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    incomes: (incomesData.incomes as any[]).map((record: any) => ({
+      ...record,
+      createdAt: new Date(record.createdAt)
+    }))
+  };
+};
+
+/**
  * 加载示例数据
  * @param type 数据类型
  * @returns Promise<unknown>
  */
 export const loadSampleData = async (type: DataType): Promise<unknown> => {
   try {
+    // 账单记录特殊处理
+    if (type === DataType.ACCOUNTING) {
+      return await loadAccountingSampleData();
+    }
+    
     // 尝试不同的路径
     const paths = [
       `/sample-data/${type}.json`,

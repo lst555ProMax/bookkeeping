@@ -76,19 +76,19 @@ const AccountingRecordsDashboard: React.FC<AccountingRecordsDashboardProps> = ({
           {/* 统计卡片 */}
           <div className="records-content__stats-section">
             <div className="stats-grid">
-              <div className="stat-card stat-card--primary">
-                <div className="stat-icon">{recordType === RecordType.EXPENSE ? '💰' : '📈'}</div>
-                <div className="stat-content">
-                  <div className="stat-label">总{recordType === RecordType.EXPENSE ? '支出' : '收入'}</div>
-                  <div className="stat-value">{formatCurrency(totalAmount)}</div>
-                </div>
-              </div>
-              
               <div className="stat-card stat-card--success">
                 <div className="stat-icon">📅</div>
                 <div className="stat-content">
                   <div className="stat-label">本月{recordType === RecordType.EXPENSE ? '支出' : '收入'}</div>
                   <div className="stat-value">{formatCurrency(monthlyTotal)}</div>
+                </div>
+              </div>
+              
+              <div className="stat-card stat-card--primary">
+                <div className="stat-icon">{recordType === RecordType.EXPENSE ? '💰' : '📈'}</div>
+                <div className="stat-content">
+                  <div className="stat-label">总{recordType === RecordType.EXPENSE ? '支出' : '收入'}</div>
+                  <div className="stat-value">{formatCurrency(totalAmount)}</div>
                 </div>
               </div>
               

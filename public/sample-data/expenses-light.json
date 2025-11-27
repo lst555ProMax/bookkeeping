@@ -1,0 +1,90 @@
+{
+  "version": "2.0.0",
+  "exportDate": "2025-11-26T00:00:00.000Z",
+  "expenses": [
+    {
+      "id": "expense_light_1",
+      "date": "2025-10-05",
+      "amount": 45.5,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-10-05T12:00:00.000Z"
+    },
+    {
+      "id": "expense_light_2",
+      "date": "2025-10-12",
+      "amount": 28.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-10-12T15:30:00.000Z"
+    },
+    {
+      "id": "expense_light_3",
+      "date": "2025-10-18",
+      "amount": 35.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-10-18T09:15:00.000Z"
+    },
+    {
+      "id": "expense_light_4",
+      "date": "2025-10-25",
+      "amount": 99.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-10-25T11:00:00.000Z"
+    },
+    {
+      "id": "expense_light_5",
+      "date": "2025-10-31",
+      "amount": 1500.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-10-31T09:00:00.000Z"
+    },
+    {
+      "id": "expense_light_6",
+      "date": "2025-11-05",
+      "amount": 50.0,
+      "category": "餐饮",
+      "description": "示例数据",
+      "createdAt": "2025-11-05T12:00:00.000Z"
+    },
+    {
+      "id": "expense_light_7",
+      "date": "2025-11-12",
+      "amount": 32.0,
+      "category": "零食",
+      "description": "示例数据",
+      "createdAt": "2025-11-12T15:30:00.000Z"
+    },
+    {
+      "id": "expense_light_8",
+      "date": "2025-11-18",
+      "amount": 40.0,
+      "category": "出行",
+      "description": "示例数据",
+      "createdAt": "2025-11-18T09:15:00.000Z"
+    },
+    {
+      "id": "expense_light_9",
+      "date": "2025-11-22",
+      "amount": 109.0,
+      "category": "软件订阅",
+      "description": "示例数据",
+      "createdAt": "2025-11-22T11:00:00.000Z"
+    },
+    {
+      "id": "expense_light_10",
+      "date": "2025-11-26",
+      "amount": 1600.0,
+      "category": "住房",
+      "description": "示例数据",
+      "createdAt": "2025-11-26T09:00:00.000Z"
+    }
+  ],
+  "incomes": [],
+  "totalExpenses": 10,
+  "totalIncomes": 0
+}
+

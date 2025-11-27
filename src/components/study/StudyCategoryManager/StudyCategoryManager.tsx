@@ -181,10 +181,11 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
     // 在新位置插入
     newCategories.splice(dropIndex, 0, draggedCategory);
     
-    setCategories(newCategories);
-    
-    // 保存新顺序（包含"其它"）
+    // 保存新顺序（保存函数会自动处理"其它"的位置）
     saveStudyCategoriesOrder(newCategories);
+    
+    // 重新加载分类列表（排除"其它"）
+    loadCategories();
     onCategoriesChange();
     
     setDraggedIndex(null);
@@ -239,7 +240,7 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
                 <div 
                   key={category} 
                   className={`study-category-manager__item ${draggedIndex === index ? 'dragging' : ''}`}
-                  draggable={editingCategory !== category}
+                  draggable={editingCategory === null}
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragEnd={handleDragEnd}
                   onDragOver={handleDragOver}
@@ -279,7 +280,7 @@ const StudyCategoryManager: React.FC<StudyCategoryManagerProps> = ({ onClose, on
                       </>
                     ) : (
                       <>
-                        <div className="study-category-manager__drag-handle">
+                        <div className="study-category-manager__drag-handle" style={editingCategory !== null ? { opacity: 0.3 } : undefined}>
                           ⋮⋮
                         </div>
                         <span className="study-category-manager__name">

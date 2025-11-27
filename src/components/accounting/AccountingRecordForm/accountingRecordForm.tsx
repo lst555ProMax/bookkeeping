@@ -55,6 +55,11 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
   const isEditing = !!(editingExpense || editingIncome);
   const currentCategories = recordType === RecordType.EXPENSE ? expenseCategories : incomeCategories;
   
+  // 获取今天的日期（YYYY-MM-DD格式）
+  const getTodayDate = () => {
+    return formatDate(new Date());
+  };
+  
   // 将分类数组转换为 FormSelectOption 数组
   const categoryOptions: FormSelectOption[] = currentCategories.map(cat => ({
     value: cat,
@@ -187,11 +192,42 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingExpense, editingIncome]); // 移除 isFirstLoad 依赖，避免重复执行
 
+  // 重置表单函数
+  const resetForm = () => {
+    setAmount('');
+    setDescription('');
+    setDate(formatDate(new Date()));
+    if (recordType === RecordType.EXPENSE) {
+      setCategory(expenseCategories[0] || '餐饮');
+    } else {
+      setCategory(incomeCategories[0] || '工资收入');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!amount || parseFloat(amount) <= 0) {
       toast.error('请输入有效的金额');
+      return;
+    }
+
+    // 验证金额不能超过1000000
+    const amountValue = parseFloat(amount);
+    if (amountValue > 1000000) {
+      toast.error('金额不能超过1,000,000');
+      return;
+    }
+
+    // 验证备注长度不能超过50个字
+    if (description.trim().length > 50) {
+      toast.error('备注长度不能超过50个字');
+      return;
+    }
+
+    // 验证日期不能超过今天
+    if (date > getTodayDate()) {
+      toast.error('不能选择今天之后的日期');
       return;
     }
 
@@ -201,21 +237,25 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
         const updatedExpense: ExpenseRecord = {
           ...editingExpense,
           date,
-          amount: parseFloat(amount),
+          amount: amountValue,
           category: category as ExpenseCategory,
           description: description.trim() || undefined,
         };
         onUpdateExpense(updatedExpense);
+        // 编辑保存后重置表单
+        resetForm();
       } else if (editingIncome && onUpdateIncome) {
         // 编辑收入模式
         const updatedIncome: IncomeRecord = {
           ...editingIncome,
           date,
-          amount: parseFloat(amount),
+          amount: amountValue,
           category: category as IncomeCategory,
           description: description.trim() || undefined,
         };
         onUpdateIncome(updatedIncome);
+        // 编辑保存后重置表单
+        resetForm();
       }
     } else {
       if (recordType === RecordType.EXPENSE) {
@@ -223,7 +263,7 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
         const expense: ExpenseRecord = {
           id: generateId(),
           date,
-          amount: parseFloat(amount),
+          amount: amountValue,
           category: category as ExpenseCategory,
           description: description.trim() || undefined,
           createdAt: new Date()
@@ -234,20 +274,23 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
         const income: IncomeRecord = {
           id: generateId(),
           date,
-          amount: parseFloat(amount),
+          amount: amountValue,
           category: category as IncomeCategory,
           description: description.trim() || undefined,
           createdAt: new Date()
         };
         onAddIncome(income);
       }
+      // 添加记录后重置表单
+      resetForm();
     }
-    
-    // 如果不是编辑模式，重置表单
-    if (!isEditing) {
-      setAmount('');
-      setDescription('');
-      // 保持日期和类别不变，方便连续记账
+  };
+
+  // 处理取消编辑
+  const handleCancelEdit = () => {
+    if (onCancelEdit) {
+      resetForm();
+      onCancelEdit();
     }
   };
 
@@ -337,6 +380,7 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
           value={date}
           onChange={setDate}
           minDate="2025-10-01"
+          maxDate={getTodayDate()}
         />
       </div>
 
@@ -350,6 +394,7 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
           onChange={setAmount}
           placeholder="0"
           min={0}
+          max={1000000}
           step={0.01}
           arrowStep={10}
           wheelStep={10}
@@ -390,7 +435,7 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
           value={description}
           onChange={setDescription}
           placeholder="记录今天的收支情况..."
-          maxLength={100}
+          maxLength={50}
         />
       </div>
 
@@ -402,7 +447,7 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
           <button 
             type="button" 
             className="expense-form__cancel"
-            onClick={onCancelEdit}
+            onClick={handleCancelEdit}
           >
             取消
           </button>

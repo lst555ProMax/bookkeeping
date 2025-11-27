@@ -24,6 +24,7 @@ const FilterSearchInput: React.FC<FilterSearchInputProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        maxLength={10}
       />
       <span className="filter-search-icon">👀</span>
     </div>
