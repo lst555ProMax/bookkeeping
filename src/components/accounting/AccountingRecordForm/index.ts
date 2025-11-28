@@ -1,2 +1,2 @@
-export { default as AccountingRecordForm } from './accountingRecordForm';
+export { default as AccountingRecordForm } from './AccountingRecordForm';
 

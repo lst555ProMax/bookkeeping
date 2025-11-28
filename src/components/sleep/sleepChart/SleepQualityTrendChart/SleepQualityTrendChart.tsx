@@ -12,7 +12,7 @@ interface SleepQualityTrendChartProps {
   averageQuality: number; // 保留此参数以保持接口兼容性，但不再在组件内使用
 }
 
-const SleepQualityTrendChart: React.FC<SleepQualityTrendChartProps> = ({ data, averageQuality }) => {
+const SleepQualityTrendChart: React.FC<SleepQualityTrendChartProps> = ({ data, averageQuality: _averageQuality }) => {
   if (!data || data.length === 0) {
     return (
       <div className="sleep-quality-trend-chart">
