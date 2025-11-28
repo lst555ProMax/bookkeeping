@@ -246,23 +246,21 @@
   }
 }
 
-// 时间信息行
-.time-info-row {
-  display: flex;
-  align-items: center;
+// 第一行：入睡时间、醒来时间、睡眠时长（三列等距）
+.time-duration-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr;
   gap: 1rem;
   padding: 0.6rem 0.75rem;
   background: #f8f9fa;
   border-radius: 8px;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  align-items: center;
 }
 
 .time-info {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex: 1;
   min-width: 0;
   justify-content: flex-start;
 
@@ -282,23 +280,21 @@
   }
 }
 
-// 睡眠时长和质量行
-.duration-quality-row {
-  display: flex;
-  align-items: center;
+// 第二行：睡眠质量和小睡（两列等距）
+.quality-naps-row {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
   gap: 1rem;
   padding: 0.6rem 0.75rem;
   background: #f8f9fa;
   border-radius: 8px;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  align-items: center;
 }
 
 .duration-info {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex: 1;
   min-width: 0;
   justify-content: flex-start;
 
@@ -341,7 +337,6 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex: 1;
   min-width: 0;
   justify-content: flex-start;
 
@@ -389,28 +384,26 @@
   }
 }
 
-// 小睡和备注行
-.naps-notes-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+// 第三行：备注
+.notes-row {
   padding: 0.6rem 0.75rem;
   background: #f8f9fa;
   border-radius: 8px;
-  flex-wrap: wrap;
 }
 
 .sleep-naps {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-shrink: 0;
+  min-width: 0;
+  justify-content: flex-start;
 
   .naps-label {
     font-size: 0.9rem;
     font-weight: 600;
     color: #495057;
     flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .naps-tags {
@@ -429,6 +422,11 @@
     background: #d1ecf1;
     color: #0c5460;
     border: 1px solid #bee5eb;
+  }
+
+  .naps-empty {
+    font-size: 0.9rem;
+    color: #999;
   }
 }
 
@@ -501,11 +499,12 @@
     }
   }
 
-  .time-info-row,
-  .duration-quality-row,
-  .naps-notes-row {
-    flex-direction: column;
-    align-items: flex-start;
+  .time-duration-row {
+    grid-template-columns: 1fr;
+  }
+
+  .quality-naps-row {
+    grid-template-columns: 1fr;
   }
 
   .sleep-quality {

@@ -38,7 +38,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
+      } catch {
         return null;
       }
     }
@@ -83,17 +83,14 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     }
   }, [categoriesKey, category]);
 
-  // 检查是否是页面刷新（首次加载）
-  const [isFirstLoad, setIsFirstLoad] = useState(() => {
-    const initialized = sessionStorage.getItem('studyFormInitialized');
-    if (!initialized) {
+  // 初始化 sessionStorage 标记（如果不存在）
+  useEffect(() => {
+    if (!sessionStorage.getItem('studyFormInitialized')) {
       sessionStorage.setItem('studyFormInitialized', 'true');
       // 首次加载时清除 localStorage 中的表单数据
       localStorage.removeItem('studyFormData');
-      return true;
     }
-    return false;
-  });
+  }, []);
 
   useEffect(() => {
     // 监听页面卸载，清除标记（刷新时会重新设置）
@@ -124,6 +121,9 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     }
   }, [date, category, videoTitle, episodeStart, episodeEnd, totalTime, remark, editingRecord]);
 
+  // 使用 ref 跟踪之前的编辑状态
+  const prevEditingRecordRef = React.useRef<StudyRecord | null>(null);
+
   // 当编辑记录时，填充表单
   useEffect(() => {
     if (editingRecord) {
@@ -135,12 +135,19 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
       setTotalTime(editingRecord.totalTime.toString());
       setRemark(editingRecord.remark || '');
     } else {
-      // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
-      if (isFirstLoad && !savedFormData) {
+      // 如果之前有编辑状态，现在变为 null（取消编辑或删除），则重置表单
+      if (prevEditingRecordRef.current !== null) {
         resetForm();
-        setIsFirstLoad(false); // 标记已处理首次加载
+      } else {
+        // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
+        const isFirstLoad = !sessionStorage.getItem('studyFormInitialized');
+        if (isFirstLoad && !savedFormData) {
+          resetForm();
+        }
       }
     }
+    // 更新 ref
+    prevEditingRecordRef.current = editingRecord;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingRecord]);
 
@@ -181,6 +188,12 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
       return;
     }
 
+    // 验证观看集数范围：0-1000
+    if (startEp > 1000 || endEp > 1000) {
+      toast.error('观看集数不能超过1000');
+      return;
+    }
+
     if (!totalTime) {
       toast.error('请输入观看总时间');
       return;
@@ -189,6 +202,24 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
     const time = parseInt(totalTime);
     if (isNaN(time) || time <= 0) {
       toast.error('观看总时间必须是大于0的数字');
+      return;
+    }
+
+    // 验证观看总时间范围：1-1440
+    if (time > 1440) {
+      toast.error('观看总时间不能超过1440分钟（24小时）');
+      return;
+    }
+
+    // 验证视频标题长度不能超过30个字
+    if (videoTitle.trim().length > 30) {
+      toast.error('视频标题长度不能超过30个字');
+      return;
+    }
+
+    // 验证备注长度不能超过50个字
+    if (remark.trim().length > 50) {
+      toast.error('备注长度不能超过50个字');
       return;
     }
 
@@ -298,6 +329,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
         <div className="form-group">
           <label htmlFor="videoTitle">
             🎬 视频标题 <span className="required">*</span>
+            <span className="quality-hint">（最多30字）</span>
           </label>
           <FormTextInput
             id="videoTitle"
@@ -305,6 +337,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
             onChange={setVideoTitle}
             placeholder="例如：React 入门教程"
             required
+            maxLength={30}
           />
         </div>
 
@@ -321,6 +354,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
                   onChange={setEpisodeStart}
                   placeholder="0"
                   min={0}
+                  max={1000}
                   step={1}
                   required
                 />
@@ -330,6 +364,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
                   onChange={setEpisodeEnd}
                   placeholder="20"
                   min={0}
+                  max={1000}
                   step={1}
                   required
                 />
@@ -347,6 +382,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
                   onChange={setTotalTime}
                   placeholder="120"
                   min={1}
+                  max={1440}
                   step={1}
                   required
                 />
@@ -358,12 +394,16 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
 
         {/* 备注 */}
         <div className="form-group">
-          <label htmlFor="remark">📝 备注</label>
+          <label htmlFor="remark">
+            📝 备注
+            <span className="quality-hint">（最多50字）</span>
+          </label>
           <FormTextarea
             id="remark"
             value={remark}
             onChange={setRemark}
             placeholder="记录学习心得、难点等..."
+            maxLength={50}
           />
         </div>
 

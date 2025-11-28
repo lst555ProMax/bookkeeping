@@ -160,6 +160,10 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
     }
   }, [recordType, amount, category, description, date, isEditing]);
 
+  // 使用 ref 跟踪之前的编辑状态
+  const prevEditingExpenseRef = React.useRef<ExpenseRecord | null>(null);
+  const prevEditingIncomeRef = React.useRef<IncomeRecord | null>(null);
+
   // 当编辑状态变化时，更新表单数据
   useEffect(() => {
     if (editingExpense) {
@@ -175,20 +179,18 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
       setDescription(editingIncome.description || '');
       setDate(editingIncome.date);
     } else {
-      // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
-      if (isFirstLoad && !savedFormData) {
-        // 重置表单到初始状态
-        setAmount('');
-        setDescription('');
-        setDate(formatDate(new Date()));
-        if (recordType === RecordType.EXPENSE) {
-          setCategory(expenseCategories[0] || '餐饮');
-        } else {
-          setCategory(incomeCategories[0] || '工资收入');
-        }
+      // 如果之前有编辑状态，现在变为 null（取消编辑或删除），则重置表单
+      if (prevEditingExpenseRef.current !== null || prevEditingIncomeRef.current !== null) {
+        resetForm();
+      } else if (isFirstLoad && !savedFormData) {
+        // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
+        resetForm();
         setIsFirstLoad(false); // 标记已处理首次加载
       }
     }
+    // 更新 ref
+    prevEditingExpenseRef.current = editingExpense || null;
+    prevEditingIncomeRef.current = editingIncome || null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingExpense, editingIncome]); // 移除 isFirstLoad 依赖，避免重复执行
 
@@ -429,7 +431,10 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
       </div>
 
       <div className="expense-form__group">
-        <label htmlFor="description" className="expense-form__label">📝 备注</label>
+        <label htmlFor="description" className="expense-form__label">
+          📝 备注
+          <span className="quality-hint">（最多50字）</span>
+        </label>
         <FormTextarea
           id="description"
           value={description}

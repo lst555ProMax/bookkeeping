@@ -71,7 +71,7 @@ export const SleepListSearchSection: React.FC<SleepListSearchSectionProps> = ({
               { value: 'too-short', label: '过少 <4小时' },
               { value: 'insufficient', label: '欠缺 4-7小时' },
               { value: 'normal', label: '正常 7-9小时' },
-              { value: 'excessive', label: '过多 >9小时' }
+              { value: 'excessive', label: '过多 ≥9小时' }
             ]}
             width="140px"
           />

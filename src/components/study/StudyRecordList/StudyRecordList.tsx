@@ -111,7 +111,7 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
 
   // 跳转到学习数据面板
   const goToStudyDashboard = () => {
-    window.location.hash = '#/study-records';
+    window.location.hash = '#/dashboard?tab=study';
   };
 
   // 渲染搜索区域

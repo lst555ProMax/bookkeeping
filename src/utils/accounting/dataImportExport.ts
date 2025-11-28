@@ -15,64 +15,146 @@ export interface ExportData {
 }
 
 /**
- * 验证日期格式是否为 YYYY-MM-DD
+ * 验证日期格式是否为 YYYY-MM-DD，并检查日期值是否有效
  */
-const isValidDate = (dateStr: string): boolean => {
+const isValidDate = (dateStr: string): { valid: boolean; error?: string } => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(dateStr)) {
-    return false;
+    return { valid: false, error: '格式不正确，必须是YYYY-MM-DD格式' };
   }
+  
+  const parts = dateStr.split('-');
+  const year = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10);
+  const day = parseInt(parts[2], 10);
+  
+  if (isNaN(year) || isNaN(month) || isNaN(day)) {
+    return { valid: false, error: '格式不正确，必须是YYYY-MM-DD格式' };
+  }
+  
+  // 检查月份是否在1-12之间
+  if (month < 1 || month > 12) {
+    return { valid: false, error: `月份值${month}无效，必须在1-12之间` };
+  }
+  
+  // 检查日期是否在1-31之间（粗略检查）
+  if (day < 1 || day > 31) {
+    return { valid: false, error: `日期值${day}无效，必须在1-31之间` };
+  }
+  
+  // 使用Date对象进一步验证日期是否有效（处理2月29日等情况）
   const date = new Date(dateStr);
-  return date instanceof Date && !isNaN(date.getTime()) && dateStr === date.toISOString().split('T')[0];
+  if (!(date instanceof Date) || isNaN(date.getTime())) {
+    return { valid: false, error: '日期值无效' };
+  }
+  
+  // 验证解析后的日期是否与输入一致（防止"2025-13-45"被解析为其他日期）
+  const parsedYear = date.getFullYear();
+  const parsedMonth = date.getMonth() + 1;
+  const parsedDay = date.getDate();
+  
+  if (parsedYear !== year || parsedMonth !== month || parsedDay !== day) {
+    return { valid: false, error: '日期值无效' };
+  }
+  
+  return { valid: true };
+};
+
+/**
+ * 验证日期范围：不能早于2025年10月1日，不能大于当天
+ */
+const isValidDateRange = (dateStr: string): { valid: boolean; error?: string } => {
+  const date = new Date(dateStr);
+  const minDate = new Date('2025-10-01');
+  const today = new Date();
+  today.setHours(23, 59, 59, 999); // 设置为今天的最后一刻
+  
+  if (date < minDate) {
+    return { valid: false, error: '日期不能早于2025年10月1日' };
+  }
+  
+  if (date > today) {
+    return { valid: false, error: '日期不能大于今天' };
+  }
+  
+  return { valid: true };
 };
 
 /**
  * 验证支出记录格式，返回详细的错误信息
  */
 const validateExpenseRecordWithError = (record: unknown, index: number): { valid: boolean; error?: string } => {
+  // 先检查是否是null或非对象类型
   if (typeof record !== 'object' || record === null) {
+    return { valid: false, error: `无效的支出记录[${index}]：记录必须是对象` };
+  }
+  
+  // 检查是否是数组（数组也是object类型，但不符合要求）
+  if (Array.isArray(record)) {
     return { valid: false, error: `无效的支出记录[${index}]：记录必须是对象` };
   }
   
   const r = record as Record<string, unknown>;
   
-  // 检查必需字段
+  // 检查必需字段是否存在
+  if (!('id' in r) || r.id === undefined || r.id === null) {
+    return { valid: false, error: `无效的支出记录[${index}]：缺少id字段` };
+  }
   if (typeof r.id !== 'string') {
-    return { valid: false, error: `无效的支出记录[${index}]：id字段必须是字符串` };
+    return { valid: false, error: `无效的支出记录[${index}]：id字段类型不正确，必须是字符串` };
   }
   
+  if (!('date' in r) || r.date === undefined || r.date === null) {
+    return { valid: false, error: `无效的支出记录[${index}]：缺少date字段` };
+  }
   if (typeof r.date !== 'string') {
-    return { valid: false, error: `无效的支出记录[${index}]：date字段必须是字符串` };
+    return { valid: false, error: `无效的支出记录[${index}]：date字段类型不正确，必须是字符串` };
   }
   
+  if (!('amount' in r) || r.amount === undefined || r.amount === null) {
+    return { valid: false, error: `无效的支出记录[${index}]：缺少amount字段` };
+  }
   if (typeof r.amount !== 'number') {
-    return { valid: false, error: `无效的支出记录[${index}]：amount字段必须是数字` };
+    return { valid: false, error: `无效的支出记录[${index}]：amount字段类型不正确，必须是数字` };
   }
   
+  if (!('category' in r) || r.category === undefined || r.category === null) {
+    return { valid: false, error: `无效的支出记录[${index}]：缺少category字段` };
+  }
   if (typeof r.category !== 'string') {
-    return { valid: false, error: `无效的支出记录[${index}]：category字段必须是字符串` };
+    return { valid: false, error: `无效的支出记录[${index}]：category字段类型不正确，必须是字符串` };
   }
   
+  if (!('createdAt' in r) || r.createdAt === undefined || r.createdAt === null) {
+    return { valid: false, error: `无效的支出记录[${index}]：缺少createdAt字段` };
+  }
   if (typeof r.createdAt !== 'string') {
-    return { valid: false, error: `无效的支出记录[${index}]：createdAt字段必须是字符串` };
+    return { valid: false, error: `无效的支出记录[${index}]：createdAt字段类型不正确，必须是字符串` };
   }
   
-  // 验证日期格式
-  if (!isValidDate(r.date)) {
-    return { valid: false, error: `无效的支出记录[${index}]：date格式不正确，必须是YYYY-MM-DD格式` };
+  // 验证日期格式和值
+  const dateValidation = isValidDate(r.date);
+  if (!dateValidation.valid) {
+    return { valid: false, error: `无效的支出记录[${index}]：date${dateValidation.error}` };
+  }
+  
+  // 验证日期范围
+  const dateRangeValidation = isValidDateRange(r.date);
+  if (!dateRangeValidation.valid) {
+    return { valid: false, error: `无效的支出记录[${index}]：${dateRangeValidation.error}` };
   }
   
   // 验证金额（必须为正数，且不超过1000000）
+  if (!Number.isFinite(r.amount)) {
+    return { valid: false, error: `无效的支出记录[${index}]：amount必须是有效数字` };
+  }
+  
   if (r.amount <= 0) {
     return { valid: false, error: `无效的支出记录[${index}]：amount必须大于0` };
   }
   
   if (r.amount > 1000000) {
     return { valid: false, error: `无效的支出记录[${index}]：amount不能超过1,000,000` };
-  }
-  
-  if (!Number.isFinite(r.amount)) {
-    return { valid: false, error: `无效的支出记录[${index}]：amount必须是有效数字` };
   }
   
   // 验证分类（不能为空）
@@ -103,49 +185,77 @@ const validateExpenseRecordWithError = (record: unknown, index: number): { valid
  * 验证收入记录格式，返回详细的错误信息
  */
 const validateIncomeRecordWithError = (record: unknown, index: number): { valid: boolean; error?: string } => {
+  // 先检查是否是null或非对象类型
   if (typeof record !== 'object' || record === null) {
+    return { valid: false, error: `无效的收入记录[${index}]：记录必须是对象` };
+  }
+  
+  // 检查是否是数组（数组也是object类型，但不符合要求）
+  if (Array.isArray(record)) {
     return { valid: false, error: `无效的收入记录[${index}]：记录必须是对象` };
   }
   
   const r = record as Record<string, unknown>;
   
-  // 检查必需字段
+  // 检查必需字段是否存在
+  if (!('id' in r) || r.id === undefined || r.id === null) {
+    return { valid: false, error: `无效的收入记录[${index}]：缺少id字段` };
+  }
   if (typeof r.id !== 'string') {
-    return { valid: false, error: `无效的收入记录[${index}]：id字段必须是字符串` };
+    return { valid: false, error: `无效的收入记录[${index}]：id字段类型不正确，必须是字符串` };
   }
   
+  if (!('date' in r) || r.date === undefined || r.date === null) {
+    return { valid: false, error: `无效的收入记录[${index}]：缺少date字段` };
+  }
   if (typeof r.date !== 'string') {
-    return { valid: false, error: `无效的收入记录[${index}]：date字段必须是字符串` };
+    return { valid: false, error: `无效的收入记录[${index}]：date字段类型不正确，必须是字符串` };
   }
   
+  if (!('amount' in r) || r.amount === undefined || r.amount === null) {
+    return { valid: false, error: `无效的收入记录[${index}]：缺少amount字段` };
+  }
   if (typeof r.amount !== 'number') {
-    return { valid: false, error: `无效的收入记录[${index}]：amount字段必须是数字` };
+    return { valid: false, error: `无效的收入记录[${index}]：amount字段类型不正确，必须是数字` };
   }
   
+  if (!('category' in r) || r.category === undefined || r.category === null) {
+    return { valid: false, error: `无效的收入记录[${index}]：缺少category字段` };
+  }
   if (typeof r.category !== 'string') {
-    return { valid: false, error: `无效的收入记录[${index}]：category字段必须是字符串` };
+    return { valid: false, error: `无效的收入记录[${index}]：category字段类型不正确，必须是字符串` };
   }
   
+  if (!('createdAt' in r) || r.createdAt === undefined || r.createdAt === null) {
+    return { valid: false, error: `无效的收入记录[${index}]：缺少createdAt字段` };
+  }
   if (typeof r.createdAt !== 'string') {
-    return { valid: false, error: `无效的收入记录[${index}]：createdAt字段必须是字符串` };
+    return { valid: false, error: `无效的收入记录[${index}]：createdAt字段类型不正确，必须是字符串` };
   }
   
-  // 验证日期格式
-  if (!isValidDate(r.date)) {
-    return { valid: false, error: `无效的收入记录[${index}]：date格式不正确，必须是YYYY-MM-DD格式` };
+  // 验证日期格式和值
+  const dateValidation = isValidDate(r.date);
+  if (!dateValidation.valid) {
+    return { valid: false, error: `无效的收入记录[${index}]：date${dateValidation.error}` };
+  }
+  
+  // 验证日期范围
+  const dateRangeValidation = isValidDateRange(r.date);
+  if (!dateRangeValidation.valid) {
+    return { valid: false, error: `无效的收入记录[${index}]：${dateRangeValidation.error}` };
   }
   
   // 验证金额（必须为正数，且不超过1000000）
+  if (!Number.isFinite(r.amount)) {
+    return { valid: false, error: `无效的收入记录[${index}]：amount必须是有效数字` };
+  }
+  
   if (r.amount <= 0) {
     return { valid: false, error: `无效的收入记录[${index}]：amount必须大于0` };
   }
   
   if (r.amount > 1000000) {
     return { valid: false, error: `无效的收入记录[${index}]：amount不能超过1,000,000` };
-  }
-  
-  if (!Number.isFinite(r.amount)) {
-    return { valid: false, error: `无效的收入记录[${index}]：amount必须是有效数字` };
   }
   
   // 验证分类（不能为空）
@@ -225,9 +335,16 @@ const validateExportDataWithError = (data: unknown): { valid: boolean; error?: s
     if (typeof expense !== 'object' || expense === null) {
       return { valid: false, error: `无效的数据格式：expenses[${i}]不是有效的对象` };
     }
+    // 检查是否是数组
+    if (Array.isArray(expense)) {
+      return { valid: false, error: `无效的数据格式：expenses[${i}]必须是对象` };
+    }
     const exp = expense as Record<string, unknown>;
+    if (!('id' in exp) || exp.id === undefined || exp.id === null) {
+      return { valid: false, error: `无效的数据格式：expenses[${i}]缺少id字段` };
+    }
     if (typeof exp.id !== 'string') {
-      return { valid: false, error: `无效的数据格式：expenses[${i}]缺少id字段或类型不正确` };
+      return { valid: false, error: `无效的数据格式：expenses[${i}]id字段类型不正确，必须是字符串` };
     }
     if (expenseIds.has(exp.id)) {
       return { valid: false, error: `无效的数据格式：expenses中存在重复的id "${exp.id}"` };
@@ -242,9 +359,16 @@ const validateExportDataWithError = (data: unknown): { valid: boolean; error?: s
     if (typeof income !== 'object' || income === null) {
       return { valid: false, error: `无效的数据格式：incomes[${i}]不是有效的对象` };
     }
+    // 检查是否是数组
+    if (Array.isArray(income)) {
+      return { valid: false, error: `无效的数据格式：incomes[${i}]必须是对象` };
+    }
     const inc = income as Record<string, unknown>;
+    if (!('id' in inc) || inc.id === undefined || inc.id === null) {
+      return { valid: false, error: `无效的数据格式：incomes[${i}]缺少id字段` };
+    }
     if (typeof inc.id !== 'string') {
-      return { valid: false, error: `无效的数据格式：incomes[${i}]缺少id字段或类型不正确` };
+      return { valid: false, error: `无效的数据格式：incomes[${i}]id字段类型不正确，必须是字符串` };
     }
     if (incomeIds.has(inc.id)) {
       return { valid: false, error: `无效的数据格式：incomes中存在重复的id "${inc.id}"` };

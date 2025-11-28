@@ -44,19 +44,73 @@ const FormNumberInput: React.FC<FormNumberInputProps> = ({
       return;
     }
 
-    // 根据 decimalPlaces 限制小数位数
+    // 根据 decimalPlaces 限制小数位数（只验证格式，不验证范围）
+    // 允许用户输入中间状态，范围验证在 handlePaste 和 handleBlur 中进行
     if (decimalPlaces === 0) {
       // 整数：只允许数字
       const regex = /^-?\d*$/;
-      if (regex.test(inputValue)) {
-        onChange(inputValue);
+      if (!regex.test(inputValue)) {
+        return; // 不更新值，保持原值
       }
     } else {
       // 小数：限制小数位数
       const regex = new RegExp(`^-?\\d*\\.?\\d{0,${decimalPlaces}}$`);
-      if (regex.test(inputValue)) {
-        onChange(inputValue);
+      if (!regex.test(inputValue)) {
+        return; // 不更新值，保持原值
       }
+    }
+
+    onChange(inputValue);
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData('text');
+    
+    // 如果粘贴内容为空，允许
+    if (pastedText.trim() === '') {
+      return;
+    }
+
+    // 验证格式
+    let isValidFormat = false;
+    if (decimalPlaces === 0) {
+      // 整数：只允许数字（可能包含负号）
+      const regex = /^-?\d+$/;
+      isValidFormat = regex.test(pastedText.trim());
+    } else {
+      // 小数：限制小数位数
+      const regex = new RegExp(`^-?\\d+\\.?\\d{0,${decimalPlaces}}$`);
+      isValidFormat = regex.test(pastedText.trim());
+    }
+
+    if (!isValidFormat) {
+      // 格式不符合，阻止粘贴
+      return;
+    }
+
+    // 验证范围
+    const numVal = parseFloat(pastedText.trim());
+    if (!isNaN(numVal)) {
+      // 检查是否超出范围
+      if (min !== undefined && numVal < min) {
+        // 超出最小值，阻止粘贴
+        return;
+      }
+      if (max !== undefined && numVal > max) {
+        // 超出最大值，阻止粘贴
+        return;
+      }
+
+      // 格式和范围都符合，允许粘贴
+      // 根据 decimalPlaces 格式化
+      let formattedValue: string;
+      if (decimalPlaces === 0) {
+        formattedValue = Math.round(numVal).toString();
+      } else {
+        formattedValue = numVal.toFixed(decimalPlaces);
+      }
+      onChange(formattedValue);
     }
   };
 
@@ -164,6 +218,7 @@ const FormNumberInput: React.FC<FormNumberInputProps> = ({
       onKeyDown={handleKeyDown}
       onWheel={handleWheel}
       onBlur={handleBlur}
+      onPaste={handlePaste}
       min={min}
       max={max}
       step={step}

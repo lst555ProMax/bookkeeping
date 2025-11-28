@@ -182,8 +182,8 @@ const Home: React.FC = () => {
         const durationHours = s.duration / 60; // 将分钟转换为小时
         if (sleepDurationLevel === 'too-short' && durationHours >= 4) return false;
         if (sleepDurationLevel === 'insufficient' && (durationHours < 4 || durationHours >= 7)) return false;
-        if (sleepDurationLevel === 'normal' && (durationHours < 7 || durationHours > 9)) return false;
-        if (sleepDurationLevel === 'excessive' && durationHours <= 9) return false;
+        if (sleepDurationLevel === 'normal' && (durationHours < 7 || durationHours >= 9)) return false;
+        if (sleepDurationLevel === 'excessive' && durationHours < 9) return false;
       }
       
       // 睡眠质量等级筛选
@@ -433,6 +433,10 @@ const Home: React.FC = () => {
       deleteIncome(id);
       const updatedIncomes = loadIncomes();
       setIncomes(updatedIncomes);
+      // 如果正在编辑这条记录，清除编辑状态
+      if (editingIncome && editingIncome.id === id) {
+        setEditingIncome(null);
+      }
       toast.success('收入记录删除成功！');
     }
   };
@@ -464,6 +468,10 @@ const Home: React.FC = () => {
     if (window.confirm('确定要删除这条记录吗？')) {
       deleteExpense(id);
       setExpenses(prev => prev.filter(expense => expense.id !== id));
+      // 如果正在编辑这条记录，清除编辑状态
+      if (editingExpense && editingExpense.id === id) {
+        setEditingExpense(null);
+      }
       toast.success('支出记录删除成功！');
     }
   };
@@ -552,6 +560,10 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearExpensesOnly();
       loadData();
+      // 如果有正在编辑的支出记录，清除编辑状态
+      if (editingExpense) {
+        setEditingExpense(null);
+      }
       toast.success(`已清空 ${count} 条支出记录！`);
     }
   };
@@ -620,6 +632,10 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearIncomesOnly();
       loadData();
+      // 如果有正在编辑的收入记录，清除编辑状态
+      if (editingIncome) {
+        setEditingIncome(null);
+      }
       toast.success(`已清空 ${count} 条收入记录！`);
     }
   };
@@ -725,6 +741,10 @@ const Home: React.FC = () => {
       deleteSleepRecord(id);
       const updatedSleeps = loadSleepRecords();
       setSleepRecords(updatedSleeps);
+      // 如果正在编辑这条记录，清除编辑状态
+      if (editingSleep && editingSleep.id === id) {
+        setEditingSleep(null);
+      }
       toast.success('睡眠记录删除成功！');
     }
   };
@@ -775,6 +795,10 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearAllSleepRecords();
       loadData(); // 重新加载数据
+      // 如果有正在编辑的睡眠记录，清除编辑状态
+      if (editingSleep) {
+        setEditingSleep(null);
+      }
       toast.success(`已清空 ${count} 条睡眠记录！`);
     }
   };
@@ -851,6 +875,10 @@ const Home: React.FC = () => {
       deleteDailyRecord(id);
       const updatedRecords = loadDailyRecords();
       setDailyRecords(updatedRecords);
+      // 如果正在编辑这条记录，清除编辑状态
+      if (editingDaily && editingDaily.id === id) {
+        setEditingDaily(null);
+      }
       toast.success('日常记录删除成功！');
     }
   };
@@ -934,6 +962,10 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearAllDailyRecords();
       loadData();
+      // 如果有正在编辑的日常记录，清除编辑状态
+      if (editingDaily) {
+        setEditingDaily(null);
+      }
       toast.success(`已清空 ${count} 条日常记录！`);
     }
   };
@@ -954,6 +986,10 @@ const Home: React.FC = () => {
       deleteStudyRecord(id);
       const updatedRecords = loadStudyRecords();
       setStudyRecords(updatedRecords);
+      // 如果正在编辑这条记录，清除编辑状态
+      if (editingStudy && editingStudy.id === id) {
+        setEditingStudy(null);
+      }
       toast.success('学习记录删除成功！');
     }
   };
@@ -1038,6 +1074,10 @@ const Home: React.FC = () => {
     if (window.confirm(message)) {
       const count = clearAllStudyRecords();
       loadData();
+      // 如果有正在编辑的学习记录，清除编辑状态
+      if (editingStudy) {
+        setEditingStudy(null);
+      }
       toast.success(`已清空 ${count} 条学习记录！`);
     }
   };

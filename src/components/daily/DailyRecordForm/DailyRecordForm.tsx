@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { DailyRecord, MealStatus } from '@/utils';
+import { DailyRecord, MealStatus, loadDailyRecords } from '@/utils';
 import { DatePicker, TimePicker, FormNumberInput, FormTextarea } from '@/components/common';
 import './DailyRecordForm.scss';
 
@@ -142,6 +142,9 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     }
   }, [date, breakfast, lunch, dinner, morningWash, nightWash, shower, hairWash, footWash, faceWash, laundry, cleaning, wechatSteps, checkInTime, checkOutTime, leaveTime, notes, editingRecord]);
 
+  // 使用 ref 跟踪之前的编辑状态
+  const prevEditingRecordRef = React.useRef<DailyRecord | null>(null);
+
   // 当编辑记录时，填充表单
   useEffect(() => {
     if (editingRecord) {
@@ -163,12 +166,17 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       setLeaveTime(editingRecord.leaveTime || '');
       setNotes(editingRecord.notes || '');
     } else {
-      // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
-      if (isFirstLoad && !savedFormData) {
+      // 如果之前有编辑状态，现在变为 null（取消编辑或删除），则重置表单
+      if (prevEditingRecordRef.current !== null) {
+        resetForm();
+      } else if (isFirstLoad && !savedFormData) {
+        // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
         resetForm();
         setIsFirstLoad(false); // 标记已处理首次加载
       }
     }
+    // 更新 ref
+    prevEditingRecordRef.current = editingRecord;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingRecord]);
 
@@ -187,6 +195,47 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     if (recordDate < minDate) {
       toast.error('日期必须从2024年10月开始');
       return;
+    }
+
+    // 验证微信步数范围：0-100000
+    if (wechatSteps) {
+      const stepsNum = parseInt(wechatSteps);
+      if (!isNaN(stepsNum) && (stepsNum < 0 || stepsNum > 100000)) {
+        toast.error('微信步数必须在0-100000之间');
+        return;
+      }
+    }
+
+    // 验证备注长度不能超过50个字
+    if (notes.trim().length > 50) {
+      toast.error('备注长度不能超过50个字');
+      return;
+    }
+
+    // 验证日期不能大于今天
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    if (recordDate > today) {
+      toast.error('日期不能大于今天');
+      return;
+    }
+
+    // 验证同一日期只能有一条记录（编辑时排除当前记录）
+    if (!editingRecord) {
+      const existingRecords = loadDailyRecords();
+      const hasSameDate = existingRecords.some(record => record.date === date);
+      if (hasSameDate) {
+        toast.error('该日期已存在日常记录，同一日期只能有一条记录');
+        return;
+      }
+    } else {
+      // 编辑时，检查是否有其他记录使用相同日期
+      const existingRecords = loadDailyRecords();
+      const hasSameDate = existingRecords.some(record => record.date === date && record.id !== editingRecord.id);
+      if (hasSameDate) {
+        toast.error('该日期已存在其他日常记录，同一日期只能有一条记录');
+        return;
+      }
     }
 
     const dailyRecord: DailyRecord = {
@@ -344,6 +393,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
               onChange={setWechatSteps}
               placeholder="8000"
               min={0}
+              max={100000}
               step={1}
               arrowStep={500}
               wheelStep={500}
@@ -476,12 +526,16 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
 
         {/* 备注 */}
         <div className="form-group">
-          <label htmlFor="notes">📝 备注</label>
+          <label htmlFor="notes">
+            📝 备注
+            <span className="quality-hint">（最多50字）</span>
+          </label>
           <FormTextarea
             id="notes"
             value={notes}
             onChange={setNotes}
             placeholder="记录今天的日常生活..."
+            maxLength={50}
           />
         </div>
 

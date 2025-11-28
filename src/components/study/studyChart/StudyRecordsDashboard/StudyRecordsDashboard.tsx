@@ -191,7 +191,7 @@ const StudyRecordsDashboard: React.FC = () => {
           <div className="stat-card stat-card--warning">
             <div className="stat-icon">🏆</div>
             <div className="stat-content">
-              <div className="stat-label">学习最多的一天</div>
+              <div className="stat-label">最长学习时间</div>
               <div className="stat-value">
                 {topDate !== '--' ? formatDate(topDate) : '--'}
                 <span className="stat-subvalue">

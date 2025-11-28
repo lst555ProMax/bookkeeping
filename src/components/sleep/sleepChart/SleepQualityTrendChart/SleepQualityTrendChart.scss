@@ -1,30 +1,36 @@
 .sleep-quality-trend-chart {
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
 
-  .chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .chart-title {
-    margin: 0;
+  h3 {
+    margin: 0 0 1.5rem 0;
     font-size: 1.2rem;
     font-weight: 600;
     color: #333;
     text-align: left;
   }
 
-  .chart-average {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #8884d8;
-    padding: 0.5rem 1rem;
-    background: #f0f0ff;
-    border-radius: 8px;
+  .chart-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #999;
+
+    p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+
+      &:first-child {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+    }
+
+    .hint {
+      font-size: 0.9rem;
+      color: #bbb;
+    }
   }
 }

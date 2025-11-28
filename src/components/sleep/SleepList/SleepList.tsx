@@ -167,10 +167,10 @@ const SleepList: React.FC<SleepListProps> = ({
   const getSleepDurationLevel = (durationMinutes: number | undefined): 'too-short' | 'insufficient' | 'normal' | 'excessive' | 'unknown' => {
     if (durationMinutes === undefined) return 'unknown';
     const hours = durationMinutes / 60;
-    if (hours < 4) return 'too-short';      // 0-4小时：过少
+    if (hours < 4) return 'too-short';      // <4小时：过少
     if (hours < 7) return 'insufficient';  // 4-7小时：欠缺
-    if (hours <= 9) return 'normal';       // 7-9小时：正常
-    return 'excessive';                     // 9小时以上：过多
+    if (hours < 9) return 'normal';       // 7-9小时：正常
+    return 'excessive';                     // ≥9小时：过多
   };
 
   // 获取睡眠时长对应的颜色类
@@ -327,8 +327,8 @@ const SleepList: React.FC<SleepListProps> = ({
                         </div>
 
                         <div className="sleep-item__body">
-                          {/* 第一行：入睡时间和醒来时间 */}
-                          <div className="time-info-row">
+                          {/* 第一行：入睡时间、醒来时间、睡眠时长 */}
+                          <div className="time-duration-row">
                             <div className="time-info">
                               <span className="info-label">🌙 入睡时间</span>
                               <span className="info-value">{sleep.sleepTime}</span>
@@ -337,47 +337,48 @@ const SleepList: React.FC<SleepListProps> = ({
                               <span className="info-label">☀️ 醒来时间</span>
                               <span className="info-value">{sleep.wakeTime}</span>
                             </div>
-                          </div>
-
-                          {/* 第二行：睡眠时长和睡眠质量 */}
-                          <div className="duration-quality-row">
-                            {sleep.duration !== undefined && (
-                              <div className="duration-info">
-                                <span className="info-label">⏱️ 睡眠时长</span>
+                            <div className="duration-info">
+                              <span className="info-label">⏱️ 睡眠时长</span>
+                              {sleep.duration !== undefined ? (
                                 <span className={`info-value ${getDurationColorClass(sleep.duration)}`}>
                                   {formatSleepDuration(sleep.duration)}
                                 </span>
-                              </div>
-                            )}
+                              ) : (
+                                <span className="info-value">--</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 第二行：睡眠质量和小睡 */}
+                          <div className="quality-naps-row">
                             <div className="quality-info">
                               <span className="info-label">⭐ 睡眠质量</span>
                               <span className={`sleep-quality ${getQualityClass(sleep.quality)}`}>
                                 {getQualityEmoji(sleep.quality)} {sleep.quality}分 ({SLEEP_QUALITY_LABELS[getSleepQualityLevel(sleep.quality)]})
                               </span>
                             </div>
+                            <div className="sleep-naps">
+                              <span className="naps-label">💤 小睡</span>
+                              {sleep.naps && (sleep.naps.morning || sleep.naps.noon || sleep.naps.afternoon || sleep.naps.evening) ? (
+                                <div className="naps-tags">
+                                  {sleep.naps.morning && <span className="nap-tag">上午</span>}
+                                  {sleep.naps.noon && <span className="nap-tag">中午</span>}
+                                  {sleep.naps.afternoon && <span className="nap-tag">下午</span>}
+                                  {sleep.naps.evening && <span className="nap-tag">晚上</span>}
+                                </div>
+                              ) : (
+                                <span className="naps-empty">--</span>
+                              )}
+                            </div>
                           </div>
 
-                          {/* 第三行：小睡和备注 */}
-                          {((sleep.naps && (sleep.naps.morning || sleep.naps.noon || sleep.naps.afternoon || sleep.naps.evening)) || sleep.notes) && (
-                            <div className="naps-notes-row">
-                              {sleep.naps && (sleep.naps.morning || sleep.naps.noon || sleep.naps.afternoon || sleep.naps.evening) && (
-                                <div className="sleep-naps">
-                                  <span className="naps-label">💤 小睡</span>
-                                  <div className="naps-tags">
-                                    {sleep.naps.morning && <span className="nap-tag">上午</span>}
-                                    {sleep.naps.noon && <span className="nap-tag">中午</span>}
-                                    {sleep.naps.afternoon && <span className="nap-tag">下午</span>}
-                                    {sleep.naps.evening && <span className="nap-tag">晚上</span>}
-                                  </div>
-                                </div>
-                              )}
-
-                              {sleep.notes && (
-                                <div className="sleep-notes">
-                                  <span className="notes-label">📝 备注</span>
-                                  <span className="notes-content">{sleep.notes}</span>
-                                </div>
-                              )}
+                          {/* 第三行：备注 */}
+                          {sleep.notes && (
+                            <div className="notes-row">
+                              <div className="sleep-notes">
+                                <span className="notes-label">📝 备注</span>
+                                <span className="notes-content">{sleep.notes}</span>
+                              </div>
                             </div>
                           )}
                         </div>

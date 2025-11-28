@@ -37,7 +37,10 @@ const SleepRecordsDashboard: React.FC = () => {
 
         {/* 统计概览卡片 */}
         <div className="sleep-records-content__stats">
-          <div className="stat-card stat-card--warning">
+          <div 
+            className="stat-card stat-card--warning"
+            title="入睡时间在早上6点到中午12点之间的天数（通宵后白天才睡）"
+          >
             <div className="stat-icon">🌃</div>
             <div className="stat-content">
               <div className="stat-label">熬穿天数</div>
@@ -45,7 +48,10 @@ const SleepRecordsDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card stat-card--danger">
+          <div 
+            className="stat-card stat-card--danger"
+            title="入睡时间在凌晨3点到早上6点之间的天数（很晚才睡）"
+          >
             <div className="stat-icon">😴</div>
             <div className="stat-content">
               <div className="stat-label">失眠天数</div>
@@ -53,7 +59,10 @@ const SleepRecordsDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card stat-card--info">
+          <div 
+            className="stat-card stat-card--info"
+            title="入睡时间在平均入睡时间上下0.5小时区间的记录数占总记录数的百分比"
+          >
             <div className="stat-icon">📊</div>
             <div className="stat-content">
               <div className="stat-label">入睡规律性</div>
@@ -61,7 +70,10 @@ const SleepRecordsDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card stat-card--success">
+          <div 
+            className="stat-card stat-card--success"
+            title="睡眠时长在平均睡眠时长上下0.5小时区间的记录数占总记录数的百分比"
+          >
             <div className="stat-icon">⏰</div>
             <div className="stat-content">
               <div className="stat-label">睡眠时长规律性</div>
@@ -90,10 +102,15 @@ const SleepRecordsDashboard: React.FC = () => {
           </div>
 
           {/* 睡眠质量趋势 */}
-          <SleepQualityTrendChart 
-            data={qualityData}
-            averageQuality={stats.averageQuality}
-          />
+          <div className="chart-with-stats">
+            <div className="chart-header-stats">
+              <span className="stat-item">⭐ 平均质量：{stats.averageQuality.toFixed(1)}分</span>
+            </div>
+            <SleepQualityTrendChart 
+              data={qualityData}
+              averageQuality={stats.averageQuality}
+            />
+          </div>
         </div>
       </div>
     </div>

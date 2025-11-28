@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { SleepRecord } from '@/utils';
+import { SleepRecord, loadSleepRecords } from '@/utils';
 import { calculateSleepDuration } from '@/utils';
 import { DatePicker, TimePicker, FormNumberInput, FormTextarea } from '@/components/common';
 import './SleepForm.scss';
@@ -33,7 +33,7 @@ const SleepForm: React.FC<SleepFormProps> = ({
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
+      } catch {
         return null;
       }
     }
@@ -107,6 +107,9 @@ const SleepForm: React.FC<SleepFormProps> = ({
     }
   }, [date, sleepTime, wakeTime, quality, notes, naps, editingSleep]);
 
+  // 使用 ref 跟踪之前的编辑状态
+  const prevEditingSleepRef = React.useRef<SleepRecord | null>(null);
+
   // 当编辑记录时，填充表单
   useEffect(() => {
     if (editingSleep) {
@@ -122,12 +125,17 @@ const SleepForm: React.FC<SleepFormProps> = ({
         evening: editingSleep.naps?.evening || false
       });
     } else {
-      // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
-      if (isFirstLoad && !savedFormData) {
+      // 如果之前有编辑状态，现在变为 null（取消编辑或删除），则重置表单
+      if (prevEditingSleepRef.current !== null) {
+        resetForm();
+      } else if (isFirstLoad && !savedFormData) {
+        // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
         resetForm();
         setIsFirstLoad(false); // 标记已处理首次加载
       }
     }
+    // 更新 ref
+    prevEditingSleepRef.current = editingSleep;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingSleep]);
 
@@ -153,6 +161,38 @@ const SleepForm: React.FC<SleepFormProps> = ({
     if (!quality || isNaN(qualityNum) || qualityNum < 0 || qualityNum > 100) {
       toast.error('睡眠质量分数必须在0-100之间');
       return;
+    }
+
+    // 验证备注长度不能超过50个字
+    if (notes.trim().length > 50) {
+      toast.error('备注长度不能超过50个字');
+      return;
+    }
+
+    // 验证日期不能大于今天
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    if (recordDate > today) {
+      toast.error('日期不能大于今天');
+      return;
+    }
+
+    // 验证同一日期只能有一条记录（编辑时排除当前记录）
+    if (!editingSleep) {
+      const existingRecords = loadSleepRecords();
+      const hasSameDate = existingRecords.some(record => record.date === date);
+      if (hasSameDate) {
+        toast.error('该日期已存在睡眠记录，同一日期只能有一条记录');
+        return;
+      }
+    } else {
+      // 编辑时，检查是否有其他记录使用相同日期
+      const existingRecords = loadSleepRecords();
+      const hasSameDate = existingRecords.some(record => record.date === date && record.id !== editingSleep.id);
+      if (hasSameDate) {
+        toast.error('该日期已存在其他睡眠记录，同一日期只能有一条记录');
+        return;
+      }
     }
 
     // 计算睡眠时长
@@ -306,12 +346,16 @@ const SleepForm: React.FC<SleepFormProps> = ({
         </div>
 
         <div className="form-group">
-          <label htmlFor="notes">📝 备注</label>
+          <label htmlFor="notes">
+            📝 备注
+            <span className="quality-hint">（最多50字）</span>
+          </label>
           <FormTextarea
             id="notes"
             value={notes}
             onChange={setNotes}
             placeholder="记录今天的睡眠情况..."
+            maxLength={50}
           />
         </div>
 

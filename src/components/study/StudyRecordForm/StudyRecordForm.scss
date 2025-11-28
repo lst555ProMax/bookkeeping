@@ -63,6 +63,13 @@
       color: #e74c3c;
       margin-left: 0.2rem;
     }
+
+    .quality-hint {
+      color: #999;
+      font-weight: 400;
+      font-size: 0.85rem;
+      margin-left: 0.5rem;
+    }
   }
 
   input[type="date"],
@@ -185,6 +192,13 @@
       color: #e74c3c;
       margin-left: 0.2rem;
     }
+
+    .quality-hint {
+      color: #999;
+      font-weight: 400;
+      font-size: 0.85rem;
+      margin-left: 0.5rem;
+    }
   }
 }
 
@@ -203,6 +217,13 @@
     .required {
       color: #e74c3c;
       margin-left: 0.2rem;
+    }
+
+    .quality-hint {
+      color: #999;
+      font-weight: 400;
+      font-size: 0.85rem;
+      margin-left: 0.5rem;
     }
   }
 }
