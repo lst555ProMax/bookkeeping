@@ -4,7 +4,7 @@ import { ExpenseCategory, ExpenseRecord, IncomeCategory, IncomeRecord, RecordTyp
 import { generateId, formatDate, getCategories, getIncomeCategories } from '@/utils';
 import { DatePicker, FormSelect, FormNumberInput, FormTextarea } from '@/components/common';
 import type { FormSelectOption } from '@/components/common';
-import './accountingRecordForm.scss';
+import './AccountingRecordForm.scss';
 
 interface AccountingRecordFormProps {
   onAddExpense: (expense: ExpenseRecord) => void;
