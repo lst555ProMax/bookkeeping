@@ -23,10 +23,10 @@ interface SleepDurationTrendChartProps {
 const SleepDurationTrendChart: React.FC<SleepDurationTrendChartProps> = ({ data }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="sleep-duration-trend-chart">
-        <div className="chart-empty">
-          <p>📊 暂无数据</p>
-          <p className="hint">开始记录睡眠后，这里将显示睡眠时长趋势</p>
+      <div className="sleep-duration-trend-chart sleep-duration-trend-chart--empty">
+        <h3 className="sleep-duration-trend-chart__title">⏱️ 睡眠时长趋势</h3>
+        <div className="sleep-duration-trend-chart__empty-message">
+          <p>暂无睡眠数据</p>
         </div>
       </div>
     );
@@ -56,8 +56,9 @@ const SleepDurationTrendChart: React.FC<SleepDurationTrendChartProps> = ({ data 
 
   return (
     <div className="sleep-duration-trend-chart">
-      <h3>⏱️ 睡眠时长趋势</h3>
-      <ResponsiveContainer width="100%" height={300}>
+      <h3 className="sleep-duration-trend-chart__title">⏱️ 睡眠时长趋势</h3>
+      <div className="sleep-duration-trend-chart__container">
+        <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis 
@@ -85,6 +86,7 @@ const SleepDurationTrendChart: React.FC<SleepDurationTrendChartProps> = ({ data 
           />
         </LineChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 };

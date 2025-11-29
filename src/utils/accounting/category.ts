@@ -302,3 +302,77 @@ export const incomeCategoryHasRecords = (category: IncomeCategory): boolean => {
   const incomes = loadIncomes();
   return incomes.some(income => income.category === category);
 };
+
+/**
+ * 重置支出分类为默认分类
+ */
+export const resetExpenseCategories = (): void => {
+  const currentCategories = getCategories();
+  const defaultCategoriesSet = new Set(DEFAULT_EXPENSE_CATEGORIES);
+  
+  // 找出用户创建的分类（不在默认分类中的，排除"其他"）
+  const userCreatedCategories = currentCategories.filter(
+    cat => cat !== '其他' && !defaultCategoriesSet.has(cat)
+  );
+  
+  // 处理用户创建的分类
+  const expenses = loadExpenses();
+  let updatedExpenses = [...expenses];
+  
+  userCreatedCategories.forEach(category => {
+    const hasRecords = expenses.some(expense => expense.category === category);
+    
+    if (hasRecords) {
+      // 有记录，将记录归到"其他"
+      updatedExpenses = updatedExpenses.map(expense =>
+        expense.category === category
+          ? { ...expense, category: '其他' as ExpenseCategory }
+          : expense
+      );
+    }
+    // 没有记录的分类直接删除，不需要处理
+  });
+  
+  // 保存更新后的记录
+  saveExpenses(updatedExpenses);
+  
+  // 恢复为默认分类
+  saveCategories([...DEFAULT_EXPENSE_CATEGORIES]);
+};
+
+/**
+ * 重置收入分类为默认分类
+ */
+export const resetIncomeCategories = (): void => {
+  const currentCategories = getIncomeCategories();
+  const defaultCategoriesSet = new Set(DEFAULT_INCOME_CATEGORIES);
+  
+  // 找出用户创建的分类（不在默认分类中的，排除"其他"）
+  const userCreatedCategories = currentCategories.filter(
+    cat => cat !== '其他' && !defaultCategoriesSet.has(cat)
+  );
+  
+  // 处理用户创建的分类
+  const incomes = loadIncomes();
+  let updatedIncomes = [...incomes];
+  
+  userCreatedCategories.forEach(category => {
+    const hasRecords = incomes.some(income => income.category === category);
+    
+    if (hasRecords) {
+      // 有记录，将记录归到"其他"
+      updatedIncomes = updatedIncomes.map(income =>
+        income.category === category
+          ? { ...income, category: '其他' as IncomeCategory }
+          : income
+      );
+    }
+    // 没有记录的分类直接删除，不需要处理
+  });
+  
+  // 保存更新后的记录
+  saveIncomes(updatedIncomes);
+  
+  // 恢复为默认分类
+  saveIncomeCategories([...DEFAULT_INCOME_CATEGORIES]);
+};

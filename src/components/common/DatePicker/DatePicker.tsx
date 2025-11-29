@@ -17,6 +17,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const pickerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const prevValueRef = useRef<string>(value);
 
   // 格式化显示日期
   const formatDisplayDate = (dateStr: string): string => {
@@ -59,6 +60,31 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, minDate, maxDa
       };
     }
   }, [isOpen]);
+
+  // 监听value变化，更新viewDate（当value改变时，同步更新日历视图）
+  useEffect(() => {
+    // 只有当value真正改变时才更新viewDate
+    if (prevValueRef.current !== value) {
+      prevValueRef.current = value;
+      if (value) {
+        const newDate = new Date(value);
+        const newViewDate = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
+        // 只有当viewDate的月份或年份与value不同时才更新
+        setViewDate(prevViewDate => {
+          if (
+            prevViewDate.getMonth() !== newViewDate.getMonth() ||
+            prevViewDate.getFullYear() !== newViewDate.getFullYear()
+          ) {
+            return newViewDate;
+          }
+          return prevViewDate;
+        });
+      } else {
+        // 如果value为空，重置为今天
+        setViewDate(new Date());
+      }
+    }
+  }, [value]);
 
   // 点击外部关闭
   useEffect(() => {

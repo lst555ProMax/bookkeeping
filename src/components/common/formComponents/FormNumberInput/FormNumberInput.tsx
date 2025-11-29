@@ -15,6 +15,7 @@ interface FormNumberInputProps {
   decimalPlaces?: number; // 小数位数限制（0表示整数）
   arrowStep?: number; // 上下箭头键的步长（默认等于step）
   wheelStep?: number; // 鼠标滚轮的步长（默认等于step）
+  onRangeError?: (error: { type: 'min' | 'max'; value: number; limit: number }) => void; // 超出范围时的回调
 }
 
 const FormNumberInput: React.FC<FormNumberInputProps> = ({
@@ -30,7 +31,8 @@ const FormNumberInput: React.FC<FormNumberInputProps> = ({
   disabled = false,
   decimalPlaces = 0,
   arrowStep,
-  wheelStep
+  wheelStep,
+  onRangeError
 }) => {
   const effectiveArrowStep = arrowStep ?? step;
   const effectiveWheelStep = wheelStep ?? step;
@@ -89,20 +91,10 @@ const FormNumberInput: React.FC<FormNumberInputProps> = ({
       return;
     }
 
-    // 验证范围
+    // 验证范围（允许粘贴超出范围的值，在失焦时显示错误提示）
     const numVal = parseFloat(pastedText.trim());
     if (!isNaN(numVal)) {
-      // 检查是否超出范围
-      if (min !== undefined && numVal < min) {
-        // 超出最小值，阻止粘贴
-        return;
-      }
-      if (max !== undefined && numVal > max) {
-        // 超出最大值，阻止粘贴
-        return;
-      }
-
-      // 格式和范围都符合，允许粘贴
+      // 允许粘贴，即使超出范围（失焦时会触发错误提示）
       // 根据 decimalPlaces 格式化
       let formattedValue: string;
       if (decimalPlaces === 0) {
@@ -178,18 +170,38 @@ const FormNumberInput: React.FC<FormNumberInputProps> = ({
     }
   };
 
-  const handleBlur = () => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     // 失焦时格式化值
     const numVal = parseFloat(String(value));
     if (!isNaN(numVal)) {
       let finalVal = numVal;
+      let hasError = false;
       
-      // 应用 min/max 限制
+      // 检查是否超出范围，如果超出则触发错误回调，不自动限制值
       if (min !== undefined && finalVal < min) {
-        finalVal = min;
+        if (onRangeError) {
+          onRangeError({ type: 'min', value: finalVal, limit: min });
+        }
+        // 设置自定义验证消息
+        e.target.setCustomValidity(`值不能小于${min}`);
+        hasError = true;
+      } else if (max !== undefined && finalVal > max) {
+        if (onRangeError) {
+          onRangeError({ type: 'max', value: finalVal, limit: max });
+        }
+        // 设置自定义验证消息
+        e.target.setCustomValidity(`值不能大于${max}`);
+        hasError = true;
+      } else {
+        // 清除自定义验证消息
+        e.target.setCustomValidity('');
       }
-      if (max !== undefined && finalVal > max) {
-        finalVal = max;
+      
+      // 如果超出范围，不自动限制值，让用户看到错误
+      if (hasError) {
+        // 触发原生验证显示
+        e.target.reportValidity();
+        return;
       }
       
       // 根据 decimalPlaces 格式化输出
@@ -201,9 +213,11 @@ const FormNumberInput: React.FC<FormNumberInputProps> = ({
     } else if (value === '') {
       // 如果为空且不是必填，保持为空
       onChange('');
+      e.target.setCustomValidity('');
     } else if (required) {
       // 如果必填但值无效，设置为最小值或0
       onChange(min !== undefined ? min.toString() : '0');
+      e.target.setCustomValidity('');
     }
   };
 

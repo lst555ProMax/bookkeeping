@@ -14,12 +14,21 @@ const StepsTrendChart: React.FC<StepsTrendChartProps> = ({ data }) => {
     date: item.date
   }));
 
+  if (chartData.length === 0) {
+    return (
+      <div className="steps-trend-chart steps-trend-chart--empty">
+        <h3 className="steps-trend-chart__title">🚶 每日步数趋势</h3>
+        <div className="steps-trend-chart__empty-message">
+          <p>暂无日常数据</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="steps-trend-chart">
-      <div className="chart-header">
-        <h3>🚶 每日步数趋势</h3>
-      </div>
-      {chartData.length > 0 ? (
+      <h3 className="steps-trend-chart__title">🚶 每日步数趋势</h3>
+      <div className="steps-trend-chart__container">
         <ResponsiveContainer width="100%" height={350}>
           <LineChart
             data={chartData}
@@ -57,11 +66,7 @@ const StepsTrendChart: React.FC<StepsTrendChartProps> = ({ data }) => {
             />
           </LineChart>
         </ResponsiveContainer>
-      ) : (
-        <div className="no-data">
-          <p>暂无数据</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

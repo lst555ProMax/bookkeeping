@@ -153,3 +153,40 @@ export const studyCategoryHasRecords = (category: StudyCategory): boolean => {
   const records = loadStudyRecords();
   return records.some(record => record.category === category);
 };
+
+/**
+ * 重置学习分类为默认分类
+ */
+export const resetStudyCategories = (): void => {
+  const currentCategories = getStudyCategories();
+  const defaultCategoriesSet = new Set(DEFAULT_STUDY_CATEGORIES);
+  
+  // 找出用户创建的分类（不在默认分类中的，排除"其它"）
+  const userCreatedCategories = currentCategories.filter(
+    cat => cat !== '其它' && !defaultCategoriesSet.has(cat)
+  );
+  
+  // 处理用户创建的分类
+  const records = loadStudyRecords();
+  let updatedRecords = [...records];
+  
+  userCreatedCategories.forEach(category => {
+    const hasRecords = records.some(record => record.category === category);
+    
+    if (hasRecords) {
+      // 有记录，将记录归到"其它"
+      updatedRecords = updatedRecords.map(record =>
+        record.category === category
+          ? { ...record, category: '其它' as StudyCategory }
+          : record
+      );
+    }
+    // 没有记录的分类直接删除，不需要处理
+  });
+  
+  // 保存更新后的记录
+  saveStudyRecords(updatedRecords);
+  
+  // 恢复为默认分类
+  saveStudyCategories([...DEFAULT_STUDY_CATEGORIES]);
+};

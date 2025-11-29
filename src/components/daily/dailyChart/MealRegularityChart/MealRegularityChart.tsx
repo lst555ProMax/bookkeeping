@@ -40,12 +40,27 @@ const MealRegularityChart: React.FC<MealRegularityChartProps> = ({
     }
   ];
 
+  // 检查是否有数据（所有统计都为0表示无数据）
+  const hasData = data.some(item => 
+    item.规律 > 0 || item.不规律 > 0 || item.未吃 > 0
+  );
+
+  if (!hasData) {
+    return (
+      <div className="meal-regularity-chart meal-regularity-chart--empty">
+        <h3 className="meal-regularity-chart__title">🍽️ 三餐规律性统计</h3>
+        <div className="meal-regularity-chart__empty-message">
+          <p>暂无日常数据</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="meal-regularity-chart">
-      <div className="chart-header">
-        <h3>🍽️ 三餐规律性统计</h3>
-      </div>
-      <ResponsiveContainer width="100%" height={350}>
+      <h3 className="meal-regularity-chart__title">🍽️ 三餐规律性统计</h3>
+      <div className="meal-regularity-chart__container">
+        <ResponsiveContainer width="100%" height={350}>
         <BarChart
           data={data}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -76,6 +91,7 @@ const MealRegularityChart: React.FC<MealRegularityChartProps> = ({
           <Bar dataKey="未吃" fill="#ff4d4f" radius={[8, 8, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 };

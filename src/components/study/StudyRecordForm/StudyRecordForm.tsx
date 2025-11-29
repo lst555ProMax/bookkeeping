@@ -178,8 +178,8 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
       return;
     }
 
-    if (startEp < 0 || endEp < 0) {
-      toast.error('集数不能为负数');
+    if (startEp < 1 || endEp < 1) {
+      toast.error('集数不能小于1');
       return;
     }
 
@@ -188,7 +188,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
       return;
     }
 
-    // 验证观看集数范围：0-1000
+    // 验证观看集数范围：1-1000
     if (startEp > 1000 || endEp > 1000) {
       toast.error('观看集数不能超过1000');
       return;
@@ -352,8 +352,8 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
                 <FormNumberInput
                   value={episodeStart}
                   onChange={setEpisodeStart}
-                  placeholder="0"
-                  min={0}
+                  placeholder="1"
+                  min={1}
                   max={1000}
                   step={1}
                   required
@@ -363,7 +363,7 @@ const StudyRecordForm: React.FC<StudyRecordFormProps> = ({
                   value={episodeEnd}
                   onChange={setEpisodeEnd}
                   placeholder="20"
-                  min={0}
+                  min={1}
                   max={1000}
                   step={1}
                   required

@@ -10,12 +10,21 @@ interface HabitStatsChartProps {
 const COLORS = ['#1ea5f9', '#52c41a', '#faad14', '#ff4d4f', '#13c2c2', '#722ed1', '#eb2f96'];
 
 const HabitStatsChart: React.FC<HabitStatsChartProps> = ({ data }) => {
+  if (data.length === 0) {
+    return (
+      <div className="habit-stats-chart habit-stats-chart--empty">
+        <h3 className="habit-stats-chart__title">🏠 生活习惯完成度</h3>
+        <div className="habit-stats-chart__empty-message">
+          <p>暂无日常数据</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="habit-stats-chart">
-      <div className="chart-header">
-        <h3>🏠 生活习惯完成度</h3>
-      </div>
-      {data.length > 0 ? (
+      <h3 className="habit-stats-chart__title">🏠 生活习惯完成度</h3>
+      <div className="habit-stats-chart__container">
         <ResponsiveContainer width="100%" height={350}>
           <PieChart>
             <Pie
@@ -53,11 +62,7 @@ const HabitStatsChart: React.FC<HabitStatsChartProps> = ({ data }) => {
             />
           </PieChart>
         </ResponsiveContainer>
-      ) : (
-        <div className="no-data">
-          <p>暂无数据</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

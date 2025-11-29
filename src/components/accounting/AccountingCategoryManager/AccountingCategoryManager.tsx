@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { ExpenseCategory, IncomeCategory, RecordType } from '@/utils';
 import { 
@@ -13,7 +13,9 @@ import {
   deleteIncomeCategory,
   updateIncomeCategory,
   incomeCategoryHasRecords,
-  saveIncomeCategoriesOrder
+  saveIncomeCategoriesOrder,
+  resetExpenseCategories,
+  resetIncomeCategories
 } from '@/utils';
 import './AccountingCategoryManager.scss';
 
@@ -31,6 +33,8 @@ const AccountingCategoryManager: React.FC<AccountingCategoryManagerProps> = ({ r
   const [editingName, setEditingName] = useState('');
   const [error, setError] = useState('');
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const listContainerRef = useRef<HTMLDivElement>(null);
+  const scrollIntervalRef = useRef<number | null>(null);
 
   useEffect(() => {
     const loadedCategories = isIncome ? getManageableIncomeCategories() : getManageableCategories();
@@ -168,6 +172,28 @@ const AccountingCategoryManager: React.FC<AccountingCategoryManagerProps> = ({ r
     }
   };
 
+  const handleReset = () => {
+    const recordLabel = isIncome ? '收入' : '支出';
+    const message = `确定要重置${recordLabel}分类为默认分类吗？\n\n` +
+      `此操作将：\n` +
+      `1. 恢复为系统默认分类\n` +
+      `2. 删除所有用户创建的分类（无记录的）\n` +
+      `3. 将用户创建分类下的记录转移到"其他"分类\n\n` +
+      `此操作不可恢复，确定要继续吗？`;
+    
+    if (window.confirm(message)) {
+      if (isIncome) {
+        resetIncomeCategories();
+      } else {
+        resetExpenseCategories();
+      }
+      
+      loadCategories();
+      onCategoriesChange();
+      toast.success(`${recordLabel}分类已重置为默认分类`);
+    }
+  };
+
   // 拖拽处理函数
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
@@ -176,11 +202,69 @@ const AccountingCategoryManager: React.FC<AccountingCategoryManagerProps> = ({ r
 
   const handleDragEnd = () => {
     setDraggedIndex(null);
+    // 清除滚动定时器
+    if (scrollIntervalRef.current !== null) {
+      cancelAnimationFrame(scrollIntervalRef.current);
+      scrollIntervalRef.current = null;
+    }
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
+    
+    // 自动滚动逻辑
+    if (!listContainerRef.current) return;
+    
+    const container = listContainerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const mouseY = e.clientY;
+    
+    // 滚动阈值（距离边缘多少像素时开始滚动）
+    const scrollThreshold = 50;
+    const scrollSpeed = 10;
+    
+    // 检查是否接近顶部
+    const distanceFromTop = mouseY - containerRect.top;
+    if (distanceFromTop < scrollThreshold && container.scrollTop > 0) {
+      // 向上滚动
+      if (scrollIntervalRef.current === null) {
+        const scroll = () => {
+          if (container.scrollTop > 0) {
+            container.scrollTop = Math.max(0, container.scrollTop - scrollSpeed);
+            scrollIntervalRef.current = requestAnimationFrame(scroll);
+          } else {
+            scrollIntervalRef.current = null;
+          }
+        };
+        scrollIntervalRef.current = requestAnimationFrame(scroll);
+      }
+    }
+    // 检查是否接近底部
+    else if (distanceFromTop > containerRect.height - scrollThreshold) {
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      if (container.scrollTop < maxScroll) {
+        // 向下滚动
+        if (scrollIntervalRef.current === null) {
+          const scroll = () => {
+            if (container.scrollTop < maxScroll) {
+              container.scrollTop = Math.min(maxScroll, container.scrollTop + scrollSpeed);
+              scrollIntervalRef.current = requestAnimationFrame(scroll);
+            } else {
+              scrollIntervalRef.current = null;
+            }
+          };
+          scrollIntervalRef.current = requestAnimationFrame(scroll);
+        }
+      }
+    }
+    // 不在滚动区域，清除滚动定时器
+    else {
+      if (scrollIntervalRef.current !== null) {
+        cancelAnimationFrame(scrollIntervalRef.current);
+        scrollIntervalRef.current = null;
+      }
+    }
   };
 
   const handleDrop = (e: React.DragEvent, dropIndex: number) => {
@@ -219,16 +303,26 @@ const AccountingCategoryManager: React.FC<AccountingCategoryManagerProps> = ({ r
       <div className="category-manager__modal">
         <div className="category-manager__header">
           <h3>管理{isIncome ? '收入' : '支出'}分类</h3>
-          <button 
-            className="category-manager__close" 
-            onClick={onClose}
-            type="button"
-          >
-            ✕
-          </button>
+          <div className="category-manager__header-actions">
+            <button 
+              className="category-manager__reset-btn" 
+              onClick={handleReset}
+              type="button"
+              title="重置为默认分类"
+            >
+              🔄
+            </button>
+            <button 
+              className="category-manager__close" 
+              onClick={onClose}
+              type="button"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
-        <div className="category-manager__content">
+        <div className="category-manager__content" ref={listContainerRef}>
           {error && (
             <div className="category-manager__error">{error}</div>
           )}

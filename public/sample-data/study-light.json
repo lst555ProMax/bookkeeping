@@ -1,0 +1,128 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2025-11-28T12:00:00.000Z",
+  "recordCount": 10,
+  "records": [
+    {
+      "id": "study_sample_26",
+      "date": "2025-10-01",
+      "category": "社会人文",
+      "videoTitle": "心理学导论",
+      "episodeStart": 1,
+      "episodeEnd": 2,
+      "totalTime": 80,
+      "remark": "示例数据",
+      "createdAt": "2025-10-01T10:00:00.000Z",
+      "updatedAt": "2025-10-01T10:00:00.000Z"
+    },
+    {
+      "id": "study_sample_15",
+      "date": "2025-10-10",
+      "category": "经济学基础",
+      "videoTitle": "宏观经济学",
+      "episodeStart": 11,
+      "episodeEnd": 13,
+      "totalTime": 140,
+      "remark": "示例数据",
+      "createdAt": "2025-10-10T15:30:00.000Z",
+      "updatedAt": "2025-10-10T15:30:00.000Z"
+    },
+    {
+      "id": "study_sample_20",
+      "date": "2025-10-20",
+      "category": "艺术史",
+      "videoTitle": "印象派绘画",
+      "episodeStart": 7,
+      "episodeEnd": 9,
+      "totalTime": 130,
+      "remark": "示例数据",
+      "createdAt": "2025-10-20T10:50:00.000Z",
+      "updatedAt": "2025-10-20T10:50:00.000Z"
+    },
+    {
+      "id": "study_sample_27",
+      "date": "2025-10-25",
+      "category": "世界历史",
+      "videoTitle": "中国古代史",
+      "episodeStart": 30,
+      "episodeEnd": 32,
+      "totalTime": 135,
+      "remark": "示例数据",
+      "createdAt": "2025-10-25T16:30:00.000Z",
+      "updatedAt": "2025-10-25T16:30:00.000Z"
+    },
+    {
+      "id": "study_sample_30",
+      "date": "2025-10-31",
+      "category": "艺术史",
+      "videoTitle": "现代艺术运动",
+      "episodeStart": 10,
+      "episodeEnd": 12,
+      "totalTime": 120,
+      "remark": "示例数据",
+      "createdAt": "2025-10-31T09:00:00.000Z",
+      "updatedAt": "2025-10-31T09:00:00.000Z"
+    },
+    {
+      "id": "study_sample_41",
+      "date": "2025-11-01",
+      "category": "前后端开发",
+      "videoTitle": "Node.js 后端开发",
+      "episodeStart": 26,
+      "episodeEnd": 28,
+      "totalTime": 110,
+      "remark": "示例数据",
+      "createdAt": "2025-11-01T16:20:00.000Z",
+      "updatedAt": "2025-11-01T16:20:00.000Z"
+    },
+    {
+      "id": "study_sample_35",
+      "date": "2025-11-10",
+      "category": "经济学基础",
+      "videoTitle": "国际贸易理论",
+      "episodeStart": 24,
+      "episodeEnd": 26,
+      "totalTime": 125,
+      "remark": "示例数据",
+      "createdAt": "2025-11-10T11:00:00.000Z",
+      "updatedAt": "2025-11-10T11:00:00.000Z"
+    },
+    {
+      "id": "study_sample_40",
+      "date": "2025-11-20",
+      "category": "艺术史",
+      "videoTitle": "当代艺术",
+      "episodeStart": 15,
+      "episodeEnd": 17,
+      "totalTime": 145,
+      "remark": "示例数据",
+      "createdAt": "2025-11-20T09:30:00.000Z",
+      "updatedAt": "2025-11-20T09:30:00.000Z"
+    },
+    {
+      "id": "study_sample_53",
+      "date": "2025-11-25",
+      "category": "AI基础",
+      "videoTitle": "强化学习",
+      "episodeStart": 32,
+      "episodeEnd": 34,
+      "totalTime": 145,
+      "remark": "示例数据",
+      "createdAt": "2025-11-25T09:25:00.000Z",
+      "updatedAt": "2025-11-25T09:25:00.000Z"
+    },
+    {
+      "id": "study_sample_58",
+      "date": "2025-11-28",
+      "category": "音乐史",
+      "videoTitle": "电子音乐",
+      "episodeStart": 24,
+      "episodeEnd": 26,
+      "totalTime": 130,
+      "remark": "示例数据",
+      "createdAt": "2025-11-28T14:15:00.000Z",
+      "updatedAt": "2025-11-28T14:15:00.000Z"
+    }
+  ]
+}
+

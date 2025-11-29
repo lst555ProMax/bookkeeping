@@ -1,0 +1,158 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2025-11-28T11:07:02.888Z",
+  "sleepRecords": [
+    {
+      "id": "sleep_sample_1",
+      "date": "2025-10-01",
+      "sleepTime": "23:45",
+      "wakeTime": "10:15",
+      "quality": 83,
+      "naps": {
+        "morning": true,
+        "noon": false,
+        "afternoon": false,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-10-01T15:51:00.000Z"
+    },
+    {
+      "id": "sleep_sample_10",
+      "date": "2025-10-10",
+      "sleepTime": "02:00",
+      "wakeTime": "08:45",
+      "quality": 61,
+      "naps": {
+        "morning": false,
+        "noon": false,
+        "afternoon": true,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-10-10T12:07:00.000Z"
+    },
+    {
+      "id": "sleep_sample_20",
+      "date": "2025-10-20",
+      "sleepTime": "22:30",
+      "wakeTime": "11:30",
+      "quality": 87,
+      "naps": {
+        "morning": false,
+        "noon": true,
+        "afternoon": false,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-10-20T15:11:00.000Z"
+    },
+    {
+      "id": "sleep_sample_25",
+      "date": "2025-10-25",
+      "sleepTime": "00:00",
+      "wakeTime": "09:00",
+      "quality": 55,
+      "naps": {
+        "morning": true,
+        "noon": false,
+        "afternoon": false,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-10-25T12:11:00.000Z"
+    },
+    {
+      "id": "sleep_sample_31",
+      "date": "2025-10-31",
+      "sleepTime": "00:15",
+      "wakeTime": "09:30",
+      "quality": 81,
+      "naps": {
+        "morning": false,
+        "noon": false,
+        "afternoon": true,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-10-31T13:15:00.000Z"
+    },
+    {
+      "id": "sleep_sample_32",
+      "date": "2025-11-01",
+      "sleepTime": "02:30",
+      "wakeTime": "08:15",
+      "quality": 86,
+      "naps": {
+        "morning": true,
+        "noon": false,
+        "afternoon": false,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-11-01T13:48:00.000Z"
+    },
+    {
+      "id": "sleep_sample_41",
+      "date": "2025-11-10",
+      "sleepTime": "22:00",
+      "wakeTime": "08:30",
+      "quality": 50,
+      "naps": {
+        "morning": true,
+        "noon": true,
+        "afternoon": false,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-11-10T13:40:00.000Z"
+    },
+    {
+      "id": "sleep_sample_51",
+      "date": "2025-11-20",
+      "sleepTime": "23:15",
+      "wakeTime": "09:00",
+      "quality": 83,
+      "naps": {
+        "morning": false,
+        "noon": true,
+        "afternoon": false,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-11-20T15:30:00.000Z"
+    },
+    {
+      "id": "sleep_sample_56",
+      "date": "2025-11-25",
+      "sleepTime": "22:15",
+      "wakeTime": "09:45",
+      "quality": 65,
+      "naps": {
+        "morning": true,
+        "noon": false,
+        "afternoon": false,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-11-25T15:54:00.000Z"
+    },
+    {
+      "id": "sleep_sample_59",
+      "date": "2025-11-28",
+      "sleepTime": "23:15",
+      "wakeTime": "11:45",
+      "quality": 87,
+      "naps": {
+        "morning": true,
+        "noon": false,
+        "afternoon": false,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-11-28T13:45:00.000Z"
+    }
+  ],
+  "totalRecords": 10
+}
+

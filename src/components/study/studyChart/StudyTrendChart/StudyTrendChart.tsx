@@ -59,46 +59,56 @@ const StudyTrendChart: React.FC<StudyTrendChartProps> = ({ dateStats }) => {
     return null;
   };
 
+  // 检查是否有数据（所有分钟数都为0表示无数据）
+  const hasData = lineChartData.some(item => item.minutes > 0);
+
+  if (!hasData) {
+    return (
+      <div className="chart-card chart-card--trend chart-card--empty">
+        <h3 className="chart-card__title">📈 最近7天学习趋势</h3>
+        <div className="chart-card__empty-message">
+          <p>暂无学习数据</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="chart-card chart-card--trend">
       <h3 className="chart-card__title">📈 最近7天学习趋势</h3>
       <div className="chart-card__container">
-        {lineChartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-              data={lineChartData}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis 
-                dataKey="displayDate" 
-                tick={{ fontSize: 12 }}
-                stroke="#666"
-              />
-              <YAxis 
-                tick={{ fontSize: 12 }}
-                stroke="#666"
-                tickFormatter={(value) => `${value}m`}
-              />
-              <Tooltip content={<CustomLineTooltip />} />
-              <Line 
-                type="monotone" 
-                dataKey="minutes" 
-                stroke="#45B7D1"
-                strokeWidth={3}
-                dot={{ fill: '#45B7D1', strokeWidth: 2, r: 5 }}
-                activeDot={{ r: 7, stroke: '#45B7D1', strokeWidth: 2 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        ) : (
-          <div className="empty-state">暂无数据</div>
-        )}
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart
+            data={lineChartData}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis 
+              dataKey="displayDate" 
+              tick={{ fontSize: 12 }}
+              stroke="#666"
+            />
+            <YAxis 
+              tick={{ fontSize: 12 }}
+              stroke="#666"
+              tickFormatter={(value) => `${value}m`}
+            />
+            <Tooltip content={<CustomLineTooltip />} />
+            <Line 
+              type="monotone" 
+              dataKey="minutes" 
+              stroke="#45B7D1"
+              strokeWidth={3}
+              dot={{ fill: '#45B7D1', strokeWidth: 2, r: 5 }}
+              activeDot={{ r: 7, stroke: '#45B7D1', strokeWidth: 2 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

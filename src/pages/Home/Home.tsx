@@ -663,10 +663,59 @@ const Home: React.FC = () => {
 
   // 学习分类变化时刷新
   const handleStudyCategoriesChange = () => {
+    // 保存更新前的状态
+    const oldSelectedCategory = studySelectedCategory;
+    const oldRecords = [...studyRecords]; // 保存更新前的记录快照
+    
     setStudyCategoriesKey(prev => prev + 1);
     // 重新加载学习记录
     const updatedStudyRecords = loadStudyRecords();
     setStudyRecords(updatedStudyRecords);
+    
+    // 获取新的分类列表
+    const newCategories = getStudyCategories();
+    
+    // 处理分类筛选状态的更新
+    if (oldSelectedCategory !== '全部') {
+      // 如果当前选中的分类还在新列表中，保持不变
+      if (newCategories.includes(oldSelectedCategory as any)) {
+        // 分类还在，保持不变
+      } else {
+        // 分类不在新列表中（可能被删除或重命名）
+        // 如果分类被重命名，记录中的分类应该已经更新为新名称
+        // 如果分类被删除，记录中的分类应该已经改为"其它"
+        
+        // 通过对比更新前后的记录，找到对应的新分类名
+        // 查找那些原本使用旧分类的记录，看看它们现在的分类是什么
+        let newCategoryName: string | null = null;
+        
+        // 遍历更新前的记录，找到使用旧分类的记录
+        for (const oldRecord of oldRecords) {
+          if (oldRecord.category === oldSelectedCategory) {
+            // 找到更新后对应的记录
+            const updatedRecord = updatedStudyRecords.find(r => r.id === oldRecord.id);
+            if (updatedRecord) {
+              // 如果更新后的记录分类在新分类列表中，说明分类被重命名了或被删除了（改为"其它"）
+              if (newCategories.includes(updatedRecord.category as any)) {
+                newCategoryName = updatedRecord.category;
+                break; // 找到第一个匹配的就够了
+              }
+            }
+          }
+        }
+        
+        if (newCategoryName && newCategories.includes(newCategoryName as any)) {
+          // 找到对应的新分类名，更新筛选状态
+          // 如果分类被重命名，newCategoryName是新分类名
+          // 如果分类被删除，newCategoryName是"其它"
+          setStudySelectedCategory(newCategoryName);
+        } else {
+          // 找不到对应的新分类名（理论上不应该发生，因为分类更新/删除时会同步更新记录）
+          // 重置为"全部"，显示所有记录
+          setStudySelectedCategory('全部');
+        }
+      }
+    }
     
     // 如果正在编辑记录，需要同步更新编辑状态中的数据
     if (editingStudy) {

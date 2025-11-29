@@ -19,14 +19,27 @@ const AttendanceComplianceChart: React.FC<AttendanceComplianceChartProps> = ({
     { name: '离开合格率 (≥22:00)', value: leaveRate, fullValue: 100 }
   ];
 
+  // 检查是否有数据（所有合格率都为0或未定义表示无数据）
+  const hasData = data.some(item => item.value > 0);
+
   const COLORS = ['#52c41a', '#1890ff', '#722ed1'];
+
+  if (!hasData) {
+    return (
+      <div className="attendance-compliance-chart attendance-compliance-chart--empty">
+        <h3 className="attendance-compliance-chart__title">📋 考勤合格率</h3>
+        <div className="attendance-compliance-chart__empty-message">
+          <p>暂无日常数据</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="attendance-compliance-chart">
-      <div className="chart-header">
-        <h3>📋 考勤合格率</h3>
-      </div>
-      <ResponsiveContainer width="100%" height={350}>
+      <h3 className="attendance-compliance-chart__title">📋 考勤合格率</h3>
+      <div className="attendance-compliance-chart__container">
+        <ResponsiveContainer width="100%" height={350}>
         <PieChart>
           <Pie
             data={data}
@@ -56,6 +69,7 @@ const AttendanceComplianceChart: React.FC<AttendanceComplianceChartProps> = ({
           />
         </PieChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 };

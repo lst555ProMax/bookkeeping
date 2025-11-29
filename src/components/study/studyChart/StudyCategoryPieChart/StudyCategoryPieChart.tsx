@@ -65,37 +65,44 @@ const StudyCategoryPieChart: React.FC<StudyCategoryPieChartProps> = ({ categoryS
     return null;
   };
 
+  if (pieChartData.length === 0) {
+    return (
+      <div className="chart-card chart-card--pie chart-card--empty">
+        <h3 className="chart-card__title">📊 学习分类统计</h3>
+        <div className="chart-card__empty-message">
+          <p>暂无学习数据</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="chart-card chart-card--pie">
       <h3 className="chart-card__title">📊 学习分类统计</h3>
       <div className="chart-card__container">
-        {pieChartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieChartData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {pieChartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomPieTooltip />} />
-              <Legend 
-                verticalAlign="bottom" 
-                height={36}
-                formatter={(value) => value}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        ) : (
-          <div className="empty-state">暂无数据</div>
-        )}
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie
+              data={pieChartData}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              outerRadius={80}
+              fill="#8884d8"
+              dataKey="value"
+            >
+              {pieChartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomPieTooltip />} />
+            <Legend 
+              verticalAlign="bottom" 
+              height={36}
+              formatter={(value) => value}
+            />
+          </PieChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

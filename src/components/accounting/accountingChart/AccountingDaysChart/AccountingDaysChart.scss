@@ -23,14 +23,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 300px;
-    text-align: center;
+    min-height: 400px;
   }
 
   &__empty-message {
     color: #666;
     font-style: italic;
+    text-align: center;
     margin: 0;
+    font-size: 1.1rem;
   }
 
   &__tooltip {

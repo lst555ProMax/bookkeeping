@@ -18,6 +18,25 @@
     height: 300px;
   }
 
+  &--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+  }
+
+  &__empty-message {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  }
+
   &__tooltip {
     background: rgba(0, 0, 0, 0.8);
     color: white;

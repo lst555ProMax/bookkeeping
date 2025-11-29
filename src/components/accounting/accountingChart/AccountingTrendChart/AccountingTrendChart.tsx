@@ -90,10 +90,24 @@ const AccountingTrendChart: React.FC<AccountingTrendChartProps> = ({
 
   const data = getTrendData();
   
+  // 检查是否有数据（所有金额都为0表示无数据）
+  const hasData = data.some(item => item.amount > 0);
+  
   // 根据类型获取线条颜色
   const getLineColor = () => {
     return isIncome ? '#28a745' : '#45B7D1';
   };
+
+  if (!hasData) {
+    return (
+      <div className="expense-trend-chart expense-trend-chart--empty">
+        <h3 className="expense-trend-chart__title">{finalTitle}</h3>
+        <div className="expense-trend-chart__empty-message">
+          <p>暂无{isIncome ? '收入' : '支出'}数据</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="expense-trend-chart">

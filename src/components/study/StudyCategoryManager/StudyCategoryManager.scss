@@ -45,6 +45,13 @@
     }
   }
 
+  &__header-actions {
+    display: flex;
+    align-items: center;
+    // gap: 8px;
+  }
+
+  &__reset-btn,
   &__close {
     background: transparent;
     border: none;

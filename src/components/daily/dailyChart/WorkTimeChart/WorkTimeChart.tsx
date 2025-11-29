@@ -19,12 +19,21 @@ const WorkTimeChart: React.FC<WorkTimeChartProps> = ({ data }) => {
       date: item.date
     }));
 
+  if (chartData.length === 0) {
+    return (
+      <div className="work-time-chart work-time-chart--empty">
+        <h3 className="work-time-chart__title">⏰ 工作时长分析（最近10天）</h3>
+        <div className="work-time-chart__empty-message">
+          <p>暂无日常数据</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="work-time-chart">
-      <div className="chart-header">
-        <h3>⏰ 工作时长分析（最近10天）</h3>
-      </div>
-      {chartData.length > 0 ? (
+      <h3 className="work-time-chart__title">⏰ 工作时长分析（最近10天）</h3>
+      <div className="work-time-chart__container">
         <ResponsiveContainer width="100%" height={350}>
           <BarChart
             data={chartData}
@@ -65,11 +74,7 @@ const WorkTimeChart: React.FC<WorkTimeChartProps> = ({ data }) => {
             />
           </BarChart>
         </ResponsiveContainer>
-      ) : (
-        <div className="no-data">
-          <p>暂无工作时长数据</p>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
