@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
 import ReadingExcerpts from './ReadingExcerpts/ReadingExcerpts';
-import ReadingNotebook from './ReadingNotebook/ReadingNotebook';
+import ReadingNotebook, { ReadingNotebookRef } from './ReadingNotebook/ReadingNotebook';
 import ReadingList from './ReadingList/ReadingList';
 import {
   QuickNote,
@@ -37,7 +37,7 @@ const Reading: React.FC = () => {
   const [currentDiary, setCurrentDiary] = useState<DiaryEntry | null>(null);
   const [diaryContent, setDiaryContent] = useState<string>('');
   const [currentImage, setCurrentImage] = useState<string | undefined>(undefined);
-  const [currentTheme, setCurrentTheme] = useState<string>('#fff');
+  const [currentTheme, setCurrentTheme] = useState<string>('#FFFFFF');
   const [currentWeather, setCurrentWeather] = useState<string>('晴天');
   const [currentMood, setCurrentMood] = useState<string>('开心');
   const [currentFont, setCurrentFont] = useState<string>("'Courier New', 'STKaiti', 'KaiTi', serif");
@@ -70,6 +70,82 @@ const Reading: React.FC = () => {
   const diaryEntriesFileInputRef = useRef<HTMLInputElement>(null);
   const [isImportingQuickNotes, setIsImportingQuickNotes] = useState(false);
   const [isImportingDiaryEntries, setIsImportingDiaryEntries] = useState(false);
+  
+  // ReadingNotebook ref for focusing editor
+  const readingNotebookRef = useRef<ReadingNotebookRef>(null);
+
+  // 从 HTML 中提取纯文本，保留换行
+  const getTextFromHTML = useCallback((html: string): string => {
+    if (!html) return '';
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    // 将 <p> 标签转换为换行符，保留文本内容
+    const paragraphs = div.querySelectorAll('p');
+    if (paragraphs.length > 0) {
+      return Array.from(paragraphs)
+        .map(p => (p.textContent || '').trim())
+        .join('\n');
+    }
+    // 如果没有 <p> 标签，直接返回文本内容
+    return div.textContent || div.innerText || '';
+  }, []);
+
+  // 标准化颜色值（将 #fff 转换为 #FFFFFF）
+  const normalizeColor = (color: string): string => {
+    if (!color || !color.startsWith('#')) return color;
+    // 如果是3位十六进制颜色（如 #fff），转换为6位（#FFFFFF）
+    if (color.length === 4) {
+      return `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`.toUpperCase();
+    }
+    return color.toUpperCase();
+  };
+
+  // 重置日记状态为新建状态
+  const resetDiaryState = () => {
+    const today = new Date().toISOString().split('T')[0];
+    setSelectedDate(today);
+    setCurrentDiary(null);
+    setDiaryContent('');
+    setCurrentImage(undefined);
+    setCurrentTheme('#FFFFFF');
+    setCurrentWeather('晴天');
+    setCurrentMood('开心');
+    setCurrentFont("'Courier New', 'STKaiti', 'KaiTi', serif");
+    
+    setInitialDiaryState({
+      date: today,
+      content: '',
+      image: undefined,
+      theme: '#FFFFFF',
+      weather: '晴天',
+      mood: '开心',
+      font: "'Courier New', 'STKaiti', 'KaiTi', serif"
+    });
+  };
+
+  // 加载日记条目（统一处理）
+  const loadDiaryEntry = (entry: DiaryEntry) => {
+    setSelectedDate(entry.date);
+    setCurrentDiary(entry);
+    setDiaryContent(entry.content);
+    setCurrentImage(entry.image);
+    // 标准化颜色值，确保一致性
+    const normalizedTheme = normalizeColor(entry.theme || '#FFFFFF');
+    setCurrentTheme(normalizedTheme);
+    setCurrentWeather(entry.weather);
+    setCurrentMood(entry.mood);
+    setCurrentFont(entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif");
+    
+    setInitialDiaryState({
+      date: entry.date,
+      content: entry.content,
+      image: entry.image,
+      theme: normalizedTheme,
+      weather: entry.weather,
+      mood: entry.mood,
+      font: entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif"
+    });
+  };
 
   // 加载数据
   useEffect(() => {
@@ -79,33 +155,64 @@ const Reading: React.FC = () => {
     const entries = loadDiaryEntries();
     setDiaryEntries(entries);
     
-    // 初始化为空白新建状态
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
-    setInitialDiaryState({
-      date: todayStr,
-      content: '',
-      theme: '#fff',
-      weather: '晴天',
-      mood: '开心',
-      font: "'Courier New', 'STKaiti', 'KaiTi', serif"
-    });
+    // 如果有日记，自动加载第一篇；否则初始化为空白新建状态
+    if (entries.length > 0) {
+      loadDiaryEntry(entries[0]);
+    } else {
+      const today = new Date();
+      const todayStr = today.toISOString().split('T')[0];
+      setInitialDiaryState({
+        date: todayStr,
+        content: '',
+        theme: '#FFFFFF',
+        weather: '晴天',
+        mood: '开心',
+        font: "'Courier New', 'STKaiti', 'KaiTi', serif"
+      });
+    }
   }, []);
 
   // 检查是否有未保存的更改
   const hasUnsavedChanges = useCallback((): boolean => {
+    // 如果没有初始状态，返回false
     if (!initialDiaryState) return false;
     
+    // 如果是新建状态（currentDiary为null），检查是否有实际内容变化
+    if (!currentDiary) {
+      // 提取纯文本内容，检查是否为空（去除HTML标签和空白）
+      const plainText = getTextFromHTML(diaryContent).trim();
+      const hasContent = plainText !== '';
+      
+      // 检查图片是否有变化（undefined/null 视为相同）
+      const hasImage = currentImage !== undefined && currentImage !== null && currentImage !== initialDiaryState.image;
+      
+      // 检查其他字段是否有变化（使用标准化后的颜色值进行比较）
+      const hasDateChange = selectedDate !== initialDiaryState.date;
+      const hasThemeChange = normalizeColor(currentTheme) !== normalizeColor(initialDiaryState.theme);
+      const hasWeatherChange = currentWeather !== initialDiaryState.weather;
+      const hasMoodChange = currentMood !== initialDiaryState.mood;
+      const hasFontChange = currentFont !== initialDiaryState.font;
+      
+      // 如果没有任何实际变化，返回false
+      return hasContent || hasImage || hasDateChange || hasThemeChange || hasWeatherChange || hasMoodChange || hasFontChange;
+    }
+    
+    // 编辑状态下，检查是否有变化
+    // 对于内容，需要比较纯文本，因为HTML格式可能不同但内容相同
+    const currentPlainText = getTextFromHTML(diaryContent).trim();
+    const initialPlainText = getTextFromHTML(initialDiaryState.content).trim();
+    const hasContentChange = currentPlainText !== initialPlainText;
+    
     return (
+      hasContentChange ||
       selectedDate !== initialDiaryState.date ||
-      diaryContent !== initialDiaryState.content ||
       currentImage !== initialDiaryState.image ||
-      currentTheme !== initialDiaryState.theme ||
+      normalizeColor(currentTheme) !== normalizeColor(initialDiaryState.theme) ||
       currentWeather !== initialDiaryState.weather ||
       currentMood !== initialDiaryState.mood ||
       currentFont !== initialDiaryState.font
     );
-  }, [selectedDate, diaryContent, currentImage, currentTheme, currentWeather, currentMood, currentFont, initialDiaryState]);
+  }, [currentDiary, selectedDate, diaryContent, currentImage, currentTheme, currentWeather, currentMood, currentFont, initialDiaryState, getTextFromHTML]);
 
   // 监听全局摘抄添加事件
   useEffect(() => {
@@ -189,10 +296,16 @@ const Reading: React.FC = () => {
   // 导出所有摘抄
   const handleExportQuickNotes = () => {
     try {
-      const message = `确定导出摘抄吗？\n\n摘抄：${quickNotes.length} 条`;
+      // 计算筛选后的摘抄
+      const filtered = quickNotes.filter(note => {
+        if (!quickNotesSearch.trim()) return true;
+        return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
+      });
+      
+      const message = `确定导出摘抄吗？\n\n摘抄：${filtered.length} 条${quickNotesSearch.trim() ? `（已筛选）` : ''}`;
       
       if (window.confirm(message)) {
-        exportQuickNotesOnly(quickNotes);
+        exportQuickNotesOnly(filtered);
         toast.success('摘抄数据导出成功！');
       }
     } catch (error) {
@@ -251,59 +364,6 @@ const Reading: React.FC = () => {
     }
   };
 
-
-  // 从 HTML 中提取纯文本
-  const getTextFromHTML = (html: string): string => {
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return div.textContent || div.innerText || '';
-  };
-
-  // 重置日记状态为新建状态
-  const resetDiaryState = () => {
-    const today = new Date().toISOString().split('T')[0];
-    setSelectedDate(today);
-    setCurrentDiary(null);
-    setDiaryContent('');
-    setCurrentImage(undefined);
-    setCurrentTheme('#fff');
-    setCurrentWeather('晴天');
-    setCurrentMood('开心');
-    setCurrentFont("'Courier New', 'STKaiti', 'KaiTi', serif");
-    
-    setInitialDiaryState({
-      date: today,
-      content: '',
-      image: undefined,
-      theme: '#fff',
-      weather: '晴天',
-      mood: '开心',
-      font: "'Courier New', 'STKaiti', 'KaiTi', serif"
-    });
-  };
-
-  // 加载日记条目（统一处理）
-  const loadDiaryEntry = (entry: DiaryEntry) => {
-    setSelectedDate(entry.date);
-    setCurrentDiary(entry);
-    setDiaryContent(entry.content);
-    setCurrentImage(entry.image);
-    setCurrentTheme(entry.theme);
-    setCurrentWeather(entry.weather);
-    setCurrentMood(entry.mood);
-    setCurrentFont(entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif");
-    
-    setInitialDiaryState({
-      date: entry.date,
-      content: entry.content,
-      image: entry.image,
-      theme: entry.theme,
-      weather: entry.weather,
-      mood: entry.mood,
-      font: entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif"
-    });
-  };
-
   // 保存日记
   const handleSaveDiary = () => {
     // 提取纯文本内容检查是否为空
@@ -311,14 +371,49 @@ const Reading: React.FC = () => {
     
     // 如果内容为空
     if (!textContent.trim()) {
-      // 如果当前日记已存在，视为删除（静默删除，不需要确认）
+      // 如果当前日记已存在，视为删除（直接删除并显示删除成功提示，不需要确认）
       if (currentDiary) {
-        handleDeleteDiary(currentDiary.id, true);
+        const id = currentDiary.id;
+        deleteDiaryFromStorage(id);
+        
+        // 使用函数式更新确保获取最新状态
+        setDiaryEntries(prev => {
+          const updatedEntries = prev.filter(e => e.id !== id);
+          
+          // 如果删除的是当前显示的日记
+          if (currentDiary?.id === id) {
+            // 如果列表中有其他日记，显示第一篇
+            if (updatedEntries.length > 0) {
+              loadDiaryEntry(updatedEntries[0]);
+            } else {
+              // 如果列表中没有日记，显示默认的新建页
+              resetDiaryState();
+            }
+          }
+          
+          return updatedEntries;
+        });
+        
+        // 显示删除成功提示
+        toast.success('删除成功', {
+          duration: 2000,
+          position: 'top-center',
+        });
         return;
       }
-      // 如果当前日记是新建的，不做任何操作
+      // 如果当前日记是新建的且没有内容，提示无法保存
+      if (!currentDiary) {
+        toast.error('无法保存：书记内容不能为空', {
+          duration: 2000,
+          position: 'top-center',
+        });
+        return;
+      }
       return;
     }
+
+    // 判断是新建还是更新
+    const isNewDiary = !currentDiary;
     
     const entry: DiaryEntry = {
       id: currentDiary?.id || Date.now().toString(),
@@ -359,10 +454,22 @@ const Reading: React.FC = () => {
     });
     
     // 显示保存成功提示
-    toast.success('保存成功', {
-      duration: 2000,
-      position: 'top-center',
-    });
+    if (isNewDiary) {
+      toast.success('创建新书记成功', {
+        duration: 2000,
+        position: 'top-center',
+      });
+    } else {
+      toast.success('保存成功', {
+        duration: 2000,
+        position: 'top-center',
+      });
+    }
+    
+    // 保存后让编辑器失去焦点
+    setTimeout(() => {
+      readingNotebookRef.current?.blurEditor();
+    }, 100);
   };
 
   // 删除日记（支持静默删除，用于保存空内容时）
@@ -403,11 +510,6 @@ const Reading: React.FC = () => {
     }
   };
 
-  // 创建新日记（内部方法）
-  const createNewDiary = () => {
-    resetDiaryState();
-  };
-
   // 新建日记
   const handleNewDiary = () => {
     // 检查是否有未保存的更改
@@ -423,16 +525,38 @@ const Reading: React.FC = () => {
     }
     
     // 创建新日记
-    createNewDiary();
+    resetDiaryState();
+    
+    // 显示创建新日记提示
+    toast.success('已创建新书记', {
+      duration: 2000,
+      position: 'top-center',
+    });
   };
 
-  // 导出所有日记
+  // 导出所有日记（使用筛选后的数据）
   const handleExportDiaryEntries = () => {
     try {
-      const message = `确定导出日记吗？\n\n日记：${diaryEntries.length} 篇`;
+      // 计算筛选后的日记
+      const filtered = diaryEntries
+        .filter(entry => {
+          if (!diaryEntriesSearch.trim()) return true;
+          // 提取纯文本进行搜索，避免搜索到HTML标签
+          const plainText = getTextFromHTML(entry.content);
+          return plainText.toLowerCase().includes(diaryEntriesSearch.toLowerCase());
+        })
+        .sort((a, b) => {
+          // 先按日期倒序排序
+          const dateCompare = b.date.localeCompare(a.date);
+          if (dateCompare !== 0) return dateCompare;
+          // 如果日期相同，按创建时间倒序排序
+          return b.createdAt - a.createdAt;
+        });
+      
+      const message = `确定导出日记吗？\n\n日记：${filtered.length} 篇${diaryEntriesSearch.trim() ? `（已筛选）` : ''}`;
       
       if (window.confirm(message)) {
-        exportDiaryEntriesOnly(diaryEntries);
+        exportDiaryEntriesOnly(filtered);
         toast.success('日记数据导出成功！');
       }
     } catch (error) {
@@ -521,11 +645,13 @@ const Reading: React.FC = () => {
     return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
   });
 
-  // 筛选日记
+  // 筛选日记（基于纯文本搜索）
   const filteredDiaryEntries = diaryEntries
     .filter(entry => {
       if (!diaryEntriesSearch.trim()) return true;
-      return entry.content.toLowerCase().includes(diaryEntriesSearch.toLowerCase());
+      // 提取纯文本进行搜索，避免搜索到HTML标签
+      const plainText = getTextFromHTML(entry.content);
+      return plainText.toLowerCase().includes(diaryEntriesSearch.toLowerCase());
     })
     .sort((a, b) => {
       // 先按日期倒序排序
@@ -570,6 +696,7 @@ const Reading: React.FC = () => {
       />
       
       <ReadingNotebook
+        ref={readingNotebookRef}
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
         currentTheme={currentTheme}
@@ -609,6 +736,7 @@ const Reading: React.FC = () => {
         searchContent={diaryEntriesSearch}
         onSearchContentChange={setDiaryEntriesSearch}
         isImporting={isImportingDiaryEntries}
+        hasUnsavedChanges={hasUnsavedChanges()}
       />
     </div>
   );

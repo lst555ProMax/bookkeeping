@@ -262,6 +262,11 @@ const validateMusicLyricsExportDataWithError = (data: unknown): { valid: boolean
     return { valid: false, error: '无效的数据格式：数据必须是JSON对象' };
   }
   
+  // 检查是否是数组（数组也是object类型，但不符合要求）
+  if (Array.isArray(data)) {
+    return { valid: false, error: '无效的数据格式：数据必须是JSON对象，不能是数组' };
+  }
+  
   const d = data as Record<string, unknown>;
   
   // 检查顶层字段
@@ -275,6 +280,11 @@ const validateMusicLyricsExportDataWithError = (data: unknown): { valid: boolean
   
   if (typeof d.totalMusicLyrics !== 'number') {
     return { valid: false, error: '无效的数据格式：缺少totalMusicLyrics字段或类型不正确' };
+  }
+  
+  // 检查musicLyrics字段是否存在
+  if (!('musicLyrics' in d) || d.musicLyrics === undefined || d.musicLyrics === null) {
+    return { valid: false, error: '无效的数据格式：缺少musicLyrics字段' };
   }
   
   // 检查musicLyrics数组
@@ -321,6 +331,11 @@ const validateMusicEntriesExportDataWithError = (data: unknown): { valid: boolea
     return { valid: false, error: '无效的数据格式：数据必须是JSON对象' };
   }
   
+  // 检查是否是数组（数组也是object类型，但不符合要求）
+  if (Array.isArray(data)) {
+    return { valid: false, error: '无效的数据格式：数据必须是JSON对象，不能是数组' };
+  }
+  
   const d = data as Record<string, unknown>;
   
   // 检查顶层字段
@@ -334,6 +349,11 @@ const validateMusicEntriesExportDataWithError = (data: unknown): { valid: boolea
   
   if (typeof d.totalMusicEntries !== 'number') {
     return { valid: false, error: '无效的数据格式：缺少totalMusicEntries字段或类型不正确' };
+  }
+  
+  // 检查musicEntries字段是否存在
+  if (!('musicEntries' in d) || d.musicEntries === undefined || d.musicEntries === null) {
+    return { valid: false, error: '无效的数据格式：缺少musicEntries字段' };
   }
   
   // 检查musicEntries数组
@@ -380,7 +400,7 @@ export const exportMusicLyricsOnly = (musicLyrics?: QuickNote[]): void => {
     const lyricsToExport = musicLyrics || loadMusicLyrics();
     
     const exportData: MusicLyricsExportData = {
-      version: '1.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       musicLyrics: lyricsToExport,
       totalMusicLyrics: lyricsToExport.length
@@ -419,7 +439,7 @@ export const exportMusicEntriesOnly = (musicEntries?: DiaryEntry[]): void => {
     const entriesWithImages = entriesToExport.filter(e => e.image).length;
     
     const exportData: MusicEntriesExportData = {
-      version: '1.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       musicEntries: entriesToExport, // 包含完整的entry数据，包括image字段（base64格式）
       totalMusicEntries: entriesToExport.length
@@ -455,7 +475,7 @@ export const exportMusicData = (): void => {
     musicLyrics: loadMusicLyrics(),
     musicEntries: loadMusicEntries(),
     exportTime: Date.now(),
-    version: '1.0.0',
+    version: '2025.11.30',
   };
 
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });

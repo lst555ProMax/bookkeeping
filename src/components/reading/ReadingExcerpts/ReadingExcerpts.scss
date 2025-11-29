@@ -211,6 +211,15 @@
         }
       }
 
+      &.unsaved {
+        border-color: #ff8c42;
+        box-shadow: 0 4px 16px rgba(255, 140, 66, 0.3);
+
+        &::before {
+          background: #ff8c42;
+        }
+      }
+
       &::before {
         content: '';
         position: absolute;

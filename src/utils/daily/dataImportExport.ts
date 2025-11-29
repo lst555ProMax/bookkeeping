@@ -443,7 +443,7 @@ export const exportDailyRecords = (records?: DailyRecord[]): void => {
     const dailyRecords = records || loadDailyRecords();
     
     const exportData: DailyExportData = {
-      version: '1.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       dailyRecords,
       totalRecords: dailyRecords.length

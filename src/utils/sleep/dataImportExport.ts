@@ -332,7 +332,7 @@ export const exportSleepRecords = (records?: SleepRecord[]): void => {
     const sleepRecords = records || loadSleepRecords();
     
     const exportData: SleepExportData = {
-      version: '1.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       sleepRecords,
       totalRecords: sleepRecords.length

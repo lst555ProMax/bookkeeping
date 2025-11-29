@@ -183,6 +183,15 @@
         }
       }
 
+      &--unsaved {
+        border-color: #ff8c42;
+        box-shadow: 0 2px 8px rgba(255, 140, 66, 0.3);
+        
+        &:hover {
+          box-shadow: 0 4px 12px rgba(255, 140, 66, 0.4);
+        }
+      }
+
       &__header {
         display: flex;
         justify-content: space-between;
@@ -275,6 +284,23 @@
           to {
             opacity: 1;
             transform: translateY(0);
+          }
+        }
+
+        &--top {
+          top: auto;
+          bottom: calc(100% + 0.5rem);
+          animation: slideUp 0.2s ease;
+
+          @keyframes slideUp {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
           }
         }
 

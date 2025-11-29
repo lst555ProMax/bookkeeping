@@ -320,7 +320,7 @@ export const exportStudyRecords = (records?: StudyRecord[]): void => {
   const dataToExport = records || loadStudyRecords();
   
   const exportData: StudyExportData = {
-    version: '1.0',
+    version: '2025.11.30',
     exportDate: new Date().toISOString(),
     recordCount: dataToExport.length,
     records: dataToExport

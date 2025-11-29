@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { DiaryEntry, WEATHER_OPTIONS, MOOD_OPTIONS } from '@/utils';
+import { getDiaryEntryNumber } from '@/utils/music';
 import { FilterSearchInput } from '@/components/common';
 import './MusicList.scss';
 
@@ -15,6 +16,7 @@ interface MusicListProps {
   searchContent?: string;
   onSearchContentChange?: (value: string) => void;
   isImporting?: boolean;
+  hasUnsavedChanges?: boolean;
 }
 
 const MusicList: React.FC<MusicListProps> = ({
@@ -28,9 +30,13 @@ const MusicList: React.FC<MusicListProps> = ({
   searchContent = '',
   onSearchContentChange,
   isImporting: _isImporting = false,
+  hasUnsavedChanges = false,
 }) => {
   const [exportMenuOpenId, setExportMenuOpenId] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState<'bottom' | 'top'>('bottom');
   const menuRef = useRef<HTMLDivElement>(null);
+  const itemsContainerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   // 点击外部关闭导出菜单
   useEffect(() => {
@@ -49,6 +55,52 @@ const MusicList: React.FC<MusicListProps> = ({
     };
   }, [exportMenuOpenId]);
 
+  // 检测菜单位置并调整，确保菜单可见
+  useEffect(() => {
+    if (exportMenuOpenId && menuRef.current && itemsContainerRef.current) {
+      const menu = menuRef.current.querySelector('.export-menu') as HTMLElement;
+      if (menu) {
+        // 使用 requestAnimationFrame 确保 DOM 已更新
+        requestAnimationFrame(() => {
+          const menuRect = menu.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+          
+          // 检查菜单是否超出视口底部
+          const menuBottom = menuRect.bottom;
+          const spaceBelow = viewportHeight - menuBottom;
+          
+          // 如果菜单超出视口底部，或者下方空间不足（小于50px），则向上显示
+          if (menuBottom > viewportHeight || spaceBelow < 50) {
+            setMenuPosition('top');
+          } else {
+            setMenuPosition('bottom');
+          }
+        });
+      }
+    } else {
+      setMenuPosition('bottom');
+    }
+  }, [exportMenuOpenId]);
+
+  // 滚动到当前选中的乐记
+  useEffect(() => {
+    if (currentDiaryId) {
+      // 延迟滚动，确保DOM已更新（包括列表更新）
+      const scrollTimer = setTimeout(() => {
+        const itemElement = itemRefs.current.get(currentDiaryId);
+        if (itemElement && itemsContainerRef.current) {
+          itemElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'nearest'
+          });
+        }
+      }, 150);
+      
+      return () => clearTimeout(scrollTimer);
+    }
+  }, [currentDiaryId, diaryEntries]);
+
   // 格式化日期为 yyyy.mm.dd
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -58,13 +110,9 @@ const MusicList: React.FC<MusicListProps> = ({
     return `${year}.${month}.${day}`;
   };
 
-  // 格式化创建时间
-  const formatTime = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString('zh-CN', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  // 计算乐记序号
+  const getEntryNumber = (entry: DiaryEntry) => {
+    return getDiaryEntryNumber(diaryEntries, entry.date, entry.id);
   };
 
   // 下载文件
@@ -90,10 +138,10 @@ const MusicList: React.FC<MusicListProps> = ({
       if (format === 'txt') {
         // 导出为txt（纯文本，不包含图片）
         const blob = new Blob([plainTextContent], { type: 'text/plain;charset=utf-8' });
-        downloadFile(blob, `乐记_${formatDate(entry.date)}.txt`);
+        downloadFile(blob, `乐记_${formatDate(entry.date)}_${getEntryNumber(entry)}.txt`);
       } else if (format === 'md') {
         // 导出为markdown（包含图片）
-        let mdContent = `# ${formatDate(entry.date)} ${formatTime(entry.createdAt)}\n\n`;
+        let mdContent = `# ${formatDate(entry.date)} #${getEntryNumber(entry)}\n\n`;
         mdContent += `**天气:** ${entry.weather}\n\n`;
         mdContent += `**心情:** ${entry.mood}\n\n`;
         
@@ -110,7 +158,7 @@ const MusicList: React.FC<MusicListProps> = ({
         mdContent += `${plainTextContent}`;
         
         const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
-        downloadFile(blob, `乐记_${formatDate(entry.date)}.md`);
+        downloadFile(blob, `乐记_${formatDate(entry.date)}_${getEntryNumber(entry)}.md`);
       } else if (format === 'doc') {
         // 导出为doc（使用HTML内容保留格式，包含图片）
         let imageHtml = '';
@@ -130,7 +178,7 @@ const MusicList: React.FC<MusicListProps> = ({
             </style>
           </head>
           <body>
-            <h1>${formatDate(entry.date)} ${formatTime(entry.createdAt)}</h1>
+            <h1>${formatDate(entry.date)} #${getEntryNumber(entry)}</h1>
             <p>天气: ${entry.weather}</p>
             <p>心情: ${entry.mood}</p>
             <hr/>
@@ -140,7 +188,7 @@ const MusicList: React.FC<MusicListProps> = ({
           </html>
         `;
         const blob = new Blob([htmlContent], { type: 'application/msword;charset=utf-8' });
-        downloadFile(blob, `乐记_${formatDate(entry.date)}.doc`);
+        downloadFile(blob, `乐记_${formatDate(entry.date)}_${getEntryNumber(entry)}.doc`);
       } else if (format === 'pdf') {
         // PDF导出：创建一个包含图片的HTML页面，然后使用浏览器打印功能
         let imageHtml = '';
@@ -168,7 +216,7 @@ const MusicList: React.FC<MusicListProps> = ({
             </style>
           </head>
           <body>
-            <h1>${formatDate(entry.date)} ${formatTime(entry.createdAt)}</h1>
+            <h1>${formatDate(entry.date)} #${getEntryNumber(entry)}</h1>
             <p><strong>天气:</strong> ${entry.weather}</p>
             <p><strong>心情:</strong> ${entry.mood}</p>
             <hr/>
@@ -285,11 +333,18 @@ const MusicList: React.FC<MusicListProps> = ({
           </button>
         </div>
       </div>
-      <div className="diary-list__items">
+      <div className="diary-list__items" ref={itemsContainerRef}>
         {diaryEntries.map(entry => (
           <div 
-            key={entry.id} 
-            className={`diary-item ${entry.id === currentDiaryId ? 'diary-item--active' : ''} ${exportMenuOpenId === entry.id ? 'diary-item--menu-open' : ''}`}
+            key={entry.id}
+            ref={(el) => {
+              if (el) {
+                itemRefs.current.set(entry.id, el);
+              } else {
+                itemRefs.current.delete(entry.id);
+              }
+            }}
+            className={`diary-item ${entry.id === currentDiaryId ? 'diary-item--active' : ''} ${entry.id === currentDiaryId && hasUnsavedChanges ? 'diary-item--unsaved' : ''} ${exportMenuOpenId === entry.id ? 'diary-item--menu-open' : ''}`}
             onClick={() => onLoadDiary(entry)}
             style={{ 
               backgroundColor: entry.theme || '#f8f9fa',
@@ -298,7 +353,7 @@ const MusicList: React.FC<MusicListProps> = ({
             <div className="diary-item__header">
               <div className="diary-item__left">
                 <span className="diary-item__date">
-                  📅 {formatDate(entry.date)} {formatTime(entry.createdAt)}
+                  📅 {formatDate(entry.date)} #{getEntryNumber(entry)}
                 </span>
                 {entry.weather && (
                   <span className="diary-item__weather">
@@ -324,7 +379,7 @@ const MusicList: React.FC<MusicListProps> = ({
                     📤
                   </button>
                   {exportMenuOpenId === entry.id && (
-                    <div className="export-menu">
+                    <div className={`export-menu ${menuPosition === 'top' ? 'export-menu--top' : ''}`}>
                       {entry.image ? (
                         // 如果有图片，只显示PDF导出
                         <button onClick={(e) => {

@@ -415,7 +415,7 @@ export const exportAccountingData = (expenses?: ExpenseRecord[], incomes?: Incom
     const incomesToExport = incomes || loadIncomes();
     
     const exportData: ExportData = {
-      version: '2.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       expenses: expensesToExport,
       incomes: incomesToExport,
@@ -453,7 +453,7 @@ export const exportExpensesOnly = (expenses?: ExpenseRecord[]): void => {
     const expensesToExport = expenses || loadExpenses();
     
     const exportData: ExportData = {
-      version: '2.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       expenses: expensesToExport,
       incomes: [],
@@ -491,7 +491,7 @@ export const exportIncomesOnly = (incomes?: IncomeRecord[]): void => {
     const incomesToExport = incomes || loadIncomes();
     
     const exportData: ExportData = {
-      version: '2.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       expenses: [],
       incomes: incomesToExport,

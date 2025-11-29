@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useMemo } from 'react';
+import React, { useRef, useCallback, useEffect, useMemo, useImperativeHandle, forwardRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import BubbleMenuExtension from '@tiptap/extension-bubble-menu';
@@ -11,6 +11,11 @@ import Underline from '@tiptap/extension-underline';
 import { PRESET_THEMES, WEATHER_OPTIONS, MOOD_OPTIONS, FONT_OPTIONS } from '@/utils';
 import DatePicker from '@/components/common/DatePicker/DatePicker';
 import './DiaryNotebook.scss';
+
+export interface DiaryNotebookRef {
+  focusEditor: () => void;
+  blurEditor: () => void;
+}
 
 const TEXT_COLORS = [
   '#1a1a1a', 
@@ -61,7 +66,7 @@ interface DiaryNotebookProps {
   onCustomThemeColorChange: (color: string) => void;
 }
 
-const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
+const DiaryNotebook = forwardRef<DiaryNotebookRef, DiaryNotebookProps>(({
   selectedDate,
   onDateChange,
   currentTheme,
@@ -86,7 +91,80 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
   onShowFontPickerChange,
   customThemeColor,
   onCustomThemeColorChange,
-}) => {
+}, ref) => {
+  // 根据背景颜色计算合适的行线颜色
+  const getLineColor = useCallback((bgColor: string): string => {
+    // 标准化颜色值
+    const normalizeColor = (color: string): string => {
+      if (!color || !color.startsWith('#')) return color;
+      if (color.length === 4) {
+        return `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`.toUpperCase();
+      }
+      return color.toUpperCase();
+    };
+    
+    const normalized = normalizeColor(bgColor);
+    
+    // 将十六进制颜色转换为RGB
+    const hexToRgb = (hex: string): [number, number, number] => {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return [r, g, b];
+    };
+    
+    // 计算亮度（使用相对亮度公式）
+    const getLuminance = (r: number, g: number, b: number): number => {
+      const [rs, gs, bs] = [r, g, b].map(val => {
+        val = val / 255;
+        return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+    };
+    
+    try {
+      const [r, g, b] = hexToRgb(normalized);
+      const luminance = getLuminance(r, g, b);
+      
+      // 根据亮度调整行线颜色
+      if (luminance > 0.75) {
+        // 非常浅的背景：使用柔和的深色行线，保持色调一致性
+        const factor = 0.8; // 降低亮度
+        const lineR = Math.max(0, Math.min(255, Math.round(r * factor)));
+        const lineG = Math.max(0, Math.min(255, Math.round(g * factor)));
+        const lineB = Math.max(0, Math.min(255, Math.round(b * factor)));
+        return `#${lineR.toString(16).padStart(2, '0')}${lineG.toString(16).padStart(2, '0')}${lineB.toString(16).padStart(2, '0')}`;
+      } else if (luminance > 0.5) {
+        // 中等浅色背景：使用中等深度的行线
+        const factor = 0.7;
+        const lineR = Math.max(0, Math.min(255, Math.round(r * factor)));
+        const lineG = Math.max(0, Math.min(255, Math.round(g * factor)));
+        const lineB = Math.max(0, Math.min(255, Math.round(b * factor)));
+        return `#${lineR.toString(16).padStart(2, '0')}${lineG.toString(16).padStart(2, '0')}${lineB.toString(16).padStart(2, '0')}`;
+      } else if (luminance > 0.25) {
+        // 中等深色背景：使用中等亮度的行线
+        const factor = 1.3;
+        const lineR = Math.max(0, Math.min(255, Math.round(r * factor)));
+        const lineG = Math.max(0, Math.min(255, Math.round(g * factor)));
+        const lineB = Math.max(0, Math.min(255, Math.round(b * factor)));
+        return `#${lineR.toString(16).padStart(2, '0')}${lineG.toString(16).padStart(2, '0')}${lineB.toString(16).padStart(2, '0')}`;
+      } else {
+        // 深色背景：使用柔和的亮色行线
+        const factor = 1.6;
+        const lineR = Math.max(0, Math.min(255, Math.round(r * factor)));
+        const lineG = Math.max(0, Math.min(255, Math.round(g * factor)));
+        const lineB = Math.max(0, Math.min(255, Math.round(b * factor)));
+        return `#${lineR.toString(16).padStart(2, '0')}${lineG.toString(16).padStart(2, '0')}${lineB.toString(16).padStart(2, '0')}`;
+      }
+    } catch {
+      // 如果计算失败，返回默认的行线颜色
+      return '#e8e4d8';
+    }
+  }, []);
+
+  // 计算当前背景对应的行线颜色
+  const lineColor = useMemo(() => getLineColor(currentTheme), [currentTheme, getLineColor]);
+
   // 使用 useMemo 确保扩展数组只创建一次，避免重复注册
   const extensions = useMemo(() => [
     StarterKit,
@@ -124,6 +202,20 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
       },
     },
   });
+
+  // 暴露编辑器焦点方法给父组件
+  useImperativeHandle(ref, () => ({
+    focusEditor: () => {
+      if (editor) {
+        editor.commands.focus();
+      }
+    },
+    blurEditor: () => {
+      if (editor) {
+        editor.view.dom.blur();
+      }
+    },
+  }), [editor]);
 
   // 将纯文本转换为 HTML（保留换行）
   const convertTextToHTML = (text: string): string => {
@@ -238,16 +330,17 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
       
       // 监听窗口大小变化和滚动事件（容器大小可能变化）
       window.addEventListener('resize', updateVerticalLineHeight);
-      if (contentRef.current) {
-        contentRef.current.addEventListener('scroll', updateVerticalLineHeight);
+      const contentElement = contentRef.current;
+      if (contentElement) {
+        contentElement.addEventListener('scroll', updateVerticalLineHeight);
       }
       
       return () => {
         resizeObserver.disconnect();
         editor.off('update', handleUpdate);
         window.removeEventListener('resize', updateVerticalLineHeight);
-        if (contentRef.current) {
-          contentRef.current.removeEventListener('scroll', updateVerticalLineHeight);
+        if (contentElement) {
+          contentElement.removeEventListener('scroll', updateVerticalLineHeight);
         }
       };
     }
@@ -619,10 +712,20 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
             <div 
               ref={verticalLineRef}
               className="notebook__content-line"
+              style={{ 
+                '--vertical-line-color': lineColor
+              } as React.CSSProperties & { '--vertical-line-color': string }}
             />
             <EditorContent 
-              editor={editor} 
-              style={{ fontFamily: currentFont, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100%' }}
+              editor={editor}
+              style={{ 
+                fontFamily: currentFont, 
+                flex: 1, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                minHeight: '100%',
+                '--line-color': lineColor
+              } as React.CSSProperties & { '--line-color': string }}
             />
           </div>
         </div>
@@ -635,6 +738,8 @@ const DiaryNotebook: React.FC<DiaryNotebookProps> = ({
       </div>
     </div>
   );
-};
+});
+
+DiaryNotebook.displayName = 'DiaryNotebook';
 
 export default DiaryNotebook;

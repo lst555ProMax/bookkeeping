@@ -230,12 +230,7 @@ const validateDiaryEntryWithError = (entry: unknown, index: number): { valid: bo
     }
   }
   
-  // 验证image（如果存在）
-  if (e.image !== undefined && e.image !== null) {
-    if (typeof e.image !== 'string') {
-      return { valid: false, error: `无效的日记条目[${index}]：image必须是字符串` };
-    }
-  }
+  // 注意：日记不支持image字段，导入时会忽略该字段（如果存在）
   
   return { valid: true };
 };
@@ -246,6 +241,11 @@ const validateDiaryEntryWithError = (entry: unknown, index: number): { valid: bo
 const validateQuickNotesExportDataWithError = (data: unknown): { valid: boolean; error?: string } => {
   if (typeof data !== 'object' || data === null) {
     return { valid: false, error: '无效的数据格式：数据必须是JSON对象' };
+  }
+  
+  // 检查是否是数组（数组也是object类型，但不符合要求）
+  if (Array.isArray(data)) {
+    return { valid: false, error: '无效的数据格式：数据必须是JSON对象，不能是数组' };
   }
   
   const d = data as Record<string, unknown>;
@@ -261,6 +261,11 @@ const validateQuickNotesExportDataWithError = (data: unknown): { valid: boolean;
   
   if (typeof d.totalQuickNotes !== 'number') {
     return { valid: false, error: '无效的数据格式：缺少totalQuickNotes字段或类型不正确' };
+  }
+  
+  // 检查quickNotes字段是否存在
+  if (!('quickNotes' in d) || d.quickNotes === undefined || d.quickNotes === null) {
+    return { valid: false, error: '无效的数据格式：缺少quickNotes字段' };
   }
   
   // 检查quickNotes数组
@@ -307,6 +312,11 @@ const validateDiaryEntriesExportDataWithError = (data: unknown): { valid: boolea
     return { valid: false, error: '无效的数据格式：数据必须是JSON对象' };
   }
   
+  // 检查是否是数组（数组也是object类型，但不符合要求）
+  if (Array.isArray(data)) {
+    return { valid: false, error: '无效的数据格式：数据必须是JSON对象，不能是数组' };
+  }
+  
   const d = data as Record<string, unknown>;
   
   // 检查顶层字段
@@ -320,6 +330,11 @@ const validateDiaryEntriesExportDataWithError = (data: unknown): { valid: boolea
   
   if (typeof d.totalDiaryEntries !== 'number') {
     return { valid: false, error: '无效的数据格式：缺少totalDiaryEntries字段或类型不正确' };
+  }
+  
+  // 检查diaryEntries字段是否存在
+  if (!('diaryEntries' in d) || d.diaryEntries === undefined || d.diaryEntries === null) {
+    return { valid: false, error: '无效的数据格式：缺少diaryEntries字段' };
   }
   
   // 检查diaryEntries数组
@@ -366,7 +381,7 @@ export const exportQuickNotesOnly = (quickNotes?: QuickNote[]): void => {
     const notesToExport = quickNotes || loadQuickNotes();
     
     const exportData: QuickNotesExportData = {
-      version: '1.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       quickNotes: notesToExport,
       totalQuickNotes: notesToExport.length
@@ -402,7 +417,7 @@ export const exportDiaryEntriesOnly = (diaryEntries?: DiaryEntry[]): void => {
     const entriesToExport = diaryEntries || loadDiaryEntries();
     
     const exportData: DiaryEntriesExportData = {
-      version: '1.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       diaryEntries: entriesToExport,
       totalDiaryEntries: entriesToExport.length
@@ -438,7 +453,7 @@ export const exportDiaryData = (): void => {
     quickNotes: loadQuickNotes(),
     diaryEntries: loadDiaryEntries(),
     exportTime: Date.now(),
-    version: '1.0.0',
+    version: '2025.11.30',
   };
 
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -564,20 +579,25 @@ export const importDiaryEntriesOnly = (file: File): Promise<{
           const importData = parsedData as DiaryEntriesExportData;
           
           const existingEntries = loadDiaryEntries();
-          const existingDates = new Set(existingEntries.map(e => e.date));
+          // 使用id作为唯一标识，而不是date，因为同一天可能有多篇日记
+          const existingIds = new Set(existingEntries.map(e => e.id));
           
           let imported = 0;
           let skipped = 0;
           
           importData.diaryEntries.forEach(entry => {
-            // 检查是否已存在（按日期）
-            if (existingDates.has(entry.date)) {
+            // 检查是否已存在相同id的日记
+            if (existingIds.has(entry.id)) {
               skipped++;
               return;
             }
             
-            existingEntries.push(entry);
-            existingDates.add(entry.date);
+            // 移除image字段（日记不支持图片功能）
+            const entryWithoutImage = { ...entry };
+            delete entryWithoutImage.image;
+            
+            existingEntries.push(entryWithoutImage);
+            existingIds.add(entryWithoutImage.id);
             imported++;
           });
           
@@ -642,8 +662,18 @@ export const importDiaryData = async (file: File): Promise<{ imported: number; s
         // 导入日记
         if (data.diaryEntries && Array.isArray(data.diaryEntries)) {
           const existingEntries = loadDiaryEntries();
-          const existingDates = new Set(existingEntries.map(e => e.date));
-          const newEntries = data.diaryEntries.filter(e => !existingDates.has(e.date));
+          // 使用id作为唯一标识，而不是date，因为同一天可能有多篇日记
+          const existingIds = new Set(existingEntries.map(e => e.id));
+          const newEntries = data.diaryEntries
+            .filter(e => {
+              if (!e.id) return false;
+              return !existingIds.has(e.id);
+            })
+            .map(entry => {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const { image, ...entryWithoutImage } = entry;
+              return entryWithoutImage;
+            }); // 移除image字段（日记不支持图片功能）
           
           if (newEntries.length > 0) {
             const merged = [...existingEntries, ...newEntries];

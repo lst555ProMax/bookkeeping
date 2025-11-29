@@ -474,6 +474,13 @@
         z-index: 10;
         padding: 0.5rem;
         pointer-events: auto;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        
+        &--hidden {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+        }
         
         .image-wrapper {
           position: relative;
@@ -697,8 +704,8 @@
         top: 0;
         right: 40px;
         width: 2px;
-        background: #ffe4e1;
-        z-index: 1;
+        background: var(--vertical-line-color, #ffe4e1);
+        z-index: 0;
         pointer-events: none;
         // 不设置默认高度，完全由JavaScript控制
       }
@@ -710,6 +717,8 @@
         outline: none;
         overflow-y: auto;
         padding: 0;
+        position: relative;
+        z-index: 1;
         
         // 使用伪元素在右上角创建保留区域，文字会环绕此区域
         &::before {
@@ -722,12 +731,13 @@
         }
         
         // 行线背景 - 使用 background-size 让横线填满容器
+        // 使用 CSS 变量动态设置行线颜色
         background: 
           repeating-linear-gradient(
             transparent,
             transparent 29px,
-            #e8e4d8 29px,
-            #e8e4d8 30px
+            var(--line-color, #e8e4d8) 29px,
+            var(--line-color, #e8e4d8) 30px
           );
         background-attachment: local;
         

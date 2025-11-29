@@ -44,7 +44,7 @@ export interface MoodOption {
 // 预设主题颜色 - 36种颜色，6行×6列
 export const PRESET_THEMES: ThemeOption[] = [
   // 第一行 - 浅色系
-  { name: '米白', color: '#FFF9E6' },
+  { name: '白色', color: '#FFFFFF' },
   { name: '淡粉', color: '#FFE6F0' },
   { name: '浅蓝', color: '#E6F3FF' },
   { name: '薄荷', color: '#E6FFF0' },
@@ -64,27 +64,27 @@ export const PRESET_THEMES: ThemeOption[] = [
   { name: '浅灰', color: '#F5F5F5' },
   { name: '淡红', color: '#FFE4E6' },
   { name: '淡青绿', color: '#E0F5E6' },
-  // 第四行 - 中等色系
-  { name: '珊瑚', color: '#FF7F50' },
-  { name: '天空', color: '#87CEEB' },
-  { name: '薰衣草紫', color: '#DDA0DD' },
-  { name: '蜜瓜', color: '#F0E68C' },
-  { name: '青绿', color: '#AFEEEE' },
-  { name: '粉红', color: '#FFC0CB' },
-  // 第五行 - 中等深色系
-  { name: '橙色', color: '#FFA500' },
-  { name: '银灰', color: '#C0C0C0' },
-  { name: '浅棕', color: '#DEB887' },
-  { name: '浅紫', color: '#DA70D6' },
-  { name: '浅青', color: '#7FFFD4' },
-  { name: '浅橙', color: '#FFA07A' },
-  // 第六行 - 深色系
-  { name: '深粉', color: '#FF69B4' },
-  { name: '深蓝', color: '#4169E1' },
-  { name: '深紫', color: '#9370DB' },
-  { name: '金黄', color: '#FFD700' },
-  { name: '青蓝', color: '#00CED1' },
-  { name: '玫红', color: '#FF1493' },
+  // 第四行 - 温柔中等色系
+  { name: '柔珊瑚', color: '#FFD4C4' },
+  { name: '柔天空', color: '#D4E8F5' },
+  { name: '柔薰衣草', color: '#E8D4F0' },
+  { name: '柔蜜瓜', color: '#F5E8C4' },
+  { name: '柔青绿', color: '#D4F0E8' },
+  { name: '柔粉红', color: '#FFD4E0' },
+  // 第五行 - 温柔中等深色系
+  { name: '柔橙色', color: '#FFD9B3' },
+  { name: '柔银灰', color: '#E0E0E0' },
+  { name: '柔浅棕', color: '#E8D4C4' },
+  { name: '柔浅紫', color: '#E8C4E8' },
+  { name: '柔浅青', color: '#C4F0E0' },
+  { name: '柔浅橙', color: '#FFD9C4' },
+  // 第六行 - 温柔深色系
+  { name: '柔深粉', color: '#FFC4D9' },
+  { name: '柔深蓝', color: '#C4D4F0' },
+  { name: '柔深紫', color: '#D4C4E8' },
+  { name: '柔金黄', color: '#FFE8C4' },
+  { name: '柔青蓝', color: '#C4E8E8' },
+  { name: '柔玫红', color: '#FFC4D4' },
 ];
 
 // 天气选项

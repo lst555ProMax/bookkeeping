@@ -302,7 +302,7 @@ const ReadingExcerpts: React.FC<ReadingExcerptsProps> = ({
           quickNotes.map(note => (
           <div 
             key={note.id} 
-            className={`quick-note-item ${editingNoteId === note.id ? 'editing' : ''}`}
+            className={`quick-note-item ${editingNoteId === note.id ? 'editing' : ''} ${editingNoteId === note.id && hasUnsavedChanges() ? 'unsaved' : ''}`}
             onClick={() => handleNoteClick(note)}
             title="点击编辑"
           >

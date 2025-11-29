@@ -262,6 +262,11 @@ const validateReadingExcerptsExportDataWithError = (data: unknown): { valid: boo
     return { valid: false, error: '无效的数据格式：数据必须是JSON对象' };
   }
   
+  // 检查是否是数组（数组也是object类型，但不符合要求）
+  if (Array.isArray(data)) {
+    return { valid: false, error: '无效的数据格式：数据必须是JSON对象，不能是数组' };
+  }
+  
   const d = data as Record<string, unknown>;
   
   // 检查顶层字段
@@ -275,6 +280,11 @@ const validateReadingExcerptsExportDataWithError = (data: unknown): { valid: boo
   
   if (typeof d.totalReadingExcerpts !== 'number') {
     return { valid: false, error: '无效的数据格式：缺少totalReadingExcerpts字段或类型不正确' };
+  }
+  
+  // 检查readingExcerpts字段是否存在
+  if (!('readingExcerpts' in d) || d.readingExcerpts === undefined || d.readingExcerpts === null) {
+    return { valid: false, error: '无效的数据格式：缺少readingExcerpts字段' };
   }
   
   // 检查readingExcerpts数组
@@ -321,6 +331,11 @@ const validateReadingEntriesExportDataWithError = (data: unknown): { valid: bool
     return { valid: false, error: '无效的数据格式：数据必须是JSON对象' };
   }
   
+  // 检查是否是数组（数组也是object类型，但不符合要求）
+  if (Array.isArray(data)) {
+    return { valid: false, error: '无效的数据格式：数据必须是JSON对象，不能是数组' };
+  }
+  
   const d = data as Record<string, unknown>;
   
   // 检查顶层字段
@@ -334,6 +349,11 @@ const validateReadingEntriesExportDataWithError = (data: unknown): { valid: bool
   
   if (typeof d.totalReadingEntries !== 'number') {
     return { valid: false, error: '无效的数据格式：缺少totalReadingEntries字段或类型不正确' };
+  }
+  
+  // 检查readingEntries字段是否存在
+  if (!('readingEntries' in d) || d.readingEntries === undefined || d.readingEntries === null) {
+    return { valid: false, error: '无效的数据格式：缺少readingEntries字段' };
   }
   
   // 检查readingEntries数组
@@ -380,7 +400,7 @@ export const exportReadingExcerptsOnly = (readingExcerpts?: QuickNote[]): void =
     const excerptsToExport = readingExcerpts || loadReadingExcerpts();
     
     const exportData: ReadingExcerptsExportData = {
-      version: '1.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       readingExcerpts: excerptsToExport,
       totalReadingExcerpts: excerptsToExport.length
@@ -416,7 +436,7 @@ export const exportReadingEntriesOnly = (readingEntries?: DiaryEntry[]): void =>
     const entriesToExport = readingEntries || loadReadingEntries();
     
     const exportData: ReadingEntriesExportData = {
-      version: '1.0.0',
+      version: '2025.11.30',
       exportDate: new Date().toISOString(),
       readingEntries: entriesToExport,
       totalReadingEntries: entriesToExport.length
@@ -452,7 +472,7 @@ export const exportReadingData = (): void => {
     readingExcerpts: loadReadingExcerpts(),
     readingEntries: loadReadingEntries(),
     exportTime: Date.now(),
-    version: '1.0.0',
+    version: '2025.11.30',
   };
 
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
