@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { DailyRecord, MealStatus, loadDailyRecords } from '@/utils';
 import { DatePicker, TimePicker, FormNumberInput, FormTextarea } from '@/components/common';
@@ -142,13 +142,69 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
     }
   }, [date, breakfast, lunch, dinner, morningWash, nightWash, shower, hairWash, footWash, faceWash, laundry, cleaning, wechatSteps, checkInTime, checkOutTime, leaveTime, notes, editingRecord]);
 
-  // 使用 ref 跟踪之前的编辑状态
+  // 判断日期是工作日还是周末（星期六、星期日）
+  const isWeekend = (dateStr: string): boolean => {
+    if (!dateStr) return false;
+    const date = new Date(dateStr);
+    const dayOfWeek = date.getDay(); // 0 = 星期日, 6 = 星期六
+    return dayOfWeek === 0 || dayOfWeek === 6;
+  };
+
+  // 使用 ref 跟踪之前的编辑状态和日期
   const prevEditingRecordRef = React.useRef<DailyRecord | null>(null);
+  const prevDateRef = React.useRef<string>(date);
+  const isInitializedRef = React.useRef<boolean>(false);
+
+  // 根据日期自动设置打卡时间
+  useEffect(() => {
+    // 只在非编辑模式下设置
+    if (!editingRecord && date) {
+      // 首次加载时，如果有保存的数据，使用保存的数据；否则根据日期类型设置
+      if (!isInitializedRef.current) {
+        isInitializedRef.current = true;
+        // 如果有保存的打卡时间数据，使用保存的数据
+        if (savedFormData?.checkInTime || savedFormData?.checkOutTime || savedFormData?.leaveTime) {
+          // 使用保存的数据，不做任何修改
+          prevDateRef.current = date;
+          return;
+        }
+        // 如果没有保存的数据，根据日期类型设置
+        if (isWeekend(date)) {
+          // 周末：保持空
+          setCheckInTime('');
+          setCheckOutTime('');
+          setLeaveTime('');
+        } else {
+          // 工作日：设置默认时间
+          setCheckInTime('09:00');
+          setCheckOutTime('18:00');
+          setLeaveTime('22:00');
+        }
+        prevDateRef.current = date;
+      } else if (prevDateRef.current !== date) {
+        // 日期变化时，根据新日期类型设置
+        if (isWeekend(date)) {
+          // 周末：清空打卡时间（保持现在的状态，即空）
+          setCheckInTime('');
+          setCheckOutTime('');
+          setLeaveTime('');
+        } else {
+          // 工作日：设置默认时间
+          setCheckInTime('09:00');
+          setCheckOutTime('18:00');
+          setLeaveTime('22:00');
+        }
+        prevDateRef.current = date;
+      }
+    }
+  }, [date, editingRecord, savedFormData]);
 
   // 当编辑记录时，填充表单
   useEffect(() => {
     if (editingRecord) {
       setDate(editingRecord.date);
+      prevDateRef.current = editingRecord.date;
+      isInitializedRef.current = true; // 编辑模式下，标记为已初始化，避免自动设置时间
       setBreakfast(editingRecord.meals.breakfast);
       setLunch(editingRecord.meals.lunch);
       setDinner(editingRecord.meals.dinner);
@@ -160,7 +216,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       setFaceWash(editingRecord.bathing.faceWash);
       setLaundry(editingRecord.laundry);
       setCleaning(editingRecord.cleaning);
-      setWechatSteps(editingRecord.wechatSteps?.toString() || '');
+      setWechatSteps(editingRecord.wechatSteps.toString());
       setCheckInTime(editingRecord.checkInTime || '');
       setCheckOutTime(editingRecord.checkOutTime || '');
       setLeaveTime(editingRecord.leaveTime || '');
@@ -169,10 +225,17 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       // 如果之前有编辑状态，现在变为 null（取消编辑或删除），则重置表单
       if (prevEditingRecordRef.current !== null) {
         resetForm();
+        prevDateRef.current = getDefaultDate();
+        isInitializedRef.current = false; // 重置初始化标记，允许重新设置默认时间
       } else if (isFirstLoad && !savedFormData) {
         // 只在页面刷新时重置表单，页面切换时不重置（数据已从 localStorage 恢复）
         resetForm();
+        prevDateRef.current = getDefaultDate();
+        isInitializedRef.current = false; // 重置初始化标记，允许重新设置默认时间
         setIsFirstLoad(false); // 标记已处理首次加载
+      } else {
+        // 恢复日期引用
+        prevDateRef.current = date;
       }
     }
     // 更新 ref
@@ -197,13 +260,21 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       return;
     }
 
+    // 验证微信步数（必填字段）
+    if (!wechatSteps || wechatSteps.trim() === '') {
+      toast.error('请输入微信步数');
+      return;
+    }
+    
     // 验证微信步数范围：0-100000
-    if (wechatSteps) {
-      const stepsNum = parseInt(wechatSteps);
-      if (!isNaN(stepsNum) && (stepsNum < 0 || stepsNum > 100000)) {
-        toast.error('微信步数必须在0-100000之间');
-        return;
-      }
+    const stepsNum = parseInt(wechatSteps);
+    if (isNaN(stepsNum)) {
+      toast.error('微信步数必须是有效数字');
+      return;
+    }
+    if (stepsNum < 0 || stepsNum > 100000) {
+      toast.error('微信步数必须在0-100000之间');
+      return;
     }
 
     // 验证备注长度不能超过50个字
@@ -238,6 +309,39 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       }
     }
 
+    // 验证打卡时间逻辑关系
+    if (checkInTime.trim() && checkOutTime.trim()) {
+      const checkInParts = checkInTime.split(':').map(Number);
+      const checkOutParts = checkOutTime.split(':').map(Number);
+      const checkInMinutes = checkInParts[0] * 60 + checkInParts[1];
+      const checkOutMinutes = checkOutParts[0] * 60 + checkOutParts[1];
+      if (checkInMinutes > checkOutMinutes) {
+        toast.error('打卡签退时间必须大于等于打卡签到时间');
+        return;
+      }
+    }
+    if (checkOutTime.trim() && leaveTime.trim()) {
+      const checkOutParts = checkOutTime.split(':').map(Number);
+      const leaveParts = leaveTime.split(':').map(Number);
+      const checkOutMinutes = checkOutParts[0] * 60 + checkOutParts[1];
+      const leaveMinutes = leaveParts[0] * 60 + leaveParts[1];
+      if (checkOutMinutes > leaveMinutes) {
+        toast.error('打卡离开时间必须大于等于打卡签退时间');
+        return;
+      }
+    }
+    // 极端情况：只有签到和离开时间，没有签退时间
+    if (checkInTime.trim() && leaveTime.trim() && !checkOutTime.trim()) {
+      const checkInParts = checkInTime.split(':').map(Number);
+      const leaveParts = leaveTime.split(':').map(Number);
+      const checkInMinutes = checkInParts[0] * 60 + checkInParts[1];
+      const leaveMinutes = leaveParts[0] * 60 + leaveParts[1];
+      if (checkInMinutes > leaveMinutes) {
+        toast.error('打卡离开时间必须大于等于打卡签到时间');
+        return;
+      }
+    }
+
     const dailyRecord: DailyRecord = {
       id: editingRecord?.id || `daily_${Date.now()}`,
       date,
@@ -258,7 +362,7 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       },
       laundry,
       cleaning,
-      wechatSteps: wechatSteps ? parseInt(wechatSteps) : undefined,
+      wechatSteps: parseInt(wechatSteps),
       checkInTime: checkInTime.trim() || undefined,
       checkOutTime: checkOutTime.trim() || undefined,
       leaveTime: leaveTime.trim() || undefined,
@@ -301,14 +405,14 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
   // 三餐状态循环切换函数
   const cycleMealStatus = (currentStatus: MealStatus): MealStatus => {
     switch (currentStatus) {
-      case MealStatus.NOT_EATEN:
+      case MealStatus.EATEN_REGULAR:
         return MealStatus.EATEN_IRREGULAR;
       case MealStatus.EATEN_IRREGULAR:
+        return MealStatus.NOT_EATEN;
+      case MealStatus.NOT_EATEN:
         return MealStatus.EATEN_REGULAR;
-      case MealStatus.EATEN_REGULAR:
-        return MealStatus.NOT_EATEN;
       default:
-        return MealStatus.NOT_EATEN;
+        return MealStatus.EATEN_REGULAR;
     }
   };
 
@@ -324,6 +428,25 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
       default:
         return { text: '❌ 未吃', class: 'not-eaten' };
     }
+  };
+
+  // 计算是否所有内务项都被选中
+  const allHouseworkSelected = useMemo(() => {
+    return morningWash && nightWash && laundry && cleaning && 
+           faceWash && footWash && hairWash && shower;
+  }, [morningWash, nightWash, laundry, cleaning, faceWash, footWash, hairWash, shower]);
+
+  // 处理全选/取消全选
+  const handleSelectAllHousework = () => {
+    const shouldSelectAll = !allHouseworkSelected;
+    setMorningWash(shouldSelectAll);
+    setNightWash(shouldSelectAll);
+    setLaundry(shouldSelectAll);
+    setCleaning(shouldSelectAll);
+    setFaceWash(shouldSelectAll);
+    setFootWash(shouldSelectAll);
+    setHairWash(shouldSelectAll);
+    setShower(shouldSelectAll);
   };
 
   return (
@@ -450,7 +573,15 @@ const DailyRecordForm: React.FC<DailyRecordFormProps> = ({
 
         {/* 内务 */}
         <div className="form-group">
-          <label>🏠 内务</label>
+          <div className="housework-label-wrapper">
+            <label>🏠 内务</label>
+            <input
+              type="checkbox"
+              checked={allHouseworkSelected}
+              onChange={handleSelectAllHousework}
+              className="housework-select-all"
+            />
+          </div>
           <div className="housework-checkboxes">
             <div className="housework-row">
               <div className="checkbox-item">

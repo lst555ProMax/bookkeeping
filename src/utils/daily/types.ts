@@ -44,7 +44,7 @@ export interface DailyRecord {
   bathing: BathingRecord; // 洗浴情况
   laundry: boolean; // 洗衣服
   cleaning: boolean; // 打扫
-  wechatSteps?: number; // 微信步数
+  wechatSteps: number; // 微信步数
   checkInTime?: string; // 签到时间 HH:mm格式
   checkOutTime?: string; // 签退时间 HH:mm格式
   leaveTime?: string; // 离开时间 HH:mm格式

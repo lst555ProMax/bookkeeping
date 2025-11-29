@@ -133,6 +133,21 @@ const isValidMealStatus = (status: string): status is MealStatus => {
 };
 
 /**
+ * 将时间字符串转换为分钟数（用于比较）
+ */
+const timeToMinutes = (timeStr: string): number => {
+  const [hour, minute] = timeStr.split(':').map(Number);
+  return hour * 60 + minute;
+};
+
+/**
+ * 比较两个时间，返回time1是否小于等于time2
+ */
+const isTimeLessThanOrEqual = (time1: string, time2: string): boolean => {
+  return timeToMinutes(time1) <= timeToMinutes(time2);
+};
+
+/**
  * 验证日常记录格式，返回详细的错误信息
  */
 const validateDailyRecordWithError = (record: unknown, index: number): { valid: boolean; error?: string } => {
@@ -259,20 +274,21 @@ const validateDailyRecordWithError = (record: unknown, index: number): { valid: 
     return { valid: false, error: `无效的日常记录[${index}]：bathing.faceWash必须是布尔值` };
   }
   
-  // 验证wechatSteps（如果存在，范围0-100000）
-  if (r.wechatSteps !== undefined && r.wechatSteps !== null) {
-    if (typeof r.wechatSteps !== 'number') {
-      return { valid: false, error: `无效的日常记录[${index}]：wechatSteps必须是数字` };
-    }
-    if (!Number.isFinite(r.wechatSteps)) {
-      return { valid: false, error: `无效的日常记录[${index}]：wechatSteps必须是有效数字` };
-    }
-    if (!Number.isInteger(r.wechatSteps) || r.wechatSteps < 0) {
-      return { valid: false, error: `无效的日常记录[${index}]：wechatSteps必须是非负整数` };
-    }
-    if (r.wechatSteps > 100000) {
-      return { valid: false, error: `无效的日常记录[${index}]：wechatSteps不能超过100000` };
-    }
+  // 验证wechatSteps（必需字段，范围0-100000）
+  if (!('wechatSteps' in r) || r.wechatSteps === undefined || r.wechatSteps === null) {
+    return { valid: false, error: `无效的日常记录[${index}]：缺少wechatSteps字段` };
+  }
+  if (typeof r.wechatSteps !== 'number') {
+    return { valid: false, error: `无效的日常记录[${index}]：wechatSteps必须是数字` };
+  }
+  if (!Number.isFinite(r.wechatSteps)) {
+    return { valid: false, error: `无效的日常记录[${index}]：wechatSteps必须是有效数字` };
+  }
+  if (!Number.isInteger(r.wechatSteps) || r.wechatSteps < 0) {
+    return { valid: false, error: `无效的日常记录[${index}]：wechatSteps必须是非负整数` };
+  }
+  if (r.wechatSteps > 100000) {
+    return { valid: false, error: `无效的日常记录[${index}]：wechatSteps不能超过100000` };
   }
   
   // 验证checkInTime（如果存在）
@@ -305,6 +321,24 @@ const validateDailyRecordWithError = (record: unknown, index: number): { valid: 
     const leaveTimeValidation = isValidTime(r.leaveTime);
     if (!leaveTimeValidation.valid) {
       return { valid: false, error: `无效的日常记录[${index}]：leaveTime${leaveTimeValidation.error}` };
+    }
+  }
+  
+  // 验证打卡时间逻辑关系
+  if (r.checkInTime && r.checkOutTime) {
+    if (!isTimeLessThanOrEqual(r.checkInTime as string, r.checkOutTime as string)) {
+      return { valid: false, error: `无效的日常记录[${index}]：打卡签退时间必须大于等于打卡签到时间` };
+    }
+  }
+  if (r.checkOutTime && r.leaveTime) {
+    if (!isTimeLessThanOrEqual(r.checkOutTime as string, r.leaveTime as string)) {
+      return { valid: false, error: `无效的日常记录[${index}]：打卡离开时间必须大于等于打卡签退时间` };
+    }
+  }
+  // 极端情况：只有签到和离开时间，没有签退时间
+  if (r.checkInTime && r.leaveTime && !r.checkOutTime) {
+    if (!isTimeLessThanOrEqual(r.checkInTime as string, r.leaveTime as string)) {
+      return { valid: false, error: `无效的日常记录[${index}]：打卡离开时间必须大于等于打卡签到时间` };
     }
   }
   

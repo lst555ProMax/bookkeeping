@@ -35,7 +35,7 @@ const DailyRecordsDashboard: React.FC = () => {
 
         {/* 统计概览卡片 */}
         <div className="daily-records-content__stats">
-          <div className="stat-card stat-card--success">
+          <div className="stat-card stat-card--success" title="统计三餐中规律饮食的比例（规律餐数/总餐数）">
             <div className="stat-icon">🍽️</div>
             <div className="stat-content">
               <div className="stat-label">三餐规律率</div>
@@ -67,15 +67,15 @@ const DailyRecordsDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="stat-card stat-card--success">
+          <div className="stat-card stat-card--success" title="统计出勤合格率：只有签到（≤9:30）、签退（≥18:00）、离开（≥22:00）三个都正常才算合格">
             <div className="stat-icon">✅</div>
             <div className="stat-content">
-              <div className="stat-label">签到合格率</div>
+              <div className="stat-label">出勤合格率</div>
               <div className="stat-value">{stats.checkInComplianceRate}%</div>
             </div>
           </div>
 
-          <div className="stat-card stat-card--primary">
+          <div className="stat-card stat-card--primary" title="统计每日内务（早洗、晚洗、洗脸、洗脚）全部完成的记录占比">
             <div className="stat-icon">🧼</div>
             <div className="stat-content">
               <div className="stat-label">每日内务完成率</div>

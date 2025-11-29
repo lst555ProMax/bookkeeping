@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "exportDate": "2025-11-28T11:07:02.888Z",
+  "exportDate": "2025-11-29T08:10:00.000Z",
   "sleepRecords": [
     {
       "id": "sleep_sample_1",
@@ -886,7 +886,22 @@
       },
       "notes": "示例数据",
       "createdAt": "2025-11-28T13:45:00.000Z"
+    },
+    {
+      "id": "sleep_sample_60",
+      "date": "2025-11-29",
+      "sleepTime": "23:30",
+      "wakeTime": "08:30",
+      "quality": 75,
+      "naps": {
+        "morning": false,
+        "noon": false,
+        "afternoon": true,
+        "evening": false
+      },
+      "notes": "示例数据",
+      "createdAt": "2025-11-29T14:20:00.000Z"
     }
   ],
-  "totalRecords": 59
+  "totalRecords": 60
 }

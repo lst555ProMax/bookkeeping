@@ -4,12 +4,12 @@ import { FilterSelect, FilterSearchInput } from '@/components/common';
 interface DailyRecordListSearchSectionProps {
   mealFilter?: 'all' | 'regular' | 'irregular';
   checkinFilter?: 'all' | 'normal' | 'abnormal';
-  houseworkFilter?: 'all' | 'wash' | 'bath' | 'housework';
+  houseworkFilter?: 'all' | 'noMorningNightWash' | 'noFaceFootWash' | 'hairWash' | 'shower' | 'laundry' | 'cleaning';
   stepsLevel?: 'all' | 'gold' | 'green' | 'normal' | 'orange' | 'red';
   searchNotes?: string;
   onMealFilterChange?: (value: 'all' | 'regular' | 'irregular') => void;
   onCheckinFilterChange?: (value: 'all' | 'normal' | 'abnormal') => void;
-  onHouseworkFilterChange?: (value: 'all' | 'wash' | 'bath' | 'housework') => void;
+  onHouseworkFilterChange?: (value: 'all' | 'noMorningNightWash' | 'noFaceFootWash' | 'hairWash' | 'shower' | 'laundry' | 'cleaning') => void;
   onStepsLevelChange?: (value: 'all' | 'gold' | 'green' | 'normal' | 'orange' | 'red') => void;
   onSearchNotesChange?: (value: string) => void;
 }
@@ -54,14 +54,17 @@ export const DailyRecordListSearchSection: React.FC<DailyRecordListSearchSection
           <span className="search-label">内务</span>
           <FilterSelect
             value={houseworkFilter}
-            onChange={(val) => onHouseworkFilterChange(val as 'all' | 'wash' | 'bath' | 'housework')}
+            onChange={(val) => onHouseworkFilterChange(val as 'all' | 'noMorningNightWash' | 'noFaceFootWash' | 'hairWash' | 'shower' | 'laundry' | 'cleaning')}
             options={[
               { value: 'all', label: '全部' },
-              { value: 'wash', label: '洗漱' },
-              { value: 'bath', label: '洗浴' },
-              { value: 'housework', label: '家务' }
+              { value: 'noMorningNightWash', label: '未早洗晚洗' },
+              { value: 'noFaceFootWash', label: '未洗脸洗脚' },
+              { value: 'hairWash', label: '洗头' },
+              { value: 'shower', label: '洗澡' },
+              { value: 'laundry', label: '洗衣' },
+              { value: 'cleaning', label: '打扫' }
             ]}
-            width="100px"
+            width="130px"
           />
         </div>
       )}

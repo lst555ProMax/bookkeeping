@@ -99,7 +99,7 @@ const Home: React.FC = () => {
   // 查询筛选状态 - 日常记录
   const [dailyMealFilter, setDailyMealFilter] = useState<'all' | 'regular' | 'irregular'>('all');
   const [dailyCheckinFilter, setDailyCheckinFilter] = useState<'all' | 'normal' | 'abnormal'>('all');
-  const [dailyHouseworkFilter, setDailyHouseworkFilter] = useState<'all' | 'wash' | 'bath' | 'housework'>('all');
+  const [dailyHouseworkFilter, setDailyHouseworkFilter] = useState<'all' | 'noMorningNightWash' | 'noFaceFootWash' | 'hairWash' | 'shower' | 'laundry' | 'cleaning'>('all');
   const [dailyStepsLevel, setDailyStepsLevel] = useState<'all' | 'gold' | 'green' | 'normal' | 'orange' | 'red'>('all');
   const [dailySearchNotes, setDailySearchNotes] = useState<string>('');
 
@@ -271,15 +271,24 @@ const Home: React.FC = () => {
       
       // 内务筛选
       if (dailyHouseworkFilter !== 'all') {
-        if (dailyHouseworkFilter === 'wash') {
-          // 洗漱：早洗或晚洗
-          if (!d.hygiene.morningWash && !d.hygiene.nightWash) return false;
-        } else if (dailyHouseworkFilter === 'bath') {
-          // 洗浴：洗澡、洗头、洗脚或洗脸
-          if (!d.bathing.shower && !d.bathing.hairWash && !d.bathing.footWash && !d.bathing.faceWash) return false;
-        } else if (dailyHouseworkFilter === 'housework') {
-          // 家务：洗衣或打扫
-          if (!d.laundry && !d.cleaning) return false;
+        if (dailyHouseworkFilter === 'noMorningNightWash') {
+          // 未早洗晚洗：任意一个没有就算
+          if (d.hygiene.morningWash && d.hygiene.nightWash) return false;
+        } else if (dailyHouseworkFilter === 'noFaceFootWash') {
+          // 未洗脸洗脚：任意一个没有就算
+          if (d.bathing.faceWash && d.bathing.footWash) return false;
+        } else if (dailyHouseworkFilter === 'hairWash') {
+          // 洗头
+          if (!d.bathing.hairWash) return false;
+        } else if (dailyHouseworkFilter === 'shower') {
+          // 洗澡
+          if (!d.bathing.shower) return false;
+        } else if (dailyHouseworkFilter === 'laundry') {
+          // 洗衣
+          if (!d.laundry) return false;
+        } else if (dailyHouseworkFilter === 'cleaning') {
+          // 打扫
+          if (!d.cleaning) return false;
         }
       }
       

@@ -1,0 +1,262 @@
+{
+  "version": "1.0.0",
+  "exportDate": "2025-11-29T08:09:55.166Z",
+  "dailyRecords": [
+    {
+      "id": "daily_sample_1",
+      "date": "2025-10-05",
+      "meals": {
+        "breakfast": "not_eaten",
+        "lunch": "eaten_irregular",
+        "dinner": "not_eaten"
+      },
+      "hygiene": {
+        "morningWash": true,
+        "nightWash": false
+      },
+      "bathing": {
+        "shower": true,
+        "hairWash": false,
+        "footWash": true,
+        "faceWash": true
+      },
+      "laundry": true,
+      "cleaning": true,
+      "wechatSteps": 1789,
+      "notes": "示例数据",
+      "createdAt": "2025-10-05T00:00:00.000Z"
+    },
+    {
+      "id": "daily_sample_2",
+      "date": "2025-10-12",
+      "meals": {
+        "breakfast": "not_eaten",
+        "lunch": "not_eaten",
+        "dinner": "not_eaten"
+      },
+      "hygiene": {
+        "morningWash": true,
+        "nightWash": true
+      },
+      "bathing": {
+        "shower": true,
+        "hairWash": false,
+        "footWash": true,
+        "faceWash": false
+      },
+      "laundry": false,
+      "cleaning": true,
+      "wechatSteps": 20446,
+      "notes": "示例数据",
+      "createdAt": "2025-10-12T00:00:00.000Z"
+    },
+    {
+      "id": "daily_sample_3",
+      "date": "2025-10-18",
+      "meals": {
+        "breakfast": "not_eaten",
+        "lunch": "not_eaten",
+        "dinner": "eaten_irregular"
+      },
+      "hygiene": {
+        "morningWash": false,
+        "nightWash": true
+      },
+      "bathing": {
+        "shower": true,
+        "hairWash": false,
+        "footWash": false,
+        "faceWash": false
+      },
+      "laundry": false,
+      "cleaning": false,
+      "wechatSteps": 12162,
+      "notes": "示例数据",
+      "createdAt": "2025-10-18T00:00:00.000Z"
+    },
+    {
+      "id": "daily_sample_4",
+      "date": "2025-10-24",
+      "meals": {
+        "breakfast": "not_eaten",
+        "lunch": "not_eaten",
+        "dinner": "not_eaten"
+      },
+      "hygiene": {
+        "morningWash": true,
+        "nightWash": false
+      },
+      "bathing": {
+        "shower": false,
+        "hairWash": true,
+        "footWash": true,
+        "faceWash": true
+      },
+      "laundry": true,
+      "cleaning": false,
+      "wechatSteps": 27135,
+      "notes": "示例数据",
+      "createdAt": "2025-10-24T00:00:00.000Z",
+      "checkInTime": "08:02",
+      "checkOutTime": "18:44",
+      "leaveTime": "22:39"
+    },
+    {
+      "id": "daily_sample_5",
+      "date": "2025-10-30",
+      "meals": {
+        "breakfast": "not_eaten",
+        "lunch": "not_eaten",
+        "dinner": "eaten_regular"
+      },
+      "hygiene": {
+        "morningWash": true,
+        "nightWash": false
+      },
+      "bathing": {
+        "shower": false,
+        "hairWash": true,
+        "footWash": true,
+        "faceWash": true
+      },
+      "laundry": false,
+      "cleaning": false,
+      "wechatSteps": 27312,
+      "notes": "示例数据",
+      "createdAt": "2025-10-30T00:00:00.000Z",
+      "checkInTime": "08:17",
+      "checkOutTime": "18:11",
+      "leaveTime": "22:50"
+    },
+    {
+      "id": "daily_sample_6",
+      "date": "2025-11-03",
+      "meals": {
+        "breakfast": "not_eaten",
+        "lunch": "eaten_irregular",
+        "dinner": "eaten_regular"
+      },
+      "hygiene": {
+        "morningWash": true,
+        "nightWash": true
+      },
+      "bathing": {
+        "shower": false,
+        "hairWash": false,
+        "footWash": true,
+        "faceWash": false
+      },
+      "laundry": true,
+      "cleaning": false,
+      "wechatSteps": 26017,
+      "notes": "示例数据",
+      "createdAt": "2025-11-03T00:00:00.000Z",
+      "checkInTime": "09:12",
+      "checkOutTime": "18:40",
+      "leaveTime": "23:27"
+    },
+    {
+      "id": "daily_sample_7",
+      "date": "2025-11-10",
+      "meals": {
+        "breakfast": "not_eaten",
+        "lunch": "not_eaten",
+        "dinner": "not_eaten"
+      },
+      "hygiene": {
+        "morningWash": true,
+        "nightWash": false
+      },
+      "bathing": {
+        "shower": true,
+        "hairWash": false,
+        "footWash": true,
+        "faceWash": true
+      },
+      "laundry": false,
+      "cleaning": true,
+      "wechatSteps": 25582,
+      "notes": "示例数据",
+      "createdAt": "2025-11-10T00:00:00.000Z",
+      "checkInTime": "09:29",
+      "checkOutTime": "18:45",
+      "leaveTime": "23:26"
+    },
+    {
+      "id": "daily_sample_8",
+      "date": "2025-11-16",
+      "meals": {
+        "breakfast": "not_eaten",
+        "lunch": "eaten_irregular",
+        "dinner": "eaten_irregular"
+      },
+      "hygiene": {
+        "morningWash": true,
+        "nightWash": true
+      },
+      "bathing": {
+        "shower": false,
+        "hairWash": true,
+        "footWash": false,
+        "faceWash": false
+      },
+      "laundry": true,
+      "cleaning": false,
+      "wechatSteps": 15020,
+      "notes": "示例数据",
+      "createdAt": "2025-11-16T00:00:00.000Z"
+    },
+    {
+      "id": "daily_sample_9",
+      "date": "2025-11-22",
+      "meals": {
+        "breakfast": "eaten_irregular",
+        "lunch": "eaten_regular",
+        "dinner": "not_eaten"
+      },
+      "hygiene": {
+        "morningWash": true,
+        "nightWash": true
+      },
+      "bathing": {
+        "shower": true,
+        "hairWash": false,
+        "footWash": false,
+        "faceWash": false
+      },
+      "laundry": false,
+      "cleaning": true,
+      "wechatSteps": 2785,
+      "notes": "示例数据",
+      "createdAt": "2025-11-22T00:00:00.000Z"
+    },
+    {
+      "id": "daily_sample_10",
+      "date": "2025-11-28",
+      "meals": {
+        "breakfast": "not_eaten",
+        "lunch": "not_eaten",
+        "dinner": "eaten_irregular"
+      },
+      "hygiene": {
+        "morningWash": false,
+        "nightWash": true
+      },
+      "bathing": {
+        "shower": false,
+        "hairWash": false,
+        "footWash": true,
+        "faceWash": true
+      },
+      "laundry": true,
+      "cleaning": false,
+      "wechatSteps": 25503,
+      "notes": "示例数据",
+      "createdAt": "2025-11-28T00:00:00.000Z",
+      "checkInTime": "08:06",
+      "checkOutTime": "18:01",
+      "leaveTime": "23:25"
+    }
+  ],
+  "totalRecords": 10
+}

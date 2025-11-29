@@ -183,6 +183,46 @@
 }
 
 // 内务复选框
+.housework-label-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.housework-select-all {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  
+  appearance: none;
+  -webkit-appearance: none;
+  border: 2px solid #999;
+  border-radius: 3px;
+  background-color: white;
+  position: relative;
+  
+  &:checked {
+    background-color: #1ea5f9;
+    border-color: #1ea5f9;
+  }
+  
+  &:hover {
+    border-color: #1ea5f9;
+  }
+
+  &:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
 .housework-checkboxes {
   display: flex;
   flex-direction: column;

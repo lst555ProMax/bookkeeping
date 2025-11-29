@@ -20,7 +20,7 @@ export interface MonthlyStats {
   workDays: number; // 工作天数
   averageWorkHours: number; // 平均工作时长（小时）
   averageCompanyHours: number; // 平均在公司时长（小时）
-  checkInComplianceRate: number; // 签到合格率（不晚于9:30）
+  checkInComplianceRate: number; // 出勤合格率（签到、签退、离开三个都正常才算合格）
   checkOutComplianceRate: number; // 签退合格率（不早于18点）
   leaveComplianceRate: number; // 离开合格率（不早于22点）
   dailyHygieneCompletionRate: number; // 每日内务完成率（早洗+晚洗+洗脸+洗脚）
@@ -174,6 +174,15 @@ const isLeaveCompliant = (record: DailyRecord): boolean => {
 };
 
 /**
+ * 检查出勤是否合格（签到、签退、离开三个都正常才算合格）
+ */
+const isAttendanceCompliant = (record: DailyRecord): boolean => {
+  return isCheckInCompliant(record) && 
+         isCheckOutCompliant(record) && 
+         isLeaveCompliant(record);
+};
+
+/**
  * 检查每日内务是否完成（早洗+晚洗+洗脸+洗脚）
  */
 const isDailyHygieneComplete = (record: DailyRecord): boolean => {
@@ -237,6 +246,7 @@ export const getMonthlyStats = (year: number, month: number): MonthlyStats => {
   let checkInCompliantCount = 0;
   let checkOutCompliantCount = 0;
   let leaveCompliantCount = 0;
+  let attendanceCompliantCount = 0; // 出勤合格数（三个都正常）
   let dailyHygieneCompleteCount = 0;
   let hairWashCount = 0;
   let showerCount = 0;
@@ -294,6 +304,8 @@ export const getMonthlyStats = (year: number, month: number): MonthlyStats => {
       if (isCheckInCompliant(record)) checkInCompliantCount++;
       if (isCheckOutCompliant(record)) checkOutCompliantCount++;
       if (isLeaveCompliant(record)) leaveCompliantCount++;
+      // 出勤合格统计（三个都正常才算合格）
+      if (isAttendanceCompliant(record)) attendanceCompliantCount++;
     }
     
     // 内务完成统计
@@ -320,7 +332,7 @@ export const getMonthlyStats = (year: number, month: number): MonthlyStats => {
     workDays,
     averageWorkHours: workDays > 0 ? Math.round((totalWorkHours / workDays) * 10) / 10 : 0,
     averageCompanyHours: companyDaysCount > 0 ? Math.round((totalCompanyHours / companyDaysCount) * 10) / 10 : 0,
-    checkInComplianceRate: completeAttendanceDays > 0 ? Math.round((checkInCompliantCount / completeAttendanceDays) * 100) : 0,
+    checkInComplianceRate: completeAttendanceDays > 0 ? Math.round((attendanceCompliantCount / completeAttendanceDays) * 100) : 0, // 出勤合格率（三个都正常才算合格）
     checkOutComplianceRate: completeAttendanceDays > 0 ? Math.round((checkOutCompliantCount / completeAttendanceDays) * 100) : 0,
     leaveComplianceRate: completeAttendanceDays > 0 ? Math.round((leaveCompliantCount / completeAttendanceDays) * 100) : 0,
     dailyHygieneCompletionRate: Math.round((dailyHygieneCompleteCount / records.length) * 100),
@@ -400,6 +412,7 @@ export const getHabitStats = (year: number, month: number): HabitStats[] => {
     shower: records.filter(r => r.bathing.shower).length,
     hairWash: records.filter(r => r.bathing.hairWash).length,
     footWash: records.filter(r => r.bathing.footWash).length,
+    faceWash: records.filter(r => r.bathing.faceWash).length,
     laundry: records.filter(r => r.laundry).length,
     cleaning: records.filter(r => r.cleaning).length
   };
@@ -408,6 +421,7 @@ export const getHabitStats = (year: number, month: number): HabitStats[] => {
   const expectedMorningWash = total; // 1天1次
   const expectedNightWash = total; // 1天1次
   const expectedFootWash = total; // 1天1次（假设）
+  const expectedFaceWash = total; // 1天1次
   const expectedHairWash = Math.ceil(total / 2); // 2天1次
   const expectedShower = Math.ceil(total / 7); // 7天1次
   const expectedLaundry = Math.ceil(total / 3); // 3天1次
@@ -418,6 +432,7 @@ export const getHabitStats = (year: number, month: number): HabitStats[] => {
     { name: '早上洗漱', value: stats.morningWash, percentage: expectedMorningWash > 0 ? Math.round((stats.morningWash / expectedMorningWash) * 100) : 0 },
     { name: '晚上洗漱', value: stats.nightWash, percentage: expectedNightWash > 0 ? Math.round((stats.nightWash / expectedNightWash) * 100) : 0 },
     { name: '洗脚', value: stats.footWash, percentage: expectedFootWash > 0 ? Math.round((stats.footWash / expectedFootWash) * 100) : 0 },
+    { name: '洗脸', value: stats.faceWash, percentage: expectedFaceWash > 0 ? Math.round((stats.faceWash / expectedFaceWash) * 100) : 0 },
     { name: '洗头', value: stats.hairWash, percentage: expectedHairWash > 0 ? Math.round((stats.hairWash / expectedHairWash) * 100) : 0 },
     { name: '洗澡', value: stats.shower, percentage: expectedShower > 0 ? Math.round((stats.shower / expectedShower) * 100) : 0 },
     { name: '打扫卫生', value: stats.cleaning, percentage: expectedCleaning > 0 ? Math.round((stats.cleaning / expectedCleaning) * 100) : 0 },

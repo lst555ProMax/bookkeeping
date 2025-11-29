@@ -93,7 +93,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
 
   // 获取步数对应的颜色类
   const getStepsColorClass = (steps: number | undefined): string => {
-    if (!steps) return '';
+    if (steps === undefined || steps === null) return '';
     if (steps >= 25000) return 'steps--gold';
     if (steps >= 10000) return 'steps--green';
     if (steps >= 5000) return 'steps--normal';
@@ -347,10 +347,10 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
             </div>
 
             {/* 步数和打卡 */}
-            {(record.wechatSteps || record.checkInTime || record.checkOutTime || record.leaveTime) && (
+            {(record.wechatSteps != null || record.checkInTime || record.checkOutTime || record.leaveTime) && (
               <div className="steps-checkin-row">
                 {/* 微信步数 */}
-                {record.wechatSteps && (
+                {record.wechatSteps != null && (
                   <div className="steps-info">
                     <span className="steps-label">👣 步数:</span>
                     <span className={`steps-value ${getStepsColorClass(record.wechatSteps)}`}>
@@ -366,19 +366,19 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
                     <div className="time-grid">
                       {record.checkInTime && (
                         <div className={`time-item ${!isCheckInTimeNormal(record.checkInTime) ? 'time-item--abnormal' : ''}`}>
-                          <span className="time-label">签到:</span>
+                          <span className="time-label">📥 签到:</span>
                           <span className="time-value">{record.checkInTime}</span>
                         </div>
                       )}
                       {record.checkOutTime && (
                         <div className={`time-item ${!isCheckOutTimeNormal(record.checkOutTime) ? 'time-item--abnormal' : ''}`}>
-                          <span className="time-label">签退:</span>
+                          <span className="time-label">📤 签退:</span>
                           <span className="time-value">{record.checkOutTime}</span>
                         </div>
                       )}
                       {record.leaveTime && (
                         <div className={`time-item ${!isLeaveTimeNormal(record.leaveTime) ? 'time-item--abnormal' : ''}`}>
-                          <span className="time-label">离开:</span>
+                          <span className="time-label">🚪 离开:</span>
                           <span className="time-value">{record.leaveTime}</span>
                         </div>
                       )}
