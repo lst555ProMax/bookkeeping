@@ -18,12 +18,12 @@ interface DailyRecordListProps {
   // 查询功能相关
   mealFilter?: 'all' | 'regular' | 'irregular';
   checkinFilter?: 'all' | 'normal' | 'abnormal';
-  houseworkFilter?: 'all' | 'wash' | 'bath' | 'housework';
+  houseworkFilter?: 'all' | 'noMorningNightWash' | 'noFaceFootWash' | 'hairWash' | 'shower' | 'laundry' | 'cleaning';
   stepsLevel?: 'all' | 'gold' | 'green' | 'normal' | 'orange' | 'red';
   searchNotes?: string;
   onMealFilterChange?: (value: 'all' | 'regular' | 'irregular') => void;
   onCheckinFilterChange?: (value: 'all' | 'normal' | 'abnormal') => void;
-  onHouseworkFilterChange?: (value: 'all' | 'wash' | 'bath' | 'housework') => void;
+  onHouseworkFilterChange?: (value: 'all' | 'noMorningNightWash' | 'noFaceFootWash' | 'hairWash' | 'shower' | 'laundry' | 'cleaning') => void;
   onStepsLevelChange?: (value: 'all' | 'gold' | 'green' | 'normal' | 'orange' | 'red') => void;
   onSearchNotesChange?: (value: string) => void;
 }
