@@ -3,7 +3,7 @@
  */
 
 import { QuickNote, DiaryEntry } from './types';
-import { loadMusicLyrics, saveMusicLyrics, loadMusicEntries, saveMusicEntries, loadMusicEntryWithImage } from './storage';
+import { loadMusicLyrics, saveMusicLyrics, loadMusicEntries, saveMusicEntries } from './storage';
 import { getImageFromIndexedDB } from '@/utils/common/imageStorage';
 
 interface MusicExportData {

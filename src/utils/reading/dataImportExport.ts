@@ -3,7 +3,7 @@
  */
 
 import { QuickNote, DiaryEntry } from './types';
-import { loadReadingExcerpts, saveReadingExcerpts, loadReadingEntries, saveReadingEntries, loadReadingEntryWithImage } from './storage';
+import { loadReadingExcerpts, saveReadingExcerpts, loadReadingEntries, saveReadingEntries } from './storage';
 import { getImageFromIndexedDB } from '@/utils/common/imageStorage';
 
 interface ReadingExportData {

@@ -17,7 +17,6 @@ import {
   deleteDiaryEntry as deleteDiaryFromStorage,
   clearAllDiaryEntries
 } from '@/utils/reading';
-import { migrateAllImagesToIndexedDB, needsImageMigration } from '@/utils/reading/imageMigration';
 import {
   exportQuickNotesOnly,
   importQuickNotesOnly,
