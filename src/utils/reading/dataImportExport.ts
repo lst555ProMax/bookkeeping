@@ -4,7 +4,7 @@
 
 import { QuickNote, DiaryEntry } from './types';
 import { loadReadingExcerpts, saveReadingExcerpts, loadReadingEntries, saveReadingEntries } from './storage';
-import { getImageFromIndexedDB } from '@/utils/common/imageStorage';
+import { getImageFromIndexedDB, saveImageToIndexedDB } from '@/utils/common/imageStorage';
 
 interface ReadingExportData {
   readingExcerpts: QuickNote[];
@@ -617,7 +617,7 @@ export const importReadingEntriesOnly = (file: File): Promise<{
     try {
       const reader = new FileReader();
       
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
         try {
           const content = event.target?.result as string;
           let parsedData: unknown;
@@ -648,7 +648,9 @@ export const importReadingEntriesOnly = (file: File): Promise<{
           
           let imported = 0;
           let skipped = 0;
+          const newEntries: DiaryEntry[] = [];
           
+          // 第一步：筛选出需要导入的条目
           entries.forEach(entry => {
             // 检查是否已存在相同id的书记
             if (existingIds.has(entry.id)) {
@@ -660,21 +662,46 @@ export const importReadingEntriesOnly = (file: File): Promise<{
             if (entry.image && typeof entry.image === 'string') {
               // 检查是否是有效的base64图片格式
               if (!entry.image.startsWith('data:image/')) {
-                // 如果不是data URI格式，尝试添加默认前缀
-                // 或者保持原样（可能是base64字符串）
                 console.warn(`书记 ${entry.id} 的图片格式可能不正确`);
               }
             }
             
-            // 保存完整的entry数据（包括image字段）
-            existingEntries.push(entry);
-            existingIds.add(entry.id);
+            newEntries.push(entry);
             imported++;
           });
           
+          // 第二步：处理图片迁移到 IndexedDB
+          const entriesToSave: DiaryEntry[] = [];
+          for (const entry of newEntries) {
+            let entryToSave: DiaryEntry = { ...entry };
+            
+            // 如果有图片，迁移到 IndexedDB
+            if (entry.image && typeof entry.image === 'string' && entry.image.trim() !== '') {
+              try {
+                const imageId = entry.id;
+                // 保存图片到 IndexedDB
+                await saveImageToIndexedDB(imageId, entry.image);
+                // entry 中只保存 imageId，删除 image 字段以节省 localStorage 空间
+                entryToSave = {
+                  ...entry,
+                  imageId: imageId,
+                  image: undefined // 删除 image 字段
+                };
+              } catch (error) {
+                console.error(`保存图片到 IndexedDB 失败 (书记 ${entry.id}):`, error);
+                // 如果保存失败，保留原来的 image（向后兼容）
+                // 但这样可能会导致 localStorage 空间不足
+              }
+            }
+            
+            entriesToSave.push(entryToSave);
+          }
+          
+          // 第三步：保存所有条目
           if (imported > 0) {
-            existingEntries.sort((a, b) => b.date.localeCompare(a.date));
-            saveReadingEntries(existingEntries);
+            const allEntries = [...existingEntries, ...entriesToSave];
+            allEntries.sort((a, b) => b.date.localeCompare(a.date));
+            saveReadingEntries(allEntries);
           }
           
           resolve({

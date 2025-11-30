@@ -833,9 +833,9 @@ const Music: React.FC = () => {
   };
 
   // 删除所有日记
-  const handleDeleteAll = () => {
+  const handleDeleteAll = async () => {
     try {
-      const count = clearAllDiaryEntries();
+      const count = await clearAllDiaryEntries();
       setDiaryEntries([]);
       resetDiaryState();
       toast.success(`已删除 ${count} 篇乐记`);
