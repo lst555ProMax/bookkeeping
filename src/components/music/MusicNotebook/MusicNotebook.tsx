@@ -580,6 +580,7 @@ const MusicNotebook = forwardRef<MusicNotebookRef, MusicNotebookProps>(({
                 value={selectedDate}
                 onChange={onDateChange}
                 minDate="2024-01-01"
+                maxDate={new Date().toISOString().split('T')[0]}
               />
             </div>
             

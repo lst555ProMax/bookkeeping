@@ -189,10 +189,8 @@ const Diary: React.FC = () => {
     }
     
     // 编辑状态下，检查是否有变化
-    // 对于内容，需要比较纯文本，因为HTML格式可能不同但内容相同
-    const currentPlainText = getTextFromHTML(diaryContent).trim();
-    const initialPlainText = getTextFromHTML(initialDiaryState.content).trim();
-    const hasContentChange = currentPlainText !== initialPlainText;
+    // 直接比较 HTML 内容，这样可以检测到样式变化（加粗、颜色、高亮等）
+    const hasContentChange = diaryContent !== initialDiaryState.content;
     
     return (
       hasContentChange ||

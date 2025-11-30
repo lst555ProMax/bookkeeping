@@ -198,10 +198,8 @@ const Reading: React.FC = () => {
     }
     
     // 编辑状态下，检查是否有变化
-    // 对于内容，需要比较纯文本，因为HTML格式可能不同但内容相同
-    const currentPlainText = getTextFromHTML(diaryContent).trim();
-    const initialPlainText = getTextFromHTML(initialDiaryState.content).trim();
-    const hasContentChange = currentPlainText !== initialPlainText;
+    // 直接比较 HTML 内容，这样可以检测到样式变化（加粗、颜色、高亮等）
+    const hasContentChange = diaryContent !== initialDiaryState.content;
     
     return (
       hasContentChange ||
@@ -369,8 +367,14 @@ const Reading: React.FC = () => {
     // 提取纯文本内容检查是否为空
     const textContent = getTextFromHTML(diaryContent);
     
-    // 如果内容为空
-    if (!textContent.trim()) {
+    // 判断是新建还是更新
+    const isNewDiary = !currentDiary;
+    
+    // 检查是否有图片
+    const hasImage = currentImage !== undefined && currentImage !== null && currentImage !== '';
+    
+    // 如果既没有文字也没有图片，才视为删除
+    if (!textContent.trim() && !hasImage) {
       // 如果当前日记已存在，视为删除（直接删除并显示删除成功提示，不需要确认）
       if (currentDiary) {
         const id = currentDiary.id;
@@ -401,8 +405,8 @@ const Reading: React.FC = () => {
         });
         return;
       }
-      // 如果当前日记是新建的且没有内容，提示无法保存
-      if (!currentDiary) {
+      // 如果当前日记是新建的且既没有内容也没有图片，提示无法保存
+      if (isNewDiary) {
         toast.error('无法保存：书记内容不能为空', {
           duration: 2000,
           position: 'top-center',
@@ -411,9 +415,6 @@ const Reading: React.FC = () => {
       }
       return;
     }
-
-    // 判断是新建还是更新
-    const isNewDiary = !currentDiary;
     
     const entry: DiaryEntry = {
       id: currentDiary?.id || Date.now().toString(),
