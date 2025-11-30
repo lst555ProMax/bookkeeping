@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { DiaryEntry, WEATHER_OPTIONS, MOOD_OPTIONS } from '@/utils';
 import { getDiaryEntryNumber } from '@/utils/music';
 import { FilterSearchInput } from '@/components/common';
+import { getImageFromIndexedDB } from '@/utils/common/imageStorage';
 import './MusicList.scss';
 
 interface MusicListProps {
@@ -37,6 +38,45 @@ const MusicList: React.FC<MusicListProps> = ({
   const menuRef = useRef<HTMLDivElement>(null);
   const itemsContainerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  
+  // 图片缓存：存储从 IndexedDB 加载的图片
+  const [imageCache, setImageCache] = useState<Map<string, string>>(new Map());
+  
+  // 异步加载所有有 imageId 的 entry 的图片
+  useEffect(() => {
+    const loadImages = async () => {
+      const newCache = new Map<string, string>();
+      const loadPromises: Promise<void>[] = [];
+      
+      diaryEntries.forEach(entry => {
+        // 如果已经有 image，直接使用（向后兼容）
+        if (entry.image) {
+          newCache.set(entry.id, entry.image);
+          return;
+        }
+        
+        // 如果有 imageId，从 IndexedDB 加载
+        if (entry.imageId) {
+          const promise = getImageFromIndexedDB(entry.imageId).then(image => {
+            if (image) {
+              newCache.set(entry.id, image);
+            }
+          }).catch(err => {
+            console.error(`加载图片 ${entry.imageId} 失败:`, err);
+          });
+          loadPromises.push(promise);
+        }
+      });
+      
+      // 等待所有图片加载完成
+      await Promise.all(loadPromises);
+      
+      // 更新缓存
+      setImageCache(newCache);
+    };
+    
+    loadImages();
+  }, [diaryEntries]);
 
   // 点击外部关闭导出菜单
   useEffect(() => {
@@ -127,12 +167,20 @@ const MusicList: React.FC<MusicListProps> = ({
     URL.revokeObjectURL(url);
   };
 
+  // 获取 entry 的图片（优先使用缓存的图片）
+  const getEntryImage = (entry: DiaryEntry): string | undefined => {
+    return entry.image || imageCache.get(entry.id);
+  };
+  
   // 导出功能
   const handleExport = async (entry: DiaryEntry, format: 'txt' | 'doc' | 'pdf' | 'md') => {
     setExportMenuOpenId(null);
     
     // 从HTML中提取纯文本
     const plainTextContent = getTextFromHTML(entry.content);
+    
+    // 获取图片（优先使用缓存的图片）
+    const entryImage = getEntryImage(entry);
     
     try {
       if (format === 'txt') {
@@ -147,10 +195,10 @@ const MusicList: React.FC<MusicListProps> = ({
         mdContent += `**心情:** ${entry.mood}\n\n`;
         
         // 如果有图片，添加图片到markdown
-        if (entry.image) {
-          const imageSrc = entry.image.startsWith('data:image/') 
-            ? entry.image 
-            : `data:image/png;base64,${entry.image}`;
+        if (entryImage) {
+          const imageSrc = entryImage.startsWith('data:image/') 
+            ? entryImage 
+            : `data:image/png;base64,${entryImage}`;
           
           mdContent += `<img src="${imageSrc}" alt="日记图片" style="max-width: 100%; height: auto; border-radius: 8px;" />\n\n`;
           mdContent += `---\n\n`;
@@ -163,8 +211,8 @@ const MusicList: React.FC<MusicListProps> = ({
       } else if (format === 'doc') {
         // 导出为doc（使用HTML内容保留格式，包含图片）
         let imageHtml = '';
-        if (entry.image) {
-          imageHtml = `<div style="margin: 1rem 0; text-align: center;"><img src="${entry.image}" alt="日记图片" style="max-width: 200px; max-height: 200px; width: auto; height: auto; border-radius: 8px; display: block; margin: 0 auto;" /></div>`;
+        if (entryImage) {
+          imageHtml = `<div style="margin: 1rem 0; text-align: center;"><img src="${entryImage}" alt="日记图片" style="max-width: 200px; max-height: 200px; width: auto; height: auto; border-radius: 8px; display: block; margin: 0 auto;" /></div>`;
         }
         
         const htmlContent = `
@@ -193,8 +241,8 @@ const MusicList: React.FC<MusicListProps> = ({
       } else if (format === 'pdf') {
         // PDF导出：创建一个包含图片的HTML页面，然后使用浏览器打印功能
         let imageHtml = '';
-        if (entry.image) {
-          imageHtml = `<div style="margin: 1rem 0; text-align: center;"><img src="${entry.image}" alt="日记图片" style="max-width: 100%; height: auto; border-radius: 8px;" /></div>`;
+        if (entryImage) {
+          imageHtml = `<div style="margin: 1rem 0; text-align: center;"><img src="${entryImage}" alt="日记图片" style="max-width: 100%; height: auto; border-radius: 8px;" /></div>`;
         }
         
         const htmlContent = `
@@ -381,7 +429,7 @@ const MusicList: React.FC<MusicListProps> = ({
                   </button>
                   {exportMenuOpenId === entry.id && (
                     <div className={`export-menu ${menuPosition === 'top' ? 'export-menu--top' : ''}`}>
-                      {entry.image ? (
+                      {getEntryImage(entry) ? (
                         // 如果有图片，只显示PDF导出
                         <button onClick={(e) => {
                           e.stopPropagation();
@@ -445,9 +493,9 @@ const MusicList: React.FC<MusicListProps> = ({
                 {getTextFromHTML(entry.content).substring(0, 100)}
                 {getTextFromHTML(entry.content).length > 100 && '...'}
               </span>
-              {entry.image && (
+              {getEntryImage(entry) && (
                 <span className="music-diary-item__preview-image" style={{ marginLeft: '1rem', display: 'inline-block', width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
-                  <img src={entry.image} alt="预览图片" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <img src={getEntryImage(entry)} alt="预览图片" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </span>
               )}
             </div>

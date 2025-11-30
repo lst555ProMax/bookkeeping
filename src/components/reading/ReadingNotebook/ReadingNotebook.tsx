@@ -16,6 +16,7 @@ import './ReadingNotebook.scss';
 export interface ReadingNotebookRef {
   focusEditor: () => void;
   blurEditor: () => void;
+  getHTML: () => string;
 }
 
 const TEXT_COLORS = [
@@ -270,6 +271,12 @@ const ReadingNotebook = forwardRef<ReadingNotebookRef, ReadingNotebookProps>(({
       if (editor) {
         editor.view.dom.blur();
       }
+    },
+    getHTML: () => {
+      if (editor) {
+        return editor.getHTML();
+      }
+      return '';
     },
   }), [editor]);
 

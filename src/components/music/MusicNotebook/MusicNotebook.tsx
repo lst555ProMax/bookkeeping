@@ -16,6 +16,7 @@ import './MusicNotebook.scss';
 export interface MusicNotebookRef {
   focusEditor: () => void;
   blurEditor: () => void;
+  getHTML: () => string;
 }
 
 const TEXT_COLORS = [
@@ -270,6 +271,12 @@ const MusicNotebook = forwardRef<MusicNotebookRef, MusicNotebookProps>(({
       if (editor) {
         editor.view.dom.blur();
       }
+    },
+    getHTML: () => {
+      if (editor) {
+        return editor.getHTML();
+      }
+      return '';
     },
   }), [editor]);
 

@@ -3,7 +3,8 @@
  */
 
 import { QuickNote, DiaryEntry } from './types';
-import { loadMusicLyrics, saveMusicLyrics, loadMusicEntries, saveMusicEntries } from './storage';
+import { loadMusicLyrics, saveMusicLyrics, loadMusicEntries, saveMusicEntries, loadMusicEntryWithImage } from './storage';
+import { getImageFromIndexedDB } from '@/utils/common/imageStorage';
 
 interface MusicExportData {
   musicLyrics: QuickNote[];
@@ -430,19 +431,48 @@ export const exportMusicLyricsOnly = (musicLyrics?: QuickNote[]): void => {
 
 /**
  * 导出乐记数据（包含图片数据）
+ * 如果图片在 IndexedDB 中，会从 IndexedDB 读取并包含在导出文件中
  */
-export const exportMusicEntriesOnly = (musicEntries?: DiaryEntry[]): void => {
+export const exportMusicEntriesOnly = async (musicEntries?: DiaryEntry[]): Promise<void> => {
   try {
     const entriesToExport = musicEntries || loadMusicEntries();
     
+    // 从 IndexedDB 加载所有图片，确保导出文件包含完整的图片数据
+    const entriesWithImages: DiaryEntry[] = await Promise.all(
+      entriesToExport.map(async (entry) => {
+        // 如果已经有 image 字段，直接使用
+        if (entry.image) {
+          return entry;
+        }
+        
+        // 如果有 imageId，从 IndexedDB 读取图片
+        if (entry.imageId) {
+          try {
+            const image = await getImageFromIndexedDB(entry.imageId);
+            if (image) {
+              return {
+                ...entry,
+                image: image // 添加图片数据到导出数据中
+              };
+            }
+          } catch (error) {
+            console.warn(`无法从 IndexedDB 读取图片 ${entry.imageId}:`, error);
+            // 如果读取失败，继续使用原 entry（没有图片）
+          }
+        }
+        
+        return entry;
+      })
+    );
+    
     // 统计包含图片的乐记数量
-    const entriesWithImages = entriesToExport.filter(e => e.image).length;
+    const entriesWithImagesCount = entriesWithImages.filter(e => e.image).length;
     
     const exportData: MusicEntriesExportData = {
       version: '2025.11.30',
       exportDate: new Date().toISOString(),
-      musicEntries: entriesToExport, // 包含完整的entry数据，包括image字段（base64格式）
-      totalMusicEntries: entriesToExport.length
+      musicEntries: entriesWithImages, // 包含完整的entry数据，包括image字段（base64格式）
+      totalMusicEntries: entriesWithImages.length
     };
 
     const dataStr = JSON.stringify(exportData, null, 2);
@@ -460,7 +490,7 @@ export const exportMusicEntriesOnly = (musicEntries?: DiaryEntry[]): void => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    console.log(`成功导出 ${entriesToExport.length} 条乐记（其中 ${entriesWithImages} 条包含图片）`);
+    console.log(`成功导出 ${entriesWithImages.length} 条乐记（其中 ${entriesWithImagesCount} 条包含图片）`);
   } catch (error) {
     console.error('导出失败:', error);
     throw new Error('导出乐记数据失败，请重试');
@@ -755,8 +785,8 @@ export const validateMusicImportFile = (file: File): string | null => {
     return '只支持JSON格式文件';
   }
 
-  if (file.size > 10 * 1024 * 1024) {
-    return '文件大小不能超过10MB';
+  if (file.size > 100 * 1024 * 1024) {
+    return '文件大小不能超过100MB';
   }
 
   return null;

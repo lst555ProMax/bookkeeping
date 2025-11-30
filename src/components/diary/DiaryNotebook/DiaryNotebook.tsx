@@ -15,6 +15,7 @@ import './DiaryNotebook.scss';
 export interface DiaryNotebookRef {
   focusEditor: () => void;
   blurEditor: () => void;
+  getHTML: () => string;
 }
 
 const TEXT_COLORS = [
@@ -262,6 +263,12 @@ const DiaryNotebook = forwardRef<DiaryNotebookRef, DiaryNotebookProps>(({
       if (editor) {
         editor.view.dom.blur();
       }
+    },
+    getHTML: () => {
+      if (editor) {
+        return editor.getHTML();
+      }
+      return '';
     },
   }), [editor]);
 

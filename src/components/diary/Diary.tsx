@@ -63,6 +63,9 @@ const Diary: React.FC = () => {
   // DiaryNotebook ref for focusing editor
   const diaryNotebookRef = useRef<DiaryNotebookRef>(null);
   
+  // 标记是否正在加载日记（用于区分加载和用户编辑）
+  const isLoadingDiaryRef = useRef<boolean>(false);
+  
   // 速记是否有未保存的修改
   const [hasUnsavedQuickNote, setHasUnsavedQuickNote] = useState<boolean>(false);
   
@@ -121,6 +124,9 @@ const Diary: React.FC = () => {
 
   // 加载日记条目（统一处理）
   const loadDiaryEntry = (entry: DiaryEntry) => {
+    // 标记正在加载，避免在内容规范化时误判为修改
+    isLoadingDiaryRef.current = true;
+    
     setSelectedDate(entry.date);
     setCurrentDiary(entry);
     setDiaryContent(entry.content);
@@ -131,6 +137,7 @@ const Diary: React.FC = () => {
     setCurrentMood(entry.mood);
     setCurrentFont(entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif");
     
+    // 先设置初始状态为原始内容，后续会在编辑器规范化后更新
     setInitialDiaryState({
       date: entry.date,
       content: entry.content,
@@ -140,6 +147,31 @@ const Diary: React.FC = () => {
       font: entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif"
     });
   };
+
+  // 监听 diaryContent 变化，当加载日记后编辑器规范化完成时，更新 initialDiaryState
+  useEffect(() => {
+    // 只有在加载日记时（isLoadingDiaryRef.current === true）且 currentDiary 存在时才更新
+    if (isLoadingDiaryRef.current && currentDiary && initialDiaryState) {
+      // 使用 setTimeout 确保编辑器已经完成规范化
+      const timer = setTimeout(() => {
+        // 使用规范化后的 diaryContent 更新 initialDiaryState
+        // 无论内容是否变化，都更新以确保一致性
+        setInitialDiaryState(prev => {
+          if (prev) {
+            return {
+              ...prev,
+              content: diaryContent // 使用编辑器规范化后的内容
+            };
+          }
+          return prev;
+        });
+        // 重置加载标志
+        isLoadingDiaryRef.current = false;
+      }, 10); // 稍微延迟，确保编辑器完成规范化
+      
+      return () => clearTimeout(timer);
+    }
+  }, [diaryContent, currentDiary, initialDiaryState]);
 
   // 加载数据
   useEffect(() => {
@@ -354,8 +386,11 @@ const Diary: React.FC = () => {
 
   // 保存日记
   const handleSaveDiary = () => {
+    // 从编辑器获取规范化后的 HTML（确保与编辑器显示的内容一致）
+    const normalizedContent = diaryNotebookRef.current?.getHTML() || diaryContent;
+    
     // 提取纯文本内容检查是否为空
-    const textContent = getTextFromHTML(diaryContent);
+    const textContent = getTextFromHTML(normalizedContent);
     
     // 判断是新建还是更新
     const isNewDiary = !currentDiary;
@@ -406,7 +441,7 @@ const Diary: React.FC = () => {
     const entry: DiaryEntry = {
       id: currentDiary?.id || Date.now().toString(),
       date: selectedDate,
-      content: diaryContent,
+      content: normalizedContent, // 使用编辑器规范化后的内容
       theme: currentTheme,
       weather: currentWeather,
       mood: currentMood,
@@ -418,10 +453,10 @@ const Diary: React.FC = () => {
     saveDiaryToStorage(entry);
     setCurrentDiary(entry);
     
-    // 更新初始状态
+    // 更新初始状态（使用规范化后的内容）
     setInitialDiaryState({
       date: selectedDate,
-      content: diaryContent,
+      content: normalizedContent, // 使用编辑器规范化后的内容
       theme: currentTheme,
       weather: currentWeather,
       mood: currentMood,

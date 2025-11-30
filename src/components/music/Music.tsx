@@ -12,10 +12,12 @@ import {
   deleteQuickNote as deleteQuickNoteFromStorage,
   clearAllQuickNotes,
   loadDiaryEntries,
+  loadMusicEntryWithImage,
   saveDiaryEntry as saveDiaryToStorage,
   deleteDiaryEntry as deleteDiaryFromStorage,
   clearAllDiaryEntries
 } from '@/utils/music';
+import { migrateAllImagesToIndexedDB, needsImageMigration } from '@/utils/music/imageMigration';
 import {
   exportQuickNotesOnly,
   importQuickNotesOnly,
@@ -73,6 +75,11 @@ const Music: React.FC = () => {
   // MusicNotebook ref for focusing editor
   const musicNotebookRef = useRef<MusicNotebookRef>(null);
   const [isImportingDiaryEntries, setIsImportingDiaryEntries] = useState(false);
+  
+  // 标记当前正在加载的日记 ID（用于区分加载和用户编辑，避免竞态条件）
+  const loadingDiaryIdRef = useRef<string | null>(null);
+  // 存储待执行的定时器，用于清理
+  const loadingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // 从 HTML 中提取纯文本，保留换行
   const getTextFromHTML = useCallback((html: string): string => {
@@ -100,6 +107,14 @@ const Music: React.FC = () => {
     return color.toUpperCase();
   };
 
+  // 标准化图片值（将 undefined、null、空字符串视为相同）
+  const normalizeImage = (image: string | undefined | null): string | undefined => {
+    if (!image || image === '' || image === null) {
+      return undefined;
+    }
+    return image;
+  };
+
   // 重置日记状态为新建状态
   const resetDiaryState = () => {
     const today = new Date().toISOString().split('T')[0];
@@ -123,54 +138,204 @@ const Music: React.FC = () => {
     });
   };
 
-  // 加载日记条目（统一处理）
-  const loadDiaryEntry = (entry: DiaryEntry) => {
-    setSelectedDate(entry.date);
-    setCurrentDiary(entry);
-    setDiaryContent(entry.content);
-    setCurrentImage(entry.image);
-    // 标准化颜色值，确保一致性
-    const normalizedTheme = normalizeColor(entry.theme || '#FFFFFF');
-    setCurrentTheme(normalizedTheme);
-    setCurrentWeather(entry.weather);
-    setCurrentMood(entry.mood);
-    setCurrentFont(entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif");
+  // 加载日记条目（统一处理，异步加载图片）
+  const loadDiaryEntry = async (entry: DiaryEntry) => {
+    console.log('📖 [loadDiaryEntry - 乐记] 开始加载日记:', {
+      entryId: entry.id,
+      previousLoadingId: loadingDiaryIdRef.current,
+      previousCurrentDiaryId: currentDiary?.id,
+      entryContentLength: entry.content.length,
+      entryContentPreview: entry.content.substring(0, 50),
+      hasImageId: !!entry.imageId,
+      hasImage: !!entry.image
+    });
     
+    // 清理之前的定时器，避免竞态条件
+    if (loadingTimerRef.current) {
+      console.log('🧹 [loadDiaryEntry - 乐记] 清理之前的定时器');
+      clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = null;
+    }
+    
+    // 标记当前正在加载的日记 ID
+    loadingDiaryIdRef.current = entry.id;
+    
+    // 异步加载图片（如果 entry 有 imageId）
+    let entryWithImage = entry;
+    if (entry.imageId && !entry.image) {
+      try {
+        entryWithImage = await loadMusicEntryWithImage(entry);
+      } catch (error) {
+        console.error('加载图片失败:', error);
+        // 加载失败，使用原 entry
+      }
+    }
+    
+    setSelectedDate(entryWithImage.date);
+    setCurrentDiary(entryWithImage);
+    setDiaryContent(entryWithImage.content);
+    // 标准化图片值，确保一致性（将 undefined、null、空字符串统一为 undefined）
+    const normalizedImage = normalizeImage(entryWithImage.image);
+    setCurrentImage(normalizedImage);
+    // 标准化颜色值，确保一致性
+    const normalizedTheme = normalizeColor(entryWithImage.theme || '#FFFFFF');
+    setCurrentTheme(normalizedTheme);
+    setCurrentWeather(entryWithImage.weather);
+    setCurrentMood(entryWithImage.mood);
+    setCurrentFont(entryWithImage.font || "'Courier New', 'STKaiti', 'KaiTi', serif");
+    
+    // 先设置初始状态为原始内容，后续会在编辑器规范化后更新
     setInitialDiaryState({
-      date: entry.date,
-      content: entry.content,
-      image: entry.image,
+      date: entryWithImage.date,
+      content: entryWithImage.content,
+      image: normalizedImage, // 使用标准化后的图片值
       theme: normalizedTheme,
-      weather: entry.weather,
-      mood: entry.mood,
-      font: entry.font || "'Courier New', 'STKaiti', 'KaiTi', serif"
+      weather: entryWithImage.weather,
+      mood: entryWithImage.mood,
+      font: entryWithImage.font || "'Courier New', 'STKaiti', 'KaiTi', serif"
+    });
+    
+    console.log('📖 [loadDiaryEntry - 乐记] 加载完成，等待编辑器规范化:', {
+      entryId: entryWithImage.id,
+      loadingDiaryId: loadingDiaryIdRef.current,
+      initialContentLength: entryWithImage.content.length,
+      initialContentPreview: entryWithImage.content.substring(0, 50),
+      hasImage: !!normalizedImage
     });
   };
 
-  // 加载数据
+  // 监听 diaryContent 变化，当加载日记后编辑器规范化完成时，更新 initialDiaryState
   useEffect(() => {
-    const notes = loadQuickNotes();
-    setQuickNotes(notes);
+    // 清理之前的定时器
+    if (loadingTimerRef.current) {
+      console.log('🧹 [useEffect cleanup] 清理之前的定时器');
+      clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = null;
+    }
     
-    const entries = loadDiaryEntries();
-    setDiaryEntries(entries);
-    
-    // 如果有日记，自动加载第一篇；否则初始化为空白新建状态
-    if (entries.length > 0) {
-      loadDiaryEntry(entries[0]);
+    // 只有在加载日记时（loadingDiaryIdRef.current 不为 null）
+    // 且 currentDiary 存在
+    // 且当前加载的日记 ID 与 currentDiary.id 匹配时才更新
+    if (loadingDiaryIdRef.current && currentDiary && initialDiaryState && loadingDiaryIdRef.current === currentDiary.id) {
+      // 已经读取了 currentDiary.id，需要在 setTimeout 中再次验证
+      const currentDiaryId = currentDiary.id;
+      
+      console.log('⏳ [useEffect] 检测到内容变化，等待编辑器规范化', {
+        loadingDiaryId: loadingDiaryIdRef.current,
+        currentDiaryId: currentDiary.id,
+        diaryContentLength: diaryContent.length,
+        diaryContentPreview: diaryContent.substring(0, 50)
+      });
+      
+      // 使用 setTimeout 确保编辑器已经完成规范化
+      loadingTimerRef.current = setTimeout(() => {
+        // 再次验证：确保当前加载的日记 ID 仍然匹配
+        if (loadingDiaryIdRef.current === currentDiaryId) {
+          // 直接从编辑器获取规范化后的 HTML，而不是使用 diaryContent（避免闭包问题）
+          const normalizedContent = musicNotebookRef.current?.getHTML() || diaryContent;
+          
+          console.log('⏰ [setTimeout] 定时器执行', {
+            loadingDiaryId: loadingDiaryIdRef.current,
+            currentDiaryId,
+            normalizedContentLength: normalizedContent.length,
+            normalizedContentPreview: normalizedContent.substring(0, 50)
+          });
+          
+          // 使用规范化后的内容更新 initialDiaryState
+          setInitialDiaryState(prev => {
+            if (prev) {
+              console.log('✅ [setTimeout] 更新 initialDiaryState', {
+                oldContentLength: prev.content.length,
+                newContentLength: normalizedContent.length,
+                oldContentPreview: prev.content.substring(0, 50),
+                newContentPreview: normalizedContent.substring(0, 50)
+              });
+              return {
+                ...prev,
+                content: normalizedContent // 使用编辑器规范化后的内容
+              };
+            }
+            return prev;
+          });
+          // 重置加载标志
+          loadingDiaryIdRef.current = null;
+        } else {
+          console.log('❌ [setTimeout] ID 不匹配，跳过更新', {
+            loadingDiaryId: loadingDiaryIdRef.current,
+            currentDiaryId
+          });
+        }
+        loadingTimerRef.current = null;
+      }, 50); // 增加延迟，确保编辑器完成规范化
+      
+      return () => {
+        if (loadingTimerRef.current) {
+          console.log('🧹 [useEffect cleanup] 清理定时器');
+          clearTimeout(loadingTimerRef.current);
+          loadingTimerRef.current = null;
+        }
+      };
     } else {
-      const today = new Date();
-      const todayStr = today.toISOString().split('T')[0];
-      setInitialDiaryState({
-        date: todayStr,
-        content: '',
-        image: undefined,
-        theme: '#FFFFFF',
-        weather: '晴天',
-        mood: '开心',
-        font: "'Courier New', 'STKaiti', 'KaiTi', serif"
+      console.log('ℹ️ [useEffect] 不是加载状态，跳过更新', {
+        loadingDiaryId: loadingDiaryIdRef.current,
+        currentDiaryId: currentDiary?.id,
+        hasInitialDiaryState: !!initialDiaryState
       });
     }
+  }, [diaryContent, currentDiary, initialDiaryState]);
+
+  // 加载数据并执行图片迁移
+  useEffect(() => {
+    const initializeData = async () => {
+      const notes = loadQuickNotes();
+      setQuickNotes(notes);
+      
+      const entries = loadDiaryEntries();
+      setDiaryEntries(entries);
+      
+      // 检查是否需要迁移图片
+      if (needsImageMigration()) {
+        console.log('🔄 开始迁移图片到 IndexedDB...');
+        try {
+          const result = await migrateAllImagesToIndexedDB();
+          console.log('✅ 图片迁移完成:', result);
+          
+          // 重新加载数据（迁移后数据已更新）
+          const updatedEntries = loadDiaryEntries();
+          setDiaryEntries(updatedEntries);
+          
+          if (result.migrated > 0) {
+            toast.success(
+              `图片迁移完成！已迁移 ${result.migrated} 张图片到 IndexedDB，释放了 localStorage 空间`,
+              { duration: 4000 }
+            );
+          }
+        } catch (error) {
+          console.error('图片迁移失败:', error);
+          toast.error('图片迁移失败，请刷新页面重试', { duration: 3000 });
+        }
+      }
+      
+      // 如果有日记，自动加载第一篇；否则初始化为空白新建状态
+      if (entries.length > 0) {
+        await loadDiaryEntry(entries[0]);
+      } else {
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        setInitialDiaryState({
+          date: todayStr,
+          content: '',
+          image: undefined,
+          theme: '#FFFFFF',
+          weather: '晴天',
+          mood: '开心',
+          font: "'Courier New', 'STKaiti', 'KaiTi', serif"
+        });
+      }
+    };
+    
+    initializeData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 检查是否有未保存的更改
@@ -202,15 +367,64 @@ const Music: React.FC = () => {
     // 直接比较 HTML 内容，这样可以检测到样式变化（加粗、颜色、高亮等）
     const hasContentChange = diaryContent !== initialDiaryState.content;
     
-    return (
+    // 标准化图片值后比较（将 undefined、null、空字符串视为相同）
+    const normalizedCurrentImage = normalizeImage(currentImage);
+    const normalizedInitialImage = normalizeImage(initialDiaryState.image);
+    const hasImageChange = normalizedCurrentImage !== normalizedInitialImage;
+    
+    const hasDateChange = selectedDate !== initialDiaryState.date;
+    const normalizedCurrentTheme = normalizeColor(currentTheme);
+    const normalizedInitialTheme = normalizeColor(initialDiaryState.theme);
+    const hasThemeChange = normalizedCurrentTheme !== normalizedInitialTheme;
+    const hasWeatherChange = currentWeather !== initialDiaryState.weather;
+    const hasMoodChange = currentMood !== initialDiaryState.mood;
+    const hasFontChange = currentFont !== initialDiaryState.font;
+    
+    const result = (
       hasContentChange ||
-      selectedDate !== initialDiaryState.date ||
-      currentImage !== initialDiaryState.image ||
-      normalizeColor(currentTheme) !== normalizeColor(initialDiaryState.theme) ||
-      currentWeather !== initialDiaryState.weather ||
-      currentMood !== initialDiaryState.mood ||
-      currentFont !== initialDiaryState.font
+      hasDateChange ||
+      hasImageChange ||
+      hasThemeChange ||
+      hasWeatherChange ||
+      hasMoodChange ||
+      hasFontChange
     );
+    
+    // 调试信息：如果检测到未保存的更改，打印详细信息
+    if (result) {
+      console.log('⚠️ [hasUnsavedChanges - 乐记] 检测到未保存的更改:', {
+        currentDiaryId: currentDiary.id,
+        loadingDiaryId: loadingDiaryIdRef.current,
+        hasContentChange,
+        contentLengthCurrent: diaryContent.length,
+        contentLengthInitial: initialDiaryState.content.length,
+        contentCurrent: diaryContent,
+        contentInitial: initialDiaryState.content,
+        contentDiff: diaryContent !== initialDiaryState.content ? '内容不同' : '内容相同',
+        hasDateChange,
+        dateCurrent: selectedDate,
+        dateInitial: initialDiaryState.date,
+        hasImageChange,
+        imageCurrent: normalizedCurrentImage ? '有图片' : '无图片',
+        imageInitial: normalizedInitialImage ? '有图片' : '无图片',
+        imageCurrentRaw: currentImage ? '有图片' : '无图片',
+        imageInitialRaw: initialDiaryState.image ? '有图片' : '无图片',
+        hasThemeChange,
+        themeCurrent: normalizedCurrentTheme,
+        themeInitial: normalizedInitialTheme,
+        hasWeatherChange,
+        weatherCurrent: currentWeather,
+        weatherInitial: initialDiaryState.weather,
+        hasMoodChange,
+        moodCurrent: currentMood,
+        moodInitial: initialDiaryState.mood,
+        hasFontChange,
+        fontCurrent: currentFont,
+        fontInitial: initialDiaryState.font
+      });
+    }
+    
+    return result;
   }, [currentDiary, selectedDate, diaryContent, currentImage, currentTheme, currentWeather, currentMood, currentFont, initialDiaryState, getTextFromHTML]);
 
   // 监听全局歌词添加事件
@@ -364,9 +578,12 @@ const Music: React.FC = () => {
   };
 
   // 保存日记
-  const handleSaveDiary = () => {
+  const handleSaveDiary = async () => {
+    // 从编辑器获取规范化后的 HTML（确保与编辑器显示的内容一致）
+    const normalizedContent = musicNotebookRef.current?.getHTML() || diaryContent;
+    
     // 提取纯文本内容检查是否为空
-    const textContent = getTextFromHTML(diaryContent);
+    const textContent = getTextFromHTML(normalizedContent);
     
     // 判断是新建还是更新
     const isNewDiary = !currentDiary;
@@ -417,11 +634,14 @@ const Music: React.FC = () => {
       return;
     }
     
+    // 标准化图片值，确保一致性
+    const normalizedImage = normalizeImage(currentImage);
+    
     const entry: DiaryEntry = {
       id: currentDiary?.id || Date.now().toString(),
       date: selectedDate,
-      content: diaryContent,
-      image: currentImage,
+      content: normalizedContent, // 使用编辑器规范化后的内容
+      image: normalizedImage,
       theme: currentTheme,
       weather: currentWeather,
       mood: currentMood,
@@ -430,29 +650,32 @@ const Music: React.FC = () => {
       updatedAt: Date.now()
     };
 
-    saveDiaryToStorage(entry);
-    setCurrentDiary(entry);
+    const savedEntry = await saveDiaryToStorage(entry);
+    setCurrentDiary(savedEntry);
     
-    // 更新初始状态
+    // 更新初始状态（使用标准化后的图片值和规范化后的内容）
     setInitialDiaryState({
       date: selectedDate,
-      content: diaryContent,
-      image: currentImage,
+      content: normalizedContent, // 使用编辑器规范化后的内容
+      image: normalizedImage,
       theme: currentTheme,
       weather: currentWeather,
       mood: currentMood,
       font: currentFont
     });
     
-    // 更新列表
+    // 同步更新 currentImage 为标准化后的值
+    setCurrentImage(normalizedImage);
+    
+    // 更新列表（使用保存后的 entry，包含 imageId）
     setDiaryEntries(prev => {
-      const index = prev.findIndex(d => d.id === entry.id);
+      const index = prev.findIndex(d => d.id === savedEntry.id);
       if (index >= 0) {
         const newEntries = [...prev];
-        newEntries[index] = entry;
+        newEntries[index] = savedEntry;
         return newEntries;
       }
-      return [entry, ...prev];
+      return [savedEntry, ...prev];
     });
     
     // 显示保存成功提示
@@ -475,15 +698,15 @@ const Music: React.FC = () => {
   };
 
   // 删除日记（支持静默删除，用于保存空内容时）
-  const handleDeleteDiary = (id: string, silent: boolean = false) => {
+  const handleDeleteDiary = async (id: string, silent: boolean = false) => {
     // 如果不是静默删除，需要确认
     if (!silent) {
       const confirmed = window.confirm('确定要删除这篇乐记吗？\n\n删除后将无法恢复！');
       if (!confirmed) return;
     }
     
-    // 通过id删除
-    deleteDiaryFromStorage(id);
+    // 通过id删除（异步，会同时删除 IndexedDB 中的图片）
+    await deleteDiaryFromStorage(id);
     
     // 使用函数式更新确保获取最新状态
     setDiaryEntries(prev => {
@@ -558,8 +781,12 @@ const Music: React.FC = () => {
       const message = `确定导出日记吗？\n\n日记：${filtered.length} 篇${diaryEntriesSearch.trim() ? `（已筛选）` : ''}`;
       
       if (window.confirm(message)) {
-        exportDiaryEntriesOnly(filtered);
-        toast.success('日记数据导出成功！');
+        toast.loading('正在导出数据，请稍候...', { id: 'export-loading' });
+        exportDiaryEntriesOnly(filtered).then(() => {
+          toast.success('日记数据导出成功！', { id: 'export-loading' });
+        }).catch((error) => {
+          toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'), { id: 'export-loading' });
+        });
       }
     } catch (error) {
       toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
