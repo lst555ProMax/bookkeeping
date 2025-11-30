@@ -138,6 +138,8 @@
     flex: 1;
     overflow-y: auto;
     padding: 0 1rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
 
     &::-webkit-scrollbar {
       width: 6px;
@@ -342,6 +344,12 @@
       text-align: center;
       padding: 3rem 1rem;
       color: #999;
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100%;
 
       &__icon {
         font-size: 4rem;

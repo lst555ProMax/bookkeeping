@@ -173,6 +173,39 @@ const MusicNotebook = forwardRef<MusicNotebookRef, MusicNotebookProps>(({
   // 图片显示状态：根据滚动位置决定是否显示图片
   const [showImage, setShowImage] = useState<boolean>(true);
 
+  // 选择更新状态：用于强制BubbleMenu在选择变化时重新渲染
+  const [selectionUpdate, setSelectionUpdate] = useState(0);
+
+  // 标准化颜色值用于比较
+  const normalizeColorForComparison = useCallback((color: string | undefined): string => {
+    if (!color) return '';
+    
+    // 如果是 RGB 格式 (rgb(255, 0, 0))
+    if (color.startsWith('rgb')) {
+      const matches = color.match(/\d+/g);
+      if (matches && matches.length >= 3) {
+        const r = parseInt(matches[0]).toString(16).padStart(2, '0');
+        const g = parseInt(matches[1]).toString(16).padStart(2, '0');
+        const b = parseInt(matches[2]).toString(16).padStart(2, '0');
+        return `#${r}${g}${b}`.toUpperCase();
+      }
+    }
+    
+    // 如果是十六进制格式
+    if (color.startsWith('#')) {
+      // 处理3位十六进制 (如 #fff)
+      if (color.length === 4) {
+        return `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`.toUpperCase();
+      }
+      // 处理6位十六进制
+      if (color.length === 7) {
+        return color.toUpperCase();
+      }
+    }
+    
+    return color.toUpperCase();
+  }, []);
+
   // 使用 useMemo 确保扩展数组只创建一次，避免重复注册
   const extensions = useMemo(() => [
     StarterKit,
@@ -210,6 +243,21 @@ const MusicNotebook = forwardRef<MusicNotebookRef, MusicNotebookProps>(({
       },
     },
   });
+
+  // 监听选择变化，强制BubbleMenu更新
+  useEffect(() => {
+    if (!editor) return;
+
+    const handleSelectionUpdate = () => {
+      setSelectionUpdate(prev => prev + 1);
+    };
+
+    editor.on('selectionUpdate', handleSelectionUpdate);
+
+    return () => {
+      editor.off('selectionUpdate', handleSelectionUpdate);
+    };
+  }, [editor]);
 
   // 暴露编辑器焦点方法给父组件
   useImperativeHandle(ref, () => ({
@@ -722,7 +770,7 @@ const MusicNotebook = forwardRef<MusicNotebookRef, MusicNotebookProps>(({
           {editor && (
             <BubbleMenu className="bubble-menu" editor={editor}>
               {/* 第一行：格式按钮 */}
-              <div className="bubble-menu__row">
+              <div className="bubble-menu__row" key={`format-${selectionUpdate}`}>
                 <button
                   type="button"
                   onMouseDown={(e) => {
@@ -770,24 +818,35 @@ const MusicNotebook = forwardRef<MusicNotebookRef, MusicNotebookProps>(({
               </div>
               
               {/* 第二行：文字颜色 */}
-              <div className="bubble-menu__row">
-                {TEXT_COLORS.map((color) => (
-                  <button
-                    key={color}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      editor.chain().focus().setColor(color).run();
-                    }}
-                    className={`color-btn color-btn--text ${editor.isActive('textStyle', { color }) ? 'is-active' : ''}`}
-                    title={color}
-                  >
-                    <span style={{ color }}>A</span>
-                  </button>
-                ))}
+              <div className="bubble-menu__row" key={`text-color-${selectionUpdate}`}>
+                {TEXT_COLORS.map((color) => {
+                  const textStyleAttrs = editor.getAttributes('textStyle');
+                  const currentColor = textStyleAttrs.color;
+                  // 标准化颜色值进行比较
+                  const normalizedCurrentColor = normalizeColorForComparison(currentColor);
+                  const normalizedColor = normalizeColorForComparison(color);
+                  const isActive = normalizedCurrentColor === normalizedColor || (color === '#1a1a1a' && !currentColor);
+                  
+                  return (
+                    <button
+                      key={color}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        editor.chain().focus().setColor(color).run();
+                        // 设置颜色后立即更新选择状态
+                        setTimeout(() => setSelectionUpdate(prev => prev + 1), 0);
+                      }}
+                      className={`color-btn color-btn--text ${isActive ? 'is-active' : ''}`}
+                      title={color}
+                    >
+                      <span style={{ color }}>A</span>
+                    </button>
+                  );
+                })}
               </div>
               
               {/* 第三行：高亮颜色 */}
-              <div className="bubble-menu__row">
+              <div className="bubble-menu__row" key={`highlight-${selectionUpdate}`}>
                 {HIGHLIGHT_COLORS.map((color) => (
                   <button
                     key={color}

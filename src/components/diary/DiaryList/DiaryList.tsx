@@ -124,8 +124,9 @@ const DiaryList: React.FC<DiaryListProps> = ({
     
     try {
       if (format === 'txt') {
-        // 导出为txt
-        const blob = new Blob([plainTextContent], { type: 'text/plain;charset=utf-8' });
+        // 导出为txt（包含日期、天气、心情等信息）
+        const txtContent = `${formatDate(entry.date)} #${getEntryNumber(entry)}\n\n天气: ${entry.weather}\n心情: ${entry.mood}\n\n${plainTextContent}`;
+        const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
         downloadFile(blob, `日记_${formatDate(entry.date)}_${getEntryNumber(entry)}.txt`);
       } else if (format === 'md') {
         // 导出为markdown
