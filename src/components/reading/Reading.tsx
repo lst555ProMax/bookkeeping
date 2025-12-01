@@ -28,9 +28,9 @@ import './Reading.scss';
 
 const Reading: React.FC = () => {
   // 状态管理
-  const [quickNotes, setQuickNotes] = useState<QuickNote[]>([]);
+  const [quickNotes, setQuickNotes] = useState<QuickNote[]>(() => loadQuickNotes());
   const [quickNoteInput, setQuickNoteInput] = useState<string>('');
-  const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
+  const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>(() => loadDiaryEntries());
   const [selectedDate, setSelectedDate] = useState<string>(() => {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -285,15 +285,10 @@ const Reading: React.FC = () => {
 
   // 加载数据
   useEffect(() => {
-    const notes = loadQuickNotes();
-    setQuickNotes(notes);
-    
-    const entries = loadDiaryEntries();
-    setDiaryEntries(entries);
-    
+    // quickNotes 和 diaryEntries 已在初始化时加载
     // 如果有日记，自动加载第一篇；否则初始化为空白新建状态
-    if (entries.length > 0) {
-      loadDiaryEntry(entries[0]);
+    if (diaryEntries.length > 0) {
+      loadDiaryEntry(diaryEntries[0]);
     } else {
       const today = new Date();
       const todayStr = today.toISOString().split('T')[0];

@@ -213,19 +213,18 @@
   }
 }
 
-// 分类徽章样式
-.category-badge {
+// 分类名称样式
+.category-name {
+  font-weight: 700;
+  color: #1ea5f9;
+  font-size: 0.95rem;
+  background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.4rem 0.75rem;
-  background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
-  color: white;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  align-self: flex-start;
-  box-shadow: 0 2px 4px rgba(30, 165, 249, 0.3);
+  gap: 0.3rem;
 }
 
 // 详情区块样式 - 左右布局
@@ -302,6 +301,7 @@
   background: #f8f9fa;
   border-radius: 8px;
   flex-wrap: wrap;
+  min-height: 48px;
 }
 
 .episode-info {

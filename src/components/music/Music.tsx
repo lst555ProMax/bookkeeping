@@ -29,9 +29,9 @@ import './Music.scss';
 
 const Music: React.FC = () => {
   // 状态管理
-  const [quickNotes, setQuickNotes] = useState<QuickNote[]>([]);
+  const [quickNotes, setQuickNotes] = useState<QuickNote[]>(() => loadQuickNotes());
   const [quickNoteInput, setQuickNoteInput] = useState<string>('');
-  const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
+  const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>(() => loadDiaryEntries());
   const [selectedDate, setSelectedDate] = useState<string>(() => {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -287,11 +287,7 @@ const Music: React.FC = () => {
   // 加载数据并执行图片迁移
   useEffect(() => {
     const initializeData = async () => {
-      const notes = loadQuickNotes();
-      setQuickNotes(notes);
-      
-      const entries = loadDiaryEntries();
-      setDiaryEntries(entries);
+      // quickNotes 和 diaryEntries 已在初始化时加载
       
       // 检查是否需要迁移图片
       if (needsImageMigration()) {
@@ -317,8 +313,8 @@ const Music: React.FC = () => {
       }
       
       // 如果有日记，自动加载第一篇；否则初始化为空白新建状态
-      if (entries.length > 0) {
-        await loadDiaryEntry(entries[0]);
+      if (diaryEntries.length > 0) {
+        await loadDiaryEntry(diaryEntries[0]);
       } else {
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];

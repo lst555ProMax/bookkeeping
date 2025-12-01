@@ -59,11 +59,11 @@ const SleepDurationTrendChart: React.FC<SleepDurationTrendChartProps> = ({ data 
       <h3 className="sleep-duration-trend-chart__title">⏱️ 睡眠时长趋势</h3>
       <div className="sleep-duration-trend-chart__container">
         <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 50 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis 
             dataKey="day" 
-            label={{ value: '日期', position: 'insideBottom', offset: -5 }}
+            label={{ value: '日期', position: 'insideBottom', offset: -20 }}
             stroke="#666"
           />
           <YAxis 
@@ -74,7 +74,11 @@ const SleepDurationTrendChart: React.FC<SleepDurationTrendChartProps> = ({ data 
             stroke="#666"
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend />
+          <Legend 
+            verticalAlign="bottom" 
+            align="left"
+            wrapperStyle={{ paddingLeft: '20px', paddingBottom: '10px' }}
+          />
           <Line
             type="monotone"
             dataKey="duration"

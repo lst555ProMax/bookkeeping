@@ -244,19 +244,15 @@ const StudyRecordList: React.FC<StudyRecordListProps> = ({
               </div>
 
               <div className="study-item__body">
-                {/* 分类 */}
-                <div className="category-badge">
-                  🏷️ {record.category}
-                </div>
-
-                {/* 视频标题 */}
+                {/* 分类：视频标题 */}
                 <div className="detail-section">
-                  <h4 className="section-title">🎬 视频标题</h4>
+                  <h4 className="section-title category-name">
+                    🏷️ {record.category}
+                  </h4>
                   <div className="section-content">
                     {record.videoTitle}
                   </div>
                 </div>
-
                 {/* 观看集数和时长 - 一行显示 */}
                 <div className="episode-duration-row">
                   <div className="episode-info">

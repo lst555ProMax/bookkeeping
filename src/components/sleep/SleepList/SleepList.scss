@@ -255,6 +255,7 @@
   background: #f8f9fa;
   border-radius: 8px;
   align-items: center;
+  min-height: 48px;
 }
 
 .time-info {
@@ -289,6 +290,7 @@
   background: #f8f9fa;
   border-radius: 8px;
   align-items: center;
+  min-height: 48px;
 }
 
 .duration-info {
@@ -336,7 +338,7 @@
 .quality-info {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.8rem;
   min-width: 0;
   justify-content: flex-start;
 
@@ -350,7 +352,7 @@
 }
 
 .sleep-quality {
-  padding: 0.4rem 0.6rem;
+  padding: 0.2rem 0.6rem;
   border-radius: 6px;
   font-weight: 600;
   font-size: 0.85rem;
@@ -389,6 +391,9 @@
   padding: 0.6rem 0.75rem;
   background: #f8f9fa;
   border-radius: 8px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
 }
 
 .sleep-naps {
@@ -415,7 +420,7 @@
   .nap-tag {
     display: inline-flex;
     align-items: center;
-    padding: 0.3rem 0.6rem;
+    padding: 0.2rem 0.6rem;
     border-radius: 5px;
     font-size: 0.8rem;
     font-weight: 500;

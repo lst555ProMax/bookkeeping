@@ -37,3 +37,15 @@
     }
   }
 }
+
+// 自定义图例样式 - 确保显示在左下角
+.recharts-legend-wrapper {
+  text-align: left !important;
+  
+  .recharts-default-legend {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding-left: 20px !important;
+  }
+}

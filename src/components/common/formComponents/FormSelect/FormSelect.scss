@@ -101,7 +101,7 @@
   }
 
   &__option {
-    padding: 0.225rem 1rem;
+    padding: 0.8rem 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
     border-radius: 8px;
@@ -111,6 +111,8 @@
     color: #333;
     font-weight: 500;
     position: relative;
+    min-height: 50px;
+    height: 50px;
 
     &:hover {
       background: linear-gradient(135deg, rgba(var(--theme-color-rgb, 102, 126, 234), 0.08) 0%, rgba(var(--theme-color-rgb, 102, 126, 234), 0.12) 100%);
@@ -192,8 +194,10 @@
     }
 
     &__option {
-      padding: 0.75rem 0.875rem;
+      padding: 0.8rem 0.875rem;
       font-size: 0.95rem;
+      min-height: 50px;
+      height: 50px;
     }
   }
 }

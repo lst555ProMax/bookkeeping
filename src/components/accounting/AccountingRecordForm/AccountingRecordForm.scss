@@ -83,6 +83,12 @@
       color: white;
       font-weight: 600;
       box-shadow: 0 2px 8px rgba(var(--theme-color-rgb), 0.3);
+
+      &:hover:not(.disabled) {
+        background: linear-gradient(135deg, var(--theme-color-end) 0%, var(--theme-color-start) 100%);
+        box-shadow: 0 4px 12px rgba(var(--theme-color-rgb), 0.4);
+        transform: translateY(-1px);
+      }
     }
 
     // 编辑模式下禁用状态的样式

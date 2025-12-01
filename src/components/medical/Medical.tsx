@@ -19,11 +19,14 @@ const Medical: React.FC = () => {
   const [selectedDisease, setSelectedDisease] = useState<DiseaseType>('hernia');
   
   // 病记状态
-  const [quickNotes, setQuickNotes] = useState<QuickNote[]>([]);
+  const [quickNotes, setQuickNotes] = useState<QuickNote[]>(() => loadMedicalQuickNotes());
   const [quickNoteInput, setQuickNoteInput] = useState<string>('');
   const [quickNotesSearch, setQuickNotesSearch] = useState<string>('');
   const quickNotesFileInputRef = useRef<HTMLInputElement>(null);
   const [isImportingQuickNotes, setIsImportingQuickNotes] = useState(false);
+  
+  // 病记是否有未保存的修改
+  const [hasUnsavedQuickNote, setHasUnsavedQuickNote] = useState<boolean>(false);
 
   // 创建各section的引用
   const overviewRef = useRef<HTMLElement>(null);
@@ -93,11 +96,42 @@ const Medical: React.FC = () => {
     };
   }, [selectedDisease]);
 
-  // 加载病记
+  // 病记数据已在初始化时加载，无需在 useEffect 中重复加载
+
+  // 监听模式切换器的点击事件，检查是否有未保存的修改
   useEffect(() => {
-    const notes = loadMedicalQuickNotes();
-    setQuickNotes(notes);
-  }, []);
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // 检查点击是否来自 home__mode-switcher 或其子元素
+      const modeSwitcher = target.closest('.home__mode-switcher');
+      
+      if (modeSwitcher) {
+        let message = '';
+        
+        // 检查是否有未保存的修改
+        if (hasUnsavedQuickNote) {
+          message = '当前有未保存的病记，是否继续当前操作？\n\n';
+        }
+        
+        if (message) {
+          const shouldContinue = window.confirm(message);
+          
+          if (!shouldContinue) {
+            // 用户选择不继续，阻止默认行为
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+          }
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClick, true); // 使用捕获阶段
+    return () => {
+      document.removeEventListener('click', handleClick, true);
+    };
+  }, [hasUnsavedQuickNote]);
 
   // 切换疾病类型
   const handleDiseaseChange = (disease: string) => {
@@ -139,34 +173,39 @@ const Medical: React.FC = () => {
   // 导出所有病记
   const handleExportQuickNotes = () => {
     try {
+      // 计算筛选后的病记
       const filtered = quickNotes.filter(note => {
         if (!quickNotesSearch.trim()) return true;
         return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
       });
       
-      const exportData = {
-        version: '1.0.0',
-        exportDate: new Date().toISOString(),
-        medicalQuickNotes: filtered,
-        totalMedicalQuickNotes: filtered.length
-      };
+      const message = `确定导出病记吗？\n\n病记：${filtered.length} 条${quickNotesSearch.trim() ? `（已筛选）` : ''}`;
+      
+      if (window.confirm(message)) {
+        const exportData = {
+          version: '1.0.0',
+          exportDate: new Date().toISOString(),
+          medicalQuickNotes: filtered,
+          totalMedicalQuickNotes: filtered.length
+        };
 
-      const dataStr = JSON.stringify(exportData, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      
-      const now = new Date();
-      const dateStr = now.toISOString().split('T')[0];
-      link.download = `medical-quick-notes-${dateStr}.json`;
-      
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      toast.success('病记数据导出成功！');
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
+        link.download = `medical-quick-notes-${dateStr}.json`;
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        toast.success('病记数据导出成功！');
+      }
     } catch (error) {
       toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
     }
@@ -181,10 +220,89 @@ const Medical: React.FC = () => {
       reader.onload = async (event) => {
         try {
           const content = event.target?.result as string;
-          const parsedData = JSON.parse(content);
+          let parsedData: unknown;
           
-          if (!parsedData.medicalQuickNotes || !Array.isArray(parsedData.medicalQuickNotes)) {
+          try {
+            parsedData = JSON.parse(content);
+          } catch {
+            throw new Error('文件格式错误：无法解析JSON，请确保文件是有效的JSON格式');
+          }
+          
+          // 检查数据是否是对象
+          if (typeof parsedData !== 'object' || parsedData === null) {
+            throw new Error('无效的数据格式：数据必须是JSON对象');
+          }
+          
+          // 检查是否是数组（数组也是object类型，但不符合要求）
+          if (Array.isArray(parsedData)) {
+            throw new Error('无效的数据格式：数据必须是JSON对象，不能是数组');
+          }
+          
+          const data = parsedData as Record<string, unknown>;
+          
+          // 检查medicalQuickNotes字段是否存在
+          if (!('medicalQuickNotes' in data) || data.medicalQuickNotes === undefined || data.medicalQuickNotes === null) {
             throw new Error('无效的数据格式：缺少medicalQuickNotes数组');
+          }
+          
+          // 检查medicalQuickNotes是否是数组
+          if (!Array.isArray(data.medicalQuickNotes)) {
+            throw new Error('无效的数据格式：medicalQuickNotes必须是数组');
+          }
+          
+          // 验证每个记录的字段
+          const notes = data.medicalQuickNotes as unknown[];
+          const validatedNotes: QuickNote[] = [];
+          const ids = new Set<string>();
+          
+          for (let i = 0; i < notes.length; i++) {
+            const note = notes[i];
+            
+            // 检查记录是否是对象
+            if (typeof note !== 'object' || note === null || Array.isArray(note)) {
+              throw new Error(`无效的病记记录[${i}]：记录必须是对象`);
+            }
+            
+            const n = note as Record<string, unknown>;
+            
+            // 检查必需字段
+            if (!('id' in n) || n.id === undefined || n.id === null) {
+              throw new Error(`无效的病记记录[${i}]：缺少id字段`);
+            }
+            if (typeof n.id !== 'string') {
+              throw new Error(`无效的病记记录[${i}]：id字段类型不正确，必须是字符串`);
+            }
+            
+            if (!('content' in n) || n.content === undefined || n.content === null) {
+              throw new Error(`无效的病记记录[${i}]：缺少content字段`);
+            }
+            if (typeof n.content !== 'string') {
+              throw new Error(`无效的病记记录[${i}]：content字段类型不正确，必须是字符串`);
+            }
+            
+            if (!('timestamp' in n) || n.timestamp === undefined || n.timestamp === null) {
+              throw new Error(`无效的病记记录[${i}]：缺少timestamp字段`);
+            }
+            if (typeof n.timestamp !== 'number') {
+              throw new Error(`无效的病记记录[${i}]：timestamp字段类型不正确，必须是数字`);
+            }
+            
+            // 验证timestamp是有效数字
+            if (!Number.isFinite(n.timestamp)) {
+              throw new Error(`无效的病记记录[${i}]：timestamp必须是有效数字`);
+            }
+            
+            if (!Number.isInteger(n.timestamp) || n.timestamp < 0) {
+              throw new Error(`无效的病记记录[${i}]：timestamp必须是非负整数`);
+            }
+            
+            // 检查ID重复（在导入文件中）
+            if (ids.has(n.id as string)) {
+              throw new Error(`无效的数据格式：存在重复的记录ID"${n.id}"`);
+            }
+            ids.add(n.id as string);
+            
+            validatedNotes.push(note as QuickNote);
           }
           
           const existingNotes = loadMedicalQuickNotes();
@@ -193,7 +311,7 @@ const Medical: React.FC = () => {
           let imported = 0;
           let skipped = 0;
           
-          parsedData.medicalQuickNotes.forEach((note: QuickNote) => {
+          validatedNotes.forEach((note) => {
             if (existingIds.has(note.id)) {
               skipped++;
               return;
@@ -203,8 +321,8 @@ const Medical: React.FC = () => {
             imported++;
           });
           
-          const notes = loadMedicalQuickNotes();
-          setQuickNotes(notes);
+          const updatedNotes = loadMedicalQuickNotes();
+          setQuickNotes(updatedNotes);
           
           toast.success(`导入完成！\n新增 ${imported} 条病记，跳过 ${skipped} 条重复记录`);
         } catch (error) {
@@ -242,6 +360,13 @@ const Medical: React.FC = () => {
 
     if (!file.name.endsWith('.json')) {
       toast.error('请选择JSON格式的文件');
+      return;
+    }
+
+    // 检查文件大小（限制为10MB）
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error('文件大小不能超过10MB');
       return;
     }
 
@@ -295,6 +420,7 @@ const Medical: React.FC = () => {
         onExportAll={handleExportQuickNotes}
         onImportAll={triggerQuickNotesFileSelect}
         onDeleteAll={handleDeleteAllQuickNotes}
+        onHasUnsavedChangesChange={setHasUnsavedQuickNote}
         isImporting={isImportingQuickNotes}
       />
 

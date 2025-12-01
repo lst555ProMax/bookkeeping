@@ -83,12 +83,12 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
   };
 
   // 计算某个月的平均步数
-  const calculateAverageSteps = (monthRecords: DailyRecord[] | undefined): number => {
-    if (!monthRecords || monthRecords.length === 0) return 0;
-    const recordsWithSteps = monthRecords.filter(record => record.wechatSteps && record.wechatSteps > 0);
-    if (recordsWithSteps.length === 0) return 0;
+  const calculateAverageSteps = (monthRecords: DailyRecord[] | undefined): { average: number; hasRecords: boolean } => {
+    if (!monthRecords || monthRecords.length === 0) return { average: 0, hasRecords: false };
+    const recordsWithSteps = monthRecords.filter(record => record.wechatSteps != null);
+    if (recordsWithSteps.length === 0) return { average: 0, hasRecords: false };
     const totalSteps = recordsWithSteps.reduce((sum, record) => sum + (record.wechatSteps || 0), 0);
-    return Math.round(totalSteps / recordsWithSteps.length);
+    return { average: Math.round(totalSteps / recordsWithSteps.length), hasRecords: true };
   };
 
   // 获取步数对应的颜色类
@@ -222,7 +222,8 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
           const isExpanded = expandedMonths[monthKey];
           const breakfastNotEaten = calculateBreakfastNotEaten(monthRecords);
           const lunchIrregular = calculateLunchIrregular(monthRecords);
-          const averageSteps = calculateAverageSteps(monthRecords);
+          const averageStepsResult = calculateAverageSteps(monthRecords);
+          const averageSteps = averageStepsResult.average;
           const sortedMonthRecords = [...monthRecords].sort((a, b) => 
             new Date(b.date).getTime() - new Date(a.date).getTime()
           );
@@ -250,7 +251,7 @@ const DailyRecordList: React.FC<DailyRecordListProps> = ({
                   <span className="daily-list__month-stat">
                     ⚠️ 午餐不规律 {lunchIrregular}次
                   </span>
-                  {averageSteps > 0 && (
+                  {averageStepsResult.hasRecords && (
                     <span className="daily-list__month-stat">
                       👣 平均步数 {averageSteps.toLocaleString()}
                     </span>

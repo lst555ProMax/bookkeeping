@@ -172,6 +172,13 @@
         background: var(--theme-color-start);
         color: white;
         border-color: var(--theme-color-start);
+
+        &:hover {
+          background: var(--theme-color-end);
+          border-color: var(--theme-color-end);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          transform: translateY(-1px);
+        }
       }
     }
   }
