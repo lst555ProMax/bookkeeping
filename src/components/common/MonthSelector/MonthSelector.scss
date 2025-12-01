@@ -13,6 +13,26 @@
   // 这里只需要确保在 month-selector 容器中正确显示
   .custom-select {
     width: 100%;
+
+    // 月份选择器的选项使用更大的高度
+    &__option {
+      padding: 0.8rem 1rem;
+      min-height: 50px;
+      height: 50px;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .month-selector {
+    .custom-select {
+      &__option {
+        padding: 0.8rem 0.875rem;
+        min-height: 50px;
+        height: 50px;
+      }
+    }
   }
 }
 

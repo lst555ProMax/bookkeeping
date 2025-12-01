@@ -44,6 +44,7 @@
     flex-direction: column;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     overflow: hidden;
+    animation: fadeInUp 0.3s ease;
   }
 
   &__header {
@@ -642,6 +643,17 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

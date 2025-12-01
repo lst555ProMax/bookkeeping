@@ -161,7 +161,7 @@ const AccountingCategoryFilter: React.FC<AccountingCategoryFilterProps> = ({
                 checked={selectedCategories.includes(category)}
                 onChange={() => handleToggleCategory(category)}
               />
-              <span className="category-name">{category}</span>
+              <span className="accounting-category-name">{category}</span>
             </label>
           ))}
         </div>
