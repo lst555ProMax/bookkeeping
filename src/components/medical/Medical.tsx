@@ -391,10 +391,12 @@ const Medical: React.FC = () => {
   };
 
   // 筛选病记
-  const filteredQuickNotes = quickNotes.filter(note => {
-    if (!quickNotesSearch.trim()) return true;
-    return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
-  });
+  const filteredQuickNotes = quickNotes
+    .filter(note => {
+      if (!quickNotesSearch.trim()) return true;
+      return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
+    })
+    .sort((a, b) => b.timestamp - a.timestamp); // 按创建日期倒序排序
 
   return (
     <div className="medical">

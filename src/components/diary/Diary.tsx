@@ -656,10 +656,12 @@ const Diary: React.FC = () => {
   };
 
   // 筛选速记
-  const filteredQuickNotes = quickNotes.filter(note => {
-    if (!quickNotesSearch.trim()) return true;
-    return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
-  });
+  const filteredQuickNotes = quickNotes
+    .filter(note => {
+      if (!quickNotesSearch.trim()) return true;
+      return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
+    })
+    .sort((a, b) => b.timestamp - a.timestamp); // 按创建日期倒序排序
 
   // 筛选日记（基于纯文本搜索）
   const filteredDiaryEntries = diaryEntries
