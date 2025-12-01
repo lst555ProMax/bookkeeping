@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { QuickNote } from '@/utils';
+import { QuickNote } from '@/utils/diary/types';
 import { FilterSearchInput } from '@/components/common';
-import './QuickNotes.scss';
+import './MedicalQuickNotes.scss';
 
-interface QuickNotesProps {
+interface MedicalQuickNotesProps {
   quickNotes: QuickNote[];
   quickNoteInput: string;
   onQuickNoteInputChange: (value: string) => void;
@@ -22,7 +22,7 @@ interface QuickNotesProps {
 
 const MAX_QUICK_NOTE_LENGTH = 100;
 
-const QuickNotes: React.FC<QuickNotesProps> = ({
+const MedicalQuickNotes: React.FC<MedicalQuickNotesProps> = ({
   quickNotes,
   quickNoteInput,
   onQuickNoteInputChange,
@@ -50,7 +50,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
     const updateTimelineHeight = () => {
       if (listRef.current) {
         if (quickNotes.length > 0) {
-          const items = listRef.current.querySelectorAll('.quick-note-item');
+          const items = listRef.current.querySelectorAll('.medical-quick-note-item');
           if (items.length > 0) {
             const lastItem = items[items.length - 1] as HTMLElement;
             const lastItemBottom = lastItem.offsetTop + lastItem.offsetHeight;
@@ -96,7 +96,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
     
     // 验证内容不能为空
     if (!trimmedContent) {
-      toast.error('速记内容不能为空！');
+      toast.error('病记内容不能为空！');
       // 恢复原内容
       onQuickNoteInputChange(originalContent);
       return;
@@ -181,7 +181,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
       // 检查是否有未保存的修改
       if (hasUnsavedChanges) {
         const shouldContinue = window.confirm(
-          '当前有未保存的速记，是否继续当前操作？\n\n'
+          '当前有未保存的病记，是否继续当前操作？\n\n'
         );
         
         if (!shouldContinue) {
@@ -198,7 +198,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
     if (editingNoteId && editingNoteId !== note.id) {
       if (hasUnsavedChanges) {
         const shouldContinue = window.confirm(
-          '当前有未保存的速记，是否继续当前操作？\n\n'
+          '当前有未保存的病记，是否继续当前操作？\n\n'
         );
         
         if (!shouldContinue) {
@@ -246,7 +246,7 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
       e.preventDefault();
       if (hasUnsavedChanges) {
         const shouldContinue = window.confirm(
-          '当前有未保存的速记，是否继续当前操作？\n\n'
+          '当前有未保存的病记，是否继续当前操作？\n\n'
         );
         
         if (shouldContinue) {
@@ -268,12 +268,12 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
   // 删除所有速记
   const handleDeleteAll = () => {
     if (quickNotes.length === 0) {
-      toast('没有速记可以删除', { icon: '⚠️' });
+      toast('没有病记可以删除', { icon: '⚠️' });
       return;
     }
 
     const confirmed = window.confirm(
-      `确定要删除所有 ${quickNotes.length} 条速记吗？\n\n此操作无法撤销！建议先导出备份。`
+      `确定要删除所有 ${quickNotes.length} 条病记吗？\n\n此操作无法撤销！建议先导出备份。`
     );
 
     if (confirmed && onDeleteAll) {
@@ -310,11 +310,11 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
   }, [onDeleteQuickNote]);
 
   return (
-    <div className="quick-notes" ref={quickNotesRef}>
-      <div className="quick-notes__header">
-        <h3 className="quick-notes__title">💭 速记 ({quickNotes.length})</h3>
+    <div className="medical-quick-notes" ref={quickNotesRef}>
+      <div className="medical-quick-notes__header">
+        <h3 className="medical-quick-notes__title">💭 病记 ({quickNotes.length})</h3>
         {onSearchContentChange && (
-          <div className="quick-notes__search">
+          <div className="medical-quick-notes__search">
             <FilterSearchInput
               value={searchContent}
               onChange={onSearchContentChange}
@@ -322,36 +322,36 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
             />
           </div>
         )}
-        <div className="quick-notes__actions">
+        <div className="medical-quick-notes__actions">
           <button 
             className="action-icon-btn"
             onClick={onExportAll}
-            title="导出所有速记为JSON"
+            title="导出所有病记为JSON"
           >
             📤
           </button>
           <button 
             className="action-icon-btn"
             onClick={handleImportAll}
-            title="从JSON导入速记"
+            title="从JSON导入病记"
           >
             📥
           </button>
           <button 
             className="action-icon-btn"
             onClick={handleDeleteAll}
-            title="删除所有速记"
+            title="删除所有病记"
           >
             🗑️
           </button>
         </div>
       </div>
-      <div className="quick-notes__input">
+      <div className="medical-quick-notes__input">
         <textarea
           placeholder={
             editingNoteId 
               ? "修改内容后按Ctrl+Enter保存，ESC取消" 
-              : "记录你的灵感（按Ctrl+Enter保存）"
+              : "记录你的病记（按Ctrl+Enter保存）"
           }
           value={quickNoteInput}
           onChange={handleInputChange}
@@ -365,12 +365,12 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
           </span>
         </div>
       </div>
-      <div className="quick-notes__list" ref={listRef}>
+      <div className="medical-quick-notes__list" ref={listRef}>
         {quickNotes.length === 0 ? (
-          <div className="quick-notes__empty">
-            <div className="quick-notes__empty-icon">💭</div>
-            <p className="quick-notes__empty-message">还没有速记</p>
-            <p className="quick-notes__empty-hint">开始记录你的灵感吧~</p>
+          <div className="medical-quick-notes__empty">
+            <div className="medical-quick-notes__empty-icon">💭</div>
+            <p className="medical-quick-notes__empty-message">还没有病记</p>
+            <p className="medical-quick-notes__empty-hint">开始记录你的病记吧~</p>
           </div>
         ) : (
           quickNotes.map(note => (
@@ -383,12 +383,12 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
                 itemRefs.current.delete(note.id);
               }
             }}
-            className={`quick-note-item ${editingNoteId === note.id ? 'editing' : ''} ${editingNoteId === note.id && hasUnsavedChanges ? 'unsaved' : ''}`}
+            className={`medical-quick-note-item ${editingNoteId === note.id ? 'editing' : ''} ${editingNoteId === note.id && hasUnsavedChanges ? 'unsaved' : ''}`}
             onClick={() => handleNoteClick(note)}
             title="点击编辑"
           >
-            <div className="quick-note-item__content">{note.content}</div>
-            <div className="quick-note-item__footer">
+            <div className="medical-quick-note-item__content">{note.content}</div>
+            <div className="medical-quick-note-item__footer">
               <span className="timestamp">
                 {new Date(note.timestamp).toLocaleString('zh-CN', {
                   year: 'numeric',
@@ -414,4 +414,5 @@ const QuickNotes: React.FC<QuickNotesProps> = ({
   );
 };
 
-export default QuickNotes;
+export default MedicalQuickNotes;
+

@@ -557,13 +557,22 @@ export const importReadingExcerptsOnly = (file: File): Promise<{
           // 兼容旧格式
           const legacyData = parsedData as Record<string, unknown> & LegacyQuickNotesExportData;
           
-          // 如果数据格式是新格式，进行严格验证
-          if (legacyData.readingExcerpts && Array.isArray(legacyData.readingExcerpts)) {
+          // 检查readingExcerpts字段
+          if ('readingExcerpts' in legacyData && legacyData.readingExcerpts !== undefined && legacyData.readingExcerpts !== null) {
+            // readingExcerpts字段存在
+            if (!Array.isArray(legacyData.readingExcerpts)) {
+              throw new Error('无效的数据格式：readingExcerpts必须是数组');
+            }
+            // 如果数据格式是新格式，进行严格验证
             const validation = validateReadingExcerptsExportDataWithError(parsedData);
             if (!validation.valid) {
               throw new Error(validation.error || '无效的数据格式：文件格式与导出格式不一致，请确保使用正确的导出文件');
             }
-          } else if (legacyData.quickNotes && Array.isArray(legacyData.quickNotes)) {
+          } else if ('quickNotes' in legacyData && legacyData.quickNotes !== undefined && legacyData.quickNotes !== null) {
+            // quickNotes字段存在
+            if (!Array.isArray(legacyData.quickNotes)) {
+              throw new Error('无效的数据格式：quickNotes必须是数组');
+            }
             // 旧格式：只有 quickNotes 字段
             // 这里可以继续处理，但建议用户使用新格式
           } else {
@@ -660,13 +669,22 @@ export const importReadingEntriesOnly = (file: File): Promise<{
           // 兼容旧格式
           const legacyData = parsedData as Record<string, unknown> & LegacyDiaryEntriesExportData;
           
-          // 如果数据格式是新格式，进行严格验证
-          if (legacyData.readingEntries && Array.isArray(legacyData.readingEntries)) {
+          // 检查readingEntries字段
+          if ('readingEntries' in legacyData && legacyData.readingEntries !== undefined && legacyData.readingEntries !== null) {
+            // readingEntries字段存在
+            if (!Array.isArray(legacyData.readingEntries)) {
+              throw new Error('无效的数据格式：readingEntries必须是数组');
+            }
+            // 如果数据格式是新格式，进行严格验证
             const validation = validateReadingEntriesExportDataWithError(parsedData);
             if (!validation.valid) {
               throw new Error(validation.error || '无效的数据格式：文件格式与导出格式不一致，请确保使用正确的导出文件');
             }
-          } else if (legacyData.diaryEntries && Array.isArray(legacyData.diaryEntries)) {
+          } else if ('diaryEntries' in legacyData && legacyData.diaryEntries !== undefined && legacyData.diaryEntries !== null) {
+            // diaryEntries字段存在
+            if (!Array.isArray(legacyData.diaryEntries)) {
+              throw new Error('无效的数据格式：diaryEntries必须是数组');
+            }
             // 旧格式：只有 diaryEntries 字段
             // 这里可以继续处理，但建议用户使用新格式
           } else {

@@ -298,21 +298,21 @@ const ReadingList: React.FC<ReadingListProps> = ({
     URL.revokeObjectURL(url);
   };
 
-  // 导出所有日记为JSON
+  // 导出所有书记为JSON
   const handleExportAllClick = () => {
     if (onExportAll) {
       onExportAll();
     }
   };
 
-  // 导入日记
+  // 导入书记
   const handleImportAllClick = () => {
     if (onImportAll) {
       onImportAll();
     }
   };
 
-  // 删除所有日记
+  // 删除所有书记
   const handleDeleteAll = () => {
     if (diaryEntries.length === 0) {
       toast('没有书记可以删除', { icon: '⚠️' });
@@ -493,7 +493,7 @@ const ReadingList: React.FC<ReadingListProps> = ({
                 {getTextFromHTML(entry.content).length > 100 && '...'}
               </span>
               {getEntryImage(entry) && (
-                <span className="reading-diary-item__preview-image" style={{ marginLeft: '1rem', display: 'inline-block', width: `${64 * 144 / 209}px`, height: '64px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                <span className="reading-diary-item__preview-image" style={{ marginLeft: '1rem', display: 'inline-block', width: `${64 * 144 / 209}px`, height: '64px', overflow: 'hidden', flexShrink: 0, border: '1px solid #e0e0e0' }}>
                   <img src={getEntryImage(entry)} alt="预览图片" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </span>
               )}

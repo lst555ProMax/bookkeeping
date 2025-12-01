@@ -1,7 +1,40 @@
+.medical {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  overflow: hidden;
+
+  // 确保所有子元素都显示
+  > * {
+    min-width: 0;
+    min-height: 0;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .medical {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .medical {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+}
+
 .medical-record {
   height: 100%;
   display: flex;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 
   /* 左侧导航菜单 */
   &__nav {
@@ -10,7 +43,11 @@
     border-right: 1px solid #e0e0e0;
     padding: 2rem 1rem;
     flex-shrink: 0;
-    overflow-y: auto;
+    overflow-y: visible;
+    height: fit-content;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
 
     .disease-select-wrapper {
       margin-bottom: 1.5rem;
@@ -47,25 +84,22 @@
         &:active {
           transform: translateX(3px);
         }
+
+        &.active {
+          background: linear-gradient(135deg, #1ea5f9 0%, #0d8bd9 100%);
+          color: white;
+          box-shadow: 0 2px 8px rgba(30, 165, 249, 0.3);
+
+          .nav-icon {
+            filter: brightness(0) invert(1);
+          }
+
+          &:hover {
+            background: linear-gradient(135deg, #0d8bd9 0%, #0a7bc7 100%);
+            transform: translateX(5px);
+          }
+        }
       }
-    }
-
-    /* 自定义滚动条 */
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 3px;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: #a8a8a8;
     }
   }
 
@@ -75,6 +109,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     min-width: 0;
+    height: 100%;
 
     /* 自定义滚动条 */
     &::-webkit-scrollbar {
@@ -117,9 +152,7 @@
   }
 
   &__content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem 3rem 2rem;
+    padding: 0 1.5rem 3rem 1.5rem;
   }
 }
 

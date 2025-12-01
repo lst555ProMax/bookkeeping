@@ -48,12 +48,17 @@ const ReadingExcerpts: React.FC<ReadingExcerptsProps> = ({
   // 动态调整时间轴高度
   useEffect(() => {
     const updateTimelineHeight = () => {
-      if (listRef.current && quickNotes.length > 0) {
-        const items = listRef.current.querySelectorAll('.quick-note-item');
-        if (items.length > 0) {
-          const lastItem = items[items.length - 1] as HTMLElement;
-          const lastItemBottom = lastItem.offsetTop + lastItem.offsetHeight;
-          listRef.current.style.setProperty('--timeline-height', `${lastItemBottom}px`);
+      if (listRef.current) {
+        if (quickNotes.length > 0) {
+          const items = listRef.current.querySelectorAll('.quick-note-item');
+          if (items.length > 0) {
+            const lastItem = items[items.length - 1] as HTMLElement;
+            const lastItemBottom = lastItem.offsetTop + lastItem.offsetHeight;
+            listRef.current.style.setProperty('--timeline-height', `${lastItemBottom}px`);
+          }
+        } else {
+          // 当没有内容时，将竖线高度设置为0，隐藏竖线
+          listRef.current.style.setProperty('--timeline-height', '0px');
         }
       }
     };

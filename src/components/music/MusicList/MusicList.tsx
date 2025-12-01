@@ -299,21 +299,21 @@ const MusicList: React.FC<MusicListProps> = ({
   };
 
 
-  // 导出所有日记为JSON
+  // 导出所有乐记为JSON
   const handleExportAllClick = () => {
     if (onExportAll) {
       onExportAll();
     }
   };
 
-  // 导入日记
+  // 导入乐记
   const handleImportAllClick = () => {
     if (onImportAll) {
       onImportAll();
     }
   };
 
-  // 删除所有日记
+  // 删除所有乐记
   const handleDeleteAll = () => {
     if (diaryEntries.length === 0) {
       toast('没有乐记可以删除', { icon: '⚠️' });

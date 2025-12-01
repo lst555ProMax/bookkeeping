@@ -557,13 +557,22 @@ export const importMusicLyricsOnly = (file: File): Promise<{
           // 兼容旧格式
           const legacyData = parsedData as Record<string, unknown> & LegacyQuickNotesExportData;
           
-          // 如果数据格式是新格式，进行严格验证
-          if (legacyData.musicLyrics && Array.isArray(legacyData.musicLyrics)) {
+          // 检查musicLyrics字段
+          if ('musicLyrics' in legacyData && legacyData.musicLyrics !== undefined && legacyData.musicLyrics !== null) {
+            // musicLyrics字段存在
+            if (!Array.isArray(legacyData.musicLyrics)) {
+              throw new Error('无效的数据格式：musicLyrics必须是数组');
+            }
+            // 如果数据格式是新格式，进行严格验证
             const validation = validateMusicLyricsExportDataWithError(parsedData);
             if (!validation.valid) {
               throw new Error(validation.error || '无效的数据格式：文件格式与导出格式不一致，请确保使用正确的导出文件');
             }
-          } else if (legacyData.quickNotes && Array.isArray(legacyData.quickNotes)) {
+          } else if ('quickNotes' in legacyData && legacyData.quickNotes !== undefined && legacyData.quickNotes !== null) {
+            // quickNotes字段存在
+            if (!Array.isArray(legacyData.quickNotes)) {
+              throw new Error('无效的数据格式：quickNotes必须是数组');
+            }
             // 旧格式：只有 quickNotes 字段
             // 这里可以继续处理，但建议用户使用新格式
           } else {

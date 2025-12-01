@@ -1,5 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { FormSelect } from '@/components/common';
+import MedicalQuickNotes from './MedicalQuickNotes/MedicalQuickNotes';
+import { QuickNote } from '@/utils/diary/types';
+import {
+  loadMedicalQuickNotes,
+  addMedicalQuickNote,
+  updateMedicalQuickNote,
+  deleteMedicalQuickNote,
+  clearAllMedicalQuickNotes
+} from '@/utils/medical/storage';
 import './Medical.scss';
 
 type DiseaseType = 'hernia';
@@ -7,6 +17,14 @@ type DiseaseType = 'hernia';
 const Medical: React.FC = () => {
   // 疾病类型状态（暂时只有食管裂孔疝）
   const [selectedDisease, setSelectedDisease] = useState<DiseaseType>('hernia');
+  
+  // 病记状态
+  const [quickNotes, setQuickNotes] = useState<QuickNote[]>([]);
+  const [quickNoteInput, setQuickNoteInput] = useState<string>('');
+  const [quickNotesSearch, setQuickNotesSearch] = useState<string>('');
+  const [hasUnsavedQuickNote, setHasUnsavedQuickNote] = useState<boolean>(false);
+  const quickNotesFileInputRef = useRef<HTMLInputElement>(null);
+  const [isImportingQuickNotes, setIsImportingQuickNotes] = useState(false);
 
   // 创建各section的引用
   const overviewRef = useRef<HTMLElement>(null);
@@ -18,11 +36,69 @@ const Medical: React.FC = () => {
   const researchRef = useRef<HTMLElement>(null);
   const prognosisRef = useRef<HTMLElement>(null);
   const recoveryRef = useRef<HTMLElement>(null);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+  
+  // 当前激活的section
+  const [activeSection, setActiveSection] = useState<string>('overview');
 
   // 滚动到指定section
   const scrollToSection = (ref: React.RefObject<HTMLElement>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+
+  // 监听滚动，高亮当前section
+  useEffect(() => {
+    const mainContent = mainContentRef.current;
+    if (!mainContent) return;
+
+    const sections = [
+      { id: 'overview', ref: overviewRef },
+      { id: 'cause', ref: causeRef },
+      { id: 'symptoms', ref: symptomsRef },
+      { id: 'treatment', ref: treatmentRef },
+      { id: 'diet', ref: dietRef },
+      { id: 'lifestyle', ref: lifestyleRef },
+      { id: 'research', ref: researchRef },
+      { id: 'prognosis', ref: prognosisRef },
+      { id: 'recovery', ref: recoveryRef },
+    ];
+
+    const handleScroll = () => {
+      const scrollTop = mainContent.scrollTop;
+      const containerHeight = mainContent.clientHeight;
+      const scrollOffset = scrollTop + containerHeight * 0.3; // 当section到达视口30%位置时激活
+
+      // 从下往上查找第一个进入视口的section
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        const element = section.ref.current;
+        if (element) {
+          const elementRect = element.getBoundingClientRect();
+          const mainRect = mainContent.getBoundingClientRect();
+          const elementTop = elementRect.top - mainRect.top + scrollTop;
+          
+          if (scrollOffset >= elementTop) {
+            setActiveSection(section.id);
+            break;
+          }
+        }
+      }
+    };
+
+    mainContent.addEventListener('scroll', handleScroll);
+    // 初始检查
+    handleScroll();
+
+    return () => {
+      mainContent.removeEventListener('scroll', handleScroll);
+    };
+  }, [selectedDisease]);
+
+  // 加载病记
+  useEffect(() => {
+    const notes = loadMedicalQuickNotes();
+    setQuickNotes(notes);
+  }, []);
 
   // 切换疾病类型
   const handleDiseaseChange = (disease: string) => {
@@ -36,10 +112,198 @@ const Medical: React.FC = () => {
     { value: 'hernia', label: '食管裂孔疝' }
   ];
 
+  // 添加病记
+  const handleAddQuickNote = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && e.ctrlKey && quickNoteInput.trim()) {
+      const newNote = addMedicalQuickNote(quickNoteInput.trim());
+      setQuickNotes(prev => [newNote, ...prev]);
+      setQuickNoteInput('');
+    }
+  };
+
+  // 更新病记
+  const handleUpdateQuickNote = (id: string, content: string) => {
+    const updatedNote = updateMedicalQuickNote(id, content);
+    if (updatedNote) {
+      setQuickNotes(prev => 
+        prev.map(note => note.id === id ? updatedNote : note)
+      );
+    }
+  };
+
+  // 删除病记
+  const handleDeleteQuickNote = (id: string) => {
+    deleteMedicalQuickNote(id);
+    setQuickNotes(prev => prev.filter(note => note.id !== id));
+  };
+
+  // 导出所有病记
+  const handleExportQuickNotes = () => {
+    try {
+      const filtered = quickNotes.filter(note => {
+        if (!quickNotesSearch.trim()) return true;
+        return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
+      });
+      
+      const exportData = {
+        version: '1.0.0',
+        exportDate: new Date().toISOString(),
+        medicalQuickNotes: filtered,
+        totalMedicalQuickNotes: filtered.length
+      };
+
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      const now = new Date();
+      const dateStr = now.toISOString().split('T')[0];
+      link.download = `medical-quick-notes-${dateStr}.json`;
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success('病记数据导出成功！');
+    } catch (error) {
+      toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'));
+    }
+  };
+
+  // 处理病记导入
+  const handleImportQuickNotes = async (file: File) => {
+    setIsImportingQuickNotes(true);
+    try {
+      const reader = new FileReader();
+      
+      reader.onload = async (event) => {
+        try {
+          const content = event.target?.result as string;
+          const parsedData = JSON.parse(content);
+          
+          if (!parsedData.medicalQuickNotes || !Array.isArray(parsedData.medicalQuickNotes)) {
+            throw new Error('无效的数据格式：缺少medicalQuickNotes数组');
+          }
+          
+          const existingNotes = loadMedicalQuickNotes();
+          const existingIds = new Set(existingNotes.map(n => n.id));
+          
+          let imported = 0;
+          let skipped = 0;
+          
+          parsedData.medicalQuickNotes.forEach((note: QuickNote) => {
+            if (existingIds.has(note.id)) {
+              skipped++;
+              return;
+            }
+            
+            addMedicalQuickNote(note.content);
+            imported++;
+          });
+          
+          const notes = loadMedicalQuickNotes();
+          setQuickNotes(notes);
+          
+          toast.success(`导入完成！\n新增 ${imported} 条病记，跳过 ${skipped} 条重复记录`);
+        } catch (error) {
+          toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+        } finally {
+          setIsImportingQuickNotes(false);
+          if (quickNotesFileInputRef.current) {
+            quickNotesFileInputRef.current.value = '';
+          }
+        }
+      };
+      
+      reader.onerror = () => {
+        toast.error('读取文件失败');
+        setIsImportingQuickNotes(false);
+        if (quickNotesFileInputRef.current) {
+          quickNotesFileInputRef.current.value = '';
+        }
+      };
+      
+      reader.readAsText(file);
+    } catch (error) {
+      toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
+      setIsImportingQuickNotes(false);
+      if (quickNotesFileInputRef.current) {
+        quickNotesFileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // 处理病记文件选择
+  const handleQuickNotesFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.json')) {
+      toast.error('请选择JSON格式的文件');
+      return;
+    }
+
+    handleImportQuickNotes(file);
+  };
+
+  // 触发病记文件选择
+  const triggerQuickNotesFileSelect = () => {
+    quickNotesFileInputRef.current?.click();
+  };
+
+  // 删除所有病记
+  const handleDeleteAllQuickNotes = () => {
+    try {
+      const count = clearAllMedicalQuickNotes();
+      setQuickNotes([]);
+      toast.success(`已删除 ${count} 条病记`);
+    } catch (error) {
+      console.error('删除所有病记失败:', error);
+      toast.error('删除失败，请重试');
+    }
+  };
+
+  // 筛选病记
+  const filteredQuickNotes = quickNotes.filter(note => {
+    if (!quickNotesSearch.trim()) return true;
+    return note.content.toLowerCase().includes(quickNotesSearch.toLowerCase());
+  });
+
   return (
-    <div className="medical-record">
-      {/* 左侧导航菜单 */}
-      <nav className="medical-record__nav">
+    <div className="medical">
+      {/* 隐藏的文件输入 */}
+      <input
+        ref={quickNotesFileInputRef}
+        type="file"
+        accept=".json,application/json"
+        onChange={handleQuickNotesFileSelect}
+        style={{ display: 'none' }}
+      />
+      
+      {/* 病记部分 */}
+      <MedicalQuickNotes
+        quickNotes={filteredQuickNotes}
+        quickNoteInput={quickNoteInput}
+        onQuickNoteInputChange={setQuickNoteInput}
+        onAddQuickNote={handleAddQuickNote}
+        onDeleteQuickNote={handleDeleteQuickNote}
+        onUpdateQuickNote={handleUpdateQuickNote}
+        searchContent={quickNotesSearch}
+        onSearchContentChange={setQuickNotesSearch}
+        onExportAll={handleExportQuickNotes}
+        onImportAll={triggerQuickNotesFileSelect}
+        onDeleteAll={handleDeleteAllQuickNotes}
+        onHasUnsavedChangesChange={setHasUnsavedQuickNote}
+        isImporting={isImportingQuickNotes}
+      />
+
+      {/* 疾病介绍部分 */}
+      <div className="medical-record">
+        {/* 左侧导航菜单 */}
+        <nav className="medical-record__nav">
         <div className="disease-select-wrapper">
           <FormSelect
             value={selectedDisease}
@@ -49,39 +313,66 @@ const Medical: React.FC = () => {
           />
         </div>
         <ul className="nav-list">
-          <li onClick={() => scrollToSection(overviewRef)}>
+          <li 
+            className={activeSection === 'overview' ? 'active' : ''}
+            onClick={() => scrollToSection(overviewRef)}
+          >
             <span className="nav-icon">📋</span>
             <span>疾病概述</span>
           </li>
-          <li onClick={() => scrollToSection(causeRef)}>
+          <li 
+            className={activeSection === 'cause' ? 'active' : ''}
+            onClick={() => scrollToSection(causeRef)}
+          >
             <span className="nav-icon">🔬</span>
             <span>病因分析</span>
           </li>
-          <li onClick={() => scrollToSection(symptomsRef)}>
+          <li 
+            className={activeSection === 'symptoms' ? 'active' : ''}
+            onClick={() => scrollToSection(symptomsRef)}
+          >
             <span className="nav-icon">🩺</span>
             <span>症状表现</span>
           </li>
-          <li onClick={() => scrollToSection(treatmentRef)}>
+          <li 
+            className={activeSection === 'treatment' ? 'active' : ''}
+            onClick={() => scrollToSection(treatmentRef)}
+          >
             <span className="nav-icon">💊</span>
             <span>治疗方法</span>
           </li>
-          <li onClick={() => scrollToSection(dietRef)}>
+          <li 
+            className={activeSection === 'diet' ? 'active' : ''}
+            onClick={() => scrollToSection(dietRef)}
+          >
             <span className="nav-icon">🍽️</span>
             <span>饮食注意</span>
           </li>
-          <li onClick={() => scrollToSection(lifestyleRef)}>
+          <li 
+            className={activeSection === 'lifestyle' ? 'active' : ''}
+            onClick={() => scrollToSection(lifestyleRef)}
+          >
             <span className="nav-icon">🏃</span>
             <span>生活方式</span>
           </li>
-          <li onClick={() => scrollToSection(researchRef)}>
+          <li 
+            className={activeSection === 'research' ? 'active' : ''}
+            onClick={() => scrollToSection(researchRef)}
+          >
             <span className="nav-icon">🔬</span>
             <span>前沿研究</span>
           </li>
-          <li onClick={() => scrollToSection(prognosisRef)}>
+          <li 
+            className={activeSection === 'prognosis' ? 'active' : ''}
+            onClick={() => scrollToSection(prognosisRef)}
+          >
             <span className="nav-icon">📈</span>
             <span>预后随访</span>
           </li>
-          <li onClick={() => scrollToSection(recoveryRef)}>
+          <li 
+            className={activeSection === 'recovery' ? 'active' : ''}
+            onClick={() => scrollToSection(recoveryRef)}
+          >
             <span className="nav-icon">💪</span>
             <span>康复管理</span>
           </li>
@@ -89,7 +380,7 @@ const Medical: React.FC = () => {
       </nav>
 
       {/* 主内容区域 */}
-      <div className="medical-record__main">
+      <div className="medical-record__main" ref={mainContentRef}>
         <div className="medical-record__content">
 
           {/* 食管裂孔疝内容 */}
@@ -666,6 +957,7 @@ const Medical: React.FC = () => {
             </p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

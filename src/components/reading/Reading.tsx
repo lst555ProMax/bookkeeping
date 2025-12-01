@@ -750,12 +750,12 @@ const Reading: React.FC = () => {
           return b.createdAt - a.createdAt;
         });
       
-      const message = `确定导出日记吗？\n\n日记：${filtered.length} 篇${diaryEntriesSearch.trim() ? `（已筛选）` : ''}`;
+      const message = `确定导出书记吗？\n\n书记：${filtered.length} 篇${diaryEntriesSearch.trim() ? `（已筛选）` : ''}`;
       
       if (window.confirm(message)) {
         toast.loading('正在导出数据，请稍候...', { id: 'export-loading' });
         exportDiaryEntriesOnly(filtered).then(() => {
-          toast.success('日记数据导出成功！', { id: 'export-loading' });
+          toast.success('书记数据导出成功！', { id: 'export-loading' });
         }).catch((error) => {
           toast.error('导出失败：' + (error instanceof Error ? error.message : '未知错误'), { id: 'export-loading' });
         });
@@ -773,7 +773,7 @@ const Reading: React.FC = () => {
       const entries = loadDiaryEntries();
       setDiaryEntries(entries);
       
-      const message = `导入完成！\n新增 ${result.imported} 篇日记，跳过 ${result.skipped} 篇重复记录`;
+      const message = `导入完成！\n新增 ${result.imported} 篇书记，跳过 ${result.skipped} 篇重复记录`;
       toast.success(message);
     } catch (error) {
       toast.error('导入失败：' + (error instanceof Error ? error.message : '未知错误'));
