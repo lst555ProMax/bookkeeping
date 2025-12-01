@@ -108,7 +108,7 @@ export const DailyRecordListSearchSection: React.FC<DailyRecordListSearchSection
         <FilterSearchInput
           value={searchNotes ?? ''}
           onChange={(val) => onSearchNotesChange?.(val)}
-          placeholder="备注"
+          placeholder="搜索备注"
           width="120px"
         />
       )}

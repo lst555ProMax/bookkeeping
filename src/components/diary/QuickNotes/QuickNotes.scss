@@ -194,20 +194,22 @@
       margin-bottom: 0.75rem;
       margin-left: 0rem;
       position: relative;
-      transition: all 0.3s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       cursor: pointer;
       display: flex;
       flex-direction: column;
+      border: 2px solid transparent;
 
       &.editing {
         background: #e8eef5;
-        border: 2px solid #1ea5f9;
+        border-color: #1ea5f9;
         box-shadow: 0 4px 16px rgba(30, 165, 249, 0.25);
 
         &::before {
           background: #0d8bd9;
           transform: scale(1.3);
+          transition: transform 0.2s ease, background 0.2s ease;
         }
       }
 
@@ -232,6 +234,7 @@
         border-radius: 50%;
         box-shadow: 0 2px 8px rgba(30, 165, 249, 0.4);
         z-index: 2;
+        transition: transform 0.2s ease, background 0.2s ease;
       }
 
       &::after {
@@ -244,7 +247,7 @@
         background: #e0e0e0;
       }
 
-      &:hover {
+      &:hover:not(.editing) {
         background: #e8eef5;
         transform: translateX(4px);
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);

@@ -100,7 +100,7 @@ export const SleepListSearchSection: React.FC<SleepListSearchSectionProps> = ({
         <FilterSearchInput
           value={searchNotes ?? ''}
           onChange={(val) => onSearchNotesChange?.(val)}
-          placeholder="备注"
+          placeholder="搜索备注"
           width="120px"
         />
       )}

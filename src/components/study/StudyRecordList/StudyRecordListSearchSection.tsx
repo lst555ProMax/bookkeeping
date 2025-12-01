@@ -64,7 +64,7 @@ export const StudyRecordListSearchSection: React.FC<StudyRecordListSearchSection
         <FilterSearchInput
           value={searchTitle}
           onChange={(val) => onSearchTitleChange(val)}
-          placeholder="标题"
+          placeholder="搜索标题"
           width="140px"
         />
       )}

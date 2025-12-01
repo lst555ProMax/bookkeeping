@@ -544,9 +544,18 @@ export const importReadingExcerptsOnly = (file: File): Promise<{
             throw new Error('文件格式错误：无法解析JSON，请确保文件是有效的JSON格式');
           }
           
+          // 检查数据本身是否是数组（应该是对象）
+          if (Array.isArray(parsedData)) {
+            throw new Error('无效的数据格式：数据必须是JSON对象，不能是数组');
+          }
+          
+          // 检查数据是否是对象
+          if (typeof parsedData !== 'object' || parsedData === null) {
+            throw new Error('无效的数据格式：数据必须是JSON对象');
+          }
+          
           // 兼容旧格式
           const legacyData = parsedData as Record<string, unknown> & LegacyQuickNotesExportData;
-          const excerpts = (legacyData.readingExcerpts || legacyData.quickNotes || []) as QuickNote[];
           
           // 如果数据格式是新格式，进行严格验证
           if (legacyData.readingExcerpts && Array.isArray(legacyData.readingExcerpts)) {
@@ -554,8 +563,18 @@ export const importReadingExcerptsOnly = (file: File): Promise<{
             if (!validation.valid) {
               throw new Error(validation.error || '无效的数据格式：文件格式与导出格式不一致，请确保使用正确的导出文件');
             }
-          } else if (!Array.isArray(excerpts)) {
-            throw new Error('无效的数据格式：缺少readingExcerpts数组');
+          } else if (legacyData.quickNotes && Array.isArray(legacyData.quickNotes)) {
+            // 旧格式：只有 quickNotes 字段
+            // 这里可以继续处理，但建议用户使用新格式
+          } else {
+            // 既没有 readingExcerpts 也没有 quickNotes
+            throw new Error('无效的数据格式：缺少readingExcerpts数组或quickNotes数组');
+          }
+          
+          const excerpts = (legacyData.readingExcerpts || legacyData.quickNotes || []) as QuickNote[];
+          
+          if (!Array.isArray(excerpts)) {
+            throw new Error('无效的数据格式：readingExcerpts或quickNotes必须是数组');
           }
           
           const existingExcerpts = loadReadingExcerpts();
@@ -628,9 +647,18 @@ export const importReadingEntriesOnly = (file: File): Promise<{
             throw new Error('文件格式错误：无法解析JSON，请确保文件是有效的JSON格式');
           }
           
+          // 检查数据本身是否是数组（应该是对象）
+          if (Array.isArray(parsedData)) {
+            throw new Error('无效的数据格式：数据必须是JSON对象，不能是数组');
+          }
+          
+          // 检查数据是否是对象
+          if (typeof parsedData !== 'object' || parsedData === null) {
+            throw new Error('无效的数据格式：数据必须是JSON对象');
+          }
+          
           // 兼容旧格式
           const legacyData = parsedData as Record<string, unknown> & LegacyDiaryEntriesExportData;
-          const entries = (legacyData.readingEntries || legacyData.diaryEntries || []) as DiaryEntry[];
           
           // 如果数据格式是新格式，进行严格验证
           if (legacyData.readingEntries && Array.isArray(legacyData.readingEntries)) {
@@ -638,8 +666,18 @@ export const importReadingEntriesOnly = (file: File): Promise<{
             if (!validation.valid) {
               throw new Error(validation.error || '无效的数据格式：文件格式与导出格式不一致，请确保使用正确的导出文件');
             }
-          } else if (!Array.isArray(entries)) {
-            throw new Error('无效的数据格式：缺少readingEntries数组');
+          } else if (legacyData.diaryEntries && Array.isArray(legacyData.diaryEntries)) {
+            // 旧格式：只有 diaryEntries 字段
+            // 这里可以继续处理，但建议用户使用新格式
+          } else {
+            // 既没有 readingEntries 也没有 diaryEntries
+            throw new Error('无效的数据格式：缺少readingEntries数组或diaryEntries数组');
+          }
+          
+          const entries = (legacyData.readingEntries || legacyData.diaryEntries || []) as DiaryEntry[];
+          
+          if (!Array.isArray(entries)) {
+            throw new Error('无效的数据格式：readingEntries或diaryEntries必须是数组');
           }
           
           const existingEntries = loadReadingEntries();

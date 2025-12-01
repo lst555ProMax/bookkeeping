@@ -12,7 +12,7 @@ interface FilterSearchInputProps {
 const FilterSearchInput: React.FC<FilterSearchInputProps> = ({
   value,
   onChange,
-  placeholder = '备注',
+  placeholder = '搜索备注',
   className = '',
   width = '120px'
 }) => {

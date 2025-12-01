@@ -229,7 +229,7 @@ const AccountingCategoryFilter: React.FC<AccountingCategoryFilterProps> = ({
               <FilterSearchInput
                 value={searchDescription ?? ''}
                 onChange={(val) => onSearchDescriptionChange?.(val)}
-                placeholder="备注"
+                placeholder="搜索备注"
                 width="120px"
               />
             )}

@@ -354,7 +354,7 @@ const MusicList: React.FC<MusicListProps> = ({
             <FilterSearchInput
               value={searchContent}
               onChange={onSearchContentChange}
-              placeholder="文本"
+              placeholder="搜索文本"
             />
           </div>
         )}
