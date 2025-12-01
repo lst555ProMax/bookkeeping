@@ -280,6 +280,11 @@ const Medical: React.FC = () => {
               throw new Error(`无效的病记记录[${i}]：content字段类型不正确，必须是字符串`);
             }
             
+            // 验证content长度（病记限制1000字以内）
+            if (n.content.length > 1000) {
+              throw new Error(`无效的病记记录[${i}]：content长度不能超过1000个字符`);
+            }
+            
             if (!('timestamp' in n) || n.timestamp === undefined || n.timestamp === null) {
               throw new Error(`无效的病记记录[${i}]：缺少timestamp字段`);
             }
@@ -729,74 +734,73 @@ const Medical: React.FC = () => {
                 </h3>
                 <div className="section-content">
                   <div className="diet-grid">
-                    <div className="diet-card diet-avoid">
-                      <h4>❌ 应避免的食物</h4>
-                      <div className="food-category">
-                        <h5>易引起反流的食物</h5>
-                        <ul>
-                          <li>油炸、高脂肪食物</li>
-                          <li>巧克力</li>
-                          <li>咖啡、浓茶</li>
-                          <li>碳酸饮料</li>
-                          <li>酒精类饮品</li>
-                          <li>薄荷</li>
-                        </ul>
-                      </div>
-                      <div className="food-category">
-                        <h5>刺激性食物</h5>
-                        <ul>
-                          <li>辛辣食物(辣椒、花椒等)</li>
-                          <li>酸性食物(柑橘、番茄等)</li>
-                          <li>洋葱、大蒜(生食)</li>
-                        </ul>
-                      </div>
-                      <div className="food-category">
-                        <h5>其他不宜食物</h5>
-                        <ul>
-                          <li>过硬、难消化的食物</li>
-                          <li>易产气食物(豆类、洋葱等)</li>
-                          <li>过冷或过热的食物</li>
-                        </ul>
+                    <div className="diet-section">
+                      <h4 className="diet-section-title diet-section-title-avoid">❌ 应避免的食物</h4>
+                      <div className="food-cards-grid">
+                        <div className="food-card food-card-avoid">
+                          <h5>易引起反流的食物</h5>
+                          <ul>
+                            <li>油炸、高脂肪食物</li>
+                            <li>巧克力</li>
+                            <li>咖啡、浓茶</li>
+                            <li>碳酸饮料</li>
+                            <li>酒精类饮品</li>
+                            <li>薄荷</li>
+                          </ul>
+                        </div>
+                        <div className="food-card food-card-avoid">
+                          <h5>刺激性食物</h5>
+                          <ul>
+                            <li>辛辣食物(辣椒、花椒等)</li>
+                            <li>酸性食物(柑橘、番茄等)</li>
+                            <li>洋葱、大蒜(生食)</li>
+                          </ul>
+                        </div>
+                        <div className="food-card food-card-avoid">
+                          <h5>其他不宜食物</h5>
+                          <ul>
+                            <li>过硬、难消化的食物</li>
+                            <li>易产气食物(豆类、洋葱等)</li>
+                            <li>过冷或过热的食物</li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="diet-card diet-recommend">
-                      <h4>✅ 推荐的食物</h4>
-                      <div className="food-category">
-                        <h5>主食类</h5>
-                        <ul>
-                          <li>软烂的米饭、粥</li>
-                          <li>面条、馒头</li>
-                          <li>燕麦、小米</li>
-                          <li>全麦面包(非油炸)</li>
-                        </ul>
-                      </div>
-                      <div className="food-category">
-                        <h5>蛋白质</h5>
-                        <ul>
-                          <li>瘦肉(鸡肉、鱼肉)</li>
-                          <li>鸡蛋(煮、蒸)</li>
-                          <li>豆腐及豆制品</li>
-                          <li>低脂奶制品</li>
-                        </ul>
-                      </div>
-                      <div className="food-category">
-                        <h5>蔬菜类</h5>
-                        <ul>
-                          <li>绿叶蔬菜(菠菜、油菜)</li>
-                          <li>根茎类(胡萝卜、山药)</li>
-                          <li>南瓜、西兰花</li>
-                          <li>芦笋、芹菜</li>
-                        </ul>
-                      </div>
-                      <div className="food-category">
-                        <h5>水果类</h5>
-                        <ul>
-                          <li>香蕉</li>
-                          <li>苹果(去皮)</li>
-                          <li>木瓜</li>
-                          <li>梨(蒸熟)</li>
-                        </ul>
+                    <div className="diet-section">
+                      <h4 className="diet-section-title diet-section-title-recommend">✅ 推荐的食物</h4>
+                      <div className="food-cards-grid">
+                        <div className="food-card food-card-recommend">
+                          <h5>主食与蛋白质</h5>
+                          <ul>
+                            <li>软烂的米饭、粥</li>
+                            <li>面条、馒头</li>
+                            <li>燕麦、小米</li>
+                            <li>全麦面包(非油炸)</li>
+                            <li>瘦肉(鸡肉、鱼肉)</li>
+                            <li>鸡蛋(煮、蒸)</li>
+                            <li>豆腐及豆制品</li>
+                            <li>低脂奶制品</li>
+                          </ul>
+                        </div>
+                        <div className="food-card food-card-recommend">
+                          <h5>蔬菜类</h5>
+                          <ul>
+                            <li>绿叶蔬菜(菠菜、油菜)</li>
+                            <li>根茎类(胡萝卜、山药)</li>
+                            <li>南瓜、西兰花</li>
+                            <li>芦笋、芹菜</li>
+                          </ul>
+                        </div>
+                        <div className="food-card food-card-recommend">
+                          <h5>水果类</h5>
+                          <ul>
+                            <li>香蕉</li>
+                            <li>苹果(去皮)</li>
+                            <li>木瓜</li>
+                            <li>梨(蒸熟)</li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>

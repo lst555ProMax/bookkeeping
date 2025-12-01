@@ -20,7 +20,7 @@ interface MedicalQuickNotesProps {
   isImporting?: boolean;
 }
 
-const MAX_QUICK_NOTE_LENGTH = 100;
+const MAX_QUICK_NOTE_LENGTH = 1000;
 
 const MedicalQuickNotes: React.FC<MedicalQuickNotesProps> = ({
   quickNotes,

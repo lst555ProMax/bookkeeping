@@ -330,7 +330,7 @@
 // 病因网格
 .cause-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
@@ -366,7 +366,7 @@
 // 症状网格
 .symptoms-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
@@ -494,10 +494,114 @@
 
 // 饮食网格
 .diet-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
   margin-top: 1.5rem;
+}
+
+// 饮食部分标题
+.diet-section {
+  .diet-section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+    padding-bottom: 1rem;
+    
+    &.diet-section-title-avoid {
+      color: #d63447;
+      border-bottom: 2px solid #ffcccc;
+    }
+    
+    &.diet-section-title-recommend {
+      color: #28a745;
+      border-bottom: 2px solid #ccffcc;
+    }
+  }
+}
+
+// 食物卡片网格（3个并排）
+.food-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+// 食物卡片
+.food-card {
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.4rem 0 0.4rem 1.5rem;
+      position: relative;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #666;
+
+      &:before {
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+      }
+    }
+  }
+
+  &.food-card-avoid {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+    border-color: #ffcccc;
+
+    h5 {
+      background: rgba(214, 52, 71, 0.1);
+      color: #d63447;
+    }
+
+    ul li {
+      &:before {
+        content: "✗";
+        color: #d63447;
+      }
+    }
+  }
+
+  &.food-card-recommend {
+    background: linear-gradient(135deg, #f0fff4 0%, #e8ffe8 100%);
+    border-color: #ccffcc;
+
+    h5 {
+      background: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+    }
+
+    ul li {
+      &:before {
+        content: "✓";
+        color: #28a745;
+      }
+    }
+  }
 }
 
 .diet-card {
@@ -885,7 +989,11 @@
   }
 
   .diet-grid {
-    grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .food-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
