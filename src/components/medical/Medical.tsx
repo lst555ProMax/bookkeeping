@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { FormSelect } from '@/components/common';
 import MedicalQuickNotes from './MedicalQuickNotes/MedicalQuickNotes';
@@ -22,7 +22,6 @@ const Medical: React.FC = () => {
   const [quickNotes, setQuickNotes] = useState<QuickNote[]>([]);
   const [quickNoteInput, setQuickNoteInput] = useState<string>('');
   const [quickNotesSearch, setQuickNotesSearch] = useState<string>('');
-  const [hasUnsavedQuickNote, setHasUnsavedQuickNote] = useState<boolean>(false);
   const quickNotesFileInputRef = useRef<HTMLInputElement>(null);
   const [isImportingQuickNotes, setIsImportingQuickNotes] = useState(false);
 
@@ -296,7 +295,6 @@ const Medical: React.FC = () => {
         onExportAll={handleExportQuickNotes}
         onImportAll={triggerQuickNotesFileSelect}
         onDeleteAll={handleDeleteAllQuickNotes}
-        onHasUnsavedChangesChange={setHasUnsavedQuickNote}
         isImporting={isImportingQuickNotes}
       />
 
