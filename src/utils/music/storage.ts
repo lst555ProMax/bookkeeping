@@ -66,7 +66,7 @@ export const updateMusicLyric = (id: string, content: string): QuickNote | null 
   lyrics[index] = {
     ...lyrics[index],
     content,
-    timestamp: Date.now(), // 更新时间戳
+    // 保持创建时间不变，不更新timestamp
   };
   
   saveMusicLyrics(lyrics);

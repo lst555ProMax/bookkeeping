@@ -42,15 +42,20 @@ const AccountingCategoryManager: React.FC<AccountingCategoryManagerProps> = ({ r
   }, [recordType, isIncome]); // 当类型改变时重新加载
 
   // ESC退出绑定
+  // 同时阻止 Ctrl+Enter 事件冒泡到表单组件
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
       }
+      // 阻止 Ctrl+Enter 事件冒泡到表单组件
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.stopPropagation(); // 阻止事件传播到表单组件
+      }
     };
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true); // 使用捕获阶段
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown, true);
     };
   }, [onClose]);
 

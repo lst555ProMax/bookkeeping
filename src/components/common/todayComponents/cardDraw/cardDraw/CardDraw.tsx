@@ -8,7 +8,9 @@ import {
   addCardDrawRecord, 
   clearTodayCardDrawRecord,
   loadActivityConfig,
-  drawCardByConfig
+  drawCardByConfig,
+  validateProbabilities,
+  resetActivityConfig
 } from '@/utils';
 import { ActivityManager } from '../activityManager';
 import './CardDraw.scss';
@@ -27,6 +29,19 @@ const CardDraw: React.FC = () => {
   useEffect(() => {
     const card = getTodayCardDraw();
     setTodayCard(card);
+  }, []);
+
+  // 页面加载时校验活动配置，如果不符合条件则重置为默认值
+  useEffect(() => {
+    const config = loadActivityConfig();
+    const validation = validateProbabilities(config);
+    if (!validation.valid) {
+      console.warn('活动配置不符合保存条件，已自动重置为默认配置:', validation.message);
+      resetActivityConfig();
+      setActivityConfig(loadActivityConfig());
+      toast.error('配置不符合保存条件，已重置为默认配置');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 重新加载配置
@@ -61,18 +76,25 @@ const CardDraw: React.FC = () => {
   };
 
   // ESC退出绑定
+  // 同时阻止 Ctrl+Enter 事件冒泡到表单组件
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showModal) {
-        setShowModal(false);
-        setIsDrawing(false);
-        setDrawnCard(null);
-        setCustomContent('');
+      if (showModal) {
+        if (e.key === 'Escape') {
+          setShowModal(false);
+          setIsDrawing(false);
+          setDrawnCard(null);
+          setCustomContent('');
+        }
+        // 阻止 Ctrl+Enter 事件冒泡到表单组件
+        if (e.ctrlKey && e.key === 'Enter') {
+          e.stopPropagation(); // 阻止事件传播到表单组件
+        }
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true); // 使用捕获阶段
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown, true);
     };
   }, [showModal]);
 

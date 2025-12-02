@@ -109,12 +109,40 @@
       cursor: grabbing;
     }
 
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
     h3 {
       margin: 0;
       font-size: 1.3rem;
       color: #333;
       font-weight: 600;
-      pointer-events: none;
+    }
+
+    .mode-switch-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: #666;
+      cursor: pointer;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: none;
+      pointer-events: auto;
+
+      &:hover {
+        color: #1ea5f9;
+      }
+
+      &:active {
+        transform: scale(0.9);
+      }
     }
 
     .close-btn {

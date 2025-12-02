@@ -8,24 +8,30 @@ interface FloatingQuickNoteProps {
 
 const MAX_QUICK_NOTE_LENGTH = 100;
 
-type FloatingMode = 'quickNote' | 'todo';
+type FloatingMode = 'quickNote' | 'lyrics' | 'excerpt' | 'todo';
 
 const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote }) => {
   // 从 localStorage 加载初始状态
   const loadInitialState = () => {
     const savedMode = localStorage.getItem('floatingMode') as FloatingMode | null;
+    const savedLastNonTodoMode = localStorage.getItem('floatingLastNonTodoMode') as FloatingMode | null;
     const savedIsOpen = localStorage.getItem('floatingWindowOpen');
     const savedWindowPos = localStorage.getItem('floatingWindowPosition');
     const savedButtonPos = localStorage.getItem('floatingButtonPosition');
     const savedQuickNote = localStorage.getItem('floatingQuickNoteTemp');
+    const savedLyrics = localStorage.getItem('floatingLyricsTemp');
+    const savedExcerpt = localStorage.getItem('floatingExcerptTemp');
     const savedTodo = localStorage.getItem('floatingTodo');
 
     return {
       mode: savedMode || 'quickNote',
+      lastNonTodoMode: savedLastNonTodoMode || 'quickNote',
       isWindowOpen: savedIsOpen === 'true',
       windowPosition: savedWindowPos ? JSON.parse(savedWindowPos) : { x: 100, y: 100 },
       buttonPosition: savedButtonPos ? JSON.parse(savedButtonPos) : { x: 40, y: 40 },
       quickNoteInput: savedQuickNote || '',
+      lyricsInput: savedLyrics || '',
+      excerptInput: savedExcerpt || '',
       todoInput: savedTodo || '',
     };
   };
@@ -33,8 +39,11 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
   const initialState = loadInitialState();
 
   const [mode, setMode] = useState<FloatingMode>(initialState.mode); // 当前模式
+  const [lastNonTodoMode, setLastNonTodoMode] = useState<FloatingMode>(initialState.lastNonTodoMode); // 上一次的非待办模式
   const [isWindowOpen, setIsWindowOpen] = useState(initialState.isWindowOpen);
   const [quickNoteInput, setQuickNoteInput] = useState(initialState.quickNoteInput);
+  const [lyricsInput, setLyricsInput] = useState(initialState.lyricsInput); // 歌词输入内容
+  const [excerptInput, setExcerptInput] = useState(initialState.excerptInput); // 摘抄输入内容
   const [todoInput, setTodoInput] = useState(initialState.todoInput); // 待办输入内容
   const [buttonPosition, setButtonPosition] = useState(initialState.buttonPosition); // 悬浮球距离右下角的距离
   const [windowPosition, setWindowPosition] = useState(initialState.windowPosition); // 悬浮窗位置(距离左上角)
@@ -58,6 +67,11 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
   // 保存模式到 localStorage
   useEffect(() => {
     localStorage.setItem('floatingMode', mode);
+    // 如果不是待办模式，保存为lastNonTodoMode
+    if (mode !== 'todo') {
+      setLastNonTodoMode(mode);
+      localStorage.setItem('floatingLastNonTodoMode', mode);
+    }
   }, [mode]);
 
   // 保存窗口状态到 localStorage
@@ -80,6 +94,16 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
     localStorage.setItem('floatingQuickNoteTemp', quickNoteInput);
   }, [quickNoteInput]);
 
+  // 自动保存歌词内容到 localStorage
+  useEffect(() => {
+    localStorage.setItem('floatingLyricsTemp', lyricsInput);
+  }, [lyricsInput]);
+
+  // 自动保存摘抄内容到 localStorage
+  useEffect(() => {
+    localStorage.setItem('floatingExcerptTemp', excerptInput);
+  }, [excerptInput]);
+
   // 自动保存待办内容到 localStorage
   useEffect(() => {
     localStorage.setItem('floatingTodo', todoInput);
@@ -99,17 +123,26 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
     }
   }, [isWindowOpen, mode]); // 添加 mode 依赖,切换模式时也重新定位光标
 
-  // 处理右键点击切换模式
+  // 处理右键点击切换模式（记录模式 ↔ 待办）
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // 切换模式
-    const newMode = mode === 'quickNote' ? 'todo' : 'quickNote';
+    // 右键在记录模式和待办之间切换，切回时恢复到上一次的记录模式
+    const newMode = mode === 'todo' ? lastNonTodoMode : 'todo';
     setMode(newMode);
     
     // 如果悬浮窗关闭,不打开;如果已打开,保持打开状态(这样可以看到切换后的内容)
     return false;
+  };
+
+  // 处理模式切换按钮点击（速记 → 歌词 → 摘抄 → 速记）
+  const handleModeSwitch = () => {
+    // 循环切换：速记 → 歌词 → 摘抄 → 速记
+    const modeOrder: FloatingMode[] = ['quickNote', 'lyrics', 'excerpt'];
+    const currentIndex = modeOrder.indexOf(mode);
+    const nextIndex = (currentIndex + 1) % modeOrder.length;
+    setMode(modeOrder[nextIndex]);
   };
 
   // ========== 悬浮球拖动相关 ==========
@@ -247,11 +280,17 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
 
   // 处理键盘事件
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (mode === 'quickNote') {
+    if (mode === 'quickNote' || mode === 'lyrics' || mode === 'excerpt') {
       if (e.key === 'Enter' && e.ctrlKey) {
         e.preventDefault();
         e.stopPropagation(); // 阻止事件冒泡，避免全局生效
-        handleAddQuickNote();
+        if (mode === 'quickNote') {
+          handleAddQuickNote();
+        } else if (mode === 'lyrics') {
+          handleAddLyrics();
+        } else if (mode === 'excerpt') {
+          handleAddExcerpt();
+        }
       } else if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
@@ -290,22 +329,107 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
     localStorage.setItem('floatingQuickNoteTemp', '');
   };
 
+  // 添加歌词
+  const handleAddLyrics = () => {
+    const trimmedContent = lyricsInput.trim();
+    
+    if (!trimmedContent) {
+      toast.error('歌词内容不能为空！');
+      return;
+    }
+
+    if (trimmedContent.length > MAX_QUICK_NOTE_LENGTH) {
+      toast.error(`歌词内容不能超过 ${MAX_QUICK_NOTE_LENGTH} 个字符！`);
+      return;
+    }
+
+    // 导入并调用 music utils 的 addQuickNote
+    import('@/utils/music').then(({ addQuickNote }) => {
+      addQuickNote(trimmedContent);
+      // 触发全局事件通知音乐页面更新
+      window.dispatchEvent(new Event('quickNoteAdded'));
+      toast.success('歌词添加成功！');
+      
+      // 清空歌词内容
+      setLyricsInput('');
+      localStorage.setItem('floatingLyricsTemp', '');
+    }).catch((error) => {
+      console.error('添加歌词失败:', error);
+      toast.error('添加歌词失败！');
+    });
+  };
+
+  // 添加摘抄
+  const handleAddExcerpt = () => {
+    const trimmedContent = excerptInput.trim();
+    
+    if (!trimmedContent) {
+      toast.error('摘抄内容不能为空！');
+      return;
+    }
+
+    if (trimmedContent.length > MAX_QUICK_NOTE_LENGTH) {
+      toast.error(`摘抄内容不能超过 ${MAX_QUICK_NOTE_LENGTH} 个字符！`);
+      return;
+    }
+
+    // 导入并调用 reading utils 的 addQuickNote
+    import('@/utils/reading').then(({ addQuickNote }) => {
+      addQuickNote(trimmedContent);
+      // 触发全局事件通知阅读页面更新
+      window.dispatchEvent(new Event('quickNoteAdded'));
+      toast.success('摘抄添加成功！');
+      
+      // 清空摘抄内容
+      setExcerptInput('');
+      localStorage.setItem('floatingExcerptTemp', '');
+    }).catch((error) => {
+      console.error('添加摘抄失败:', error);
+      toast.error('添加摘抄失败！');
+    });
+  };
+
   // 获取剩余字符数
   const getRemainingChars = () => {
     if (mode === 'quickNote') {
       return MAX_QUICK_NOTE_LENGTH - quickNoteInput.length;
+    } else if (mode === 'lyrics') {
+      return MAX_QUICK_NOTE_LENGTH - lyricsInput.length;
+    } else if (mode === 'excerpt') {
+      return MAX_QUICK_NOTE_LENGTH - excerptInput.length;
     }
     return 0; // 待办模式不限制字符数
   };
 
   // 获取当前模式的图标
   const getModeIcon = () => {
-    return mode === 'quickNote' ? '💭' : '📝';
+    // 记录模式统一使用速记logo，待办模式使用独立logo
+    if (mode === 'todo') return '📝';
+    return '💭';
   };
 
   // 获取当前模式的标题
   const getModeTitle = () => {
-    return mode === 'quickNote' ? '速记' : '待办';
+    if (mode === 'quickNote') return '速记';
+    if (mode === 'lyrics') return '歌词';
+    if (mode === 'excerpt') return '摘抄';
+    return '待办';
+  };
+
+  // 获取当前输入内容
+  const getCurrentInput = () => {
+    if (mode === 'quickNote') return quickNoteInput;
+    if (mode === 'lyrics') return lyricsInput;
+    if (mode === 'excerpt') return excerptInput;
+    return todoInput;
+  };
+
+  // 设置当前输入内容
+  const setCurrentInput = (value: string) => {
+    if (mode === 'quickNote') setQuickNoteInput(value);
+    else if (mode === 'lyrics') setLyricsInput(value);
+    else if (mode === 'excerpt') setExcerptInput(value);
+    else setTodoInput(value);
   };
 
   return (
@@ -316,7 +440,7 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
         style={{ bottom: `${buttonPosition.y}px`, right: `${buttonPosition.x}px` }}
         onContextMenu={handleContextMenu}
         onMouseDown={handleButtonMouseDown}
-        title={`${getModeTitle()}（右键切换模式）`}
+        title={`${getModeTitle()}（右键切换速记/待办）`}
       >
         <span className="floating-icon">{getModeIcon()}</span>
       </div>
@@ -331,23 +455,38 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
             className={`window-header ${isWindowDragging ? 'dragging' : ''}`}
             onMouseDown={handleWindowMouseDown}
           >
-            <h3>{getModeIcon()} {getModeTitle()}</h3>
+            <div className="header-title">
+              <h3>{getModeIcon()} {getModeTitle()}</h3>
+              <button 
+                className="mode-switch-btn" 
+                onClick={handleModeSwitch}
+                title="切换模式（速记/歌词/摘抄）"
+              >
+                🔄
+              </button>
+            </div>
             <button className="close-btn" onClick={handleCloseWindow}>✕</button>
           </div>
           <div className="window-body">
-            {mode === 'quickNote' ? (
+            {mode === 'quickNote' || mode === 'lyrics' || mode === 'excerpt' ? (
               <>
                 <textarea
                   ref={textareaRef}
-                  placeholder="记录你的灵感（自动保存）&#10;按 Ctrl+Enter 新增到日记-速记列表"
-                  value={quickNoteInput}
-                  onChange={(e) => setQuickNoteInput(e.target.value)}
+                  placeholder={
+                    mode === 'quickNote' 
+                      ? "记录你的灵感（自动保存）&#10;按 Ctrl+Enter 新增到日记-速记列表"
+                      : mode === 'lyrics'
+                      ? "记录喜爱的歌词（自动保存）&#10;按 Ctrl+Enter 新增到乐记-歌词列表"
+                      : "摘抄喜欢的文字（自动保存）&#10;按 Ctrl+Enter 新增到书记-摘抄列表"
+                  }
+                  value={getCurrentInput()}
+                  onChange={(e) => setCurrentInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   maxLength={MAX_QUICK_NOTE_LENGTH}
                 />
                 <div className="char-count">
                   <span className={getRemainingChars() < 20 ? 'warning' : ''}>
-                    {quickNoteInput.length}/{MAX_QUICK_NOTE_LENGTH}
+                    {getCurrentInput().length}/{MAX_QUICK_NOTE_LENGTH}
                   </span>
                   <span className="save-hint">Ctrl+Enter 保存</span>
                 </div>

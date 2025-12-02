@@ -1012,7 +1012,7 @@ const Medical: React.FC = () => {
               <section className="medical-section" ref={recoveryRef}>
                 <h3 className="section-title">
                   <span className="icon">💪</span>
-                  康复与自我管理
+                  康复与健康记录
                 </h3>
                 <div className="section-content">
                   <div className="recovery-tips">
@@ -1041,7 +1041,7 @@ const Medical: React.FC = () => {
                       <h4>📚 疾病教育</h4>
                       <p>
                         了解食管裂孔疝的病理机制、治疗方法和预后,
-                        从权威医疗机构获取信息,提高自我管理能力。
+                        从权威医疗机构获取信息,提高健康管理能力。
                       </p>
                     </div>
                     <div className="tip-box">

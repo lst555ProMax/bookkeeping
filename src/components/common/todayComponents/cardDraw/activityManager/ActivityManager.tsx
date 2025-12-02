@@ -10,7 +10,8 @@ import {
   deleteActivityCategory,
   addActivityItem,
   updateActivityItem,
-  deleteActivityItem
+  deleteActivityItem,
+  validateProbabilities
 } from '@/utils';
 import './ActivityManager.scss';
 
@@ -26,28 +27,92 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
   const [editing, setEditing] = useState<{ type: 'category' | 'item'; id: string } | null>(null);
   const [error, setError] = useState('');
   const [editingCategoryName, setEditingCategoryName] = useState('');
-  const [editingCategoryProb, setEditingCategoryProb] = useState(0);
+  const [editingCategoryProb, setEditingCategoryProb] = useState<number | ''>(0);
   const [editingItemName, setEditingItemName] = useState('');
-  const [editingItemProb, setEditingItemProb] = useState(0);
+  const [editingItemProb, setEditingItemProb] = useState<number | ''>(0);
 
   useEffect(() => {
-    loadConfig();
+    const loaded = loadConfig();
+    // 页面加载时校验配置，如果不符合条件则重置为默认值
+    const validation = validateProbabilities(loaded);
+    if (!validation.valid) {
+      console.warn('活动配置不符合保存条件，已自动重置为默认配置:', validation.message);
+      resetActivityConfig();
+      const resetLoaded = loadConfig();
+      // 重置后默认选中第一个分类
+      if (resetLoaded.length > 0) {
+        setSelectedCategoryId(resetLoaded[0].id);
+      } else {
+        setSelectedCategoryId(null);
+      }
+      onConfigChange();
+      toast.error('配置不符合保存条件，已重置为默认配置');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 处理关闭逻辑：校验配置，如果不符合条件则提示用户
+  const handleClose = () => {
+    // 先退出编辑状态（如果有的话）
+    if (editing) {
+      setEditing(null);
+      setEditingCategoryName('');
+      setEditingCategoryProb('');
+      setEditingItemName('');
+      setEditingItemProb('');
+      // 重新加载配置以确保使用最新保存的值
+      loadConfig();
+    }
+
+    // 校验当前配置
+    const currentConfig = loadActivityConfig();
+    const validation = validateProbabilities(currentConfig);
+    if (!validation.valid) {
+      const shouldExit = confirm(
+        `当前配置不符合保存条件：\n\n${validation.message}\n\n如果退出，配置将重置为默认值。\n\n确定要退出吗？`
+      );
+      if (shouldExit) {
+        // 重置为默认配置
+        resetActivityConfig();
+        setEditing(null);
+        setError('');
+        const loaded = loadConfig();
+        // 重置后默认选中第一个分类
+        if (loaded.length > 0) {
+          setSelectedCategoryId(loaded[0].id);
+        } else {
+          setSelectedCategoryId(null);
+        }
+        onConfigChange();
+        onClose();
+        toast.success('已重置为默认配置');
+      }
+      // 如果用户取消，不关闭模态框
+    } else {
+      // 配置正确，直接关闭
+      onClose();
+    }
+  };
+
   // ESC退出绑定（在捕获阶段处理，优先于今日活动界面）
+  // 同时阻止 Ctrl+Enter 事件冒泡到表单组件
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation(); // 阻止事件传播到今日活动界面
-        onClose();
+        handleClose();
+      }
+      // 阻止 Ctrl+Enter 事件冒泡到表单组件
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.stopPropagation(); // 阻止事件传播到表单组件
       }
     };
     window.addEventListener('keydown', handleKeyDown, true); // 使用捕获阶段
     return () => {
       window.removeEventListener('keydown', handleKeyDown, true);
     };
-  }, [onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config]);
 
   const loadConfig = () => {
     const loaded = loadActivityConfig();
@@ -252,7 +317,13 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
   const cancelEditItem = () => {
     setEditing(null);
     setEditingItemName('');
-    setEditingItemProb(0);
+    setEditingItemProb('');
+  };
+
+  const cancelEditCategory = () => {
+    setEditing(null);
+    setEditingCategoryName('');
+    setEditingCategoryProb('');
   };
 
   const saveEditItem = (categoryId: string, itemId: string) => {
@@ -263,6 +334,12 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
 
     if (editingItemName.trim().length > 5) {
       toast.error('活动名称不能超过5个字');
+      return;
+    }
+
+    // 校验概率输入
+    if (editingItemProb === '' || editingItemProb === null || editingItemProb === undefined) {
+      toast.error('请输入活动概率');
       return;
     }
 
@@ -279,18 +356,28 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
 
     handleUpdateItem(categoryId, itemId, {
       name: editingItemName.trim(),
-      probability: editingItemProb / 100
+      probability: Number(editingItemProb) / 100
     });
   };
 
   // 保存一级分类编辑
   const saveEditCategory = (categoryId: string) => {
-    if (editingCategoryName.trim()) {
-      handleUpdateCategory(categoryId, {
-        name: editingCategoryName.trim(),
-        totalProbability: editingCategoryProb / 100
-      });
+    // 校验分类名称
+    if (!editingCategoryName.trim()) {
+      toast.error('分类名称不能为空');
+      return;
     }
+
+    // 校验概率输入
+    if (editingCategoryProb === '' || editingCategoryProb === null || editingCategoryProb === undefined) {
+      toast.error('请输入分类概率');
+      return;
+    }
+
+    handleUpdateCategory(categoryId, {
+      name: editingCategoryName.trim(),
+      totalProbability: Number(editingCategoryProb) / 100
+    });
   };
 
   // 处理一级分类编辑时的键盘事件
@@ -336,7 +423,13 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
       resetActivityConfig();
       setEditing(null); // 退出编辑状态
       setError(''); // 清空错误信息
-      loadConfig();
+      const loaded = loadConfig();
+      // 重置后默认选中第一个分类
+      if (loaded.length > 0) {
+        setSelectedCategoryId(loaded[0].id);
+      } else {
+        setSelectedCategoryId(null);
+      }
       onConfigChange();
       toast.success(' 重置成功！');
     }
@@ -382,7 +475,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
 
   return ReactDOM.createPortal(
     <div className="activity-manager">
-      <div className="activity-manager__overlay" onClick={onClose} />
+      <div className="activity-manager__overlay" />
       <div className="activity-manager__modal">
         <div className="activity-manager__header">
           <h2>活动配置管理</h2>
@@ -403,7 +496,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
             </button>
             <button 
               className="activity-manager__btn-close" 
-              onClick={onClose}
+              onClick={handleClose}
               title="关闭"
             >
               ✕
@@ -455,7 +548,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                           value={editingCategoryName}
                           onChange={(e) => setEditingCategoryName(e.target.value)}
                           onKeyDown={(e) => handleCategoryKeyDown(e, category.id)}
-                          placeholder="分类名称（最多4个字）"
+                          placeholder="分类名称"
                           maxLength={4}
                           autoFocus
                         />
@@ -464,8 +557,15 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                           className="activity-manager__edit-prob"
                           value={editingCategoryProb}
                           onChange={(e) => {
-                            const val = parseInt(e.target.value) || 0;
-                            setEditingCategoryProb(Math.max(0, Math.min(100, val)));
+                            const val = e.target.value;
+                            if (val === '') {
+                              setEditingCategoryProb('');
+                            } else {
+                              const numVal = parseInt(val);
+                              if (!isNaN(numVal)) {
+                                setEditingCategoryProb(Math.max(0, Math.min(100, numVal)));
+                              }
+                            }
                           }}
                           onKeyDown={(e) => handleCategoryKeyDown(e, category.id)}
                           min="0"
@@ -474,7 +574,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                         />
                         <button
                           className="activity-manager__btn-cancel-edit"
-                          onClick={() => setEditing(null)}
+                          onClick={cancelEditCategory}
                         >
                           ❌
                         </button>
@@ -575,7 +675,7 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                               value={editingItemName}
                               onChange={(e) => setEditingItemName(e.target.value)}
                               onKeyDown={(e) => handleItemKeyDown(e, selectedCategory.id, item.id)}
-                              placeholder="活动名称（最多5个字）"
+                              placeholder="活动名称"
                               maxLength={5}
                               autoFocus
                             />
@@ -584,8 +684,15 @@ const ActivityManager: React.FC<ActivityManagerProps> = ({ onClose, onConfigChan
                               className="activity-manager__item-prob-input-edit"
                               value={editingItemProb}
                               onChange={(e) => {
-                                const val = parseInt(e.target.value) || 0;
-                                setEditingItemProb(Math.max(0, Math.min(100, val)));
+                                const val = e.target.value;
+                                if (val === '') {
+                                  setEditingItemProb('');
+                                } else {
+                                  const numVal = parseInt(val);
+                                  if (!isNaN(numVal)) {
+                                    setEditingItemProb(Math.max(0, Math.min(100, numVal)));
+                                  }
+                                }
                               }}
                               onKeyDown={(e) => handleItemKeyDown(e, selectedCategory.id, item.id)}
                               min="0"

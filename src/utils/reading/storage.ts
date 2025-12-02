@@ -66,7 +66,7 @@ export const updateReadingExcerpt = (id: string, content: string): QuickNote | n
   excerpts[index] = {
     ...excerpts[index],
     content,
-    timestamp: Date.now(), // 更新时间戳
+    // 保持创建时间不变，不更新timestamp
   };
   
   saveReadingExcerpts(excerpts);
