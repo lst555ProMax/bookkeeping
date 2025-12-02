@@ -443,6 +443,87 @@ export const importAllSampleData = async (): Promise<void> => {
 };
 
 /**
+ * 显示加载提示
+ */
+const showLoadingOverlay = (message: string): HTMLDivElement => {
+  const overlay = document.createElement('div');
+  overlay.id = 'sample-data-loading-overlay';
+  overlay.innerHTML = `
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <div class="loading-message">${message}</div>
+    </div>
+  `;
+  
+  const style = document.createElement('style');
+  style.textContent = `
+    #sample-data-loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .loading-content {
+      text-align: center;
+      color: white;
+      padding: 40px;
+      background: rgba(42, 42, 42, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      max-width: 400px;
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(100, 108, 255, 0.2);
+      border-top-color: #646cff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-message {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      white-space: pre-line;
+    }
+  `;
+  
+  document.head.appendChild(style);
+  document.body.appendChild(overlay);
+  return overlay;
+};
+
+/**
+ * 移除加载提示
+ */
+const hideLoadingOverlay = (): void => {
+  const overlay = document.getElementById('sample-data-loading-overlay');
+  if (overlay) {
+    overlay.remove();
+  }
+};
+
+/**
  * 检查并提示导入示例数据
  * 在应用启动时调用此函数
  */
@@ -458,20 +539,28 @@ export const checkAndPromptSampleData = async (): Promise<void> => {
     '检测到您可能是第一次访问当前网页，是否导入示例数据、开发者个人的记录以及对这个项目的详细介绍？导入示例数据将会清空您当前的所有数据。'
   );
   
-  // 标记已提示过，避免下次再弹窗
-  setSampleDataImported(true);
-  
   // 只在用户确认时导入数据
   if (userConfirmed) {
     try {
+      // 显示加载提示
+      showLoadingOverlay('正在导入示例数据...\n\n导入时长受网络影响较大，请勿刷新界面，耐心等待直到提示成功为止');
+      
       await importAllSampleData();
+      
+      // 导入成功后才标记为已导入
+      setSampleDataImported(true);
+      
+      hideLoadingOverlay();
       alert('示例数据导入成功！页面将自动刷新以显示数据。');
       window.location.reload();
     } catch (error) {
+      hideLoadingOverlay();
       console.error('导入示例数据失败:', error);
       alert('导入示例数据时发生错误，请检查控制台了解详情。');
     }
   } else {
+    // 用户取消也标记已提示过，避免重复弹窗
+    setSampleDataImported(true);
     console.log('用户取消导入示例数据');
   }
 };
