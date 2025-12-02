@@ -15,7 +15,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-01T15:51:00.000Z"
+      "createdAt": "2025-10-01T15:51:00.000Z",
+      "duration": 630
     },
     {
       "id": "sleep_sample_10",
@@ -30,7 +31,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-10T12:07:00.000Z"
+      "createdAt": "2025-10-10T12:07:00.000Z",
+      "duration": 405
     },
     {
       "id": "sleep_sample_20",
@@ -45,7 +47,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-20T15:11:00.000Z"
+      "createdAt": "2025-10-20T15:11:00.000Z",
+      "duration": 780
     },
     {
       "id": "sleep_sample_25",
@@ -60,7 +63,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-25T12:11:00.000Z"
+      "createdAt": "2025-10-25T12:11:00.000Z",
+      "duration": 540
     },
     {
       "id": "sleep_sample_31",
@@ -75,7 +79,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-31T13:15:00.000Z"
+      "createdAt": "2025-10-31T13:15:00.000Z",
+      "duration": 555
     },
     {
       "id": "sleep_sample_32",
@@ -90,7 +95,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-01T13:48:00.000Z"
+      "createdAt": "2025-11-01T13:48:00.000Z",
+      "duration": 345
     },
     {
       "id": "sleep_sample_41",
@@ -105,7 +111,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-10T13:40:00.000Z"
+      "createdAt": "2025-11-10T13:40:00.000Z",
+      "duration": 630
     },
     {
       "id": "sleep_sample_51",
@@ -120,7 +127,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-20T15:30:00.000Z"
+      "createdAt": "2025-11-20T15:30:00.000Z",
+      "duration": 585
     },
     {
       "id": "sleep_sample_56",
@@ -135,7 +143,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-25T15:54:00.000Z"
+      "createdAt": "2025-11-25T15:54:00.000Z",
+      "duration": 690
     },
     {
       "id": "sleep_sample_59",
@@ -150,9 +159,9 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-28T13:45:00.000Z"
+      "createdAt": "2025-11-28T13:45:00.000Z",
+      "duration": 750
     }
   ],
   "totalRecords": 10
 }
-

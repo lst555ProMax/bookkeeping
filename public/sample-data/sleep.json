@@ -15,7 +15,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-01T15:51:00.000Z"
+      "createdAt": "2025-10-01T15:51:00.000Z",
+      "duration": 630
     },
     {
       "id": "sleep_sample_2",
@@ -30,7 +31,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-02T13:08:00.000Z"
+      "createdAt": "2025-10-02T13:08:00.000Z",
+      "duration": 525
     },
     {
       "id": "sleep_sample_3",
@@ -45,7 +47,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-03T14:33:00.000Z"
+      "createdAt": "2025-10-03T14:33:00.000Z",
+      "duration": 480
     },
     {
       "id": "sleep_sample_4",
@@ -60,7 +63,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-04T13:14:00.000Z"
+      "createdAt": "2025-10-04T13:14:00.000Z",
+      "duration": 630
     },
     {
       "id": "sleep_sample_5",
@@ -75,7 +79,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-05T15:53:00.000Z"
+      "createdAt": "2025-10-05T15:53:00.000Z",
+      "duration": 420
     },
     {
       "id": "sleep_sample_6",
@@ -90,7 +95,8 @@
         "evening": true
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-06T15:30:00.000Z"
+      "createdAt": "2025-10-06T15:30:00.000Z",
+      "duration": 645
     },
     {
       "id": "sleep_sample_7",
@@ -105,7 +111,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-07T12:24:00.000Z"
+      "createdAt": "2025-10-07T12:24:00.000Z",
+      "duration": 630
     },
     {
       "id": "sleep_sample_8",
@@ -120,7 +127,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-08T12:48:00.000Z"
+      "createdAt": "2025-10-08T12:48:00.000Z",
+      "duration": 585
     },
     {
       "id": "sleep_sample_9",
@@ -135,7 +143,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-09T13:13:00.000Z"
+      "createdAt": "2025-10-09T13:13:00.000Z",
+      "duration": 495
     },
     {
       "id": "sleep_sample_10",
@@ -150,7 +159,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-10T12:07:00.000Z"
+      "createdAt": "2025-10-10T12:07:00.000Z",
+      "duration": 405
     },
     {
       "id": "sleep_sample_11",
@@ -165,7 +175,8 @@
         "evening": true
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-11T12:46:00.000Z"
+      "createdAt": "2025-10-11T12:46:00.000Z",
+      "duration": 450
     },
     {
       "id": "sleep_sample_12",
@@ -180,7 +191,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-12T13:46:00.000Z"
+      "createdAt": "2025-10-12T13:46:00.000Z",
+      "duration": 585
     },
     {
       "id": "sleep_sample_13",
@@ -195,7 +207,8 @@
         "evening": true
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-13T15:32:00.000Z"
+      "createdAt": "2025-10-13T15:32:00.000Z",
+      "duration": 765
     },
     {
       "id": "sleep_sample_14",
@@ -210,7 +223,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-14T14:54:00.000Z"
+      "createdAt": "2025-10-14T14:54:00.000Z",
+      "duration": 360
     },
     {
       "id": "sleep_sample_15",
@@ -225,7 +239,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-15T14:14:00.000Z"
+      "createdAt": "2025-10-15T14:14:00.000Z",
+      "duration": 480
     },
     {
       "id": "sleep_sample_16",
@@ -240,7 +255,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-16T13:51:00.000Z"
+      "createdAt": "2025-10-16T13:51:00.000Z",
+      "duration": 405
     },
     {
       "id": "sleep_sample_17",
@@ -255,7 +271,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-17T15:40:00.000Z"
+      "createdAt": "2025-10-17T15:40:00.000Z",
+      "duration": 570
     },
     {
       "id": "sleep_sample_18",
@@ -270,7 +287,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-18T13:35:00.000Z"
+      "createdAt": "2025-10-18T13:35:00.000Z",
+      "duration": 615
     },
     {
       "id": "sleep_sample_19",
@@ -285,7 +303,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-19T13:53:00.000Z"
+      "createdAt": "2025-10-19T13:53:00.000Z",
+      "duration": 510
     },
     {
       "id": "sleep_sample_20",
@@ -300,7 +319,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-20T15:11:00.000Z"
+      "createdAt": "2025-10-20T15:11:00.000Z",
+      "duration": 780
     },
     {
       "id": "sleep_sample_21",
@@ -315,7 +335,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-21T12:11:00.000Z"
+      "createdAt": "2025-10-21T12:11:00.000Z",
+      "duration": 570
     },
     {
       "id": "sleep_sample_22",
@@ -330,7 +351,8 @@
         "evening": true
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-22T14:45:00.000Z"
+      "createdAt": "2025-10-22T14:45:00.000Z",
+      "duration": 570
     },
     {
       "id": "sleep_sample_23",
@@ -345,7 +367,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-23T12:46:00.000Z"
+      "createdAt": "2025-10-23T12:46:00.000Z",
+      "duration": 660
     },
     {
       "id": "sleep_sample_24",
@@ -360,7 +383,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-24T14:31:00.000Z"
+      "createdAt": "2025-10-24T14:31:00.000Z",
+      "duration": 540
     },
     {
       "id": "sleep_sample_25",
@@ -375,7 +399,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-25T12:11:00.000Z"
+      "createdAt": "2025-10-25T12:11:00.000Z",
+      "duration": 540
     },
     {
       "id": "sleep_sample_26",
@@ -390,7 +415,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-26T14:27:00.000Z"
+      "createdAt": "2025-10-26T14:27:00.000Z",
+      "duration": 705
     },
     {
       "id": "sleep_sample_27",
@@ -405,7 +431,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-27T13:28:00.000Z"
+      "createdAt": "2025-10-27T13:28:00.000Z",
+      "duration": 525
     },
     {
       "id": "sleep_sample_28",
@@ -420,7 +447,8 @@
         "evening": true
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-28T14:10:00.000Z"
+      "createdAt": "2025-10-28T14:10:00.000Z",
+      "duration": 450
     },
     {
       "id": "sleep_sample_29",
@@ -435,7 +463,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-29T15:10:00.000Z"
+      "createdAt": "2025-10-29T15:10:00.000Z",
+      "duration": 630
     },
     {
       "id": "sleep_sample_30",
@@ -450,7 +479,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-30T15:51:00.000Z"
+      "createdAt": "2025-10-30T15:51:00.000Z",
+      "duration": 630
     },
     {
       "id": "sleep_sample_31",
@@ -465,7 +495,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-10-31T13:15:00.000Z"
+      "createdAt": "2025-10-31T13:15:00.000Z",
+      "duration": 555
     },
     {
       "id": "sleep_sample_32",
@@ -480,7 +511,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-01T13:48:00.000Z"
+      "createdAt": "2025-11-01T13:48:00.000Z",
+      "duration": 345
     },
     {
       "id": "sleep_sample_33",
@@ -495,7 +527,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-02T12:23:00.000Z"
+      "createdAt": "2025-11-02T12:23:00.000Z",
+      "duration": 480
     },
     {
       "id": "sleep_sample_34",
@@ -510,7 +543,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-03T12:12:00.000Z"
+      "createdAt": "2025-11-03T12:12:00.000Z",
+      "duration": 585
     },
     {
       "id": "sleep_sample_35",
@@ -525,7 +559,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-04T14:44:00.000Z"
+      "createdAt": "2025-11-04T14:44:00.000Z",
+      "duration": 480
     },
     {
       "id": "sleep_sample_36",
@@ -540,7 +575,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-05T13:07:00.000Z"
+      "createdAt": "2025-11-05T13:07:00.000Z",
+      "duration": 450
     },
     {
       "id": "sleep_sample_37",
@@ -555,7 +591,8 @@
         "evening": true
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-06T13:52:00.000Z"
+      "createdAt": "2025-11-06T13:52:00.000Z",
+      "duration": 525
     },
     {
       "id": "sleep_sample_38",
@@ -570,7 +607,8 @@
         "evening": true
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-07T12:50:00.000Z"
+      "createdAt": "2025-11-07T12:50:00.000Z",
+      "duration": 525
     },
     {
       "id": "sleep_sample_39",
@@ -585,7 +623,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-08T12:46:00.000Z"
+      "createdAt": "2025-11-08T12:46:00.000Z",
+      "duration": 660
     },
     {
       "id": "sleep_sample_40",
@@ -600,7 +639,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-09T14:11:00.000Z"
+      "createdAt": "2025-11-09T14:11:00.000Z",
+      "duration": 720
     },
     {
       "id": "sleep_sample_41",
@@ -615,7 +655,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-10T13:40:00.000Z"
+      "createdAt": "2025-11-10T13:40:00.000Z",
+      "duration": 630
     },
     {
       "id": "sleep_sample_42",
@@ -630,7 +671,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-11T15:30:00.000Z"
+      "createdAt": "2025-11-11T15:30:00.000Z",
+      "duration": 540
     },
     {
       "id": "sleep_sample_43",
@@ -645,7 +687,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-12T14:07:00.000Z"
+      "createdAt": "2025-11-12T14:07:00.000Z",
+      "duration": 570
     },
     {
       "id": "sleep_sample_44",
@@ -660,7 +703,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-13T12:45:00.000Z"
+      "createdAt": "2025-11-13T12:45:00.000Z",
+      "duration": 795
     },
     {
       "id": "sleep_sample_45",
@@ -675,7 +719,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-14T12:22:00.000Z"
+      "createdAt": "2025-11-14T12:22:00.000Z",
+      "duration": 555
     },
     {
       "id": "sleep_sample_46",
@@ -690,7 +735,8 @@
         "evening": true
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-15T14:25:00.000Z"
+      "createdAt": "2025-11-15T14:25:00.000Z",
+      "duration": 450
     },
     {
       "id": "sleep_sample_47",
@@ -705,7 +751,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-16T15:48:00.000Z"
+      "createdAt": "2025-11-16T15:48:00.000Z",
+      "duration": 525
     },
     {
       "id": "sleep_sample_48",
@@ -720,7 +767,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-17T12:10:00.000Z"
+      "createdAt": "2025-11-17T12:10:00.000Z",
+      "duration": 540
     },
     {
       "id": "sleep_sample_49",
@@ -735,7 +783,8 @@
         "evening": true
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-18T15:07:00.000Z"
+      "createdAt": "2025-11-18T15:07:00.000Z",
+      "duration": 660
     },
     {
       "id": "sleep_sample_50",
@@ -750,7 +799,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-19T14:33:00.000Z"
+      "createdAt": "2025-11-19T14:33:00.000Z",
+      "duration": 480
     },
     {
       "id": "sleep_sample_51",
@@ -765,7 +815,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-20T15:30:00.000Z"
+      "createdAt": "2025-11-20T15:30:00.000Z",
+      "duration": 585
     },
     {
       "id": "sleep_sample_52",
@@ -780,7 +831,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-21T13:31:00.000Z"
+      "createdAt": "2025-11-21T13:31:00.000Z",
+      "duration": 585
     },
     {
       "id": "sleep_sample_53",
@@ -795,7 +847,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-22T15:15:00.000Z"
+      "createdAt": "2025-11-22T15:15:00.000Z",
+      "duration": 435
     },
     {
       "id": "sleep_sample_54",
@@ -810,7 +863,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-23T14:51:00.000Z"
+      "createdAt": "2025-11-23T14:51:00.000Z",
+      "duration": 570
     },
     {
       "id": "sleep_sample_55",
@@ -825,7 +879,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-24T12:17:00.000Z"
+      "createdAt": "2025-11-24T12:17:00.000Z",
+      "duration": 720
     },
     {
       "id": "sleep_sample_56",
@@ -840,7 +895,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-25T15:54:00.000Z"
+      "createdAt": "2025-11-25T15:54:00.000Z",
+      "duration": 690
     },
     {
       "id": "sleep_sample_57",
@@ -855,7 +911,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-26T15:06:00.000Z"
+      "createdAt": "2025-11-26T15:06:00.000Z",
+      "duration": 510
     },
     {
       "id": "sleep_sample_58",
@@ -870,7 +927,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-27T14:35:00.000Z"
+      "createdAt": "2025-11-27T14:35:00.000Z",
+      "duration": 570
     },
     {
       "id": "sleep_sample_59",
@@ -885,7 +943,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-28T13:45:00.000Z"
+      "createdAt": "2025-11-28T13:45:00.000Z",
+      "duration": 750
     },
     {
       "id": "sleep_sample_60",
@@ -900,7 +959,8 @@
         "evening": false
       },
       "notes": "示例数据",
-      "createdAt": "2025-11-29T14:20:00.000Z"
+      "createdAt": "2025-11-29T14:20:00.000Z",
+      "duration": 540
     }
   ],
   "totalRecords": 60

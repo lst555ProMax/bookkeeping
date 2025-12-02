@@ -256,6 +256,7 @@
     gap: 1.5rem;
     flex-shrink: 0;
     min-height: 0;
+    margin-bottom:2rem;
   }
 
   &__drawn-card {
@@ -395,7 +396,7 @@
     overflow-x: hidden;
 
     li {
-      padding: 0.4rem 0;
+      padding: 0.2rem 0;
       color: #666;
       font-size: 0.9rem;
       line-height: 1.6;
