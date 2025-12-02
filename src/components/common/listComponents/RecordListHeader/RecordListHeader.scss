@@ -10,29 +10,33 @@
   background: white;
   z-index: 10;
   gap: 1rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* 强制单行显示 */
+  min-width: 0; /* 允许 flex 子项收缩 */
 
   &__title {
     color: #333;
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0;
-    flex-shrink: 0;
-    width: 140px;
+    flex-shrink: 0; /* 防止标题被压缩 */
+    white-space: nowrap; /* 防止标题换行 */
   }
 
   &__search {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem; /* 减小间距 */
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* 强制单行显示 */
     flex: 1;
+    min-width: 0; /* 允许 flex 子项收缩 */
+    /* 移除 overflow: hidden，避免裁剪下拉菜单 */
 
     // 搜索组样式
     .search-group {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.3rem; /* 减小间距 */
+      flex-shrink: 0; /* 防止搜索组被压缩 */
     }
 
     .search-label {

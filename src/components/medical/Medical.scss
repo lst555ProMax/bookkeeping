@@ -43,20 +43,35 @@
     border-right: 1px solid #e0e0e0;
     padding: 2rem 1rem;
     flex-shrink: 0;
-    overflow-y: visible;
-    height: fit-content;
+    overflow: hidden; /* 导航容器本身不滚动 */
+    height: 100%; /* 占满父容器高度 */
     position: sticky;
     top: 0;
     align-self: flex-start;
+    display: flex;
+    flex-direction: column; /* 垂直布局 */
 
     .disease-select-wrapper {
       margin-bottom: 1.5rem;
+      flex-shrink: 0; /* 疾病选择器不收缩，固定在顶部 */
     }
 
     .nav-list {
       list-style: none;
       padding: 0;
       margin: 0;
+      flex: 1; /* 占据剩余空间 */
+      overflow-y: auto; /* 允许滚动 */
+      overflow-x: hidden; /* 防止水平滚动 */
+      min-height: 0; /* 允许 flex 子项收缩 */
+      
+      /* 隐藏滚动条但保持滚动功能 */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE 和 Edge */
+      
+      &::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+      }
 
       li {
         padding: 0.75rem 1rem;

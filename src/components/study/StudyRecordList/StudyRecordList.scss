@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden;
+  overflow: visible; /* 改为 visible，允许下拉菜单显示 */
 
   &__header {
     // 通用样式在 RecordListHeader 组件中
@@ -180,6 +180,8 @@
   overflow: hidden;
   transition: all 0.3s ease;
   margin-bottom: 0;
+  max-width: 100%; /* 限制最大宽度 */
+  min-width: 0; /* 允许收缩 */
 
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
@@ -210,6 +212,9 @@
     display: flex;
     flex-direction: column;
     gap: 0.55rem;
+    max-width: 100%; /* 限制最大宽度 */
+    overflow: hidden; /* 防止内容溢出 */
+    min-width: 0; /* 允许收缩 */
   }
 }
 
@@ -236,6 +241,9 @@
   background: #f8f9fa;
   border-radius: 8px;
   min-height: 48px;
+  max-width: 100%; /* 限制最大宽度 */
+  overflow: hidden; /* 防止内容溢出 */
+  min-width: 0; /* 允许 flex 子项收缩 */
 
   .section-title {
     font-size: 0.9rem;
@@ -257,6 +265,8 @@
     font-size: 0.9rem;
     line-height: 1.5;
     white-space: pre-wrap;
+    min-width: 0; /* 允许 flex 子项收缩 */
+    overflow: hidden; /* 防止内容溢出 */
   }
 }
 
@@ -302,6 +312,9 @@
   border-radius: 8px;
   flex-wrap: wrap;
   min-height: 48px;
+  max-width: 100%; /* 限制最大宽度 */
+  overflow: hidden; /* 防止内容溢出 */
+  min-width: 0; /* 允许 flex 子项收缩 */
 }
 
 .episode-info {
@@ -309,17 +322,22 @@
   align-items: center;
   gap: 0.5rem;
   flex-shrink: 0;
+  overflow: hidden; /* 防止内容溢出 */
 
   .info-label {
     font-size: 0.9rem;
     font-weight: 600;
     color: #495057;
+    white-space: nowrap; /* 防止标签换行 */
   }
 
   .info-value {
     font-size: 0.9rem;
     font-weight: 600;
     color: #6c757d;
+    overflow: hidden; /* 防止内容溢出 */
+    text-overflow: ellipsis; /* 文本溢出显示省略号 */
+    white-space: nowrap; /* 防止文本换行 */
   }
 }
 
@@ -330,12 +348,14 @@
   flex: 1;
   min-width: 0;
   justify-content: center;
+  overflow: hidden; /* 防止内容溢出 */
 
   .info-label {
     font-size: 0.9rem;
     font-weight: 600;
     color: #495057;
     flex-shrink: 0;
+    white-space: nowrap; /* 防止标签换行 */
   }
 
   .info-value {
@@ -343,6 +363,9 @@
     font-weight: 600;
     color: #6c757d;
     text-align: center;
+    overflow: hidden; /* 防止内容溢出 */
+    text-overflow: ellipsis; /* 文本溢出显示省略号 */
+    white-space: nowrap; /* 防止文本换行 */
   }
 }
 

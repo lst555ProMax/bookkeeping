@@ -321,7 +321,7 @@ const AccountingRecordForm: React.FC<AccountingRecordFormProps> = ({
         <h2 className="expense-form__title">
           {isEditing 
             ? (editingExpense ? '✏️ 编辑支出' : '✏️ 编辑收入')
-            : '💰 添加收支'
+            : '💰 添加收支记录'
           }
         </h2>
       </div>

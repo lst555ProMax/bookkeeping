@@ -338,7 +338,7 @@ const SleepList: React.FC<SleepListProps> = ({
                               <span className="info-value">{sleep.wakeTime}</span>
                             </div>
                             <div className="duration-info">
-                              <span className="info-label">⏱️ 睡眠时长</span>
+                              <span className="info-label">⏱️ 时长</span>
                               {sleep.duration !== undefined ? (
                                 <span className={`info-value ${getDurationColorClass(sleep.duration)}`}>
                                   {formatSleepDuration(sleep.duration)}
@@ -352,7 +352,7 @@ const SleepList: React.FC<SleepListProps> = ({
                           {/* 第二行：睡眠质量和小睡 */}
                           <div className="quality-naps-row">
                             <div className="quality-info">
-                              <span className="info-label">⭐ 睡眠质量</span>
+                              <span className="info-label">⭐ 质量</span>
                               <span className={`sleep-quality ${getQualityClass(sleep.quality)}`}>
                                 {getQualityEmoji(sleep.quality)} {sleep.quality}分 ({SLEEP_QUALITY_LABELS[getSleepQualityLevel(sleep.quality)]})
                               </span>

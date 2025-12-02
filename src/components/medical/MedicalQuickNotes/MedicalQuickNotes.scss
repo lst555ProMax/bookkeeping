@@ -19,7 +19,9 @@
     top: 0;
     background: white;
     z-index: 10;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* 强制单行显示 */
+    gap: 1rem; /* 添加间距 */
+    min-width: 0; /* 允许 flex 子项收缩 */
   }
 
   &__title {
@@ -28,6 +30,7 @@
     font-weight: 600;
     margin: 0;
     flex-shrink: 0;
+    white-space: nowrap; /* 防止标题换行 */
   }
 
   &__search {
@@ -35,9 +38,10 @@
     gap: 0.25rem;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* 强制单行显示 */
     flex: 1;
-    width: 140px;
+    min-width: 0; /* 允许收缩 */
+    overflow: hidden; /* 防止内容溢出 */
 
     .search-input {
       padding: 0.4rem 0.6rem;
@@ -58,6 +62,8 @@
 
       &--text {
         width: 140px;
+        min-width: 0; /* 允许收缩 */
+        flex: 1; /* 允许搜索框收缩 */
       }
 
       &::placeholder {

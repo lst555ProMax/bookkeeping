@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden;
+  overflow: visible; /* 改为 visible，允许下拉菜单显示 */
 
   &__header {
     // 通用样式在 RecordListHeader 组件中
@@ -160,6 +160,8 @@
   overflow: hidden;
   transition: all 0.3s ease;
   margin-bottom: 0;
+  max-width: 100%; /* 限制最大宽度 */
+  min-width: 0; /* 允许收缩 */
 
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
@@ -191,6 +193,9 @@
     display: flex;
     flex-direction: column;
     gap: 0.55rem;
+    max-width: 100%; /* 限制最大宽度 */
+    overflow: hidden; /* 防止内容溢出 */
+    min-width: 0; /* 允许收缩 */
   }
 }
 
@@ -223,6 +228,9 @@
   background: #f8f9fa;
   border-radius: 8px;
   min-height: 48px;
+  max-width: 100%; /* 限制最大宽度 */
+  overflow: hidden; /* 防止内容溢出 */
+  min-width: 0; /* 允许 flex 子项收缩 */
 
   .section-title {
     font-size: 0.9rem;
@@ -243,6 +251,8 @@
     color: #6c757d;
     font-size: 0.9rem;
     line-height: 1.5;
+    min-width: 0; /* 允许 flex 子项收缩 */
+    overflow: hidden; /* 防止内容溢出 */
   }
 }
 
@@ -256,6 +266,9 @@
   border-radius: 8px;
   align-items: center;
   min-height: 48px;
+  max-width: 100%; /* 限制最大宽度 */
+  overflow: hidden; /* 防止内容溢出 */
+  min-width: 0; /* 允许 grid 子项收缩 */
 }
 
 .time-info {
@@ -264,6 +277,7 @@
   gap: 0.5rem;
   min-width: 0;
   justify-content: flex-start;
+  overflow: hidden; /* 防止内容溢出 */
 
   .info-label {
     font-size: 0.9rem;
@@ -278,6 +292,9 @@
     font-weight: 600;
     color: #6c757d;
     text-align: left;
+    overflow: hidden; /* 防止内容溢出 */
+    text-overflow: ellipsis; /* 文本溢出显示省略号 */
+    white-space: nowrap; /* 防止文本换行 */
   }
 }
 
@@ -291,6 +308,15 @@
   border-radius: 8px;
   align-items: center;
   min-height: 48px;
+  max-width: 100%; /* 限制最大宽度 */
+  overflow: hidden; /* 防止内容溢出 */
+  min-width: 0; /* 允许 grid 子项收缩 */
+
+  /* 确保 grid 子项可以收缩 */
+  > * {
+    min-width: 0;
+    overflow: hidden;
+  }
 }
 
 .duration-info {
@@ -299,6 +325,7 @@
   gap: 0.5rem;
   min-width: 0;
   justify-content: flex-start;
+  overflow: hidden; /* 防止内容溢出 */
 
   .info-label {
     font-size: 0.9rem;
@@ -313,6 +340,9 @@
     font-weight: 600;
     color: #1ea5f9;
     text-align: left;
+    overflow: hidden; /* 防止内容溢出 */
+    text-overflow: ellipsis; /* 文本溢出显示省略号 */
+    white-space: nowrap; /* 防止文本换行 */
 
     &.duration--too-short {
       color: #dc3545;
@@ -341,6 +371,9 @@
   gap: 0.8rem;
   min-width: 0;
   justify-content: flex-start;
+  overflow: hidden; /* 防止内容溢出 */
+  flex: 1; /* 允许收缩 */
+  max-width: 100%; /* 限制最大宽度 */
 
   .info-label {
     font-size: 0.9rem;
@@ -348,6 +381,11 @@
     color: #495057;
     flex-shrink: 0;
     white-space: nowrap;
+  }
+
+  .sleep-quality {
+    flex-shrink: 1; /* 允许睡眠质量标签收缩 */
+    min-width: 0; /* 允许收缩到最小 */
   }
 }
 
@@ -360,6 +398,10 @@
   align-items: center;
   gap: 0.3rem;
   border: 1px solid;
+  max-width: 100%; /* 限制最大宽度 */
+  overflow: hidden; /* 防止内容溢出 */
+  white-space: nowrap; /* 防止文本换行 */
+  text-overflow: ellipsis; /* 文本溢出显示省略号 */
 
   &.quality--excellent {
     background: #d4edda;
@@ -394,6 +436,9 @@
   min-height: 48px;
   display: flex;
   align-items: center;
+  max-width: 100%; /* 限制最大宽度 */
+  overflow: hidden; /* 防止内容溢出 */
+  min-width: 0; /* 允许收缩 */
 }
 
 .sleep-naps {
@@ -402,6 +447,8 @@
   gap: 0.5rem;
   min-width: 0;
   justify-content: flex-start;
+  overflow: hidden; /* 防止内容溢出 */
+  flex: 1; /* 允许收缩 */
 
   .naps-label {
     font-size: 0.9rem;
@@ -415,18 +462,23 @@
     display: flex;
     gap: 0.4rem;
     flex-wrap: wrap;
+    min-width: 0; /* 允许标签组收缩 */
+    overflow: hidden; /* 防止内容溢出 */
+    flex: 1; /* 允许收缩 */
   }
 
   .nap-tag {
     display: inline-flex;
     align-items: center;
-    padding: 0.2rem 0.6rem;
+    padding: 0.2rem 0.5rem; /* 减小内边距 */
     border-radius: 5px;
-    font-size: 0.8rem;
+    font-size: 0.75rem; /* 稍微减小字体 */
     font-weight: 500;
     background: #d1ecf1;
     color: #0c5460;
     border: 1px solid #bee5eb;
+    white-space: nowrap; /* 防止标签文本换行 */
+    flex-shrink: 0; /* 防止标签被压缩 */
   }
 
   .naps-empty {
@@ -442,6 +494,7 @@
   flex: 1;
   min-width: 0;
   width: 100%;
+  overflow: hidden; /* 防止内容溢出 */
 
   .notes-label {
     font-weight: 600;
@@ -459,6 +512,8 @@
     word-wrap: break-word;
     flex: 1;
     text-align: left;
+    min-width: 0; /* 允许文本区域收缩 */
+    overflow: hidden; /* 防止内容溢出 */
   }
 }
 

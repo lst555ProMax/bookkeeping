@@ -1,6 +1,8 @@
 .category-filter {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0; /* 防止在 flex 容器中被压缩 */
+  min-height: fit-content; /* 基于内容高度 */
 
   // 默认主题变量（支出 - 橙色）
   --theme-color-start: #e67e22;
@@ -107,10 +109,14 @@
     align-items: center;
     padding-top: 0.5rem;
     border-top: 1px solid #f0f0f0;
+    flex-wrap: nowrap; /* 强制单行显示 */
+    min-width: 0; /* 允许 flex 子项收缩 */
 
     &-left {
       display: flex;
       gap: 0.5rem;
+      flex-shrink: 0; /* 防止左侧按钮区域被压缩 */
+      align-items: center;
     }
 
     .toggle-btn {
@@ -185,14 +191,18 @@
 
   &__search {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem; /* 减小间距 */
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* 强制单行显示 */
+    min-width: 0; /* 允许 flex 子项收缩 */
+    flex-shrink: 1; /* 允许在空间不足时收缩 */
+    margin-left: auto; /* 确保搜索区域靠右 */
 
     .search-group {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.3rem; /* 减小间距 */
+      flex-shrink: 0; /* 防止金额输入组被压缩 */
     }
 
     .search-label {

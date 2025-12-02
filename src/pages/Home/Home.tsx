@@ -1315,8 +1315,8 @@ const Home: React.FC = () => {
                       />
                     </div>
                     
-                    {/* 添加支出表单 */}
-                    <div className="form-container">
+                    {/* 添加收支记录表单 */}
+                    <div className="form-container form-container--fixed">
                       <AccountingRecordForm
                         onAddExpense={handleAddExpense}
                         onAddIncome={handleAddIncome}
@@ -1380,7 +1380,7 @@ const Home: React.FC = () => {
 
               <div className="home__section-group">
                 {/* 添加睡眠记录表单 */}
-                <div className="home__form-section">
+                <div className="home__form-section home__form-section--daily">
                   <SleepForm
                     onAddSleep={handleAddSleep}
                     onUpdateSleep={handleUpdateSleep}

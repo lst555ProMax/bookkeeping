@@ -209,7 +209,7 @@ const AccountingCategoryFilter: React.FC<AccountingCategoryFilterProps> = ({
                   min={0}
                   max={1000000}
                   step={500}
-                  width="70px"
+                  width="60px"
                   textAlign="center"
                 />
                 <span className="search-separator">-</span>
@@ -220,7 +220,7 @@ const AccountingCategoryFilter: React.FC<AccountingCategoryFilterProps> = ({
                   min={0}
                   max={1000000}
                   step={500}
-                  width="70px"
+                  width="60px"
                   textAlign="center"
                 />
               </div>
