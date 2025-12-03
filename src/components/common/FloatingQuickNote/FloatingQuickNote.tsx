@@ -457,13 +457,16 @@ const FloatingQuickNote: React.FC<FloatingQuickNoteProps> = ({ onAddQuickNote })
           >
             <div className="header-title">
               <h3>{getModeIcon()} {getModeTitle()}</h3>
-              <button 
-                className="mode-switch-btn" 
-                onClick={handleModeSwitch}
-                title="切换模式（速记/歌词/摘抄）"
-              >
-                🔄
-              </button>
+              {/* 代办模式下不显示切换按钮，因为代办和速记的三个组件是独立开来的 */}
+              {mode !== 'todo' && (
+                <button 
+                  className="mode-switch-btn" 
+                  onClick={handleModeSwitch}
+                  title="切换模式（速记/歌词/摘抄）"
+                >
+                  🔄
+                </button>
+              )}
             </div>
             <button className="close-btn" onClick={handleCloseWindow}>✕</button>
           </div>
