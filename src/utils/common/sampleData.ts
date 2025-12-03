@@ -1,5 +1,7 @@
 // 示例数据加载工具
 
+import { saveImageToIndexedDB } from './imageStorage';
+
 /**
  * 示例数据导入状态的 localStorage key
  */
@@ -327,6 +329,121 @@ const loadSampleDataFile = async (filename: string): Promise<unknown> => {
 };
 
 /**
+ * 加载单张图片并转换为 base64
+ * 支持 .jpg 和 .jpeg 扩展名
+ */
+const loadImageAsBase64 = async (imagePath: string): Promise<string> => {
+  // 如果路径是 .jpg，也尝试 .jpeg
+  const alternativePaths: string[] = [];
+  if (imagePath.endsWith('.jpg')) {
+    alternativePaths.push(imagePath.replace(/\.jpg$/, '.jpeg'));
+  } else if (imagePath.endsWith('.jpeg')) {
+    alternativePaths.push(imagePath.replace(/\.jpeg$/, '.jpg'));
+  }
+  
+  const allPaths = [imagePath, ...alternativePaths];
+  const basePaths = [
+    '',
+    `${import.meta.env.BASE_URL}`,
+    `/bookkeeping/`
+  ];
+  
+  let lastError = null;
+  
+  // 尝试所有路径组合
+  for (const imagePathToTry of allPaths) {
+    for (const basePath of basePaths) {
+      const fullPath = `${basePath}${imagePathToTry}`;
+      try {
+        const response = await fetch(fullPath);
+        if (response.ok) {
+          const blob = await response.blob();
+          return new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64String = reader.result as string;
+              resolve(base64String);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        }
+      } catch (error) {
+        lastError = error;
+      }
+    }
+  }
+  
+  throw new Error(`Failed to load image ${imagePath}. Last error: ${lastError}`);
+};
+
+/**
+ * 并行加载图片并保存到 IndexedDB（通用函数，支持乐记和书记）
+ */
+const loadEntryImagesInParallel = async (
+  entries: Array<Record<string, unknown>>,
+  totalImages: number,
+  onProgressUpdate?: (current: number, total: number) => void
+): Promise<void> => {
+  // 过滤出有 imagePath 的条目
+  const entriesToLoad = entries.filter(e => {
+    const imagePath = e.imagePath as string | undefined;
+    const entryId = e.id as string | undefined;
+    return imagePath && entryId;
+  });
+  
+  if (entriesToLoad.length === 0) {
+    return;
+  }
+  
+  let loadedCount = 0;
+  
+  // 使用原子计数器确保进度更新准确
+  const updateProgress = () => {
+    loadedCount++;
+    if (onProgressUpdate) {
+      onProgressUpdate(loadedCount, totalImages);
+    }
+  };
+  
+  // 并行加载所有图片（使用 Promise.allSettled 以便部分失败不影响整体）
+  const loadPromises = entriesToLoad.map(async (entry) => {
+    const imagePath = entry.imagePath as string;
+    const entryId = entry.id as string;
+    
+    try {
+      // 加载图片并转换为 base64
+      const base64Image = await loadImageAsBase64(imagePath);
+      
+      // 保存到 IndexedDB
+      await saveImageToIndexedDB(entryId, base64Image);
+      
+      // 更新进度
+      updateProgress();
+      
+      return { success: true, entryId };
+    } catch (error) {
+      console.error(`加载图片失败 (${entryId}, ${imagePath}):`, error);
+      updateProgress();
+      return { success: false, entryId, error };
+    }
+  });
+  
+  // 等待所有图片加载完成
+  const results = await Promise.allSettled(loadPromises);
+  
+  // 统计结果
+  const successCount = results.filter(r => 
+    r.status === 'fulfilled' && r.value.success
+  ).length;
+  const failCount = entriesToLoad.length - successCount;
+  
+  if (failCount > 0) {
+    console.warn(`部分图片加载失败: ${failCount} 张，但不影响数据使用`);
+  }
+};
+
+/**
  * 清空所有模块的数据
  */
 export const clearAllData = (): void => {
@@ -358,6 +475,9 @@ export const importAllSampleData = async (): Promise<void> => {
     const { importReadingExcerptsOnly } = await import('@/utils/reading/dataImportExport');
     const { importReadingEntriesOnly } = await import('@/utils/reading/dataImportExport');
     const { saveMedicalQuickNotes } = await import('@/utils/medical/storage');
+    
+    // 收集所有需要加载图片的条目
+    const allEntriesWithImages: Array<Record<string, unknown>> = [];
     
     for (const config of SAMPLE_DATA_CONFIGS) {
       try {
@@ -391,6 +511,14 @@ export const importAllSampleData = async (): Promise<void> => {
           case 'music-entries':
             result = await importMusicEntriesOnly(file);
             console.log(`✓ 乐记导入: ${result.imported}条新增, ${result.skipped}条跳过`);
+            
+            // 收集有 imagePath 的条目，稍后统一加载
+            if (typeof rawData === 'object' && rawData !== null) {
+              const obj = rawData as Record<string, unknown>;
+              const entries = (obj.musicEntries || []) as Array<Record<string, unknown>>;
+              const entriesWithImagePath = entries.filter(e => e.imagePath && typeof e.imagePath === 'string');
+              allEntriesWithImages.push(...entriesWithImagePath);
+            }
             break;
             
           case 'reading-excerpts':
@@ -401,6 +529,14 @@ export const importAllSampleData = async (): Promise<void> => {
           case 'reading-entries':
             result = await importReadingEntriesOnly(file);
             console.log(`✓ 书记导入: ${result.imported}条新增, ${result.skipped}条跳过`);
+            
+            // 收集有 imagePath 的条目，稍后统一加载
+            if (typeof rawData === 'object' && rawData !== null) {
+              const obj = rawData as Record<string, unknown>;
+              const entries = (obj.readingEntries || []) as Array<Record<string, unknown>>;
+              const entriesWithImagePath = entries.filter(e => e.imagePath && typeof e.imagePath === 'string');
+              allEntriesWithImages.push(...entriesWithImagePath);
+            }
             break;
             
           case 'medical-quick-notes':
@@ -431,6 +567,23 @@ export const importAllSampleData = async (): Promise<void> => {
         console.warn(`✗ ${config.type} 数据导入失败:`, error);
         // 继续导入其他数据，不中断流程
       }
+    }
+    
+    // 统一加载所有图片（乐记+书记）
+    if (allEntriesWithImages.length > 0) {
+      console.log(`开始并行加载 ${allEntriesWithImages.length} 张图片（乐记+书记）...`);
+      const totalImages = allEntriesWithImages.length;
+      
+      // 更新进度显示的回调函数
+      const updateProgress = (current: number, total: number) => {
+        const progress = Math.round((current / total) * 100);
+        updateLoadingOverlay(`正在导入示例数据...\n\n正在并行加载图片: ${current}/${total} (${progress}%)\n请勿刷新界面，耐心等待`);
+      };
+      
+      updateLoadingOverlay(`正在导入示例数据...\n\n正在并行加载 ${totalImages} 张图片（乐记+书记）...\n请勿刷新界面，耐心等待`);
+      
+      await loadEntryImagesInParallel(allEntriesWithImages, totalImages, updateProgress);
+      console.log(`✓ 所有图片加载完成`);
     }
     
     // 设置导入标记
@@ -511,6 +664,19 @@ const showLoadingOverlay = (message: string): HTMLDivElement => {
   document.head.appendChild(style);
   document.body.appendChild(overlay);
   return overlay;
+};
+
+/**
+ * 更新加载提示消息
+ */
+const updateLoadingOverlay = (message: string): void => {
+  const overlay = document.getElementById('sample-data-loading-overlay');
+  if (overlay) {
+    const messageElement = overlay.querySelector('.loading-message');
+    if (messageElement) {
+      messageElement.textContent = message;
+    }
+  }
 };
 
 /**

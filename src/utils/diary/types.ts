@@ -20,6 +20,7 @@ export interface DiaryEntry {
   font?: string; // 字体样式
   image?: string; // 图片（base64格式）- 向后兼容，新数据应使用 imageId
   imageId?: string; // 图片ID（图片存储在 IndexedDB 中）
+  imagePath?: string; // 图片路径（用于示例数据导入，从 public 目录加载）
   createdAt: number;
   updatedAt: number;
 }

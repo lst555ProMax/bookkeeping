@@ -741,6 +741,12 @@ export const importMusicEntriesOnly = (file: File): Promise<{
               }
             }
             
+            // 删除 imagePath 字段（仅用于示例数据加载，不应保存到 localStorage）
+            if (entryToSave.imagePath) {
+              const { imagePath, ...entryWithoutPath } = entryToSave;
+              entryToSave = entryWithoutPath;
+            }
+            
             entriesToSave.push(entryToSave);
           }
           
